@@ -1,0 +1,10 @@
+<matcase name="name" description="description">
+<element column="column" row="row">
+  <matrix series="" size="size" style="" character="" activator="" set_width=""/>
+</element>
+</matcase>
+
+<stopbar name="name" description="description">
+  <bar row="row">width</bar>
+</stopbar>
+
