@@ -1,0 +1,33 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {
+                backBegin = id; 
+                backLine = id; 
+                forwardLine = id; 
+                loadJob = id; 
+                toggleCaster = id; 
+            }; 
+            CLASS = CasterController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                CasterToggleButton = NSButton; 
+                Character = NSTextField; 
+                Face = NSTextField; 
+                JobName = NSTextField; 
+                Line = NSTextField; 
+                LoadJobButton = NSButton; 
+                Mould = NSTextField; 
+                Set = NSTextField; 
+                SkipBackwardButton = NSButton; 
+                SkipBeginButton = NSButton; 
+                SkipForwardButton = NSButton; 
+                Status = NSTextField; 
+                Wedge = NSTextField; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
+    ); 
+    IBVersion = 1; 
+}
