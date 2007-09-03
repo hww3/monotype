@@ -2,6 +2,6 @@
 
 CFBundleName = "Monotype Composition Caster";
 CFBundleShortVersionString = "Monotype Composition Caster version 0.1";
-CFBundleGetInfoString = "Monotype Composition Caster version 0.1, Copyright 2002 __MyCompanyName__.";
-NSHumanReadableCopyright = "Copyright 2007 __MyCompanyName__.";
+CFBundleGetInfoString = "Monotype Composition Caster version 0.1, Copyright 2002 Bill Welliver.";
+NSHumanReadableCopyright = "Copyright 2007 Bill Welliver.";
 
