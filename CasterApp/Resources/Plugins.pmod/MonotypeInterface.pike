@@ -125,6 +125,7 @@ void start_code()
 
 void end_code()
 {
+  int code;
   code = interesting_bits;	
   iow->write_interface(0, sprintf("%04c", code));
 }

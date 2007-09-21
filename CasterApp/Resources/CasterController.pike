@@ -25,7 +25,7 @@ mapping jobinfo;
 
 static void create()
 {
-   Driver = ((program)"Driver")();
+   Driver = ((program)"Driver")(this);
 }
 
 void set_job_info()
@@ -41,7 +41,7 @@ void loadJob_(object a)
 {
 
   object openPanel = Cocoa.NSOpenPanel.openPanel();
-  if(!openPanel->runModalForTypes_(({"xml"}))) return;
+  if(!openPanel->runModalForTypes_(({"rib"}))) return;
 
   mixed files = openPanel->filenames();
   if(sizeof(files))
@@ -57,12 +57,14 @@ void loadJob_(object a)
 void toggleCaster_(mixed ... args)
 {
 werror("ARGS: %O\n", args);
-	int state = CasterToggleButton->state();
+  int state = CasterToggleButton->state();
 //  werror("toggleCaster_(%O)\n", LoadJobButton->isEnabled());
   LoadJobButton->setEnabled_(!state);
   SkipForwardButton->setEnabled_(state);
   SkipBackwardButton->setEnabled_(state);
   SkipBeginButton->setEnabled_(state);
+  if(state) Driver->start();
+  else Driver->stop();
 }
 
 void backBegin_(object a)
