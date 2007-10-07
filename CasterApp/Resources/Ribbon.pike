@@ -13,7 +13,7 @@ static void create(string filename)
 	if(!file_stat(filename))
 	  throw(Error.Generic("Ribbon file " + filename + " does not exist.\n"));
 
-	file = Stdio.FILE(filename, "r");
+	file = ((program)"FRFILE")(filename, "r");
 	
 	parse_header();
 	parse_body();
@@ -61,8 +61,8 @@ array get_next_code()
 	string line = codes[current_pos++];
     if(!line)
   	  return 0;
-    werror("code is %O\n", line);
-    return (line / " ");
+  //  werror("code is %O\n", line);
+    return sizeof(line)?(line / " "):0;
   };
 
   return 0;

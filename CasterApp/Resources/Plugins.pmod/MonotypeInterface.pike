@@ -5,7 +5,8 @@ object driver;
 
 int cv;
 int state;
-int interesting_bits = 0b00000000100000000000000000000000;
+int started = 0;
+int interesting_bits = 33554432;
 
 mapping pincodes;
 
@@ -82,7 +83,7 @@ void report_callback(mixed ... args)
   int nv;
 
   sscanf(args[0], "%04c", nv);
-
+//werror("callback: %O\n", nv);
   nv = nv & interesting_bits;
   if(nv != cv)
   {
@@ -98,13 +99,14 @@ void value_changed(int nv)
   if(nv&interesting_bits)
   {
 	state = 1;
-	write("on\n"); 
-	start_code();
+//	write("on: %O\n", started); 
+	if(started)
+	  start_code();
   }
   else
   { 
 	state = 0;
-	write("off\n");
+//	write("off\n");
 	end_code();
   }
 }
@@ -115,12 +117,20 @@ void start_code()
 
   if(!code_str)
   {
-	driver->codesEnded();
+  	  driver->codesEnded();
+	  driver->doStop();
+	  driver->rewindRibbon();
+	  driver->setStatus("at end of ribbon.");
 	return;
   }
+
   int code = map_code_to_pins(code_str);
- 
+//  werror("writing code %O\n", code); 
   iow->write_interface(0, sprintf("%04c", code));
+
+  driver->setStatus((code_str*"-") + ".");
+
+  
 }
 
 void end_code()
@@ -139,6 +149,9 @@ static void create(object driver, mapping config)
   iow = Public.IO.IOWarrior.IOWarrior();
   iow->count_interfaces();
 
+  // shut everything off initially.
+  iow->write_interface(0, sprintf("%04c", 0));
+  
   iow->set_report_callback(report_callback, 0);
   Public.ObjectiveC.add_backend_runloop();
 }
@@ -149,8 +162,18 @@ int map_code_to_pins(array codes)
 	
   foreach(codes;;string c)
   {
-	code = code | pinmap[c];
+	code = code | pincodes[c];
   }
 
   return code;
+}
+
+void start()
+{
+	started = 1;
+}
+
+void stop()
+{
+	started = 0;
 }

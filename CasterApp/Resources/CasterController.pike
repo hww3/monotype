@@ -23,6 +23,22 @@ object Status;
 
 mapping jobinfo;
 
+class nr
+{
+  inherit Cocoa.NSResponder;
+
+  void create()
+{
+	::create();
+}
+
+  int acceptsFirstResponder()
+  {
+	return 1;
+  }
+
+}
+
 static void create()
 {
    Driver = ((program)"Driver")(this);
@@ -39,7 +55,6 @@ void set_job_info()
 
 void loadJob_(object a)
 {
-
   object openPanel = Cocoa.NSOpenPanel.openPanel();
   if(!openPanel->runModalForTypes_(({"rib"}))) return;
 
@@ -52,11 +67,13 @@ void loadJob_(object a)
       set_job_info();
     }
   CasterToggleButton->setEnabled_(1);
+//  NSApp->keyWindow()->setNextResponder_(nr()->init());
+
 }
 
 void toggleCaster_(mixed ... args)
 {
-werror("ARGS: %O\n", args);
+//werror("ARGS: %O\n", args);
   int state = CasterToggleButton->state();
 //  werror("toggleCaster_(%O)\n", LoadJobButton->isEnabled());
   LoadJobButton->setEnabled_(!state);
