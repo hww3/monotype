@@ -48,7 +48,7 @@ int main()
         if(ilinespaces)
         {
           // algorithm from page 14 of the booklet.
-          ijustspace = ((float)(lineunites - ilinelength)/ilinespaces);
+          ijustspace = ((float)(lineunits - ilinelength)/ilinespaces);
           ijustspace = (ijustspace + (jspacewidth - 6) * (unitwidth * 1.537));
         }
         else ijustspace = 0.0;
@@ -56,7 +56,7 @@ int main()
         int numsteps = (int)ijustspace;
         numsteps += 53;
 
-        int f = ijustspace - (float)(int)ijustspace;
+        float f = ijustspace - (float)(int)ijustspace;
         if((f*2)>1.0) 
           numsteps ++;
 
@@ -68,16 +68,20 @@ int main()
         ibig = (int)floor(ijustspace/bigadj);
         ilittle = (int)floor((ijustspace - (bigadj*ibig))/ smalladj);
 */
+
+/*
         write("0.0005 %d\n", ilittle);
         write("0.0075 %d\n", ibig);
+*/
+/*
         foreach(reverse(line->elements);; object m)
         {
           if(m->is_justifying_space)
             write("S\n");
           else
-            write("  %s %d\n", m->col_pos, m->row_pos);  
+            write("%s %d\n", m->col_pos, m->row_pos);  
         }
-          
+*/          
       }
       break;
     }
@@ -101,7 +105,7 @@ int main()
     }    
     else if(activator == "\n")
     {
-      lines += ({Line(line)});
+      lines += ({Line(line, big, little)});
       line = ({});
       linelength = 0;
       linespaces = 0;
@@ -126,21 +130,24 @@ int main()
   write("%s %d %s\n", displayline * "", lineunits-linelength, (linespaces && big<15 && little < 15)?("* "+ big + " " + little):"");
 
   }
-
+/*
   werror("%d units to justify divided over %d justifying spaces in line: %d %d", 
             lineunits-linelength, linespaces, 
             big, little);
+*/
 
-  write("0.0005 %d\n", little);
-  write("0.0075 %d\n", big);
-
-  foreach(reverse(line);; object m)
+  foreach(reverse(lines);; object line)
   {
-    if(m->is_justifying_space)
-      write("S\n");
-    else write("%d %s\n", m->row_pos, m->col_pos);
-  }
+    write("0005 0075 %d\n", line->little);
+    write("0075 %d\n", line->big);
 
+    foreach(reverse(line->elements);; object m)
+    {
+      if(m->is_justifying_space)
+        write("S\n");
+      else write("%d %s [%s]\n", m->row_pos, m->col_pos, m->character);
+    }
+  }
   return 1;
 }
 
@@ -154,7 +161,7 @@ class JustifyingSpace(int size)
   int is_justifying_space = 1;
 }
 
-class Line(array elements)
+class Line(array elements, int big, int little)
 {
 
 }

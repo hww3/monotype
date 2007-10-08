@@ -1,8 +1,6 @@
 
 Stdio.FILE file;
 
-array codes;
-
 int current_pos = 0;
 
 mapping job_info = ([]);
@@ -16,12 +14,29 @@ static void create(string filename)
 	file = ((program)"FRFILE")(filename, "r");
 	
 	parse_header();
+	job_info->code_count = file->count_lines();
 	parse_body();
 }
 
 void parse_body()
 {
-	codes = file->read()/"\n";
+	int pos = file->tell();
+	int total_lines, total_codes;
+	multiset last;
+	foreach(file;int i;string l)
+	{
+		// we're looking for 0005+0075 followed by a 0075 code (end of line and reset).
+        // 0005 followed by 0075 is used in double justification.
+		multiset c = (multiset)((l/" ")-({""}));
+		if(c["0075"] && (last && last["0005"] && last["0075"])) total_lines++;
+		last = c;
+		total_codes ++;
+	}
+
+	job_info->code_count = total_codes + 1;
+	job_info->line_count = total_lines + 1;
+	
+	file->seek(pos);
 }
 
 void parse_header()
@@ -58,10 +73,14 @@ array get_next_code()
 {
   catch
   {
-	string line = codes[current_pos++];
+	string line = file->gets();
+	werror("LINE: %O\n", line);
     if(!line)
   	  return 0;
   //  werror("code is %O\n", line);
+    if(!sizeof(line)) return 0;
+     
+    sscanf(line, "%s [%s\]", line, string character);
     return sizeof(line)?(line / " "):0;
   };
 

@@ -57,7 +57,7 @@ import Public.ObjectiveC;
      ribbon = ((program)"Ribbon")(filename);
 
      mapping jobinfo = ribbon->get_info();
-     setStatus("loaded ribbon.");
+     setStatus(sprintf("loaded %d lines.", jobinfo->line_count));
      return jobinfo;
   }
 
