@@ -12,17 +12,15 @@
             LANGUAGE = ObjC; 
             OUTLETS = {
                 CasterToggleButton = NSButton; 
-                Character = NSTextField; 
                 Face = NSTextField; 
                 JobName = NSTextField; 
-                Line = NSTextField; 
                 LoadJobButton = NSButton; 
                 Mould = NSTextField; 
-                Set = NSTextField; 
                 SkipBackwardButton = NSButton; 
                 SkipBeginButton = NSButton; 
                 SkipForwardButton = NSButton; 
                 Status = NSTextField; 
+                Thermometer = NSProgressIndicator; 
                 Wedge = NSTextField; 
             }; 
             SUPERCLASS = NSObject; 

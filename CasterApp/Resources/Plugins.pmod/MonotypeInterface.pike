@@ -120,7 +120,7 @@ void start_code()
   	  driver->codesEnded();
 	  driver->doStop();
 	  driver->rewindRibbon();
-	  driver->setStatus("at end of ribbon.");
+	  driver->setStatus("End of Ribbon.");
 	return;
   }
 
@@ -128,9 +128,9 @@ void start_code()
 //  werror("writing code %O\n", code); 
   iow->write_interface(0, sprintf("%04c", code));
 
-  driver->setStatus((code_str*"-") + ".");
+  driver->setStatus((code_str*"-"));
 
-  
+  driver->processedCode();
 }
 
 void end_code()

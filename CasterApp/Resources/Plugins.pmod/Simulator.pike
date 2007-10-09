@@ -20,9 +20,10 @@ void process_code()
 	{
 	  driver->doStop();
 	  driver->rewindRibbon();
-  	  driver->setStatus("at end of ribbon.");
+  	  driver->setStatus("End of Ribbon.");
 	  return;
 	}
-	driver->setStatus((code*"-") + ".");
-	call_out_id = call_out(process_code, 0.07);
+	driver->setStatus((code*"-"));
+	driver->processedCode();
+	call_out_id = call_out(process_code, 0.75);
 }

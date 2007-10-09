@@ -1,179 +1,182 @@
 <matcase name="C Arrangement 5A">
+<element row="4" column="K">
+  <matrix series="" size="" style="" character=" " activator="JS" set_width="4"/>
+</element>
 <element row="12" column="J">
-<matrix series="" size="" style="" character="A" activator="A" set_width="13"/>
+  <matrix series="" size="" style="" character="A" activator="A" set_width="13"/>
 </element>
 <element row="12" column="F">
-<matrix series="" size="" style="" character="B" activator="B" set_width="13"/>
+  <matrix series="" size="" style="" character="B" activator="B" set_width="13"/>
 </element>
 <element row="12" column="E">
-<matrix series="" size="" style="" character="C" activator="C" set_width="13"/>
+  <matrix series="" size="" style="" character="C" activator="C" set_width="13"/>
 </element>
 <element row="14" column="G">
-<matrix series="" size="" style="" character="D" activator="D" set_width="15"/>
+  <matrix series="" size="" style="" character="D" activator="D" set_width="15"/>
 </element>
 <element row="12" column="I">
-<matrix series="" size="" style="" character="E" activator="E" set_width="13"/>
+  <matrix series="" size="" style="" character="E" activator="E" set_width="13"/>
 </element>
 <element row="11" column="J">
-<matrix series="" size="" style="" character="F" activator="F" set_width="12"/>
+  <matrix series="" size="" style="" character="F" activator="F" set_width="12"/>
 </element>
 <element row="13" column="J">
-<matrix series="" size="" style="" character="G" activator="G" set_width="14"/>
+  <matrix series="" size="" style="" character="G" activator="G" set_width="14"/>
 </element>
 <element row="14" column="J">
-<matrix series="" size="" style="" character="H" activator="H" set_width="15"/>
+  <matrix series="" size="" style="" character="H" activator="H" set_width="15"/>
 </element>
 <element row="4" column="H">
-<matrix series="" size="" style="" character="I" activator="I" set_width="8"/>
+  <matrix series="" size="" style="" character="I" activator="I" set_width="8"/>
 </element>
 <element row="7" column="H">
-<matrix series="" size="" style="" character="J" activator="J" set_width="9"/>
+  <matrix series="" size="" style="" character="J" activator="J" set_width="9"/>
 </element>
 <element row="14" column="I">
-<matrix series="" size="" style="" character="K" activator="K" set_width="15"/>
+  <matrix series="" size="" style="" character="K" activator="K" set_width="15"/>
 </element>
 <element row="11" column="H">
-<matrix series="" size="" style="" character="L" activator="L" set_width="12"/>
+  <matrix series="" size="" style="" character="L" activator="L" set_width="12"/>
 </element>
 <element row="15" column="J">
-<matrix series="" size="" style="" character="M" activator="M" set_width="18"/>
+  <matrix series="" size="" style="" character="M" activator="M" set_width="18"/>
 </element>
 <element row="14" column="H">
-<matrix series="" size="" style="" character="N" activator="N" set_width="15"/>
+  <matrix series="" size="" style="" character="N" activator="N" set_width="15"/>
 </element>
 <element row="12" column="H">
-<matrix series="" size="" style="" character="O" activator="O" set_width="13"/>
+  <matrix series="" size="" style="" character="O" activator="O" set_width="13"/>
 </element>
 <element row="11" column="I">
-<matrix series="" size="" style="" character="P" activator="P" set_width="12"/>
+  <matrix series="" size="" style="" character="P" activator="P" set_width="12"/>
 </element>
 <element row="12" column="C">
-<matrix series="" size="" style="" character="Q" activator="Q" set_width="13"/>
+  <matrix series="" size="" style="" character="Q" activator="Q" set_width="13"/>
 </element>
 <element row="13" column="K">
-<matrix series="" size="" style="" character="R" activator="R" set_width="14"/>
+  <matrix series="" size="" style="" character="R" activator="R" set_width="14"/>
 </element>
 <element row="8" column="F">
-<matrix series="" size="" style="" character="S" activator="S" set_width="10"/>
+  <matrix series="" size="" style="" character="S" activator="S" set_width="10"/>
 </element>
 <element row="12" column="G">
-<matrix series="" size="" style="" character="T" activator="T" set_width="13"/>
+  <matrix series="" size="" style="" character="T" activator="T" set_width="13"/>
 </element>
 <element row="13" column="I">
-<matrix series="" size="" style="" character="U" activator="U" set_width="14"/>
+  <matrix series="" size="" style="" character="U" activator="U" set_width="14"/>
 </element>
 <element row="12" column="D">
-<matrix series="" size="" style="" character="V" activator="V" set_width="13"/>
+  <matrix series="" size="" style="" character="V" activator="V" set_width="13"/>
 </element>
 <element row="15" column="K">
-<matrix series="" size="" style="" character="W" activator="W" set_width="18"/>
+  <matrix series="" size="" style="" character="W" activator="W" set_width="18"/>
 </element>
 <element row="14" column="F">
-<matrix series="" size="" style="" character="X" activator="X" set_width="15"/>
+  <matrix series="" size="" style="" character="X" activator="X" set_width="15"/>
 </element>
 <element row="13" column="H">
-<matrix series="" size="" style="" character="Y" activator="Y" set_width="14"/>
+  <matrix series="" size="" style="" character="Y" activator="Y" set_width="14"/>
 </element>
 <element row="10" column="I">
-<matrix series="" size="" style="" character="Z" activator="Z" set_width="11"/>
+  <matrix series="" size="" style="" character="Z" activator="Z" set_width="11"/>
 </element>
 <element row="7" column="K">
-<matrix series="" size="" style="" character="a" activator="a" set_width="9"/>
+  <matrix series="" size="" style="" character="a" activator="a" set_width="9"/>
 </element>
 <element row="9" column="I">
-<matrix series="" size="" style="" character="b" activator="b" set_width="10"/>
+  <matrix series="" size="" style="" character="b" activator="b" set_width="10"/>
 </element>
 <element row="4" column="J">
-<matrix series="" size="" style="" character="c" activator="c" set_width="8"/>
+  <matrix series="" size="" style="" character="c" activator="c" set_width="8"/>
 </element>
 <element row="9" column="K">
-<matrix series="" size="" style="" character="d" activator="d" set_width="10"/>
+  <matrix series="" size="" style="" character="d" activator="d" set_width="10"/>
 </element>
 <element row="4" column="K">
-<matrix series="" size="" style="" character="e" activator="e" set_width="8"/>
+  <matrix series="" size="" style="" character="e" activator="e" set_width="8"/>
 </element>
 <element row="2" column="I">
-<matrix series="" size="" style="" character="f" activator="f" set_width="6"/>
+  <matrix series="" size="" style="" character="f" activator="f" set_width="6"/>
 </element>
 <element row="7" column="I">
-<matrix series="" size="" style="" character="g" activator="g" set_width="9"/>
+  <matrix series="" size="" style="" character="g" activator="g" set_width="9"/>
 </element>
 <element row="9" column="J">
-<matrix series="" size="" style="" character="h" activator="h" set_width="10"/>
+  <matrix series="" size="" style="" character="h" activator="h" set_width="10"/>
 </element>
 <element row="1" column="K">
-<matrix series="" size="" style="" character="i" activator="i" set_width="5"/>
+  <matrix series="" size="" style="" character="i" activator="i" set_width="5"/>
 </element>
 <element row="2" column="H">
-<matrix series="" size="" style="" character="j" activator="j" set_width="6"/>
+  <matrix series="" size="" style="" character="j" activator="j" set_width="6"/>
 </element>
 <element row="9" column="H">
-<matrix series="" size="" style="" character="k" activator="k" set_width="10"/>
+  <matrix series="" size="" style="" character="k" activator="k" set_width="10"/>
 </element>
 <element row="1" column="J">
-<matrix series="" size="" style="" character="l" activator="l" set_width="5"/>
+  <matrix series="" size="" style="" character="l" activator="l" set_width="5"/>
 </element>
 <element row="14" column="K">
-<matrix series="" size="" style="" character="m" activator="m" set_width="15"/>
+  <matrix series="" size="" style="" character="m" activator="m" set_width="15"/>
 </element>
 <element row="8" column="K">
-<matrix series="" size="" style="" character="n" activator="n" set_width="10"/>
+  <matrix series="" size="" style="" character="n" activator="n" set_width="10"/>
 </element>
 <element row="7" column="J">
-<matrix series="" size="" style="" character="o" activator="o" set_width="9"/>
+  <matrix series="" size="" style="" character="o" activator="o" set_width="9"/>
 </element>
 <element row="8" column="I">
-<matrix series="" size="" style="" character="p" activator="p" set_width="10"/>
+  <matrix series="" size="" style="" character="p" activator="p" set_width="10"/>
 </element>
 <element row="9" column="G">
-<matrix series="" size="" style="" character="q" activator="q" set_width="10"/>
+  <matrix series="" size="" style="" character="q" activator="q" set_width="10"/>
 </element>
 <element row="3" column="I">
-<matrix series="" size="" style="" character="r" activator="r" set_width="7"/>
+  <matrix series="" size="" style="" character="r" activator="r" set_width="7"/>
 </element>
 <element row="3" column="J">
-<matrix series="" size="" style="" character="s" activator="s" set_width="7"/>
+  <matrix series="" size="" style="" character="s" activator="s" set_width="7"/>
 </element>
 <element row="3" column="K">
-<matrix series="" size="" style="" character="t" activator="t" set_width="7"/>
+  <matrix series="" size="" style="" character="t" activator="t" set_width="7"/>
 </element>
 <element row="8" column="J">
-<matrix series="" size="" style="" character="u" activator="u" set_width="10"/>
+  <matrix series="" size="" style="" character="u" activator="u" set_width="10"/>
 </element>
 <element row="8" column="G">
-<matrix series="" size="" style="" character="v" activator="v" set_width="10"/>
+  <matrix series="" size="" style="" character="v" activator="v" set_width="10"/>
 </element>
 <element row="12" column="K">
-<matrix series="" size="" style="" character="w" activator="w" set_width="13"/>
+  <matrix series="" size="" style="" character="w" activator="w" set_width="13"/>
 </element>
 <element row="7" column="G">
-<matrix series="" size="" style="" character="x" activator="x" set_width="9"/>
+  <matrix series="" size="" style="" character="x" activator="x" set_width="9"/>
 </element>
 <element row="8" column="H">
-<matrix series="" size="" style="" character="y" activator="y" set_width="10"/>
+  <matrix series="" size="" style="" character="y" activator="y" set_width="10"/>
 </element>
 <element row="4" column="I">
-<matrix series="" size="" style="" character="z" activator="z" set_width="8"/>
+  <matrix series="" size="" style="" character="z" activator="z" set_width="8"/>
 </element>
 <element row="1" column="G">
-<matrix series="" size="" style="" character="." activator="." set_width="5"/>
+  <matrix series="" size="" style="" character="." activator="." set_width="5"/>
 </element>
 <element row="1" column="H">
-<matrix series="" size="" style="" character="," activator="," set_width="5"/>
+  <matrix series="" size="" style="" character="," activator="," set_width="5"/>
 </element>
 <element row="2" column="G">
-<matrix series="" size="" style="" character="-" activator="-" set_width="6"/>
+  <matrix series="" size="" style="" character="-" activator="-" set_width="6"/>
 </element>
 <element row="2" column="F">
-<matrix series="" size="" style="" character=";" activator=";" set_width="6"/>
+  <matrix series="" size="" style="" character=";" activator=";" set_width="6"/>
 </element>
 <element row="2" column="E">
-<matrix series="" size="" style="" character=":" activator=":" set_width="6"/>
+  <matrix series="" size="" style="" character=":" activator=":" set_width="6"/>
 </element>
 <element row="2" column="D">
-<matrix series="" size="" style="" character="!" activator="!" set_width="6"/>
+  <matrix series="" size="" style="" character="!" activator="!" set_width="6"/>
 </element>
 <element row="4" column="G">
-<matrix series="" size="" style="" character="?" activator="?" set_width="8"/>
+  <matrix series="" size="" style="" character="?" activator="?" set_width="8"/>
 </element>
 </matcase>

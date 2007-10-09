@@ -141,11 +141,14 @@ int main()
     write("0005 0075 %d\n", line->little);
     write("0075 %d\n", line->big);
 
-    foreach(reverse(line->elements);; object m)
+    foreach(reverse(line->elements);; object me)
     {
-      if(m->is_justifying_space)
-        write("S\n");
-      else write("%d %s [%s]\n", m->row_pos, m->col_pos, m->character);
+      if(me->is_justifying_space)
+      {
+	    object x = m->elements["JS"];
+        write("S %d %s [%s]\n", x->row_pos, x->col_pos, x->character);
+      }
+      else write("%d %s [%s]\n", me->row_pos, me->col_pos, me->character);
     }
   }
   return 1;

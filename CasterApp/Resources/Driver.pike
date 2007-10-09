@@ -3,6 +3,7 @@ import Public.ObjectiveC;
   object plugin;
   object ribbon;
   object ui;
+  mapping jobinfo;
 
   array getNextCode()
   {
@@ -21,12 +22,13 @@ import Public.ObjectiveC;
 
   void forwardLine()
   {
-	
+	ribbon->skip_to_line_end();
   }
 
   void backwardLine()
   {
-	
+	ribbon->skip_to_line_beginning();
+	processedCode();
   }
 
   void codesEnded()
@@ -37,8 +39,14 @@ import Public.ObjectiveC;
   void rewindRibbon()
   {
 	ribbon->rewind(-1);
+	processedCode();
   }
   
+  int currentPos()
+  {
+    return ribbon->current_pos;	
+  }
+
   // called by anyone except the UI when the processing should be stopped, such as end of ribbon.
   void doStop()
   {
@@ -52,12 +60,17 @@ import Public.ObjectiveC;
 	ui->Status->setStringValue_(s);
   }
 
+  void processedCode()
+  {
+	ui->Thermometer->setDoubleValue_(((float)ribbon->current_pos/jobinfo->code_count)*100);
+  }
+
   mapping loadRibbon(string filename)
   {
      ribbon = ((program)"Ribbon")(filename);
 
-     mapping jobinfo = ribbon->get_info();
-     setStatus(sprintf("loaded %d lines.", jobinfo->line_count));
+     jobinfo = ribbon->get_info();
+     setStatus(sprintf("Loaded %d codes in %d lines.", jobinfo->code_count, jobinfo->line_count));
      return jobinfo;
   }
 

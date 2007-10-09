@@ -14,11 +14,9 @@ object LoadJobButton;
 object JobName;
 object Face;
 object Wedge;
-object Set;
 object Mould;
 
-object Line;
-object Character;
+object Thermometer;
 object Status;
 
 mapping jobinfo;
@@ -48,9 +46,10 @@ void set_job_info()
 {
 	JobName->setStringValue_(jobinfo->name);
 	Face->setStringValue_(jobinfo->face);
-	Wedge->setStringValue_(jobinfo->wedge);
-	Set->setStringValue_(jobinfo->set);
+	Wedge->setStringValue_(jobinfo->wedge + "/" + jobinfo->set);
 	Mould->setStringValue_(jobinfo->mould);
+	Thermometer->setMinValue_(0.0);
+	Thermometer->setDoubleValue_(0.0);
 }
 
 void loadJob_(object a)
@@ -62,7 +61,7 @@ void loadJob_(object a)
   if(sizeof(files))
     foreach(files;;mixed file)
     {
-      werror("file: %O\n", (string)file);
+//      werror("file: %O\n", (string)file);
       jobinfo = Driver->loadRibbon((string)file);
       set_job_info();
     }
@@ -86,17 +85,20 @@ void toggleCaster_(mixed ... args)
 
 void backBegin_(object a)
 {
-  werror("backBegin_(%O)\n", a);
+//  werror("backBegin_(%O)\n", a);
+  Driver->rewindRibbon();
 }
 
 void backLine_(object a)
 {
-  werror("backLine_(%O)\n", a);
+//  werror("backLine_(%O)\n", a);
+  Driver->backwardLine();
 }
 
 void forwardLine_(object a)
 {
-  werror("forwardLine_(%O)\n", a);
+//  werror("forwardLine_(%O)\n", a);
+  Driver->forwardLine();
 }
 
 
