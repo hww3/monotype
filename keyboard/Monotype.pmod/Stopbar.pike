@@ -48,7 +48,7 @@ int load(Node n)
 
     if(c->get_node_name() == "bar")
     {
-      set((int)(c->get_attributes()["column"]), (int)(c->get_text()));
+      set((int)(c->get_attributes()["row"]), (int)(c->get_text()));
     }
   }
 

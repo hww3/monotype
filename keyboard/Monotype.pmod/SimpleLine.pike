@@ -21,7 +21,7 @@ float justspace;
 int big, little;
 
 object m;
-object n;
+object s;
 
 int line_mode = MODE_JUSTIFY;
 
@@ -31,6 +31,7 @@ int main(int argc, array argv)
 {
 
   m = load_matcase("Book5A");
+  s = load_stopbar("S5");
 
   werror("ARGS: %O, %O\n", argc, argv);
   if(argc == 1)
@@ -194,19 +195,64 @@ void low_quad_out(int amount, int|void atbeginning)
 
 void generate_ribbon(array lines)
 {
+	int f,c;
+	
 	foreach(reverse(lines);; object line)
     {
-      write("0005 0075 %d\n", line->little);
-      write("0075 %d\n", line->big);
+	  int cc, cf; // the current justification wedge settings
+	  f = line->little;
+	  c = line->big;
+	  cf = f;
+	  cc = c;
+	
+      write("0005 0075 %d\n", f);
+      write("0075 %d\n", c);
 
       foreach(reverse(line->elements);; object me)
       {
+	    int needs_adjustment;
+	
         if(me->is_justifying_space)
         {
-	      object x = m->elements["JS"];
-          write("S %d %s [%s]\n", x->row_pos, x->col_pos, x->character);
+	      if(cf != f || cc != c)
+	      {
+		      write("0005 %d\n", f);
+		      write("0075 %d\n", c);
+			  cf = f;
+			  cc = c;
+	      }
+	      object me = m->elements["JS"];
+          write("S %d %s [ ]\n", me->row_pos, me->col_pos);
         }
-        else write("%d %s [%s]\n", me->row_pos, me->col_pos, me->character);
+        else 
+		{
+			int wedgewidth = s->get(me->row_pos);
+	
+			//werror("want %d, wedge provides %d\n", mat->get_set_width(), wedgewidth);
+			if(wedgewidth != me->get_set_width()) // we need to adjust the justification wedges
+			{
+			  int nf, nc;
+			  needs_adjustment = 1;
+			  // first, we should calculate what difference we need, in units of set.
+			  int neededunits = me->get_set_width() - wedgewidth;
+			  
+			  // then, figure out what that adjustment is in terms of 0075 and 0005
+			  [nc, nf] = calculate_wordspacing_code(neededunits);
+			  // if it's not what we have now, make the adjustment
+		      if(cf != nf || cc != nc)
+		      {
+			      write("0005 %d\n", nf);
+			      write("0075 %d\n", nc);
+				  cf = nf;
+				  cc = nc;
+		      }
+			}
+			
+			if(needs_adjustment)
+			  write("S ");
+			
+			write("%d %s [%s]\n", me->row_pos, me->col_pos, me->character);
+		}
       }
     }  
 }
@@ -214,7 +260,15 @@ void generate_ribbon(array lines)
 object load_matcase(string ml)
 {
   object m = MatCaseLayout();                                            
-  n = Public.Parser.XML2.parse_xml(Stdio.read_file(ml + ".xml"));
+  object n = Public.Parser.XML2.parse_xml(Stdio.read_file(ml + ".xml"));
+  m->load(n);
+  return m;
+}
+
+object load_stopbar(string ml)
+{
+  object m = Stopbar();                                            
+  object n = Public.Parser.XML2.parse_xml(Stdio.read_file(ml + ".xml"));
   m->load(n);
   return m;
 }
@@ -244,26 +298,40 @@ object remove()
 
 void calculate_justification()
 {
-	if(linespaces)
+  float justspace;
+  if(linespaces)
   {
 	// algorithm from page 14
     justspace = ((float)(lineunits-linelength)/linespaces); // in units of set.
   }
   else justspace = 0.0;
 
+  [big, little] = low_calculate_justification(justspace, jspacewidth);
+}
+
+array low_calculate_justification(float justspace, int jspacewidth)
+{
   justspace = justspace + (jspacewidth-6);
   justspace *= (setwidth * 1.537);	
 
-  int w = (int)justspace + 53;
+  int w = ((int)round(justspace)) + 53;
 
-  big = w/15;
-  little = w%15;
+  return ({ w/15, w%15 });
+}
+
+array calculate_wordspacing_code(int units)
+{
+	// algorithm from page 25
+	int steps = (int)round((0.0007685 * setwidth * units) / 0.0005);
+	steps += 53;
+	return ({steps/15, steps%15});
 }
 
 void add (string activator, int|void atbeginning)
 {
   object mat;
-  // backspace.
+
+  // justifying space
   if(activator == " ")
   {
 	if(atbeginning)
@@ -290,7 +358,7 @@ void add (string activator, int|void atbeginning)
 
   if(!mat) werror("invalid activator " + activator + "!\n");
   else
-  {
+  {	
 	if(atbeginning)
 	{
 		displayline = ({activator}) + displayline;
