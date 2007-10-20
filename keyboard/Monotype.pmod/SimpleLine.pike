@@ -9,7 +9,7 @@ float setwidth = 12.0;
 
 int currentpos;
 int jspacewidth=4;
-int lineunits = 180;
+int lineunits = 18 * 6 * 30;;
 array displayline = ({});
 
 int linelength = 0;
@@ -23,6 +23,9 @@ int big, little;
 object m;
 object s;
 
+int isitalic = 0;
+int issmallcaps = 0;
+
 int line_mode = MODE_JUSTIFY;
 
 string last = "";
@@ -30,7 +33,7 @@ string last = "";
 int main(int argc, array argv)
 {
 
-  m = load_matcase("Book5A");
+  m = load_matcase("S5 C1");
   s = load_stopbar("S5");
 
   werror("ARGS: %O, %O\n", argc, argv);
@@ -93,7 +96,7 @@ mixed i_parse_data(object parser, string data, mapping extra)
 		  for(int j = i; j >= lastjs; j--)
 		  {
 			object x = remove();
-			werror("removing a character: %O\n", x?(x->activator?x->activator:"JS"):"");
+			// werror("removing a character: %O\n", x?(x->activator?x->activator:"JS"):"");
 		  }
 		  if(line_mode)
 		  {
@@ -107,6 +110,15 @@ mixed i_parse_data(object parser, string data, mapping extra)
 
 mixed i_parse_tags(object parser, string data, mapping extra)
 {
+	if(data == "<i>")
+	{
+		isitalic ++;
+	}
+	if(data == "</i>")
+	{
+		isitalic --;
+		if(isitalic < 0) isitalic = 0;
+	}
 	if(data == "<left>")
 	{
 		line_mode = MODE_LEFT;
@@ -169,7 +181,7 @@ void quad_out()
 
 void low_quad_out(int amount, int|void atbeginning)
 {
-	  array spaces = ({4, 5, 6, 7, 9, 10, 18});
+	  array spaces = ({5, 6, 8, 9, 18});
 	  array toadd = ({});
 
 	int left = amount;
@@ -216,12 +228,14 @@ void generate_ribbon(array lines)
         {
 	      if(cf != f || cc != c)
 	      {
+		werror("resetting justification wedges.\n");
 		      write("0005 %d\n", f);
 		      write("0075 %d\n", c);
 			  cf = f;
 			  cc = c;
 	      }
 	      object me = m->elements["JS"];
+	  if(!me) error("No Justifying Space!\n");
           write("S %d %s [ ]\n", me->row_pos, me->col_pos);
         }
         else 
@@ -232,6 +246,7 @@ void generate_ribbon(array lines)
 			if(wedgewidth != me->get_set_width()) // we need to adjust the justification wedges
 			{
 			  int nf, nc;
+			werror("needs adjustment: have %d, need %d!\n", wedgewidth, me->get_set_width());
 			  needs_adjustment = 1;
 			  // first, we should calculate what difference we need, in units of set.
 			  int neededunits = me->get_set_width() - wedgewidth;
@@ -374,7 +389,7 @@ void add (string activator, int|void atbeginning)
 
   calculate_justification();
 
-  werror("%s %d %s %s\n", displayline * "", lineunits-linelength, can_justify()?("* "+ big + " " + little):"", is_overset()?(" OVERSET "):"");
+  //werror("%s %d %s %s\n", displayline * "", lineunits-linelength, can_justify()?("* "+ big + " " + little):"", is_overset()?(" OVERSET "):"");
 }
 
 int is_overset()

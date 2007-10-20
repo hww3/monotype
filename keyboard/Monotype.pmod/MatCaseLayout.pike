@@ -28,7 +28,7 @@ void set(string column, int row, Matrix mat)
     error("invalid row provided!\n");
 
   if(!(<"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", 
-        "L", "M", "N", "NI", "NL">)[column]) 
+        "L", "M", "N", "O", "NI", "NL">)[column]) 
    error("invalid matrix case position requested.\n");
 
   if(!matcase[column]) matcase[column] = ([]);

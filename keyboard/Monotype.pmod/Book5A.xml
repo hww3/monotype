@@ -1,23 +1,17 @@
 <matcase name="C Arrangement 5A">
-	<element row="4" column="K">
-	  <matrix series="" size="" style="" character=" " activator="S4" set_width="4"/>
-	</element>
-	<element row="4" column="K">
+	<element row="1" column="I">
 	  <matrix series="" size="" style="" character=" " activator="S5" set_width="5"/>
 	</element>
-	<element row="4" column="K">
+	<element row="2" column="O">
 	  <matrix series="" size="" style="" character=" " activator="S6" set_width="6"/>
 	</element>
-	<element row="4" column="K">
-	  <matrix series="" size="" style="" character=" " activator="S7" set_width="7"/>
+	<element row="4" column="O">
+	  <matrix series="" size="" style="" character=" " activator="S8" set_width="8"/>
 	</element>
-	<element row="4" column="K">
+	<element row="6" column="O">
 	  <matrix series="" size="" style="" character=" " activator="S9" set_width="9"/>
 	</element>
-	<element row="4" column="K">
-	  <matrix series="" size="" style="" character=" " activator="S10" set_width="10"/>
-	</element>
-	<element row="4" column="K">
+	<element row="15" column="O">
 	  <matrix series="" size="" style="" character=" " activator="S18" set_width="18"/>
 	</element>
 
