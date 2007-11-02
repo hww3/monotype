@@ -35,7 +35,7 @@ void set(string column, int row, Matrix mat)
 
   matcase[column][row] = mat;
   mat->set_position(row, column);
-  elements[mat->activator] = mat;
+  elements[(mat->style?(mat->style+"|"):"") + mat->activator] = mat;
 }
 
 int get(string column, int row)
