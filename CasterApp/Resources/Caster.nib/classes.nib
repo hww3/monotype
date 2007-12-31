@@ -14,6 +14,7 @@
                 CasterToggleButton = NSButton; 
                 Face = NSTextField; 
                 JobName = NSTextField; 
+                LineLength = NSTextField; 
                 LoadJobButton = NSButton; 
                 Mould = NSTextField; 
                 SkipBackwardButton = NSButton; 

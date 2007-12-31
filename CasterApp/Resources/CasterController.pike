@@ -15,31 +15,18 @@ object JobName;
 object Face;
 object Wedge;
 object Mould;
+object LineLength;
 
 object Thermometer;
 object Status;
 
 mapping jobinfo;
 
-class nr
-{
-  inherit Cocoa.NSResponder;
-
-  void create()
-{
-	::create();
-}
-
-  int acceptsFirstResponder()
-  {
-	return 1;
-  }
-
-}
-
 static void create()
 {
    Driver = ((program)"Driver")(this);
+
+  ::create();
 }
 
 void set_job_info()
@@ -48,6 +35,7 @@ void set_job_info()
 	Face->setStringValue_(jobinfo->face);
 	Wedge->setStringValue_(jobinfo->wedge + "/" + jobinfo->set);
 	Mould->setStringValue_(jobinfo->mould);
+	LineLength->setStringValue_(jobinfo->linelength + " pica");
 	Thermometer->setMinValue_(0.0);
 	Thermometer->setDoubleValue_(0.0);
 }
@@ -55,26 +43,24 @@ void set_job_info()
 void loadJob_(object a)
 {
   object openPanel = Cocoa.NSOpenPanel.openPanel();
+
   if(!openPanel->runModalForTypes_(({"rib"}))) return;
 
   mixed files = openPanel->filenames();
   if(sizeof(files))
     foreach(files;;mixed file)
     {
-//      werror("file: %O\n", (string)file);
       jobinfo = Driver->loadRibbon((string)file);
       set_job_info();
     }
   CasterToggleButton->setEnabled_(1);
-//  NSApp->keyWindow()->setNextResponder_(nr()->init());
 
 }
 
 void toggleCaster_(mixed ... args)
 {
-//werror("ARGS: %O\n", args);
   int state = CasterToggleButton->state();
-//  werror("toggleCaster_(%O)\n", LoadJobButton->isEnabled());
+
   LoadJobButton->setEnabled_(!state);
   SkipForwardButton->setEnabled_(state);
   SkipBackwardButton->setEnabled_(state);
@@ -85,20 +71,15 @@ void toggleCaster_(mixed ... args)
 
 void backBegin_(object a)
 {
-//  werror("backBegin_(%O)\n", a);
   Driver->rewindRibbon();
 }
 
 void backLine_(object a)
 {
-//  werror("backLine_(%O)\n", a);
   Driver->backwardLine();
 }
 
 void forwardLine_(object a)
 {
-//  werror("forwardLine_(%O)\n", a);
   Driver->forwardLine();
 }
-
-

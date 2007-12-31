@@ -57,6 +57,7 @@ import Public.ObjectiveC;
 
   void setStatus(string s)
   {
+	werror("%O\n", ui->Status);
 	ui->Status->setStringValue_(s);
   }
 
