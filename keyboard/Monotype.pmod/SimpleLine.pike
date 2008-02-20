@@ -18,7 +18,7 @@ int lineunits = 0;
 int interactive = 0;
 array displayline = ({});
 
-float linelengthp = 25.0;
+float linelengthp = 0.0;
 int linelength = 0;
 int linespaces = 0;
 array lines = ({});
@@ -92,12 +92,12 @@ int main(int argc, array argv)
 
   argv = argv - ({0});
 
-  lineunits = (int)(18 * (1/(setwidth/12.0)) * linelengthp); // 30 ems
+  lineunits = (int)(18 * (1/(setwidth/12.0)) * linelengthp);
 
   werror("Matcase: %s\n", matcase);
   werror("Stopbar: %s\n", stopbar);
   werror("Set Width: %s\n", (string)setwidth);
-  werror("Set Width: %.2f picas / %d units\n", linelengthp, linelength);
+  werror("Set Width: %.2f picas / %.2f ems / %d units\n", linelengthp, lineunits/18.0, lineunits);
 
   m = load_matcase(matcase);
   s = load_stopbar(stopbar);
@@ -210,6 +210,15 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 		isitalic --;
 		if(isitalic < 0) isitalic = 0;
 	}
+      if(data == "<sc>")
+      {
+              issmallcaps ++;
+      }
+      if(data == "</sc>")
+      {
+              issmallcaps --;
+              if(issmallcaps < 0) issmallcaps = 0;
+      }
 	if(data == "<left>")
 	{
 		line_mode = MODE_LEFT;
@@ -279,10 +288,10 @@ void low_quad_out(int amount, int|void atbeginning)
 //	werror("spaces: %O, %O\n", amount, toadd);
 	if(!toadd)
   	  toadd = simple_find_space(amount, spaces);
-
+      toadd = sort(toadd);
 	//  calculate_justification();
 	//  werror("to quad out %d, we need the following: %O\n", total, toadd);  
-	  foreach(reverse(toadd);;int i)
+	  foreach(toadd;;int i)
 	  {
 	    add("S" + i, atbeginning);	
 	  }
@@ -384,6 +393,8 @@ werror(string_to_utf8(me->character));
 		}
       }
     }  
+
+  file->write("0075 0005 1\n"); // stop the pump, eject the line.
 }
 
 object load_matcase(string ml)
@@ -499,6 +510,8 @@ void add (string activator, int|void atbeginning)
   string code = activator;
   if(isitalic)
       code = "I|" + code;
+  else if(issmallcaps)
+      code = "S|" + code;
 
   mat = m->elements[code];
 
