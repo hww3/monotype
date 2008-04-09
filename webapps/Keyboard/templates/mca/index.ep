@@ -1,0 +1,6 @@
+
+<% foreach(data->mcas; int i; string mca) { %>
+
+  <li> <%=mca %>
+
+<% } %>

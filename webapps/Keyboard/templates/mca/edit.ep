@@ -1,0 +1,21 @@
+<table>
+<tr><td></td>
+<%foreach(data->cols; int k; string v){%>
+<th><%=v%></th>
+<%}%>
+</tr>
+	
+<%
+  foreach(data->rows; int k; int v){
+%>
+<tr><th><%=v%></th>
+<%
+  foreach(data->cols;int ck; string cv){
+%>
+
+		<td><input type="text" size="2" name="<%=v%><%=cv%>" value=""/>
+				<%=data->mca[cv][v]->activator%></td>
+	<%}%>
+	</tr>
+<%}%>
+</table>
