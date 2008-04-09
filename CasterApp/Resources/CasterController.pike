@@ -1,8 +1,13 @@
+//
+//  this is the main Controller for the Monotype Caster Control UI.
+//
 
 import Public.ObjectiveC;
 
 inherit Cocoa.NSObject;
 
+// the driver object acts as an intermediary between the ribbon,
+// this ui and the caster hardware interface
 object Driver;
 
 object SkipForwardButton;
@@ -40,6 +45,7 @@ void set_job_info()
 	Thermometer->setDoubleValue_(0.0);
 }
 
+// callback from the "Load Job" button
 void loadJob_(object a)
 {
   object openPanel = Cocoa.NSOpenPanel.openPanel();
@@ -54,9 +60,9 @@ void loadJob_(object a)
       set_job_info();
     }
   CasterToggleButton->setEnabled_(1);
-
 }
 
+// callback from the "Start/Stop" button
 void toggleCaster_(mixed ... args)
 {
   int state = CasterToggleButton->state();
@@ -69,16 +75,19 @@ void toggleCaster_(mixed ... args)
   else Driver->stop();
 }
 
+// callback from the "full rewind" button
 void backBegin_(object a)
 {
   Driver->rewindRibbon();
 }
 
+// calback from the "back one line" button
 void backLine_(object a)
 {
   Driver->backwardLine();
 }
 
+// callback from the "forward one line" button
 void forwardLine_(object a)
 {
   Driver->forwardLine();

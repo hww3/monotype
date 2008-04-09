@@ -1,5 +1,9 @@
 inherit Stdio.FILE;
 
+//! this is an extension of the Stdio.FILE buffered file object
+//! which additionally supports reading of lines backward from
+//! the current position in the file.
+
 static mixed create(mixed ... args)
 {
 	::create(@args);
@@ -8,7 +12,12 @@ static mixed create(mixed ... args)
 	//count_lines();
 }
 
-// reads the previous line from the file. 
+//! reads the previous line from the file. 
+//! 
+//! @note
+//!   if switching from forward reading to reverse reading,
+//!   the first line returned by @[rgets]() will (neccessarily) be the line
+//!   just read by @[gets]()
 string rgets()
 {
 	int stop;
@@ -56,6 +65,8 @@ string rgets()
 	while(!stop);
 }
 
+//! @returns
+//!   the number of lines in the file from the current position.
 int count_lines()
 {
 	int pos;

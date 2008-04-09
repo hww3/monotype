@@ -6,6 +6,10 @@ object driver;
 int cv;
 int state;
 int started = 0;
+
+// this should be the bit attached to the single input from the caster.
+// note that this value could vary depending on how you've wired your 
+// interconnect cables
 int interesting_bits = 33554432;
 
 mapping pincodes;
@@ -44,6 +48,11 @@ array codes = ({
 	"0005"	
 });
 
+
+// the makeup of this array could potentially be different based on
+// how you've wired your cabling. it's not terribly elegant, but 
+// does provide a simple way to account for human error in building 
+// the interface cables.
 array pinmap = ({ /* 31 elements */
     8388608,
     2097152,
@@ -78,6 +87,8 @@ array pinmap = ({ /* 31 elements */
     64
 });
 
+// this function is called when the usb interface reports a change in status 
+// of one of its io pins.
 void report_callback(mixed ... args)
 {
   int nv;
