@@ -1,0 +1,18 @@
+SimpleLine.pike - standalone ribbon generator
+
+MatCaseLayout.pike - matcase arrangement object
+Stopbar.pike - stopbar arrangement object
+
+findspace.pike - sample of the algorithm to find the best possible quadout 
+combination
+
+Description of file formats:
+
+format.txt
+syntax.txt
+
+Sample mca (matcase arrangement) and stopbar files:
+
+S5.xml
+Book5A.xml
+

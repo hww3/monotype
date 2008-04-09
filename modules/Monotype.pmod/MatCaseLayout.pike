@@ -24,7 +24,7 @@ void set_description(string _description)
 
 void set(string column, int row, Matrix mat)
 {
-  if(row<1 || row >15)
+  if(row<1 || row >16)
     error("invalid row provided!\n");
 
   if(!(<"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", 
@@ -40,7 +40,7 @@ void set(string column, int row, Matrix mat)
 
 int get(string column, int row)
 {
-  if(row<1 || row >15)
+  if(row<1 || row >16)
     error("invalid row provided!\n");
   return matcase[column][row];
 }

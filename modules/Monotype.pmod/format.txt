@@ -1,6 +1,30 @@
 <matcase name="name" description="description">
 <element column="column" row="row">
-  <matrix series="" size="size" style="" character="" activator="" set_width=""/>
+<!-- 
+
+  set_width is the number of units this character should use. normally
+  this will correspond to the wedge with used at the position but can be
+  different in order to effect letterspacing or when a fully correct 
+  wedge is not available.
+
+  character is the character to be displayed on screen for applications 
+  that use this functionality.
+
+  activator is the character entered from keyboard or file that will cause
+  this mat to be used.
+
+  style is used to denote bold, italic, small-caps, and whose value should 
+  be "B", "I", or "S", respectively.
+
+  series is the monotype series number of the mat (as matcases can be 
+  mixed among various series.
+
+  size is the point size of the mat, as these may be mixed within a 
+  matcase.
+
+  -->
+  <matrix series="" size="size" style="" character="" activator="" 
+          set_width=""/>
 </element>
 </matcase>
 
