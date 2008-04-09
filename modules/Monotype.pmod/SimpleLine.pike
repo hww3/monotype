@@ -1,10 +1,11 @@
-// we can set this.
 
+// some modes we find useful
 constant MODE_JUSTIFY = 0;
 constant MODE_LEFT = 1;
 constant MODE_RIGHT = 2;
 constant MODE_CENTER = 3;
 
+// a list of the spaces available in the current matcase
 array spaces = ({});
 
 float setwidth = 10.0;
@@ -29,8 +30,10 @@ int mould = 12;
 float justspace;
 int big, little;
 
+//! the output file object
 object file;
 
+//! the matcase and stopbar objects
 object m;
 object s;
 
@@ -44,12 +47,13 @@ string last = "";
 int do_help(array argv)
 {
   werror("Usage: %s [-m|--matcase matcase] [-s|--stopbar stopbar] "
- "[-w|--setwidth setwidth] [-M|--mould mouldsize] [--help] [inputfile] [outputfile]\n");
+ "[-w|--setwidth setwidth] [-M|--mould mouldsize] [--help] "
+ "[inputfile] [outputfile]\n");
 }
 
 int main(int argc, array argv)
 {
-
+  // parse each command line argument
   foreach(Getopt.find_all_options(argv,aggregate(
 	    ({"stopbar",Getopt.HAS_ARG,({"-s", "--stopbar"}) }),
 	    ({"output",Getopt.HAS_ARG,({"-o", "--output"}) }),
@@ -92,17 +96,19 @@ int main(int argc, array argv)
 
   argv = argv - ({0});
 
+  // calculate the total number of units a line should occupy.
   lineunits = (int)(18 * (1/(setwidth/12.0)) * linelengthp);
 
   werror("Matcase: %s\n", matcase);
   werror("Stopbar: %s\n", stopbar);
   werror("Set Width: %s\n", (string)setwidth);
-  werror("Set Width: %.2f picas / %.2f ems / %d units\n", linelengthp, lineunits/18.0, lineunits);
+  werror("Line Length: %.2f picas / %.2f ems / %d units\n", linelengthp, lineunits/18.0, lineunits);
 
   m = load_matcase(matcase);
   s = load_stopbar(stopbar);
 
-
+  // if we haven't specified an input file, we should use interactive mode
+  // this code may have decayed somewhat.
   if(sizeof(argv) == 1)
   {
     int c;
@@ -129,15 +135,17 @@ int main(int argc, array argv)
   
     Stdio.stdin.tcsetattr(tcattrs);
   }
-  else
+  else // otherwise, we read the file and parse it.
   {
 	//werror("%O\n", argv);
 	filename = argv[1];
 	parse(argv[1], outputfile);
   }
+
+  // finally, generate the ribbon!
   generate_ribbon(lines);
 
-  return 1;
+  return 0;
 }
 
 void parse(string filename, string|void output)
@@ -155,12 +163,15 @@ void parse(string filename, string|void output)
     werror("*** writing output to stdout\n");
     file = Stdio.File("stdout");
   }
+
   object parser = Parser.HTML();
   mapping extra = ([]);
   parser->_set_tag_callback(i_parse_tags);
   parser->_set_data_callback(i_parse_data);
   parser->set_extra(extra);
 
+
+  // feed the data to the parser and have it do its thing.
   parser->finish(s);
 }
 
@@ -298,6 +309,9 @@ void low_quad_out(int amount, int|void atbeginning)
 	
 }
 
+// this an inferior quad-out mechanism. we currently favor
+// the algorithm in findspace.pike. left here for historical
+// completeness.
 array simple_find_space(int amount, array spaces)
 {
 	int left = amount;
@@ -305,22 +319,29 @@ array simple_find_space(int amount, array spaces)
 
 	array toadd = ({});
 
-foreach(reverse(spaces); int i; int space)
-{
+  foreach(reverse(spaces); int i; int space)
+  {
    while(left > space)
    {
 		toadd += ({space});
 		left -= space;
    }	
-}
+  }
 
  return toadd;
 }
 
+// actually generates the ribbon file from an array of lines of sorts.
+// line justifications should already be calculated and provided with each 
+// line, however, each sort is checked to make sure its requested width is
+// the same as the width of the wedge in the same position. if it's not, 
+// we can use various methods (currently consisting only of using the 
+// space justification wedges) to "nudge" character to the right width, 
+// ensuring justification and world peace.
 void generate_ribbon(array lines)
 {
 	int f,c;
-werror("*** writing %d lines to the ribbon\n", sizeof(lines));
+        werror("*** writing %d lines to the ribbon\n", sizeof(lines));
 	
 	file->write("name: %s\n", filename); 
 	file->write("face: %s\n", matcase);
@@ -331,22 +352,26 @@ werror("*** writing %d lines to the ribbon\n", sizeof(lines));
 	file->write("\n");
 	
 	foreach(reverse(lines);; object line)
-    {
+        {
+          // a little nomenclature here: c == coarse (0075) f == fine (0005), 
+          //   cc == current coarse setting, cf == current fine setting
 	  int cc, cf; // the current justification wedge settings
 	  f = line->little;
 	  c = line->big;
 	  cf = f;
 	  cc = c;
-	write("\n");
-      file->write("0005 0075 %d\n", f);
-      file->write("0075 %d\n", c);
+	  write("\n");
+          file->write("0005 0075 %d\n", f);
+          file->write("0075 %d\n", c);
 
-      foreach(reverse(line->elements);; object me)
-      {
+          foreach(reverse(line->elements);; object me)
+          {
 	    int needs_adjustment;
 	
-        if(me->is_justifying_space)
-        {
+            if(me->is_justifying_space)
+            {
+              // if we've previously changed the justification wedges in order to
+              // correct a sort width, we need to put things back.
 	      if(cf != f || cc != c)
 	      {
 		werror("resetting justification wedges.\n");
@@ -356,42 +381,43 @@ werror("*** writing %d lines to the ribbon\n", sizeof(lines));
 			  cc = c;
 	      }
 	      object me = m->elements["JS"];
-	  if(!me) error("No Justifying Space!\n");
-          file->write("S %d %s [ ]\n", me->row_pos, me->col_pos);
-werror("_");
-        }
-        else 
-		{
-			int wedgewidth = s->get(me->row_pos);
+              // houston, we have a problem!
+	      if(!me) error("No Justifying Space!\n");
+              file->write("S %d %s [ ]\n", me->row_pos, me->col_pos);
+              werror("_");
+            }
+            else 
+	    {
+	      int wedgewidth = s->get(me->row_pos);
 	
-			//werror("want %d, wedge provides %d\n", mat->get_set_width(), wedgewidth);
-			if(wedgewidth != me->get_set_width()) // we need to adjust the justification wedges
-			{
-			  int nf, nc;
-			werror("needs adjustment: have %d, need %d!\n", wedgewidth, me->get_set_width());
-			  needs_adjustment = 1;
-			  // first, we should calculate what difference we need, in units of set.
-			  int neededunits = me->get_set_width() - wedgewidth;
+	      //werror("want %d, wedge provides %d\n", mat->get_set_width(), wedgewidth);
+	      if(wedgewidth != me->get_set_width()) // we need to adjust the justification wedges
+	      {
+	        int nf, nc;
+		werror("needs adjustment: have %d, need %d!\n", wedgewidth, me->get_set_width());
+		needs_adjustment = 1;
+	        // first, we should calculate what difference we need, in units of set.
+	        int neededunits = me->get_set_width() - wedgewidth;
 			  
-			  // then, figure out what that adjustment is in terms of 0075 and 0005
-			  [nc, nf] = calculate_wordspacing_code(neededunits);
-			  // if it's not what we have now, make the adjustment
-		      if(cf != nf || cc != nc)
-		      {
+	        // then, figure out what that adjustment is in terms of 0075 and 0005
+                [nc, nf] = calculate_wordspacing_code(neededunits);
+		// if it's not what we have now, make the adjustment
+		if(cf != nf || cc != nc)
+		{
 
-			      file->write("0005 %d\n", nf);
-			      file->write("0075 %d\n", nc);
-				  cf = nf;
-				  cc = nc;
-		      }
-			}
+                  file->write("0005 %d\n", nf);
+	          file->write("0075 %d\n", nc);
+                  cf = nf;
+		  cc = nc;
+	        }
+	      }
 			
-			if(needs_adjustment)
-			  file->write("S ");
-werror(string_to_utf8(me->character));			
-			file->write("%d %s [%s]\n", me->row_pos, me->col_pos, string_to_utf8(me->character));
-		}
-      }
+	      if(needs_adjustment)
+	        file->write("S ");
+              werror(string_to_utf8(me->character));			
+	      file->write("%d %s [%s]\n", me->row_pos, me->col_pos, string_to_utf8(me->character));
+	   }
+       }
     }  
 
   file->write("0075 0005 1\n"); // stop the pump, eject the line.
@@ -557,6 +583,7 @@ class JustifyingSpace(int size)
   int is_justifying_space = 1;
 }
 
+// represents a line in a job.
 class Line(array elements, int big, int little)
 {
 
