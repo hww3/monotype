@@ -1,6 +1,6 @@
 #!/bin/sh
 
-  PIKE_ARGS=""
+  PIKE_ARGS="-M../modules"
 
   if [ x$FINS_HOME != "x" ]; then
     PIKE_ARGS="$PIKE_ARGS -M$FINS_HOME/lib"

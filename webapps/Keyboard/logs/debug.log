@@ -3841,3 +3841,110 @@ src/backend.cmod:803: Pike.Backend(0)->`()(3600.000000)
 23:53:53 DEBUG - Loading template /layouts/mca.ep.
 23:53:53 DEBUG - Loading template /layouts/application.ep.
 23:53:53 DEBUG - Loading template mca/index.ep.
+11:18:44 DEBUG - config file: /Users/hww3/monotype/webapps/Keyboard/config/dev.cfg
+11:18:44 INFO - Preparing to load application Keyboard.
+11:18:44 INFO - Automatic reload of controllers is enabled.
+11:18:44 INFO - Starting Cache.
+11:18:44 DEBUG - No model defined!
+11:19:08 DEBUG - config file: /Users/hww3/monotype/webapps/Keyboard/config/dev.cfg
+11:19:08 INFO - Preparing to load application Keyboard.
+11:19:08 INFO - Automatic reload of controllers is enabled.
+11:19:08 INFO - Starting Cache.
+11:19:08 DEBUG - No model defined!
+11:19:08 DEBUG - loading macro "javascript_includes"
+11:19:08 DEBUG - loading macro "sessionid"
+11:19:08 DEBUG - loading macro "LOCALE"
+11:19:08 DEBUG - loading macro "aindex"
+11:19:08 DEBUG - loading macro "remote_form"
+11:19:08 DEBUG - loading macro "remote_link"
+11:19:08 DEBUG - loading macro "assign"
+11:19:08 DEBUG - loading macro "language_selector"
+11:19:08 DEBUG - loading macro "available_languages"
+11:19:08 DEBUG - loading macro "dump_data"
+11:19:08 DEBUG - loading macro "action_link"
+11:19:08 DEBUG - loading macro "describe_object"
+11:19:08 DEBUG - loading macro "implode"
+11:19:08 DEBUG - loading macro "boolean"
+11:19:08 DEBUG - loading macro "describe"
+11:19:08 DEBUG - loading macro "action_url"
+11:19:08 DEBUG - loading macro "capitalize"
+11:19:08 DEBUG - loading macro "humanize"
+11:19:08 DEBUG - loading macro "dump_id"
+11:19:08 DEBUG - loading macro "flash"
+11:19:08 DEBUG - loading macro "sizeof"
+11:19:08 DEBUG - loading macro "field_editor"
+11:19:08 DEBUG - loading macro "matrix"
+11:19:08 DEBUG - /Users/hww3/monotype/webapps/Keyboard/classes/application()->load_controller()
+11:19:08 DEBUG - controller.pike()->create()
+11:19:08 INFO - Application Keyboard loaded.
+11:19:08 INFO - FinServe listening on port 8080
+11:19:08 INFO - Application ready for business.
+11:19:15 DEBUG - Created new session sid='b2c9b9b8e0fb077d25e7' host='66.249.70.22 53300'
+11:19:17 DEBUG - Created new session sid='8e2201c87cffb7ec15aa' host='66.249.70.22 53300'
+11:19:56 DEBUG - config file: /Users/hww3/monotype/webapps/Keyboard/config/dev.cfg
+11:19:56 INFO - Preparing to load application Keyboard.
+11:19:56 INFO - Automatic reload of controllers is enabled.
+11:19:56 INFO - Starting Cache.
+11:19:56 DEBUG - No model defined!
+11:19:56 DEBUG - loading macro "javascript_includes"
+11:19:56 DEBUG - loading macro "remote_form"
+11:19:56 DEBUG - loading macro "remote_link"
+11:19:56 DEBUG - loading macro "sessionid"
+11:19:56 DEBUG - loading macro "LOCALE"
+11:19:56 DEBUG - loading macro "assign"
+11:19:56 DEBUG - loading macro "dump_data"
+11:19:56 DEBUG - loading macro "aindex"
+11:19:56 DEBUG - loading macro "action_url"
+11:19:56 DEBUG - loading macro "available_languages"
+11:19:56 DEBUG - loading macro "dump_id"
+11:19:56 DEBUG - loading macro "humanize"
+11:19:56 DEBUG - loading macro "language_selector"
+11:19:56 DEBUG - loading macro "capitalize"
+11:19:56 DEBUG - loading macro "flash"
+11:19:56 DEBUG - loading macro "sizeof"
+11:19:56 DEBUG - loading macro "action_link"
+11:19:56 DEBUG - loading macro "implode"
+11:19:56 DEBUG - loading macro "boolean"
+11:19:56 DEBUG - loading macro "describe_object"
+11:19:56 DEBUG - loading macro "describe"
+11:19:56 DEBUG - loading macro "field_editor"
+11:19:56 DEBUG - loading macro "matrix"
+11:19:56 DEBUG - /Users/hww3/monotype/webapps/Keyboard/classes/application()->load_controller()
+11:19:56 DEBUG - controller.pike()->create()
+11:19:56 INFO - Application Keyboard loaded.
+11:19:56 INFO - FinServe listening on port 8004
+11:19:56 INFO - Application ready for business.
+11:21:24 DEBUG - config file: /Users/hww3/monotype/webapps/Keyboard/config/dev.cfg
+11:21:24 INFO - Preparing to load application Keyboard.
+11:21:24 INFO - Automatic reload of controllers is enabled.
+11:21:24 INFO - Starting Cache.
+11:21:24 DEBUG - No model defined!
+11:21:24 DEBUG - loading macro "javascript_includes"
+11:21:24 DEBUG - loading macro "remote_form"
+11:21:24 DEBUG - loading macro "remote_link"
+11:21:24 DEBUG - loading macro "sessionid"
+11:21:24 DEBUG - loading macro "LOCALE"
+11:21:24 DEBUG - loading macro "assign"
+11:21:24 DEBUG - loading macro "dump_data"
+11:21:24 DEBUG - loading macro "aindex"
+11:21:24 DEBUG - loading macro "action_url"
+11:21:24 DEBUG - loading macro "available_languages"
+11:21:24 DEBUG - loading macro "dump_id"
+11:21:24 DEBUG - loading macro "humanize"
+11:21:24 DEBUG - loading macro "language_selector"
+11:21:24 DEBUG - loading macro "capitalize"
+11:21:24 DEBUG - loading macro "flash"
+11:21:24 DEBUG - loading macro "sizeof"
+11:21:24 DEBUG - loading macro "action_link"
+11:21:24 DEBUG - loading macro "implode"
+11:21:24 DEBUG - loading macro "boolean"
+11:21:24 DEBUG - loading macro "describe_object"
+11:21:24 DEBUG - loading macro "describe"
+11:21:24 DEBUG - loading macro "field_editor"
+11:21:24 DEBUG - loading macro "matrix"
+11:21:24 DEBUG - /Users/hww3/monotype/webapps/Keyboard/classes/application()->load_controller()
+11:21:24 DEBUG - controller.pike()->create()
+11:21:24 INFO - Application Keyboard loaded.
+11:21:24 INFO - FinServe listening on port 8004
+11:21:24 INFO - Application ready for business.
+11:21:29 DEBUG - mca.pike()->create()

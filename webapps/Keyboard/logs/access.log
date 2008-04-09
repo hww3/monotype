@@ -3207,3 +3207,5 @@
 23:53:43 DEBUG - Received Fins.HTTPRequest("GET" "/jmca/ljl")
 23:53:53 DEBUG - Received Fins.HTTPRequest("GET" "/mca")
 23:53:53 DEBUG - Received Fins.HTTPRequest("GET" "/mca/")
+11:19:14 DEBUG - Received Fins.HTTPRequest("GET" "/changelog/cvs/?cs=MAIN:hww3:20051123192822")
+11:19:17 DEBUG - Received Fins.HTTPRequest("GET" "/browse/cvs/PDT/src/org/gotpike/pdt/commands/ToggleComments.java?r=MAIN")
