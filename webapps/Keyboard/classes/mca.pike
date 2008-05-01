@@ -37,24 +37,32 @@ inherit DocController;
 
 public void index(Request id, Response response, Template.View view, mixed args)
 {
-  array m = glob("*.xml", get_dir(app->config["locations"]["matcases"]));
+  array m = map(glob("*.xml", get_dir(app->config["locations"]["matcases"]) || ({})), lambda(string s){return (s/".xml")[0];});
+
+
   view->add("mcas", m);
+}
+
+public void new(Request id, Response response, Template.View view, mixed args)
+{
+	
 }
 
 public void edit(Request id, Response response, Template.View view, mixed args)
 {
+  object mca;
+
   if(!sizeof(args))
   {
 	response->set_data("You must provide a mat case layout to edit.");
   }
 
-//werror("args:%O, %O\n", getcwd(),combine_path(app->config["locations"]["matcases"], args[0]));
-if(!mca)
-  mca = Monotype.load_matcase(combine_path(app->config["locations"]["matcases"], args[0]));
+werror("args:%O, %O\n", getcwd(),combine_path(app->config["locations"]["matcases"], args[0]));
+  if(!mca)
+    mca = Monotype.load_matcase(combine_path(getcwd(), app->config["locations"]["matcases"], args[0]));
 
   view->add("mca", mca);
   view->add("rows", rows15);   
   view->add("cols", cols15);
 }
 
-object mca;

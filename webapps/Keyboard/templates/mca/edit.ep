@@ -13,9 +13,11 @@
   foreach(data->cols;int ck; string cv){
 %>
 
-		<td><input type="text" size="2" name="<%=v%><%=cv%>" value=""/>
-				<%=data->mca[cv][v]->activator%></td>
+		<td><input type="text" size="2" name="<%=v%><%=cv%>" value="<%=data->mca->matcase[cv][v]->character%>"/>
+		</td>
 	<%}%>
 	</tr>
 <%}%>
 </table>
+
+<%#action_link "action": "index"%>Return</a>

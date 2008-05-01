@@ -1,6 +1,10 @@
-
+Select a MCA to edit:
 <% foreach(data->mcas; int i; string mca) { %>
 
-  <li> <%=mca %>
+  <li> <%#action_link "action": "edit", "args": mca%><%=mca %></a>
 
 <% } %>
+
+<p>
+
+<%#action_link "action": "new"%>New MCA</a>
