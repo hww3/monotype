@@ -1,0 +1,20 @@
+<h1>Create New Mat Case Arrangement (MCA)</h1>
+<font color="red"><%#flash%></font>
+<p>
+<form>
+
+Arrangement Name: <input type="text" name="name"/>
+<p>
+Arrangement Type: <input type="radio" name="size" value="0" checked="true"/> 15x15 
+<input type="radio" name="size" value="1"/> 15x17 
+<input type="radio" name="size" value="2"/>  16x17
+
+<p>
+
+Description: <textarea name="description"></textarea>
+
+<p>
+
+<button type="submit">Create</button>
+
+</form>
