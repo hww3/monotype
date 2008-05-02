@@ -1,4 +1,19 @@
-<table>
+<html>
+<head>
+<style type="text/css">
+    @import "/dojo/dijit/themes/tundra/tundra.css";
+    @import "/dojo/dojo/resources/dojo.css"
+</style>
+
+<script type="text/javascript" src="/dojo/dojo/dojo.js" djConfig="parseOnLoad:true, isDebug:true">
+<script type="text/javascript" src="/dojo/dijit/dijit.js"></script>
+
+	<script type="text/javascript">
+       dojo.require("dijit.InlineEditBox");
+	</script>
+</head>
+<body class="tundra">
+<table border="1">
 <tr><td></td>
 <%foreach(data->cols; int k; string v){%>
 <th><%=v%></th>
@@ -8,12 +23,15 @@
 <%
   foreach(data->rows; int k; int v){
 %>
-<tr><th><%=v%></th>
+<tr height="35"><th><%=v%></th>
 <%
   foreach(data->cols;int ck; string cv){
 %>
 
-		<td><input type="text" size="2" name="<%=v%><%=cv%>" value="<%=data->mca->matcase[cv][v]->character%>"/>
+		<td width="35">
+			<div dojoType="dijit.InlineEditBox" 
+				noValueIndicator="<span style='background-color: #dddddd;'> &nbsp; &nbsp; &nbsp; &nbsp; </span>" 		
+				id="<%=v%><%=cv%>"><%=data->mca->matcase[cv][v]->character%></div>
 		</td>
 	<%}%>
 	</tr>
@@ -21,3 +39,8 @@
 </table>
 
 <%#action_link "action": "index"%>Return</a>
+<p>
+<div dojoType="dijit.InlineEditBox" id="helloButton">Hello World!</div>
+
+	</body>
+	</html>

@@ -2,10 +2,12 @@
 inherit Fins.FinsController;
 
 object mca;
+object dojo;
 
 void start()
 {
   mca = load_controller("mca");
+  dojo = Fins.StaticController(app, "dojo");
 }
 
 void index(object id, object response, mixed ... args)

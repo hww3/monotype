@@ -45,7 +45,23 @@ public void index(Request id, Response response, Template.View view, mixed args)
 
 public void new(Request id, Response response, Template.View view, mixed args)
 {
-	
+	if(id->variables->size)
+	{
+		string file_name = combine_path(getcwd(), app->config["locations"]["matcases"], id->variables->name + ".xml");
+		if(file_stat(file_name))
+		{
+			response->flash("MCA " + id->variables->name + " already exists.");
+			return;
+		}
+		
+		Monotype.MatCaseLayout l = Monotype.MatCaseLayout((int)id->variables->size);
+		l->set_description(id->variables->description);
+		l->set_name(id->variables->name);
+		object node = l->dump();
+		
+		Stdio.write_file(file_name, Public.Parser.XML2.render_xml(node));
+		response->redirect(edit, ({id->variables->name}));
+	}
 }
 
 public void edit(Request id, Response response, Template.View view, mixed args)
