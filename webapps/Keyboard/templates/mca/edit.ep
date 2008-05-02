@@ -27,6 +27,7 @@
 <%}%>
 </table>
 
-<%#action_link "action": "index"%>Return</a>
 <p>
-<div dojoType="dijit.InlineEditBox" id="helloButton">Hello World!</div>
+	
+<%#action_link "action": "index"%>Cancel and Return</a>
+<p>
