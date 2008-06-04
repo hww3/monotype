@@ -2,6 +2,8 @@ import Fins;
 
 inherit DocController;
 
+int __quiet = 1;
+
    array cols15 = ({ /* 15 elements */
                 "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
                 "L", "M", "N", "O"
@@ -37,14 +39,14 @@ inherit DocController;
 
 public void index(Request id, Response response, Template.View view, mixed args)
 {
-  array m = map(glob("*.xml", get_dir(app->config["locations"]["matcases"]) || ({})), lambda(string s){return (s/".xml")[0];});
-
-
+  array m = app->get_mcas();
   view->add("mcas", m);
 }
 
 public void new(Request id, Response response, Template.View view, mixed args)
 {
+	view->add("wedges", app->get_wedges());
+	
 	if(id->variables->size)
 	{
 		string file_name = combine_path(getcwd(), app->config["locations"]["matcases"], id->variables->name + ".xml");
@@ -57,11 +59,85 @@ public void new(Request id, Response response, Template.View view, mixed args)
 		Monotype.MatCaseLayout l = Monotype.MatCaseLayout((int)id->variables->size);
 		l->set_description(id->variables->description);
 		l->set_name(id->variables->name);
-		object node = l->dump();
+		l->set_wedge(id->variables->wedge);
 		
-		Stdio.write_file(file_name, Public.Parser.XML2.render_xml(node));
+		app->save_matcase(l);
+		
 		response->redirect(edit, ({id->variables->name}));
 	}
+}
+
+public void cancel(Request id, Response response, Template.View view, mixed args)
+{
+	id->misc->session_variables->mca = 0;
+	
+	response->flash("Your changes were cancelled.");
+	response->redirect(index);
+}
+
+public void save(Request id, Response response, Template.View view, mixed args)
+{
+	app->save_matcase(id->misc->session_variables->mca);
+	id->misc->session_variables->mca = 0;
+	
+	response->flash("Your changes were saved.");
+	response->redirect(index);	
+}
+
+public void setMat(Request id, Response response, Template.View view, mixed args)
+{
+	werror("setting mat for " + id->variables->col + " " + id->variables->row + " with " + id->variables->matrix);
+    object mca = id->misc->session_variables->mca;
+//werror("%O", mkmapping(indices(id), values(id)) );
+  if(id->variables->matrix == "")
+  {
+    mca->delete(id->variables->col, (int)id->variables->row);
+  }
+  else
+  {
+    object n = Public.Parser.XML2.parse_xml(id->variables->matrix);
+    object m = mca->Matrix(n);
+    werror("n: %O", n);
+    mca->set(id->variables->col, (int)id->variables->row, m);
+  }
+
+  response->set_data("");
+}
+
+public void getMat(Request id, Response response, Template.View view, mixed args)
+{
+  // the column is a string (a - o)
+  // the row is an int 1 - 15
+  string resp;
+  string col = id->variables->col;
+  int row = (int)id->variables->row;
+  object mat;
+
+//  werror("%O\n\n", id->misc->session_variables->mca->matcase[col]);
+
+  mapping column = id->misc->session_variables->mca->matcase[col];
+  if(column)
+   mat = column[row];
+  if(mat) resp = mat->dump();
+  else resp = "";
+
+  response->set_data(resp);
+}
+
+public void test(Request id, Response response, Template.View view, mixed args)
+{
+  object mca;
+
+  if(!sizeof(args))
+  {
+	response->set_data("You must provide a mat case layout to edit.");
+	return;
+  }
+
+  if(!mca)
+    mca = Monotype.load_matcase(combine_path(getcwd(), app->config["locations"]["matcases"], args[0]));
+
+  id->misc->session_variables->mca = mca;
 }
 
 public void edit(Request id, Response response, Template.View view, mixed args)
@@ -74,9 +150,10 @@ public void edit(Request id, Response response, Template.View view, mixed args)
   }
 
 werror("args:%O, %O\n", getcwd(),combine_path(app->config["locations"]["matcases"], args[0]));
-  if(!mca)
-    mca = Monotype.load_matcase(combine_path(getcwd(), app->config["locations"]["matcases"], args[0]));
-
+  mca = app->load_matcase(args[0]);
+  if(mca->wedge)
+    view->add("wedge", app->load_wedge(mca->wedge));
+  id->misc->session_variables->mca = mca;
   view->add("mca", mca);
   view->add("rows", rows15);   
   view->add("cols", cols15);

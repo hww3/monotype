@@ -1,0 +1,40 @@
+<script type="text/javascript">
+   dojo.require("dijit.form.MatrixEditor");
+   dojo.require("dijit.InlineEditBox");
+
+
+function saveMat(wgt)
+{
+  dojo.xhrPost({ widget: wgt, url: "/q", 
+					load: function(response, ioArgs){wgt.setNewVal(); wgt.close();} 
+	});
+}
+
+function cancelMat(wgt)
+{
+  wgt.close();
+}
+
+function openWidget(v, row, col)
+{
+  // get the widget div
+  var d = dojo.byId("widget");
+
+  // get the mat element, set it to be the contents of the widget div, then create the widget
+  dojo.xhrGet({ url: "/mca/getMat?col=" + col + "&row=" + row, load: function(response, ioArgs){ 
+      d.innerHTML = response; 
+      var e = new dijit.form.MatrixEditor({srcId: v.id, row: "", column: "", default_set_width: 20, onSave: saveMat, onCancel: cancelMat}, d);
+      } 
+  });
+}
+</script>
+
+
+<div id="x" onClick="openWidget(this, 2, 'C')">O</div>
+<p>
+<div id="widget"><matrix series="" size="" style="" character=" " activator="S18"/></div>
+
+
+<qdiv xdojoType="dijit.form.MatrixEditor" srcId="x" row="" column="" default_set_width="20" onSave="saveMat">
+  <matrix series="" size="" style="" character=" " activator="S18"/>
+</qdiv>

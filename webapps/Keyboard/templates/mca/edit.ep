@@ -1,33 +1,94 @@
-	<script type="text/javascript">
-       dojo.require("dijit.InlineEditBox");
-	</script>
+<script type="text/javascript">
+   dojo.require("dijit.form.MatrixEditor");
 
-<table border="1">
-<tr><td></td>
+var isEditing = false;
+
+function saveMat(wgt)
+{
+  isEditing = false;
+  dojo.xhrPost({ widget: wgt, url: "/mca/setMat?col=" + wgt.column + "&row=" + wgt.row + "&matrix=" + wgt.getValue(),
+					load: function(response, ioArgs){wgt.setNewVal(); wgt.close();} 
+	});
+}
+
+function cancelMat(wgt)
+{
+  isEditing = false;
+  wgt.close();
+}
+
+function openWidget(v, row, col, units)
+{
+  if(this.isEditing == true) { return; }
+  this.isEditing = true;
+
+  // get the widget div
+  var d = dojo.byId("widget");
+
+  // get the mat element, set it to be the contents of the widget div, then create the widget
+  dojo.xhrGet({ url: "/mca/getMat?col=" + col + "&row=" + row, load: function(response, ioArgs){ 
+      d.innerHTML = response; 
+      var e = new dijit.form.MatrixEditor({srcId: v.id, row: row, column: col, default_set_width: units, onSave: saveMat, onCancel: cancelMat}, d);
+      } 
+  });
+}
+</script>
+
+Layout: <b><%=data->mca->name%></b> &nbsp; 
+		<%#action_link "action": "cancel"%>Cancel</a> &nbsp; <%#action_link "action": "save"%>Save</a>
+<p>
+	<style>
+	div.cell {
+		width:35px; height:35px; border-width:1px; border-style: solid; position:relative; float:left;
+	}
+	input.mine { border-width:1px; border-style: solid; border-color: background-color: #dddddd; }
+	</style>
+	<div style="z-axis: 200; " id="widget"></div>
+	<div>
+
+<div style="clear: left;">
+<div class="cell"><font style="color:grey"><%=data->wedge->name%></font></div>
 <%foreach(data->cols; int k; string v){%>
-<th><%=v%></th>
+<div class="cell"><b><%=v%></b></div>
 <%}%>
-</tr>
-	
+</div>
+
 <%
   foreach(data->rows; int k; int v){
+	int u = data->wedge->bars[v];
 %>
-<tr height="35"><th><%=v%></th>
+<div style="clear: left">
+	<!-- the first div is the row number with the unit width for that row from the default wedge -->
+<div class="cell"><b><%=v%></b><br/><font style="color: grey"><%=u%>U</font></div>
 <%
   foreach(data->cols;int ck; string cv){
+		mapping row = data->mca->matcase[cv];
+		string ch = "";
+		if(row) 
+		{
+			object mat = row[v];
+			if(mat) 
+			{ 
+			  ch = mat->character;
+
+			  if(mat->is_js)
+		  	    ch = "<img src=\"/static/images/js.png\">";
+			  else if(mat->is_fs)
+		  	  	ch = "<img src=\"/static/images/fs.png\">";
+			}
+		}
 %>
 
-		<td width="35">
-			<div dojoType="dijit.InlineEditBox" 
-				noValueIndicator="<span style='background-color: #dddddd;'> &nbsp; &nbsp; &nbsp; &nbsp; </span>" 		
-				id="<%=v%><%=cv%>"><%=data->mca->matcase[cv][v]->character%></div>
-		</td>
+<div class="cell" id='<%=v + cv%>' onClick="openWidget(this, <%=v%>, '<%=cv%>', <%=u%>)"><%=ch%></div>
 	<%}%>
-	</tr>
-<%}%>
-</table>
+	</div>
+	<p/>
+<%}	%>
 
-<p>
+
+<div style="left:5px; clear:left">
 	
-<%#action_link "action": "index"%>Cancel and Return</a>
-<p>
+	<%#action_link "action": "cancel"%>Cancel</a> <%#action_link "action": "save"%>Save</a>
+	
+</div>
+</div>
