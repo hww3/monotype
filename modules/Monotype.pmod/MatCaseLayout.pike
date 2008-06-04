@@ -2,14 +2,32 @@ import Public.Parser.XML2;
 
 string name;
 string description;
+int matcase_size;
+string wedge;
 
+int maxrow = 15;
+multiset validcolumns = (<"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", 
+        "L", "M", "N", "O">);
 // mapping of columns containing a mapping for each row.
 mapping matcase = ([]);
 mapping elements = ([]);
 
-void create()
+void create(int|void size)
 {
- 
+  matcase_size = size;
+
+  switch(size)
+  {
+	case Monotype.MATCASE_15_15:
+	  break;
+	case Monotype.MATCASE_15_17:
+	  validcolumns += (<"NI", "NL" >);
+	  break;
+	case Monotype.MATCASE_16_17:
+      validcolumns += (<"NI", "NL" >);
+	  maxrow = 16;
+	  break;
+  }
 }
 
 void set_name(string _name)
@@ -22,14 +40,27 @@ void set_description(string _description)
   description = _description;
 }
 
-void set(string column, int row, Matrix mat)
+void checkValidPosition(string column, int row)
 {
-  if(row<1 || row >16)
+	
+  if(row<1 || row >maxrow)
     error("invalid row provided!\n");
 
-  if(!(<"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", 
-        "L", "M", "N", "O", "NI", "NL">)[column]) 
+  if(!validcolumns[column]) 
    error("invalid matrix case position requested.\n");
+  
+}
+
+void delete(string column, int row)
+{
+  checkValidPosition(column, row);
+  if(!matcase[column]) matcase[column] = ([]);
+   m_delete(matcase[column], row);
+}
+
+void set(string column, int row, Matrix mat)
+{
+  checkValidPosition(column, row);
 
   if(!matcase[column]) matcase[column] = ([]);
 
@@ -38,10 +69,14 @@ void set(string column, int row, Matrix mat)
   elements[(mat->style?(mat->style+"|"):"") + mat->activator] = mat;
 }
 
-int get(string column, int row)
+void set_wedge(string w)
 {
-  if(row<1 || row >16)
-    error("invalid row provided!\n");
+	wedge = w;
+}
+
+Matrix get(string column, int row)
+{
+  checkValidPosition(column, row);
   return matcase[column][row];
 }
 
@@ -52,8 +87,10 @@ int load(Node n)
 
   name = n->get_attributes()["name"];
   description = n->get_attributes()["description"];
+  matcase_size = n->get_attributes()["size"];
+  wedge = n->get_attributes()["wedge"];
 
-  foreach(n->children();; Node c)
+  foreach(n->children()||({});; Node c)
   {
     if(c->get_node_type() != Constants.ELEMENT_NODE)
       continue;
@@ -79,11 +116,13 @@ Node dump()
   if(description)
     n->set_attribute("description", description);
 
+    n->set_attribute("size", (string)matcase_size);
+	n->set_attribute("wedge", (string)wedge || "");
   foreach(matcase; mixed i; mixed v)
   {
     foreach(v; mixed in; mixed va)
     {
-      Node y = n->new_child("", "element");
+      Node y = n->new_child("element", "");
       y->set_attribute("row", (string)in);
       y->set_attribute("column", i);
       y->add_child(va->dump());
@@ -103,6 +142,8 @@ class Matrix
   int set_width;
   int row_pos;
   string col_pos;
+  int is_js;
+  int is_fs;
 
   static void create(void|Node n)
   {
@@ -116,6 +157,8 @@ class Matrix
  
     mapping a = n->get_attributes();
 
+	if(a->space && a->space == "fixed") is_fs = 1; 
+	else if(a->space && a->space == "justifying") is_js = 1; 
     if(a->series) series = a->series;
     if(a->size) size = (int)(a->size);
     if(a->style) style = a->style;
@@ -141,9 +184,20 @@ class Matrix
       n->set_attribute("activator", activator);
     if(set_width)
       n->set_attribute("set_width", (string)set_width);
-
+	if(is_fs)
+      n->set_attribute("space", "fixed");
+	if(is_js)
+      n->set_attribute("space", "justifying");
+	  
     return n;
   }
+
+  int is_space()
+  {
+	return is_js || is_fs;
+  }
+
+  
 
   int get_set_width()
   {
