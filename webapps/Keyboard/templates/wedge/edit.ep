@@ -1,0 +1,31 @@
+
+<form id="form" action="<%#action_url "action": "save"%>">
+Wedge: <b><%=data->wedge->name%></b> &nbsp; 
+<%#action_link "action": "cancel"%>Cancel</a> &nbsp; <a href="#" onclick="javascript:document.forms[0].submit()">Save</a>
+<p>
+	<style>
+	div.cell {
+		width:35px; height:35px; border-width:1px; border-style: solid; position:relative; float:left;
+	}
+	input.mine { border-width:1px; border-style: solid; border-color: background-color: #dddddd; }
+	</style>
+	<div style="z-axis: 200; " id="widget"></div>
+	<div>
+
+<div style="clear: left;">
+<div class="cell"><font style="color:grey"><%=data->wedge->name%></font></div>
+<div class="cell">Units</div>
+<%foreach(sort(indices(data->wedge->bars)); ; int q){%>
+<div style="clear: left;">
+<div class="cell"><b><%=q%></b></div>
+<div class="cell"><input type="text" size="2" name="row<%=q%>" value="<%=data->wedge->bars[q]%>"</div>
+</div>
+<%}%>
+
+<div style="left:5px; clear:left">
+	
+	<%#action_link "action": "cancel"%>Cancel</a> <a href="#" onclick="javascript:document.forms[0].submit()">Save</a>
+	</form>
+	
+</div>
+</div>
