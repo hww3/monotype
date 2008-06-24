@@ -7,6 +7,7 @@ dojo.require("dijit.form._FormWidget");
 dojo.require("dijit.form.NumberTextBox");
 dojo.require("dijit.form.Button");
 dojo.require("dijit.form.CheckBox");
+dojo.require("dijit.form.Select");
 
 dojo.declare(
 	"dijit.form.MatrixEditor",
@@ -41,7 +42,7 @@ dojo.declare(
 		emptyradio : 0,
 		
 		templateString:
-			"<div style=\"border-width:2px; width:250px; overflow:hidden; display:compact; height:250px; position:fixed; z-index:200;\">" + 
+			"<div style=\"border-width:2px; width:300px; overflow:hidden; display:compact; height:250px; position:fixed; z-index:200;\">" + 
 			"<table>" + 
 			"<tr><td colspan='2'>Col: <b>${column}</b> Row: <b>${row}</b></td></tr>" + 
 			"<tr><td><input dojoType=\"dijit.form.RadioButton\" dojoAttachEvent='onClick:_onClickJustRadio' type=\"radio\" dojoAttachPoint='justradio' name=\"type${name}\" value=\"just\"></td><td width=\"90%\"> Justifying Space <td/></tr>\n" + 
@@ -52,12 +53,13 @@ dojo.declare(
 			"<div style=\"display: none;\" dojoAttachPoint=\"sorteditordiv\">" +
 			"<table>" +
 			"<tr><td>Sort: </td><td>" +
-			"<input style=\"width:100px\" maxLength=\"5\" required=\"true\" dojoType=\"dijit.form.ValidationTextBox\" dojoAttachPoint='charbox,focusNode' name=\"char${name}\"\n\tdojoAttachEvent='onChange:setChar,onmouseenter:_onMouse,onmouseleave:_onMouse,onfocus:_onMouse,onblur:_onMouse,onkeypress:_onKeyPress'\n\tautocomplete=\"off\" type=\"string\"\n\t/>" + 
+			"<input style=\"width:30px\" maxLength=\"5\" required=\"true\" dojoType=\"dijit.form.ValidationTextBox\" dojoAttachPoint='charbox,focusNode' name=\"char${name}\"\n\tdojoAttachEvent='onChange:setChar,onmouseenter:_onMouse,onmouseleave:_onMouse,onfocus:_onMouse,onblur:_onMouse,onkeypress:_onKeyPress'\n\tautocomplete=\"off\" type=\"string\"\n\t/>" + 
+			" <select style=\"width:90px\" dojoType=\"dijit.form.Select\" dojoAttachEvent='onChange:setStyle' dojoAttachPoint='stylebox'><option>Roman</option><option>Underline</option><option>Italic</option><option>Bold</option><option>SmallCap</option></select>" +
 		 	"</td></tr><tr><td>" + 
 			"Activator Key: </td><td>" +
-			"<input style=\"width:100px\" maxLength=\"5\" required=\"true\" dojoType=\"dijit.form.ValidationTextBox\" dojoAttachPoint='actbox,focusNode' name=\"act${name}\"\n\tdojoAttachEvent='onChange:setAct,onmouseenter:_onMouse,onmouseleave:_onMouse,onfocus:_onMouse,onblur:_onMouse,onkeypress:_onKeyPress'\n\tautocomplete=\"off\" type=\"${type}\"\n\t/>" + 
+			"<input style=\"width:30px\" maxLength=\"5\" required=\"true\" dojoType=\"dijit.form.ValidationTextBox\" dojoAttachPoint='actbox,focusNode' name=\"act${name}\"\n\tdojoAttachEvent='onChange:setAct,onmouseenter:_onMouse,onmouseleave:_onMouse,onfocus:_onMouse,onblur:_onMouse,onkeypress:_onKeyPress'\n\tautocomplete=\"off\" type=\"${type}\"\n\t/>" + 
 			"</td></tr><tr><td>Unit Width: </td><td>" +
-			"<input style=\"width:100px\" maxLength=\"5\" required=\"true\" dojoType=\"dijit.form.NumberTextBox\" dojoAttachPoint='setbox' constraints=\"{min: 3, max: 21}\" name=\"set${name}\"\n\tdojoAttachEvent='onChange:setSet,onmouseenter:_onMouse,onmouseleave:_onMouse,onfocus:_onMouse,onblur:_onMouse,onkeypress:_onKeyPress'\n\tautocomplete=\"off\" type=\"${type}\"\n\t/>" + 
+			"<input style=\"width:30px\" maxLength=\"5\" required=\"true\" dojoType=\"dijit.form.NumberTextBox\" dojoAttachPoint='setbox' constraints=\"{min: 3, max: 21}\" name=\"set${name}\"\n\tdojoAttachEvent='onChange:setSet,onmouseenter:_onMouse,onmouseleave:_onMouse,onfocus:_onMouse,onblur:_onMouse,onkeypress:_onKeyPress'\n\tautocomplete=\"off\" type=\"${type}\"\n\t/>" + 
 		 	"</td></tr></table>" +	
 			"</div>\n" +
 			"</td></tr>\n" +
@@ -68,6 +70,7 @@ dojo.declare(
 		baseClass: "dijitTextBox",
 
 		setbox: 0,
+		stylebox: 0,
 		charbox: 0,
 		actbox: 0,
 				
@@ -147,6 +150,47 @@ dojo.declare(
 		setSet: function() {
 			this._set_width = this.setbox.getValue();
 		},
+		
+		setStyle: function()
+		{
+			var s = this.stylebox.getSelected();
+
+			s.forEach(function(n){
+				//alert("style: " + n.value);
+				var q = n.value;
+
+				if(q == "Roman")
+					this._style = "R";
+				else if(q == "Italic")
+					this._style = "I";
+				else if(q == "Bold")
+					this._style = "B";
+				else if(q == "SmallCap")
+					this._style = "S";
+				else if(q == "Underline")
+					this._style = "U";
+
+			},this)
+			
+		},
+		
+		lowSetStyle: function(s) {
+			//alert("lowSetStyle: " + s);
+			this._style = s;			
+			if(!s || s == "" || s == "R")
+				s = "Roman";
+			else if(s == "I")
+				s = "Italic";
+			else if(s == "S")
+				s = "SmallCap";
+			else if(s == "B")
+				s = "Bold";
+			else if(s == "U")
+				s = "Underline";
+				
+
+			this.stylebox.setSelected(s);
+		},
 	
 		displayValue: function(){
 			alert(this.getValue());
@@ -166,7 +210,7 @@ dojo.declare(
 				var activator = this._activator;
 				var set_width = this._set_width;
 			
-				return "<matrix series=\"" + series + "\" size=\"" + size + "\" style=\"" + style + "\" character=\"" + character + "\" activator=\"" + activator + "\" set_width=\"" + set_width + "\"/>";
+				return "<matrix series=\"" + series + "\" size=\"" + size + "\" weight=\"" + style + "\" character=\"" + character + "\" activator=\"" + activator + "\" set_width=\"" + set_width + "\"/>";
 			}
 			else if(this._mat_type == "FS")
 			{
@@ -251,8 +295,20 @@ dojo.declare(
 			else if(this._mat_type == "JS")
 			  this.origNode.innerHTML="<img src=\"/static/images/js.png\">";
 			else if(this._mat_type == "SORT")
-			  this.origNode.innerHTML=this._character;
+			{
+			  var q = this._character;
+			  if(this._style == "B")
+				q = "<b>" + q + "</b>";
+			  if(this._style == "U")
+				q = "<u>" + q + "</u>";
+			  if(this._style == "I")
+				q = "<i>" + q + "</I>";
+			  if(this._style == "S")
+				q = "<tt>" + q + "</tt>";
+			  this.origNode.innerHTML=q;
+			}
 			else this.origNode.innerHTML="";
+			this.origNode.style.color = 'blue';
 		},
 		
 		_setup: function() {
@@ -268,7 +324,7 @@ dojo.declare(
 			if(matdef.length!=1) 
 			{ 
 				this._setIsEmpty();
-				this._style = this.default_style;
+				this.lowSetStyle(this.default_style);
 				this._set_width = this.default_set_width;
 				this._series = this.default_series;
 				this._size = this.default_size;
@@ -291,12 +347,17 @@ dojo.declare(
 			if(att)
 				this._character = att.value;
 			
-			att = matdef.attributes.getNamedItem("style");
+			att = matdef.attributes.getNamedItem("weight");
+			//alert("style: " +att.value);
 			if(att)
-				this._style = att.value; 
+			{
+				this.lowSetStyle(att.value); 
+			}
 			else
-				this._style = this.default_style;
-				
+			{
+				this.lowSetStyle(this.default_style);
+			}
+			
 			att = matdef.attributes.getNamedItem("series");
 			if(att)
 				this._series = att.value;
