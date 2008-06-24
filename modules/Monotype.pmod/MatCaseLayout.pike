@@ -66,7 +66,14 @@ void set(string column, int row, Matrix mat)
 
   matcase[column][row] = mat;
   mat->set_position(row, column);
-  elements[(mat->style?(mat->style+"|"):"") + mat->activator] = mat;
+  // we prepend the style type (as long as it's not roman) 
+  // styles:
+  //   R == ROMAN
+  //   I == ITALIC
+  //   B == BOLD
+  //   U == UNDERLINE
+  //   S == SMALL CAPS
+  elements[((mat->style && mat->style!="R")?(mat->style+"|"):"") + mat->activator] = mat;
 }
 
 void set_wedge(string w)
@@ -161,7 +168,7 @@ class Matrix
 	else if(a->space && a->space == "justifying") is_js = 1; 
     if(a->series) series = a->series;
     if(a->size) size = (int)(a->size);
-    if(a->style) style = a->style;
+    if(a->weight) style = a->weight;
     if(a->character) character = a->character;
     if(a->activator) activator = a->activator;
     if(a->set_width) set_width = (int)(a->set_width);
@@ -177,7 +184,7 @@ class Matrix
     if(size)
       n->set_attribute("size", (string)size);
     if(style)
-      n->set_attribute("style", style);
+      n->set_attribute("weight", style);
     if(character)
       n->set_attribute("character", character);
     if(activator)

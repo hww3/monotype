@@ -425,9 +425,7 @@ void generate_ribbon(array lines)
 
 object load_matcase(string ml)
 {
-  object m = MatCaseLayout();                                            
-  object n = Public.Parser.XML2.parse_xml(Stdio.read_file(ml + ".xml"));
-  m->load(n);
+  Monotype.MatCaseLayout m = Monotype.load_matcase(ml);
 
   for(int x = 3; x < 23; x++)
   {
@@ -440,12 +438,11 @@ object load_matcase(string ml)
 
 object load_stopbar(string ml)
 {
-  object m = Stopbar();                                            
-  object n = Public.Parser.XML2.parse_xml(Stdio.read_file(ml + ".xml"));
-  m->load(n);
-  return m;
+  Monotype.Stopbar s = Monotype.load_stopbar(ml); 
+  return s;
 }
 
+// add the current line to the job, if it's justifyable.
 object new_line()
 {
   if(!linespaces && linelength != lineunits) throw(Error.Generic(sprintf("Off-length line: expected %d, got %d\n", lineunits, linelength)));
@@ -461,6 +458,7 @@ object new_line()
   displayline = ({});    
 }
 
+// remove a sort from the line; recalculate the justification
 object remove()
 {
    displayline = displayline[..sizeof(displayline)-2];
@@ -498,6 +496,8 @@ array low_calculate_justification(float justspace, int jspacewidth)
   return ({ w/15, w%15 });
 }
 
+// calculates the large (0.0075) and small (0.0005) justification settings
+// required to add units to the current sort.
 array calculate_wordspacing_code(int units)
 {
 	// algorithm from page 25
@@ -506,6 +506,7 @@ array calculate_wordspacing_code(int units)
 	return ({steps/15, steps%15});
 }
 
+// add a sort to the current line
 void add (string activator, int|void atbeginning)
 {
   object mat;
@@ -584,6 +585,7 @@ class JustifyingSpace(int size)
 }
 
 // represents a line in a job.
+// big and little are the calculated justification settings
 class Line(array elements, int big, int little)
 {
 
