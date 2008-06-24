@@ -8,3 +8,5 @@ Select a MCA to edit:
 <p>
 
 <%#action_link "action": "new"%>New MCA</a>
+<p>
+<%#action_link "controller": "/" %>Main Menu</a>

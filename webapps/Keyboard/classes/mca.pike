@@ -120,7 +120,7 @@ public void getMat(Request id, Response response, Template.View view, mixed args
    mat = column[row];
   if(mat) resp = mat->dump();
   else resp = "";
-
+//werror("mat: %O\n", (string)resp);
   response->set_data(resp);
 }
 

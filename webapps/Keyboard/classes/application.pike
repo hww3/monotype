@@ -10,6 +10,16 @@ void save_matcase(Monotype.MatCaseLayout mca)
 	Stdio.write_file(file_name, Public.Parser.XML2.render_xml(node));
 }
 
+void save_wedge(Monotype.Stopbar wedge)
+{
+	string file_name;
+	object node = wedge->dump();
+	file_name = combine_path(getcwd(), config["locations"]["wedges"], wedge->name  + ".xml");
+	mv(file_name, file_name + ".bak");
+	Stdio.write_file(file_name, Public.Parser.XML2.render_xml(node));
+}
+
+
 object load_wedge(string wedgename)
 {
 	return Monotype.load_stopbar(combine_path(getcwd(), config["locations"]["wedges"], wedgename));	

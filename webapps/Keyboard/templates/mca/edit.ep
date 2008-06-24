@@ -27,6 +27,7 @@ function openWidget(v, row, col, units)
 
   // get the mat element, set it to be the contents of the widget div, then create the widget
   dojo.xhrGet({ url: "/mca/getMat?col=" + col + "&row=" + row, load: function(response, ioArgs){ 
+//alert("mat:" + response);
       d.innerHTML = response; 
       var e = new dijit.form.MatrixEditor({srcId: v.id, row: row, column: col, default_set_width: units, onSave: saveMat, onCancel: cancelMat}, d);
       } 
@@ -34,7 +35,7 @@ function openWidget(v, row, col, units)
 }
 </script>
 
-Layout: <b><%=data->mca->name%></b> &nbsp; 
+Layout: <b><%=data->mca->name%></b> &nbsp; Default Wedge: <b><%=data->mca->wedge%></b> &nbsp;
 		<%#action_link "action": "cancel"%>Cancel</a> &nbsp; <%#action_link "action": "save"%>Save</a>
 <p>
 	<style>
@@ -75,6 +76,27 @@ Layout: <b><%=data->mca->name%></b> &nbsp;
 		  	    ch = "<img src=\"/static/images/js.png\">";
 			  else if(mat->is_fs)
 		  	  	ch = "<img src=\"/static/images/fs.png\">";
+			  else
+			  {
+				switch(mat->style)
+				{
+					case "B":
+						ch = "<b>" + ch + "</b>";
+						break;
+					case "U":
+						ch = "<u>" + ch + "</u>";
+						break;
+					case "S":
+						ch = "<tt>" + ch + "</tt>";
+						break;
+					case "I":
+						ch = "<i>" + ch + "</i>";
+						break;
+					case "R":
+					default:
+						break;
+				}
+			  }
 			}
 		}
 %>
