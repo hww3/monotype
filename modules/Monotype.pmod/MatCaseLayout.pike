@@ -4,6 +4,8 @@ string name;
 string description;
 int matcase_size;
 string wedge;
+mapping spaces = ([]);
+object justifying_space;
 
 int maxrow = 15;
 multiset validcolumns = (<"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", 
@@ -73,7 +75,19 @@ void set(string column, int row, Matrix mat)
   //   B == BOLD
   //   U == UNDERLINE
   //   S == SMALL CAPS
-  elements[((mat->style && mat->style!="R")?(mat->style+"|"):"") + mat->activator] = mat;
+  if(mat->is_fs || mat->is_js)
+  {
+    elements["SPACE_"+ mat->set_width] = mat;
+    spaces[mat->set_width] = mat;
+  }
+  if(mat->is_js)
+  { 
+    elements->JS = mat;
+	justifying_space = mat;
+  }
+  else
+    elements[((mat->style && mat->style!="R")?(mat->style+"|"):"") + mat->activator] = mat;
+
 }
 
 void set_wedge(string w)

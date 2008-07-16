@@ -17,11 +17,11 @@ int main(int argc, array argv)
   return 0;
 }
 
-array simple_find_space(int amount, array spaces)
+array simple_find_space(int amount, mapping spaces)
 {
 	object set, sol;
 	
-	set = box(spaces);
+	set = box(indices(spaces));
 	sol = box(({}));
 //	werror("spaces: %O %O\n", amount, spaces);
 //	if(findSpace(amount, set, sol) && sizeof(sol->vals))

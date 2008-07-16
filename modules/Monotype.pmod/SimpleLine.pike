@@ -5,21 +5,19 @@ constant MODE_LEFT = 1;
 constant MODE_RIGHT = 2;
 constant MODE_CENTER = 3;
 
-// a list of the spaces available in the current matcase
-array spaces = ({});
-
 float setwidth = 10.0;
 string matcase = "Bulmer - 462 EFG [chestnut 10]";
 string stopbar = "S5";
 string filename = "[interactive input]";
-string outputfile = "-	";
+string outputfile = "[interactive input].rib";
 int currentpos;
 int jspacewidth=4;
 int lineunits = 0;
 int interactive = 0;
 array displayline = ({});
 
-float linelengthp = 0.0;
+// line length in picas
+float linelengthp = 30.0;
 int linelength = 0;
 int linespaces = 0;
 array lines = ({});
@@ -61,7 +59,7 @@ int main(int argc, array argv)
 	    ({"set",Getopt.NO_ARG,({"-w", "--setwidth"}) }),
 	    ({"linelength",Getopt.NO_ARG,({"-l", "--linelength"}) }),
 	    ({"mould",Getopt.NO_ARG,({"-M", "--mould"}) }),
-	    ({"help",Getopt.NO_ARG,({"--help"}) }),
+	    ({"help",Getopt.NO_ARG,({"-h", "--help"}) }),
 	    )),array opt)
 	{
 		switch(opt[0])
@@ -99,6 +97,8 @@ int main(int argc, array argv)
   // calculate the total number of units a line should occupy.
   lineunits = (int)(18 * (1/(setwidth/12.0)) * linelengthp);
 
+  werror("Input File: %s\n", filename);
+  werror("Output File: %s\n", outputfile);
   werror("Matcase: %s\n", matcase);
   werror("Stopbar: %s\n", stopbar);
   werror("Set Width: %s\n", (string)setwidth);
@@ -295,16 +295,16 @@ void low_quad_out(int amount, int|void atbeginning)
 {
 	  array toadd = ({});
 
-	toadd = findspace()->simple_find_space(amount, spaces);
+	toadd = findspace()->simple_find_space(amount, m->spaces);
 //	werror("spaces: %O, %O\n", amount, toadd);
 	if(!toadd)
-  	  toadd = simple_find_space(amount, spaces);
+  	  toadd = simple_find_space(amount, m->spaces);
       toadd = sort(toadd);
 	//  calculate_justification();
 	//  werror("to quad out %d, we need the following: %O\n", total, toadd);  
 	  foreach(toadd;;int i)
 	  {
-	    add("S" + i, atbeginning);	
+	    add("SPACE_" + i, atbeginning);	
 	  }
 	
 }
@@ -312,14 +312,14 @@ void low_quad_out(int amount, int|void atbeginning)
 // this an inferior quad-out mechanism. we currently favor
 // the algorithm in findspace.pike. left here for historical
 // completeness.
-array simple_find_space(int amount, array spaces)
+array simple_find_space(int amount, mapping spaces)
 {
 	int left = amount;
 	int total = left;
 
 	array toadd = ({});
 
-  foreach(reverse(spaces); int i; int space)
+  foreach(reverse(indices(spaces)); int i; int space)
   {
    while(left > space)
    {
@@ -425,20 +425,27 @@ void generate_ribbon(array lines)
 
 object load_matcase(string ml)
 {
-  Monotype.MatCaseLayout m = Monotype.load_matcase(ml);
-
-  for(int x = 3; x < 23; x++)
+  Monotype.MatCaseLayout m;
+  
+  catch(m = Monotype.load_matcase(ml));
+  if(!m) 
   {
-    if(m->elements["S" + x])
-      spaces += ({x});
+     exit(1, "Error: Unable to load matcase " + ml + "\n");
   }
-  werror("Spaces in matcase: [ %{%d %}]\n", spaces);
+
+  werror("Spaces in matcase: [ %{%d %}]\n", indices(m->spaces));
   return m;
 }
 
 object load_stopbar(string ml)
 {
-  Monotype.Stopbar s = Monotype.load_stopbar(ml); 
+  Monotype.Stopbar s;
+  catch(s = Monotype.load_stopbar(ml));
+  if(!s) 
+  {
+     exit(1, "Error: Unable to load stopbar " + ml + "\n");
+  }
+ 
   return s;
 }
 
