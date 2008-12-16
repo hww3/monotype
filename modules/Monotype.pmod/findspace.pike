@@ -13,22 +13,36 @@ int main(int argc, array argv)
   object sol = box(({}));
 
 
-  werror("%O\n",  findSpace((int)argv[1],set,sol)?realSol:0);
+ // werror("%O\n",  findSpace((int)argv[1],set,sol)?realSol:0);
   return 0;
 }
 
 array simple_find_space(int amount, mapping spaces)
 {
 	object set, sol;
-	
-	set = box(indices(spaces));
+	array sv = indices(spaces);
+	multiset sm = (multiset)sv;
+	// the 18 unit wedge position is often worn, 
+	// so we minimize error by mixing it with 9 unit spaces when possible.
+	if(sm[18] && sm[9])
+	  sv += ({27});
+	set = box(sort(sv));
 	sol = box(({}));
+	
 //	werror("spaces: %O %O\n", amount, spaces);
 //	if(findSpace(amount, set, sol) && sizeof(sol->vals))
 	
-	return (findSpace(amount,set,sol)?realSol:0);
+	array x = (findSpace(amount,set,sol)?realSol:0);
+	
+	array z = x - ({27});
+	array y = x - z;
+	
+	foreach(y;;)
+	  z = ({9, 18}) + z;
+	
 //	  return sol->vals;
 //	else return 0;
+  return z;
 }
 
 public int findSpace(int space, object set, object sol)

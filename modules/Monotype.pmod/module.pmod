@@ -2,6 +2,10 @@ constant MATCASE_15_15 = 0;
 constant MATCASE_15_17 = 1;
 constant MATCASE_16_17 = 2;
 
+constant MODIFIER_ITALICS = 1;
+constant MODIFIER_BOLD = 2;
+constant MODIFIER_SMALLCAPS = 4;
+
 //!
 object load_matcase(string ml)
 {

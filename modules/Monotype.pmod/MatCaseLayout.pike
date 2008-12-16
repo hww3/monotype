@@ -90,6 +90,24 @@ void set(string column, int row, Matrix mat)
 
 }
 
+void set_size(int size)
+{
+  matcase_size = size;
+  switch(size)
+  {
+	case Monotype.MATCASE_15_15:
+	  break;
+	case Monotype.MATCASE_15_17:
+	  validcolumns += (<"NI", "NL" >);
+	  break;
+	case Monotype.MATCASE_16_17:
+      validcolumns += (<"NI", "NL" >);
+	  maxrow = 16;
+	  break;
+  }
+
+}
+
 void set_wedge(string w)
 {
 	wedge = w;
@@ -108,7 +126,22 @@ int load(Node n)
 
   name = n->get_attributes()["name"];
   description = n->get_attributes()["description"];
-  matcase_size = n->get_attributes()["size"];
+  matcase_size = (int)(n->get_attributes()["size"]);
+
+
+  switch(matcase_size)
+  {
+	case Monotype.MATCASE_15_15:
+	  break;
+	case Monotype.MATCASE_15_17:
+	  validcolumns += (<"NI", "NL" >);
+	  break;
+	case Monotype.MATCASE_16_17:
+      validcolumns += (<"NI", "NL" >);
+	  maxrow = 16;
+	  break;
+  }
+
   wedge = n->get_attributes()["wedge"];
 
   foreach(n->children()||({});; Node c)
@@ -201,14 +234,14 @@ class Matrix
       n->set_attribute("weight", style);
     if(character)
       n->set_attribute("character", character);
-    if(activator)
-      n->set_attribute("activator", activator);
     if(set_width)
       n->set_attribute("set_width", (string)set_width);
-	if(is_fs)
-      n->set_attribute("space", "fixed");
-	if(is_js)
-      n->set_attribute("space", "justifying");
+     if(is_fs)
+        n->set_attribute("space", "fixed");
+      else if(is_js)
+        n->set_attribute("space", "justifying");
+      else if(activator)
+        n->set_attribute("activator", activator);
 	  
     return n;
   }
