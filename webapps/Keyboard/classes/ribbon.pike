@@ -1,0 +1,152 @@
+import Fins;
+
+inherit DocController;
+
+int __quiet = 1;
+
+public void index(Request id, Response response, Template.View v, mixed ... args)
+{
+	return;
+}
+
+public void generate(Request id, Response response, Template.View v, mixed ... args)
+{
+	array m = app->get_mcas();
+    v->add("mcas", m);
+    v->add("wedges", app->get_wedges());
+  
+	return;
+}
+
+public void do_generate(Request id, Response response, Template.View v, mixed ... args)
+{
+	
+	mapping settings = ([
+		"mould": (int)id->variables->points,
+		"setwidth": (float)id->variables->set,
+		"linelengthp": (float)id->variables->linelength,
+		"stopbar": app->load_wedge(id->variables->wedge),
+		"matcase": app->load_matcase(id->variables->mca),
+		"jobname": id->variables->jobname,
+		"dict_dir": combine_path(app->config->app_dir, "config")
+		]);
+		
+		string data = id->variables["input-file"];
+		// = "Now is the time for all good men to come to the aid of their country. Mary had a little lamb, its fleece was white as snow. Everywhere that mary went, the lamb was sure to go.<qo>";
+	
+	object g = Monotype.Generator(settings);
+	g->parse(data);
+
+    response->set_data(g->generate_ribbon());	
+    response->set_type("text/plain");
+}
+
+public void do_validate(Request id, Response response, Template.View v, mixed ... args)
+{
+	
+//	werror("%O\n", id->variables);
+	
+	mapping settings = ([
+		"mould": (int)id->variables->points,
+		"setwidth": (float)id->variables->set,
+		"linelengthp": (float)id->variables->linelength,
+		"stopbar": app->load_wedge(id->variables->wedge),
+		"matcase": app->load_matcase(id->variables->mca),
+		"jobname": id->variables->jobname,
+		"dict_dir": combine_path(app->config->app_dir, "config")
+		]);
+		
+		string data = id->variables["input-file"];
+		// = "Now is the time for all good men to come to the aid of their country. Mary had a little lamb, its fleece was white as snow. Everywhere that mary went, the lamb was sure to go.<qo>";
+	
+	object g = Monotype.Generator(settings);
+	g->parse(data);
+	
+	object b = String.Buffer();
+
+	foreach(g->lines; int i; mixed line)
+	{
+		int setonline;
+		int last_was_space = 0;
+		int last_set;
+		b+="<div style=\"clear: left\">";
+		b+=("<div style=\"position:relative; float:left; width:30px\">" + (i+1) + "</div>");
+		string tobeadded = "";
+		int tobeaddedwidth = 0;
+		int total_set; 
+		float spill =0.00;
+
+		foreach(line->elements;int col; mixed e)
+		{
+		  if(e->is_real_js)
+		  {
+			if(tobeadded != "")
+			{
+			  b+= ("<div style=\"align:center; background: grey; position:relative; float:left; width:" + tobeaddedwidth + "px\">" + tobeadded + "</div>");
+			  tobeadded = "";
+			  tobeaddedwidth = 0;
+			}
+			// need some better work on this.
+		    int w = e->matrix->get_set_width();
+		    w = (w-2 + line->units);
+		    setonline+=w;
+
+ 		// spill is used to even out the display lines, as we're not able to depict fractional units accurately on the screen.
+		    spill += (line->units-floor(line->units));
+		if(spill > 1.0) { w+=1; spill -=1.0; }
+
+		total_set += (e->matrix->get_set_width()-2);
+		    b += ("<div style=\"position:relative; float:left; background:orange; width:" + (int)(w) + "px\"> &nbsp; </div>");
+			last_was_space = 1;
+		  }
+		  else if(e->is_fs || e->is_js)
+		  {
+			if(tobeadded != "")
+			{
+			  b+= ("<div style=\"align:center; background: grey; position:relative; float:left; width:" + tobeaddedwidth + "px\">" + tobeadded + "</div>");
+			  tobeadded = "";
+			  tobeaddedwidth = 0;
+			}
+			// need some better work on this.
+		    int w = e->get_set_width();
+		    setonline+=w;
+		    
+		    b += ("<div style=\"position:relative; float:left; background:pink; width:" + w + "px\">&nbsp;</div>");
+			last_was_space = 1;
+		  }
+  		  else
+ 		  {
+			total_set += e->get_set_width();
+			 tobeaddedwidth += e->get_set_width();
+			 setonline+=e->get_set_width();
+			string ch = e->character;
+			
+			  if(e->style == "I")
+			   ch = "<i>" + ch + "</i>";
+			    
+			 if(sizeof(e->character) > 1) 
+			  tobeadded += ("<u>" + string_to_utf8(ch||" &nbsp; ") + "</u>");
+			 else
+  			   tobeadded += string_to_utf8(ch||" &nbsp; ");
+		  }
+		
+//		  if((total_set-last_set) <= 2) werror("%d %d whee!\n", i, col);
+		  last_set = total_set;
+        }		
+		
+			if(tobeadded != "")
+			{
+			  b+= ("<div style=\"align:center; background: grey; position:relative; float:left; width:" + tobeaddedwidth + "px\">" + tobeadded + "</div>");
+			  tobeadded = "";
+			  tobeaddedwidth = 0;
+			}
+		b+=(" &nbsp; " /* +total_set + " " +(setonline) */ + " &lt;== " + line->big + " " + line->little /*+ " " + line->units*/);
+		if(line->errors && sizeof(line->errors))
+		  b+= (line->errors * ", ");
+		b+=("</div>\n");
+	}
+	
+//	string s = g->generate_ribbon();
+	response->set_data(b);
+	return;
+}

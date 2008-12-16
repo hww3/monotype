@@ -1,0 +1,92 @@
+<h1>Ribbon Generator</h1>
+<form action="<%#action_url "action": "do_generate" %>" method="post" enctype="multipart/form-data">
+Job Name <input type="text" name="jobname"/> 
+<p>
+Matcase
+<select name="mca">
+<%foreach(data->mcas; int i; string c){%>
+  <option><%=c%></option>
+<%}%>
+</select>
+<p>
+Wedge
+<select name="wedge">
+<%foreach(data->wedges; int i; string w){%>
+  <option><%=w%></option>
+<%}%>
+</select>
+<p>
+Set Width
+<select name="set">
+<option>4</option>
+<option>5</option>
+<option>6</option>
+<option>6.25</option>
+<option>6.50</option>
+<option>6.75</option>
+<option>7</option>
+<option>7.25</option>
+<option>7.50</option>
+<option>7.75</option>
+<option>8</option>
+<option>8.25</option>
+<option>8.50</option>
+<option>8.75</option>
+<option>9</option>
+<option>9.25</option>
+<option>9.50</option>
+<option>9.75</option>
+<option>10</option>
+<option>10.25</option>
+<option>10.50</option>
+<option>10.75</option>
+<option>11</option>
+<option>11.25</option>
+<option>11.50</option>
+<option>11.75</option>
+<option selected="1">12</option>
+<option>12.25</option>
+<option>12.50</option>
+<option>12.75</option>
+<option>13</option>
+<option>14</option>
+<option>15</option>
+<option>16</option>
+<option>18</option>
+<option>24</option>
+</select>
+
+<p>
+Point Size
+<select name="points">
+  <option>4</option>
+  <option>5</option>
+  <option>6</option>
+  <option>7</option>
+  <option>8</option>
+  <option>9</option>
+  <option>10</option>
+  <option>11</option>
+  <option selected="1">12</option>
+  <option>13</option>
+  <option>14</option>
+  <option>15</option>
+  <option>16</option>
+  <option>18</option>
+  <option>24</option>
+</select>
+<p>
+Line Length (picas)
+  <input type="text" name="linelength" size="5" value="30"/> 
+<p>
+Width Adjustment Mechanisms<p>
+<input type="checkbox" name="spacing" value="unitadding"> Unit Adding <br/>
+<input type="checkbox" name="spacing" value="unitshift">Unit Shift <br/>
+<input type="checkbox" name="spacing" checked="1" value="justification"> Justification Wedges 
+
+<p>
+Input File: <input type="file" name="input-file">
+
+<p>
+<input type="submit" value="Generate Ribbon"/>
+</form>

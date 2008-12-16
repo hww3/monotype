@@ -1,0 +1,9 @@
+<h1>Monotype Keyboard Management</h1>
+
+Choose an option:
+<p>
+<%#action_link "action": "mca"%>Mat Case Arrangements</a>
+<p>
+<%#action_link "action": "wedge"%>Stopbar Arrangements</a>
+<p>
+<%#action_link "action": "ribbon"%>Ribbon Generator</a>

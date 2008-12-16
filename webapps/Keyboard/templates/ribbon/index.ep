@@ -1,0 +1,3 @@
+<%#action_link "action": "generate"%>Generate Ribbon</a>
+<p>
+<%#action_link "controller": "/" %>Main Menu</a>
