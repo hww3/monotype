@@ -60,17 +60,22 @@ Layout: <b><%=data->mca->name%></b> &nbsp; Default Wedge: <b><%=data->mca->wedge
 %>
 <div style="clear: left">
 	<!-- the first div is the row number with the unit width for that row from the default wedge -->
-<div class="cell"><b><%=v%></b><br/><font style="color: grey"><%=u%>U</font></div>
+<div class="cell"
+><b><%=v%></b><br/><font style="color: grey"><%=u%>U</font></div>
 <%
   foreach(data->cols;int ck; string cv){
 		mapping row = data->mca->matcase[cv];
 		string ch = "";
+		string st = "";
 		if(row) 
 		{
 			object mat = row[v];
 			if(mat) 
 			{ 
 			  ch = mat->character;
+
+			  if(u != (int)mat->set_width) 
+   			    st = "style=\"background: yellow\"";
 
 			  if(mat->is_js)
 		  	    ch = "<img src=\"/static/images/js.png\">";
@@ -101,7 +106,7 @@ Layout: <b><%=data->mca->name%></b> &nbsp; Default Wedge: <b><%=data->mca->wedge
 		}
 %>
 
-<div class="cell" id='<%=v + cv%>' onClick="openWidget(this, <%=v%>, '<%=cv%>', <%=u%>)"><%=ch%></div>
+<div class="cell" <%=st%> id='<%=v + cv%>' onClick="openWidget(this, <%=v%>, '<%=cv%>', <%=u%>)"><%=ch%></div>
 	<%}%>
 	</div>
 	<p/>

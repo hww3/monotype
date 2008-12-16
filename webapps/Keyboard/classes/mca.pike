@@ -22,31 +22,49 @@ int __quiet = 1;
                 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
             });
 
-/*
-  write("<table><th></th>\n");
-  foreach(cols;;string c)
-  {  
-    write("<th>" + c + "</th>");
-  }
-  foreach(rows;;string r)
-  {
-     write("<tr><th>" + r + "</th>");
-     foreach(cols;; int c)
-       write("<td><input size=\"2\" type=\"text\" name=" + r + c + "\"></td>");
-     write("</tr>\n");
-  }
-*/
-
 public void index(Request id, Response response, Template.View view, mixed args)
 {
   array m = app->get_mcas();
   view->add("mcas", m);
 }
 
+public void copy(Request id, Response response, Template.View view, mixed args)
+{
+  Monotype.MatCaseLayout mca;
+  mca = app->load_matcase(args[0]);
+
+  view->add("mca", mca);
+  view->add("wedges", app->get_wedges());
+
+  if(!id->variables->name || !sizeof(id->variables->name))
+  {
+    response->flash("You must supply a name for the copy.");
+    return;	
+  }
+
+  if(id->variables->size)
+  {
+	string file_name = combine_path(getcwd(), app->config["locations"]["matcases"], id->variables->name + ".xml");
+	if(file_stat(file_name))
+	{
+		response->flash("MCA " + id->variables->name + " already exists.");
+		return;
+	}
+	else 
+	  mca->set_name(id->variables->name);
+
+	mca->set_description(id->variables->description);
+	mca->set_wedge(id->variables->wedge);
+	mca->set_size((int)id->variables->size);
+    app->save_matcase(mca);		
+    response->redirect(edit, ({id->variables->name}));
+  }
+}
+
 public void new(Request id, Response response, Template.View view, mixed args)
 {
 	view->add("wedges", app->get_wedges());
-	
+	Monotype.MatCaseLayout l;
 	if(id->variables->size)
 	{
 		string file_name = combine_path(getcwd(), app->config["locations"]["matcases"], id->variables->name + ".xml");
@@ -56,7 +74,7 @@ public void new(Request id, Response response, Template.View view, mixed args)
 			return;
 		}
 		
-		Monotype.MatCaseLayout l = Monotype.MatCaseLayout((int)id->variables->size);
+        l = Monotype.MatCaseLayout((int)id->variables->size);
 		l->set_description(id->variables->description);
 		l->set_name(id->variables->name);
 		l->set_wedge(id->variables->wedge);
@@ -101,6 +119,7 @@ public void setMat(Request id, Response response, Template.View view, mixed args
     mca->set(id->variables->col, (int)id->variables->row, m);
   }
 
+werror("!!!\n!!!\n");
   response->set_data("");
 }
 
@@ -124,22 +143,6 @@ public void getMat(Request id, Response response, Template.View view, mixed args
   response->set_data(resp);
 }
 
-public void test(Request id, Response response, Template.View view, mixed args)
-{
-  object mca;
-
-  if(!sizeof(args))
-  {
-	response->set_data("You must provide a mat case layout to edit.");
-	return;
-  }
-
-  if(!mca)
-    mca = Monotype.load_matcase(combine_path(getcwd(), app->config["locations"]["matcases"], args[0]));
-
-  id->misc->session_variables->mca = mca;
-}
-
 public void edit(Request id, Response response, Template.View view, mixed args)
 {
   object mca;
@@ -149,13 +152,32 @@ public void edit(Request id, Response response, Template.View view, mixed args)
 	response->set_data("You must provide a mat case layout to edit.");
   }
 
+
 werror("args:%O, %O\n", getcwd(),combine_path(app->config["locations"]["matcases"], args[0]));
   mca = app->load_matcase(args[0]);
   if(mca->wedge)
     view->add("wedge", app->load_wedge(mca->wedge));
   id->misc->session_variables->mca = mca;
+
+  array r,c;
+  switch(mca->matcase_size)
+  {
+    case Monotype.MATCASE_15_15:
+      r = rows15;
+      c = cols15;
+      break;
+    case Monotype.MATCASE_15_17:
+      r = rows15;
+      c = cols17;
+      break;
+    case Monotype.MATCASE_16_17:
+      r = rows16;
+      c = cols17;
+      break;
+  }
+
   view->add("mca", mca);
-  view->add("rows", rows15);   
-  view->add("cols", cols15);
+  view->add("rows", r);   
+  view->add("cols", c);
 }
 
