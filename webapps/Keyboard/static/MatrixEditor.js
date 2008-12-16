@@ -7,7 +7,7 @@ dojo.require("dijit.form._FormWidget");
 dojo.require("dijit.form.NumberTextBox");
 dojo.require("dijit.form.Button");
 dojo.require("dijit.form.CheckBox");
-dojo.require("dijit.form.Select");
+dojo.require("dijit.form.FilteringSelect");
 
 dojo.declare(
 	"dijit.form.MatrixEditor",
@@ -42,8 +42,8 @@ dojo.declare(
 		emptyradio : 0,
 		
 		templateString:
-			"<div style=\"border-width:2px; width:300px; overflow:hidden; display:compact; height:250px; position:fixed; z-index:200;\">" + 
-			"<table>" + 
+			"<div style=\"border-width:2px; width:420px; overflow:hidden; display:compact; height:250px; position:fixed; z-index:200;\">" + 
+			"<table width=\"100%\">" + 
 			"<tr><td colspan='2'>Col: <b>${column}</b> Row: <b>${row}</b> Default Set: <b>${default_set_width}</b></td></tr>" + 
 			"<tr><td><input dojoType=\"dijit.form.RadioButton\" dojoAttachEvent='onClick:_onClickJustRadio' type=\"radio\" dojoAttachPoint='justradio' name=\"type${name}\" value=\"just\"></td><td width=\"90%\"> Justifying Space <td/></tr>\n" + 
 			"<tr><td><input dojoType=\"dijit.form.RadioButton\" dojoAttachEvent='onClick:_onClickSpaceRadio' type=\"radio\" dojoAttachPoint='spaceradio' name=\"type${name}\" value=\"space\"></td><td width=\"90%\"> Fixed Space <td/></tr>\n" + 
@@ -54,7 +54,8 @@ dojo.declare(
 			"<table>" +
 			"<tr><td>Sort: </td><td>" +
 			"<input style=\"width:40px\" maxLength=\"5\" required=\"true\" dojoType=\"dijit.form.ValidationTextBox\" dojoAttachPoint='charbox,focusNode' name=\"char${name}\"\n\tdojoAttachEvent='onChange:setChar,onmouseenter:_onMouse,onmouseleave:_onMouse,onfocus:_onMouse,onblur:_onMouse,onkeypress:_onKeyPress'\n\tautocomplete=\"off\" type=\"string\"\n\t/>" + 
-			" <select style=\"width:90px\" dojoType=\"dijit.form.Select\" dojoAttachEvent='onChange:setStyle' dojoAttachPoint='stylebox'><option>Roman</option><option>Underline</option><option>Italic</option><option>Bold</option><option>SmallCap</option></select>" +
+			" <select dojoType=\"dijit.form.FilteringSelect\" hasDownArrow=\"true\" autoComplete=\"false\" dojoAttachEvent='onChange:setStyle' dojoAttachPoint='stylebox'>"+
+			"<option value='Roman'>Roman</option><option value='Underline'>Underline</option><option value='Italic'>Italic</option><option value='Bold'>Bold</option><option value='SmallCap'>SmallCap</option></select>" +
 		 	"</td></tr><tr><td>" + 
 			"Activator Key: </td><td>" +
 			"<input style=\"width:40px\" maxLength=\"5\" required=\"true\" dojoType=\"dijit.form.ValidationTextBox\" dojoAttachPoint='actbox,focusNode' name=\"act${name}\"\n\tdojoAttachEvent='onChange:setAct,onmouseenter:_onMouse,onmouseleave:_onMouse,onfocus:_onMouse,onblur:_onMouse,onkeypress:_onKeyPress'\n\tautocomplete=\"off\" type=\"${type}\"\n\t/>" + 
@@ -89,6 +90,7 @@ dojo.declare(
 		postMixInProperties: function()
 		{
 			this.origNodeId = this.srcNodeRef.id;
+			dijit.form.MatrixEditor.superclass.postMixInProperties.call();
 		},
 		
 		_onDoSave: function()
@@ -139,7 +141,7 @@ dojo.declare(
 		},
 
 		setChar: function() {
-			this._character = this.charbox.getValue();
+			this._character = this.charbox.attr('value');
 			if(this.actbox.getValue() == "") this.actbox.setValue(this._character);
 		},
 	
@@ -153,24 +155,18 @@ dojo.declare(
 		
 		setStyle: function()
 		{
-			var s = this.stylebox.getSelected();
-
-			s.forEach(function(n){
-				//alert("style: " + n.value);
-				var q = n.value;
-
-				if(q == "Roman")
+			var s = this.stylebox.attr("value");
+//alert("s: " + s);
+				if(s == "Roman")
 					this._style = "R";
-				else if(q == "Italic")
+				else if(s == "Italic")
 					this._style = "I";
-				else if(q == "Bold")
+				else if(s == "Bold")
 					this._style = "B";
-				else if(q == "SmallCap")
+				else if(s == "SmallCap")
 					this._style = "S";
-				else if(q == "Underline")
+				else if(s == "Underline")
 					this._style = "U";
-
-			},this)
 			
 		},
 		
@@ -188,8 +184,9 @@ dojo.declare(
 			else if(s == "U")
 				s = "Underline";
 				
+//alert("setting style to " + s );
 
-			this.stylebox.setSelected(s);
+			this.stylebox.setValue(s);
 		},
 	
 		displayValue: function(){
@@ -279,12 +276,13 @@ dojo.declare(
 		postCreate: function(){
 			// setting the value here is needed since value="" in the template causes "undefined"
 			// and setting in the DOM (instead of the JS object) helps with form reset actions
-//			this.textbox.setAttribute("value", this.getDisplayedValue());
+//			this.textbox.attr("value", this.getDisplayedValue());
 			this.inherited(arguments);
 
 			this._layoutHack();
 			
 			this._setup();
+			dijit.form.MatrixEditor.superclass.postCreate.call();
 		},
 		
 		setNewVal: function()
@@ -322,9 +320,6 @@ dojo.declare(
 		},
 		
 		_setup: function() {
-			//alert("setup running..." + this.srcNodeRef);
-		     
-		
 			this.origNode = dojo.byId(this.srcId);
 			//alert("origNode: " + this.srcId);
 			
@@ -358,14 +353,11 @@ dojo.declare(
 				this._character = att.value;
 			
 			att = matdef.attributes.getNamedItem("weight");
-			//alert("style: " +att.value);
+//			if(att) alert("style: " +att.value);
+
 			if(att)
 			{
 				this.lowSetStyle(att.value); 
-			}
-			else
-			{
-				this.lowSetStyle(this.default_style);
 			}
 			
 			att = matdef.attributes.getNamedItem("series");
