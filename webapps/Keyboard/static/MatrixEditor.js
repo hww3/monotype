@@ -44,7 +44,7 @@ dojo.declare(
 		templateString:
 			"<div style=\"border-width:2px; width:300px; overflow:hidden; display:compact; height:250px; position:fixed; z-index:200;\">" + 
 			"<table>" + 
-			"<tr><td colspan='2'>Col: <b>${column}</b> Row: <b>${row}</b></td></tr>" + 
+			"<tr><td colspan='2'>Col: <b>${column}</b> Row: <b>${row}</b> Default Set: <b>${default_set_width}</b></td></tr>" + 
 			"<tr><td><input dojoType=\"dijit.form.RadioButton\" dojoAttachEvent='onClick:_onClickJustRadio' type=\"radio\" dojoAttachPoint='justradio' name=\"type${name}\" value=\"just\"></td><td width=\"90%\"> Justifying Space <td/></tr>\n" + 
 			"<tr><td><input dojoType=\"dijit.form.RadioButton\" dojoAttachEvent='onClick:_onClickSpaceRadio' type=\"radio\" dojoAttachPoint='spaceradio' name=\"type${name}\" value=\"space\"></td><td width=\"90%\"> Fixed Space <td/></tr>\n" + 
 			"<tr><td><input dojoType=\"dijit.form.RadioButton\" dojoAttachEvent='onClick:_onClickSortRadio' type=\"radio\" dojoAttachPoint='sortradio' name=\"type${name}\" value=\"sort\"></td><td width=\"90	%\"> Sort </td></tr>\n" + 
@@ -53,13 +53,13 @@ dojo.declare(
 			"<div style=\"display: none;\" dojoAttachPoint=\"sorteditordiv\">" +
 			"<table>" +
 			"<tr><td>Sort: </td><td>" +
-			"<input style=\"width:30px\" maxLength=\"5\" required=\"true\" dojoType=\"dijit.form.ValidationTextBox\" dojoAttachPoint='charbox,focusNode' name=\"char${name}\"\n\tdojoAttachEvent='onChange:setChar,onmouseenter:_onMouse,onmouseleave:_onMouse,onfocus:_onMouse,onblur:_onMouse,onkeypress:_onKeyPress'\n\tautocomplete=\"off\" type=\"string\"\n\t/>" + 
+			"<input style=\"width:40px\" maxLength=\"5\" required=\"true\" dojoType=\"dijit.form.ValidationTextBox\" dojoAttachPoint='charbox,focusNode' name=\"char${name}\"\n\tdojoAttachEvent='onChange:setChar,onmouseenter:_onMouse,onmouseleave:_onMouse,onfocus:_onMouse,onblur:_onMouse,onkeypress:_onKeyPress'\n\tautocomplete=\"off\" type=\"string\"\n\t/>" + 
 			" <select style=\"width:90px\" dojoType=\"dijit.form.Select\" dojoAttachEvent='onChange:setStyle' dojoAttachPoint='stylebox'><option>Roman</option><option>Underline</option><option>Italic</option><option>Bold</option><option>SmallCap</option></select>" +
 		 	"</td></tr><tr><td>" + 
 			"Activator Key: </td><td>" +
-			"<input style=\"width:30px\" maxLength=\"5\" required=\"true\" dojoType=\"dijit.form.ValidationTextBox\" dojoAttachPoint='actbox,focusNode' name=\"act${name}\"\n\tdojoAttachEvent='onChange:setAct,onmouseenter:_onMouse,onmouseleave:_onMouse,onfocus:_onMouse,onblur:_onMouse,onkeypress:_onKeyPress'\n\tautocomplete=\"off\" type=\"${type}\"\n\t/>" + 
+			"<input style=\"width:40px\" maxLength=\"5\" required=\"true\" dojoType=\"dijit.form.ValidationTextBox\" dojoAttachPoint='actbox,focusNode' name=\"act${name}\"\n\tdojoAttachEvent='onChange:setAct,onmouseenter:_onMouse,onmouseleave:_onMouse,onfocus:_onMouse,onblur:_onMouse,onkeypress:_onKeyPress'\n\tautocomplete=\"off\" type=\"${type}\"\n\t/>" + 
 			"</td></tr><tr><td>Unit Width: </td><td>" +
-			"<input style=\"width:30px\" maxLength=\"5\" required=\"true\" dojoType=\"dijit.form.NumberTextBox\" dojoAttachPoint='setbox' constraints=\"{min: 3, max: 21}\" name=\"set${name}\"\n\tdojoAttachEvent='onChange:setSet,onmouseenter:_onMouse,onmouseleave:_onMouse,onfocus:_onMouse,onblur:_onMouse,onkeypress:_onKeyPress'\n\tautocomplete=\"off\" type=\"${type}\"\n\t/>" + 
+			"<input style=\"width:40px\" maxLength=\"5\" required=\"true\" dojoType=\"dijit.form.NumberTextBox\" dojoAttachPoint='setbox' constraints=\"{min: 3, max: 21}\" name=\"set${name}\"\n\tdojoAttachEvent='onChange:setSet,onmouseenter:_onMouse,onmouseleave:_onMouse,onfocus:_onMouse,onblur:_onMouse,onkeypress:_onKeyPress'\n\tautocomplete=\"off\" type=\"${type}\"\n\t/>" + 
 		 	"</td></tr></table>" +	
 			"</div>\n" +
 			"</td></tr>\n" +
@@ -309,6 +309,16 @@ dojo.declare(
 			}
 			else this.origNode.innerHTML="";
 			this.origNode.style.color = 'blue';
+			//alert("default: " + (this.default_set_width) + " this: "  + this._set_width);
+			if(this.default_set_width != this._set_width)
+			{
+				this.origNode.style.background= 'yellow';
+			}
+			else
+			{
+				this.origNode.style.background= '';
+				
+			}
 		},
 		
 		_setup: function() {
@@ -371,9 +381,13 @@ dojo.declare(
 				this._size = this.default_size;
 				
 			att = matdef.attributes.getNamedItem("space");
-			if(att && att == "justifying")
+//			alert("Whee "  + att);
+			if(att && att.value == "justifying")
+			{
+//				alert("JS");
 			  this._setIsJS();
-			else if(att && att == "fixed")
+			}
+			else if(att && att.value == "fixed")
 			  this._setIsFS();
 			else
 			  this._setIsSort();
