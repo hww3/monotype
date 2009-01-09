@@ -9,7 +9,7 @@ constant MODIFIER_SMALLCAPS = 4;
 //!
 object load_matcase(string ml)
 {
-  object m = .MatCaseLayout();                                            
+  object m = master()->resolv("Monotype.MatCaseLayout")();                                            
   object n = Public.Parser.XML2.parse_xml(Stdio.read_file(ml + ".xml"));
   m->load(n);
 
@@ -26,7 +26,7 @@ object load_matcase(string ml)
 //!
 object load_stopbar(string ml)
 {
-  object m = .Stopbar();                                            
+  object m = master()->resolv("Monotype.Stopbar")();                                            
   object n = Public.Parser.XML2.parse_xml(Stdio.read_file(ml + ".xml"));
   m->load(n);
   return m;
