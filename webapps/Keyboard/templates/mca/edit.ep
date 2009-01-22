@@ -47,6 +47,11 @@ Layout: <b><%=data->mca->name%></b> &nbsp; Default Wedge: <b><%=data->mca->wedge
 	<div style="z-axis: 200; " id="widget"></div>
 	<div>
 
+<style type="text/css">
+.dijitArrowButton {
+  display: block;
+}
+</style>
 <div style="clear: left;">
 <div class="cell"><font style="color:grey"><%=data->wedge->name%></font></div>
 <%foreach(data->cols; int k; string v){%>

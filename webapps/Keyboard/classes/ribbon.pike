@@ -18,9 +18,27 @@ public void generate(Request id, Response response, Template.View v, mixed ... a
 	return;
 }
 
+public void get_wedge_for_mca(Request id, Response response, Template.View v, mixed args)
+{
+	string w;
+	werror("args: %O\n", args);
+	
+	object mca = app->load_matcase(args[0]);
+
+    if(!mca) w = "000";
+
+    else w = mca->wedge;
+	werror("wedge: " + w);
+	response->set_data(w);
+}
+
 public void do_generate(Request id, Response response, Template.View v, mixed ... args)
 {
-	
+    // the job settings are stored in a mapping stored in the session object when we validate the file.
+    // we can then retrieve them in the next step, here.
+	id->variables = id->misc->session_variables["job_" + id->variables->job_id];
+	m_delete(id->misc->session_variables, "job_" + id->variables->job_id);
+
 	mapping settings = ([
 		"mould": (int)id->variables->points,
 		"setwidth": (float)id->variables->set,
@@ -38,13 +56,15 @@ public void do_generate(Request id, Response response, Template.View v, mixed ..
 	g->parse(data);
 
     response->set_data(g->generate_ribbon());	
-    response->set_type("text/plain");
+    response->set_type("application/x-monotype-e-ribbon");
 }
 
 public void do_validate(Request id, Response response, Template.View v, mixed ... args)
 {
 	
 //	werror("%O\n", id->variables);
+	int job_id = random(9999999);
+	id->misc->session_variables["job_" + job_id] = id->variables;
 	
 	mapping settings = ([
 		"mould": (int)id->variables->points,
@@ -64,13 +84,17 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 	
 	object b = String.Buffer();
 
+	b+="<div style=\"clear: left\">";
+	b+=("<div style=\"position:relative; float:left; width:35px\">Line</div><div style=\"position:relative; float:left; width:" + g->lines[-1]->units + "px\">&nbsp;</div><div>Just Code / Comments</div>");
+	b+=("</div>");
+
 	foreach(g->lines; int i; mixed line)
 	{
 		int setonline;
 		int last_was_space = 0;
 		int last_set;
 		b+="<div style=\"clear: left\">";
-		b+=("<div style=\"position:relative; float:left; width:30px\">" + (i+1) + "</div>");
+		b+=("<div style=\"position:relative; float:left; width:35px\">" + (i+1) + "</div>");
 		string tobeadded = "";
 		int tobeaddedwidth = 0;
 		int total_set; 
@@ -145,8 +169,11 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 		  b+= (line->errors * ", ");
 		b+=("</div>\n");
 	}
+
+    v->add("job_id", job_id);
+    v->add("result", b);
 	
 //	string s = g->generate_ribbon();
-	response->set_data(b);
+//	response->set_data(b);
 	return;
 }

@@ -42,7 +42,7 @@ dojo.declare(
 		emptyradio : 0,
 		
 		templateString:
-			"<div style=\"border-width:2px; width:420px; overflow:hidden; display:compact; height:250px; position:fixed; z-index:200;\">" + 
+			"<div style=\"border-width:2px; width:300px; overflow:hidden; display:compact; height:250px; position:fixed; z-index:200;\">" + 
 			"<table width=\"100%\">" + 
 			"<tr><td colspan='2'>Col: <b>${column}</b> Row: <b>${row}</b> Default Set: <b>${default_set_width}</b></td></tr>" + 
 			"<tr><td><input dojoType=\"dijit.form.RadioButton\" dojoAttachEvent='onClick:_onClickJustRadio' type=\"radio\" dojoAttachPoint='justradio' name=\"type${name}\" value=\"just\"></td><td width=\"90%\"> Justifying Space <td/></tr>\n" + 
@@ -54,7 +54,7 @@ dojo.declare(
 			"<table>" +
 			"<tr><td>Sort: </td><td>" +
 			"<input style=\"width:40px\" maxLength=\"5\" required=\"true\" dojoType=\"dijit.form.ValidationTextBox\" dojoAttachPoint='charbox,focusNode' name=\"char${name}\"\n\tdojoAttachEvent='onChange:setChar,onmouseenter:_onMouse,onmouseleave:_onMouse,onfocus:_onMouse,onblur:_onMouse,onkeypress:_onKeyPress'\n\tautocomplete=\"off\" type=\"string\"\n\t/>" + 
-			" <select dojoType=\"dijit.form.FilteringSelect\" hasDownArrow=\"true\" autoComplete=\"false\" dojoAttachEvent='onChange:setStyle' dojoAttachPoint='stylebox'>"+
+			" <select style=\"width:120px\" dojoType=\"dijit.form.FilteringSelect\" hasDownArrow=\"true\" autoComplete=\"false\" dojoAttachEvent='onChange:setStyle' dojoAttachPoint='stylebox'>"+
 			"<option value='Roman'>Roman</option><option value='Underline'>Underline</option><option value='Italic'>Italic</option><option value='Bold'>Bold</option><option value='SmallCap'>SmallCap</option></select>" +
 		 	"</td></tr><tr><td>" + 
 			"Activator Key: </td><td>" +
