@@ -86,7 +86,7 @@ void set(string column, int row, Matrix mat)
 	justifying_space = mat;
   }
   else
-    elements[((mat->style && mat->style!="R")?(mat->style+"|"):"") + mat->activator] = mat;
+    elements[((mat->style && sizeof(mat->style) && mat->style!="R")?(mat->style+"|"):"") + mat->activator] = mat;
 
 }
 
@@ -117,6 +117,22 @@ Matrix get(string column, int row)
 {
   checkValidPosition(column, row);
   return matcase[column][row];
+}
+
+array get_ligatures()
+{
+	array ligatures = ({});
+	
+	foreach(elements;; object mat)
+	{
+		// assume that any activator greater than 1 character is a ligature we would like to automatically use.
+		// we allow this to be short circuited by making the activator start with an @ sign (such as @ct for a 
+		// non-automatically applied ligature "ct".)
+		if(mat->activator && sizeof(mat->activator) > 1 && mat->activator[0] != '@')  
+		  ligatures += ({mat});
+	}
+	
+	return ligatures;
 }
 
 int load(Node n)

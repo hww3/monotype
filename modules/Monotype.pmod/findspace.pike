@@ -32,8 +32,10 @@ array simple_find_space(int amount, mapping spaces)
 //	werror("spaces: %O %O\n", amount, spaces);
 //	if(findSpace(amount, set, sol) && sizeof(sol->vals))
 	
-	array x = (findSpace(amount,set,sol)?realSol:0);
-	
+    if(!findSpace(amount,set,sol))
+      werror(sprintf("failed to find space=%O, sol=%O\n", amount, sol->vals));
+
+	array x = realSol||({});
 	array z = x - ({27});
 	array y = x - z;
 	
@@ -47,7 +49,7 @@ array simple_find_space(int amount, mapping spaces)
 
 public int findSpace(int space, object set, object sol)
 {
-//  werror("findSpace(set=%O, sol=%O)\n", set->vals, sol->vals);
+  //werror("findSpace(space=%O, set=%O, sol=%O)\n", space, set->vals, sol->vals);
   if(!sizeof(set->vals)) return 0;
 
   int largestItem = sizeof(set->vals)?set->vals[-1]:0;
