@@ -1,0 +1,52 @@
+<h1>Copy Mat Case Arrangement (MCA)</h1>
+<font color="red"><%#flash%></font>
+<p>
+<form>
+Copying from: <%=data->mca->name%><br/>
+New Name: <input type="text" name="name"/>
+<p>
+
+<%
+  string a1 = "";
+  string a2 = "";
+  string a3 = "";
+
+  switch(data->mca->matcase_size)
+  {
+    case Monotype.MATCASE_15_15:
+      a1 = "checked=\"true\"";
+      break;
+    case Monotype.MATCASE_15_17:
+      a2 = "checked=\"true\"";
+      break;
+    case Monotype.MATCASE_16_17:
+      a3 = "checked=\"true\"";
+      break;
+  }
+%>
+
+Arrangement Type: <input type="radio" name="size" value="0" <%=a1%>/> 15x15 
+<input type="radio" name="size" value="1" <%=a2%>/> 15x17 
+<input type="radio" name="size" value="2" <%=a3%>/>  16x17
+
+<p>
+
+Default Wedge: <select name="wedge">
+<% 
+  foreach(data->wedges; int i; string w) { 
+    string sel = "";
+    if(data->mca->wedge == w) sel = "selected";
+%>
+  <option <%=sel%>><%=w %></option>
+<% } %>
+</select>
+
+<p>
+	
+Description: <textarea name="description"><%=data->mca->description%></textarea>
+
+<p>
+
+<button type="submit">Create</button>
+
+</form>

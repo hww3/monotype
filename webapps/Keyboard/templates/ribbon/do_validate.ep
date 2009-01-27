@@ -1,0 +1,6 @@
+<form action="<%#action_url "action": "do_generate" %>">
+<input type="hidden" name="job_id" value="<%$job_id%>">
+<button type="submit">Generate Ribbon</button>
+</form>
+<p>
+<%$result%>
