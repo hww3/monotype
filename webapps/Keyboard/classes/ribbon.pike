@@ -55,8 +55,11 @@ public void do_generate(Request id, Response response, Template.View v, mixed ..
 	object g = Monotype.Generator(settings);
 	g->parse(data);
 
-    response->set_data(g->generate_ribbon());	
+    response->set_data(g->generate_ribbon());
+    response->set_header("content-disposition", "attachment; filename=" + 
+        id->variables->jobname + ".rib");	
     response->set_type("application/x-monotype-e-ribbon");
+    response->set_charset("utf-8");
 }
 
 public void do_validate(Request id, Response response, Template.View v, mixed ... args)
@@ -172,6 +175,8 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 
     v->add("job_id", job_id);
     v->add("result", b);
+
+    response->set_charset("utf-8");
 	
 //	string s = g->generate_ribbon();
 //	response->set_data(b);
