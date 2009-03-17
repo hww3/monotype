@@ -1,7 +1,83 @@
+<style type="text/css">
+#        @import url("/dojo/dojo/resources/dojo.css");
+        @import url("/dojo/dojo/resources/dnd.css");
+</style>
+
 <script type="text/javascript">
    dojo.require("dijit.form.MatrixEditor");
+   dojo.require("dojo.dnd.Source");
+   dojo.require("dojox.collections.ArrayList");
+  
+   var isEditing = false;
 
-var isEditing = false;
+   var mic = new dojox.collections.ArrayList();
+
+// based on dojo.dnd.Source.checkAcceptance()
+function checkAcceptanceWithoutSelfDrop(source, nodes) {
+    if(this == source){ return false; }
+    for(var i = 0; i < nodes.length; ++i){
+        var type = source.getItem(nodes[i].id).type;
+        // type instanceof Array
+        var flag = false;
+        for(var j = 0; j < type.length; ++j){
+            if(type[j] in this.accept){
+                flag = true;
+                break;
+            }
+        }
+        if(!flag){
+            return false;
+        }
+    }
+    return true;
+}
+
+	// create the DOM representation for the given item
+	function micNodeCreator(item, hint) {
+		// create a table/tr/td-based node structure; each item here needs an
+		// image, a name, a brief description, and a quantity available
+		var nameTd = document.createElement("span");
+		var n;
+
+		if(item.style == "U")
+  		  n = (document.createElement("u"));
+		else if(item.style == "S")
+  		  n = (document.createElement("smallcaps"));
+		else if(item.style == "I")
+  		  n = (document.createElement("i"));
+		else if(item.style == "B")
+  		  n = (document.createElement("b"));
+
+		var y = document.createTextNode(item.character || "N/A");
+
+		if(n)
+		{
+		   n.appendChild(y);
+		}
+		else n = y;
+
+		nameTd.appendChild(n);
+
+		dojo.addClass(nameTd, "cell");
+
+		if (hint != "avatar") {
+		}else{
+			// put the avatar into a self-contained table
+			var table = document.createElement("table");
+			var tbody = document.createElement("tbody");
+			var tr = document.createElement("tr");
+			var td = document.createElement("td");
+			td.appendChild(nameTd);
+			tr.appendChild(td);
+			tbody.appendChild(tr);
+			table.appendChild(tbody);
+			node = table;
+		}
+
+		return {node: nameTd, data: item};
+	};
+
+
 
 function saveMat(wgt)
 {
@@ -38,6 +114,14 @@ function openWidget(v, row, col, units)
 Layout: <b><%=data->mca->name%></b> &nbsp; Default Wedge: <b><%=data->mca->wedge%></b> &nbsp;
 		<%#action_link "action": "cancel"%>Cancel</a> &nbsp; <%#action_link "action": "save"%>Save</a>
 <p>
+<div id="matsInCaseContainer">
+<b>Mats In Case</b>
+<div id="matsInCaseNode" class="container">
+</div>
+</table>
+</div>
+</div>
+<p>
 	<style>
 	div.cell {
 		width:35px; height:35px; border-width:1px; border-style: solid; position:relative; float:left;
@@ -60,6 +144,7 @@ Layout: <b><%=data->mca->name%></b> &nbsp; Default Wedge: <b><%=data->mca->wedge
 </div>
 
 <%
+  array mic = ({});
   foreach(data->rows; int k; int v){
 	int u = data->wedge->bars[v];
 %>
@@ -106,20 +191,34 @@ Layout: <b><%=data->mca->name%></b> &nbsp; Default Wedge: <b><%=data->mca->wedge
 					default:
 						break;
 				}
+				mic += ({ Tools.JSON.serialize((mapping)mat) });
 			  }
 			}
 		}
 %>
 
-<div class="cell" <%=st%> id='<%=v + cv%>' onClick="openWidget(this, <%=v%>, '<%=cv%>', <%=u%>)"><%=ch%></div>
+<div dojoType="dojo.dnd.Target" class="cell" <%=st%> 
+id='<%=v + cv%>' onClick="openWidget(this, <%=v%>, '<%=cv%>', <%=u%>)"><%=ch%></div>
 	<%}%>
 	</div>
 	<p/>
 <%}	%>
 
+<script type="text/javascript">
+<% foreach(mic;; string ch) { %>
+    mic.add(<%=ch%>);
+<% } %>
+	function init() {
+		var wishlist = new dojo.dnd.Source("matsInCaseNode",
+			{isSource:true, copyOnly: true, 
+                         creator: micNodeCreator, accept: ["text"]});
+		wishlist.insertNodes(false, mic.toArray());
+wishlist.checkAcceptance = checkAcceptanceWithoutSelfDrop;
+	};
+	dojo.addOnLoad(init);
+</script>
 
 <div style="left:5px; clear:left">
-	
 	<%#action_link "action": "cancel"%>Cancel</a> <%#action_link "action": "save"%>Save</a>
 	
 </div>
