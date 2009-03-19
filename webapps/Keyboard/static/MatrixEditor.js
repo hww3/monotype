@@ -203,8 +203,8 @@ dojo.declare(
 				var series = this._series;
 				var size = this._size;
 				var style = this._style;
-				var character = this._character;
-				var activator = this._activator;
+				var character = this.encode(this._character);
+				var activator = this.encode(this._activator);
 				var set_width = this._set_width;
 			
 				return "<matrix series=\"" + series + "\" size=\"" + size + "\" weight=\"" + style + "\" character=\"" + character + "\" activator=\"" + activator + "\" set_width=\"" + set_width + "\"/>";
@@ -219,6 +219,17 @@ dojo.declare(
 			}
 			else return "";
 		},
+
+		encode: function(text)
+                {
+                  var textneu = text.replace(/&/,"&amp;");
+		  textneu = textneu.replace(/</,"&lt;");
+		  textneu = textneu.replace(/>/,"&gt;");
+		  textneu = textneu.replace(/\r\n/,"<br>");
+		  textneu = textneu.replace(/\n/,"<br>");
+		  textneu = textneu.replace(/\r/,"<br>");
+		  return(textneu);
+                },
 
 		setValue: function(value, /*Boolean?*/ priorityChange, /*String?*/ formattedValue){
 			//	summary: 

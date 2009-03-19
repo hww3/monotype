@@ -10,27 +10,41 @@
   
    var isEditing = false;
 
-   var mic = new dojox.collections.ArrayList();
+function dndDropComplete(s, n, c)
+{
+return;
+  var mat = s.getItem(n[0].id).data;
+  var manager = dojo.dnd.manager();
+  alert("source: " + s);
+  replaceMat(row, col, mat);
+}
+
 
 // based on dojo.dnd.Source.checkAcceptance()
-function checkAcceptanceWithoutSelfDrop(source, nodes) {
+function checkAcceptanceWithoutSelfDrop(source, nodes){
     if(this == source){ return false; }
-    for(var i = 0; i < nodes.length; ++i){
-        var type = source.getItem(nodes[i].id).type;
-        // type instanceof Array
-        var flag = false;
-        for(var j = 0; j < type.length; ++j){
-            if(type[j] in this.accept){
-                flag = true;
-                break;
-            }
-        }
-        if(!flag){
-            return false;
-        }
-    }
-    return true;
-}
+		if(this == source){
+			return !this.copyOnly || this.selfAccept;
+		}
+		for(var i = 0; i < nodes.length; ++i){
+			var item = source.getItem(nodes[i].id)
+                        var type = item.type;
+			// type instanceof Array
+			var flag = false;
+			for(var j = 0; j < type.length; ++j){
+				if(type[j] in this.accept){
+//alert(type[j] + " is acceptable!");
+					flag = true;
+					break;
+				}
+			}
+			if(!flag){
+				return false;	// Boolean
+			}
+		}
+		return true;	// Boolean
+	}
+
 
 	// create the DOM representation for the given item
 	function micNodeCreator(item, hint) {
@@ -74,16 +88,80 @@ function checkAcceptanceWithoutSelfDrop(source, nodes) {
 			node = table;
 		}
 
-		return {node: nameTd, data: item};
+		return {node: nameTd, data: item, type: [item.type]};
 	};
 
 
+function foo(source, nodes, copy)
+{
+		// summary: called only on the current target, when drop is performed
+		//	from an external source
+		// source: Object: the source which provides items
+		// nodes: Array: the list of transferred items
+		// copy: Boolean: copy items, if true, move items otherwise
+		var target = this;
+		var oldCreator = this._normalizedCreator;
+		// transferring nodes from the source to the target
+		if(this.creator){
+			// use defined creator
+			this._normalizedCreator = function(node, hint){
+				return oldCreator.call(this, 
+source.getItem(node.id).data, hint);
+			};
+		}else{
+			// we have no creator defined => move/clone nodes
+/*			if(copy){
+				// clone nodes
+				this._normalizedCreator = function(node, 
+hint){
+					var t = source.getItem(node.id);
+					var n = node.cloneNode(true);
+					n.id = dojo.dnd.getUniqueId();
+					return {node: n, data: t.data, 
+type: t.type};
+				};
+			}else */ {
+				// move nodes
+				this._normalizedCreator = function(node, hint){
+					var t = source.getItem(node.id);
+					t.row = this.parent.id;
+					t.column = this.parent.id;
+					source.delItem(node.id);
+					return {node: node, data: t.data, type: t.type};
+				};
+			}
+		}
+		this.selectNone();
+		if(!copy && !this.creator){
+			source.selectNone();
+		}
+
+		var an = this.getAllNodes();
+
+		dojo.forEach(an, function(n){ 
+					replaceMat(n.id, target.getItem(n.id), source.getItem(nodes[0].id)); 
+					target.delItem(n.id); n.parentNode.removeChild(n); });
+
+		this.insertNodes(true, nodes, this.before, this.current);
+		if(!copy && this.creator){
+			source.deleteSelectedNodes();
+		}
+		this._normalizedCreator = oldCreator;
+}
 
 function saveMat(wgt)
 {
   isEditing = false;
   dojo.xhrPost({ widget: wgt, url: "/mca/setMat?col=" + wgt.column + "&row=" + wgt.row + "&matrix=" + wgt.getValue(),
 					load: function(response, ioArgs){wgt.setNewVal(); wgt.close();} 
+	});
+}
+
+function replaceMat(pos, data, newmat)
+{
+  isEditing = false;
+  dojo.xhrPost({ url: "/mca/replaceMat?pos=" + pos + "&matrix=" + dojo.toJson(newmat),
+					load: function(response, ioArgs){} 
 	});
 }
 
@@ -115,8 +193,37 @@ Layout: <b><%=data->mca->name%></b> &nbsp; Default Wedge: <b><%=data->mca->wedge
 		<%#action_link "action": "cancel"%>Cancel</a> &nbsp; <%#action_link "action": "save"%>Save</a>
 <p>
 <div id="matsInCaseContainer">
-<b>Mats In Case</b>
-<div id="matsInCaseNode" class="container">
+<b>Mats Not In Case</b>
+<div style="clear: left;">
+<div style="position:relative; float:left">
+Roman: 
+</div>
+<div id="matsInCaseNodeR" dojoType="dojo.dnd.Source" accept="R" style="position:relative; 
+float:left" class="container"></div>
+</div>
+</div>
+<div style="clear: left;">
+<div style="position:relative; float:left">
+Italic: 
+</div>
+<div id="matsInCaseNodeI" dojoType="dojo.dnd.Source" accept="I" style="position:relative; 
+float:left" class="container"></div>
+</div>
+</div>
+<div style="clear: left;">
+<div style="position:relative; float:left">
+Bold: 
+</div>
+<div id="matsInCaseNodeB" dojoType="dojo.dnd.Source" accept="B" style="position:relative; float:left" class="container"></div>
+</div>
+</div>
+<div style="clear: left;">
+<div style="position:relative; float:left">
+Small Caps: 
+</div>
+<div id="matsInCaseNodeS" dojoType="dojo.dnd.Source" accept="S" style="position:relative; float:left" class="container"></div>
+</div>
+</div>
 </div>
 </table>
 </div>
@@ -144,7 +251,6 @@ Layout: <b><%=data->mca->name%></b> &nbsp; Default Wedge: <b><%=data->mca->wedge
 </div>
 
 <%
-  array mic = ({});
   foreach(data->rows; int k; int v){
 	int u = data->wedge->bars[v];
 %>
@@ -191,30 +297,54 @@ Layout: <b><%=data->mca->name%></b> &nbsp; Default Wedge: <b><%=data->mca->wedge
 					default:
 						break;
 				}
-				mic += ({ Tools.JSON.serialize((mapping)mat) });
 			  }
 			}
 		}
 %>
 
-<div dojoType="dojo.dnd.Target" class="cell" <%=st%> 
-id='<%=v + cv%>' onClick="openWidget(this, <%=v%>, '<%=cv%>', <%=u%>)"><%=ch%></div>
+<div class="cell" dojoType="dojo.dnd.Source" id='<%=v + cv%>' accept="R,I,B,S,U" onDropExternal="foo">
+  <div class="dojoDndItem" id='<%=v + cv%>' onClick="openWidget(this, 
+<%=v%>, '<%=cv%>', <%=u%>)" data="{a:1, b:2}"><%=ch%></div>
+</div>
 	<%}%>
 	</div>
 	<p/>
 <%}	%>
 
 <script type="text/javascript">
-<% foreach(mic;; string ch) { %>
-    mic.add(<%=ch%>);
-<% } %>
 	function init() {
-		var wishlist = new dojo.dnd.Source("matsInCaseNode",
+	var wishlist, mic, connected;
+<% foreach(data->not_in_matcase;string style; array elems) { 
+%>
+		wishlist = new dojo.dnd.Source("matsInCaseNode<%=style%>",
 			{isSource:true, copyOnly: true, 
-                         creator: micNodeCreator, accept: ["text"]});
-		wishlist.insertNodes(false, mic.toArray());
-wishlist.checkAcceptance = checkAcceptanceWithoutSelfDrop;
-	};
+                         creator: micNodeCreator, accept: ["<%=style%>"]});
+		wishlist.checkAcceptance = checkAcceptanceWithoutSelfDrop;
+
+		// we only need to connect the first one; the others will get it automatically.
+		if(!connected)
+                {
+  		  dojo.connect(wishlist, "onDndDrop", dndDropComplete);
+                  connected = 1;
+                }
+                mic = new dojox.collections.ArrayList();
+
+<%
+     foreach(elems;; string mat)
+     {
+%>
+
+  mic.add( <%= Tools.JSON.serialize((["character": mat, "style": style, "type": style])) %>);
+
+<%
+     }
+%>
+  wishlist.insertNodes(false, mic.toArray());
+<%
+   } 
+%>
+
+  };
 	dojo.addOnLoad(init);
 </script>
 

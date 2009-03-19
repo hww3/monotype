@@ -22,6 +22,31 @@ int __quiet = 1;
                 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
             });
 
+array small_caps_elements = 
+  ({
+      "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", 
+      "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X",
+      "Y", "Z"
+  });
+
+array full_alphabet_elements = 
+  ({
+      "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", 
+      "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X",
+      "Y", "Z",
+      "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l",
+      "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x",
+      "y", "z",
+      "ff", "fi", "fl", "ffi", "ffl", "oe", "ae",
+      "1", "2", "3", "4", "5", "6", "7", "8", "9", "0",
+      ".", ",", ":", ";", "!", "?", "&", "-", "$"
+  });
+
+mapping case_contents = (["R": full_alphabet_elements,
+			  "S": small_caps_elements,
+                          "I": full_alphabet_elements]);
+
+
 public void index(Request id, Response response, Template.View view, mixed args)
 {
   array m = app->get_mcas();
@@ -143,6 +168,30 @@ public void getMat(Request id, Response response, Template.View view, mixed args
   response->set_data(resp);
 }
 
+public void replaceMat(Request id, Response response, Template.View view, mixed args)
+{
+  string col;
+  int row;
+
+  [row, col] = array_sscanf(id->variables->pos, "%d%[A-O]s");
+
+  mapping mat = Tools.JSON.deserialize(id->variables->matrix)->data;
+  werror("%s %d: %O\n", col, row, mat); 
+  object matrix = Monotype.Matrix(); 
+
+  object mca = id->misc->session_variables->mca;
+  object wedge = app->load_wedge(mca->wedge);
+  int sw = wedge->get(row);
+
+  matrix->set_character(mat->character);
+  matrix->set_activator(mat->character);
+  matrix->set_style(mat->style);
+  matrix->set_set_width(sw);
+
+  mca->set(col, row, matrix);
+  response->set_data("");
+}
+
 public void edit(Request id, Response response, Template.View view, mixed args)
 {
   object mca;
@@ -179,5 +228,28 @@ werror("args:%O, %O\n", getcwd(),combine_path(app->config["locations"]["matcases
   view->add("mca", mca);
   view->add("rows", r);   
   view->add("cols", c);
+
+  // generate "elements not in matcase" data
+  mapping not_in_matcase = copy_value(case_contents);
+ 
+  foreach(mca->elements; string act; object matrix)
+  {
+    string style = matrix->style;
+    if(!style || style == "") style = "R";
+    array z;
+if(matrix->character == "0")
+   werror("%O\n", (mapping)matrix);
+    if((z = not_in_matcase[style]) && search(z, matrix->character)!= -1)
+    {
+      not_in_matcase[style] -= ({ matrix->character });
+      if(matrix->character == "0") werror("removing " + matrix->character + "\n"); 
+    }
+    
+  }  
+  view->add("not_in_matcase", not_in_matcase);    
+
+  // response->set_data("<pre>" + sprintf("%O", not_in_matcase));
+
 }
+
 
