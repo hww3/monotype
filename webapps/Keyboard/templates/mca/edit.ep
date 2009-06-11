@@ -62,7 +62,7 @@ function checkAcceptanceWithoutSelfDrop(source, nodes){
 		else if(item.style == "B")
   		  n = (document.createElement("b"));
 
-		var y = document.createTextNode(item.character || "N/A");
+		var y = document.createTextNode((" " + item.character) || "N/A");
 
 		if(n)
 		{
@@ -193,21 +193,21 @@ Layout: <b><%=data->mca->name%></b> &nbsp; Default Wedge: <b><%=data->mca->wedge
 		<%#action_link "action": "cancel"%>Cancel</a> &nbsp; <%#action_link "action": "save"%>Save</a>
 <p>
 <div id="matsInCaseContainer">
-<b>Mats Not In Case</b>
+<div><b>Mats Not In Case</b>
+</div>
+<div id="matsInCaseNodeQ" dojoType="dojo.dnd.Source" accept="Q" style="position:relative; float:left" class="container"></div>
 <div style="clear: left;">
 <div style="position:relative; float:left">
 Roman: 
 </div>
-<div id="matsInCaseNodeR" dojoType="dojo.dnd.Source" accept="R" style="position:relative; 
-float:left" class="container"></div>
+<div id="matsInCaseNodeR" dojoType="dojo.dnd.Source" accept="R" style="position:relative; float:left" class="container"></div>
 </div>
 </div>
 <div style="clear: left;">
 <div style="position:relative; float:left">
 Italic: 
 </div>
-<div id="matsInCaseNodeI" dojoType="dojo.dnd.Source" accept="I" style="position:relative; 
-float:left" class="container"></div>
+<div id="matsInCaseNodeI" dojoType="dojo.dnd.Source" accept="I" style="position:relative; float:left" class="container"></div>
 </div>
 </div>
 <div style="clear: left;">
@@ -302,9 +302,8 @@ Small Caps:
 		}
 %>
 
-<div class="cell" dojoType="dojo.dnd.Source" id='<%=v + cv%>' accept="R,I,B,S,U" onDropExternal="foo">
-  <div class="dojoDndItem" id='<%=v + cv%>' onClick="openWidget(this, 
-<%=v%>, '<%=cv%>', <%=u%>)" data="{a:1, b:2}"><%=ch%></div>
+<div class="cell" dojoType="dojo.dnd.Source" id='<%=v + cv%>' accept="R,I,B,S,U" onDropExternal="foo" onClick="openWidget(this, <%=v%>, '<%=cv%>', <%=u%>)" >
+  <div class="dojoDndItem" id='<%=v + cv%>' ><%=ch%></div>
 </div>
 	<%}%>
 	</div>

@@ -222,12 +222,10 @@ dojo.declare(
 
 		encode: function(text)
                 {
-                  var textneu = text.replace(/&/,"&amp;");
-		  textneu = textneu.replace(/</,"&lt;");
-		  textneu = textneu.replace(/>/,"&gt;");
-		  textneu = textneu.replace(/\r\n/,"<br>");
-		  textneu = textneu.replace(/\n/,"<br>");
-		  textneu = textneu.replace(/\r/,"<br>");
+                  var textneu = text.replace(/%/,"%25");
+		  textneu = textneu.replace(/&/,"%26amp;");
+		  textneu = textneu.replace(/</,"%26lt;");
+		  textneu = textneu.replace(/>/,"%26gt;");
 		  return(textneu);
                 },
 

@@ -130,7 +130,7 @@ public void save(Request id, Response response, Template.View view, mixed args)
 public void setMat(Request id, Response response, Template.View view, mixed args)
 {
 	werror("setting mat for " + id->variables->col + " " + id->variables->row + " with " + id->variables->matrix);
-    object mca = id->misc->session_variables->mca;
+ object mca = id->misc->session_variables->mca;
 //werror("%O", mkmapping(indices(id), values(id)) );
   if(id->variables->matrix == "")
   {
@@ -139,7 +139,7 @@ public void setMat(Request id, Response response, Template.View view, mixed args
   else
   {
     object n = Public.Parser.XML2.parse_xml(id->variables->matrix);
-    object m = mca->Matrix(n);
+    object m = Monotype.Matrix(n);
     werror("n: %O", n);
     mca->set(id->variables->col, (int)id->variables->row, m);
   }
