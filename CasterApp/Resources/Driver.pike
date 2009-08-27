@@ -5,9 +5,50 @@ import Public.ObjectiveC;
   object ui;
   mapping jobinfo;
 
+  int wasStarted;
+
+  void enableManualControl()
+  {
+	  allOff();
+      wasStarted = plugin->started;	  
+      plugin->stop();
+  }
+
+  void disableManualControl()
+  {
+	  allOff();
+	  if(wasStarted)
+	    plugin->start();
+
+  }
+
+  void allOn()
+  {
+	if(plugin->allOn)
+		plugin->allOn();	
+  }
+  
+  void allOff()
+  {
+	if(plugin->allOff)
+		plugin->allOff();
+  }
+
+  void enablePin(string pin)
+  {
+    if(plugin->enablePin)
+	  plugin->enablePin(pin);
+  }
+
+  void disablePin(string pin)
+  {
+    if(plugin->disablePin)
+	  plugin->disablePin(pin);
+  }
+ 
   array getNextCode()
   {
-	return ribbon->get_next_code();
+    return ribbon->get_next_code(); 
   }
 
   void stop()
