@@ -48,7 +48,6 @@ array codes = ({
 	"0005"	
 });
 
-
 // the makeup of this array could potentially be different based on
 // how you've wired your cabling. it's not terribly elegant, but 
 // does provide a simple way to account for human error in building 
@@ -118,7 +117,8 @@ void value_changed(int nv)
   { 
 	state = 0;
 //	write("off\n");
-	end_code();
+	if(started)
+  	  end_code();
   }
 }
 
@@ -135,10 +135,8 @@ void start_code()
 	return;
   }
 
-  int code = map_code_to_pins(code_str);
-//  werror("writing code %O\n", code); 
-  iow->write_interface(0, sprintf("%04c", code));
-
+  send_code_to_interface(code_str);
+  
   driver->setStatus((code_str*"-"));
 
   driver->processedCode();
@@ -148,6 +146,13 @@ void end_code()
 {
   int code;
   code = interesting_bits;	
+  iow->write_interface(0, sprintf("%04c", code));
+}
+
+void send_code_to_interface(array code_str)
+{
+  int code = map_code_to_pins(code_str);
+//  werror("writing code %O\n", code); 
   iow->write_interface(0, sprintf("%04c", code));
 }
 
@@ -187,4 +192,46 @@ void start()
 void stop()
 {
 	started = 0;
+}
+
+void allOn()
+{
+  int code;
+  code = 0xffffffff ^ interesting_bits;	
+  iow->write_interface(0, sprintf("%04c", code));
+}
+
+void allOff()
+{
+  end_code();	
+}
+
+void enablePin(string pin)
+{
+	int code = 0;
+
+	// first, get the existing codes from the interface
+	array cur = iow->read_interface0();
+	foreach(cur;;int y)
+  	  {code<<=8; code = code|y;} 
+
+	// now, blend in the ones we want added
+   code |= map_code_to_pins(({pin}));
+
+   iow->write_interface(0, sprintf("%04c", code));	
+}
+
+void disablePin(string pin)
+{
+	int code = 0;
+
+	// first, get the existing codes from the interface
+	array cur = iow->read_interface0();
+	foreach(cur;;int y)
+  	  {code<<=8; code = code|y;} 
+
+	// now, remove in the ones we want off
+   code ^= map_code_to_pins(({pin}));
+
+   iow->write_interface(0, sprintf("%04c", code));		
 }
