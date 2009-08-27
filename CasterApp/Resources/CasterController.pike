@@ -46,6 +46,7 @@ void set_job_info()
 	Thermometer->setDoubleValue_(0.0);
 }
 
+// callback from the load job button
 void loadJob_(object a)
 {
   object openPanel = Cocoa.NSOpenPanel.openPanel();
@@ -63,6 +64,7 @@ void loadJob_(object a)
 
 }
 
+// callback from the start/stop button
 void toggleCaster_(mixed ... args)
 {
   int state = CasterToggleButton->state();
@@ -75,16 +77,19 @@ void toggleCaster_(mixed ... args)
   else Driver->stop();
 }
 
+// callback from the skip to beginning button
 void backBegin_(object a)
 {
   Driver->rewindRibbon();
 }
 
+// callback from the backward one line button
 void backLine_(object a)
 {
   Driver->backwardLine();
 }
 
+// callback from the forward line button
 void forwardLine_(object a)
 {
   Driver->forwardLine();
