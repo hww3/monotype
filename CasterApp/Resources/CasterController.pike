@@ -1,13 +1,8 @@
-//
-//  this is the main Controller for the Monotype Caster Control UI.
-//
 
 import Public.ObjectiveC;
 
 inherit Cocoa.NSObject;
 
-// the driver object acts as an intermediary between the ribbon,
-// this ui and the caster hardware interface
 object Driver;
 
 object SkipForwardButton;
@@ -15,6 +10,8 @@ object SkipBackwardButton;
 object SkipBeginButton;
 object CasterToggleButton;
 object LoadJobButton;
+object PinControlItem;
+object PinControlWindow;
 
 object JobName;
 object Face;
@@ -27,11 +24,15 @@ object Status;
 
 mapping jobinfo;
 
+object app;
+
 static void create()
 {
    Driver = ((program)"Driver")(this);
 
   ::create();
+	
+   app = Cocoa.NSApplication.sharedApplication();
 }
 
 void set_job_info()
@@ -45,7 +46,6 @@ void set_job_info()
 	Thermometer->setDoubleValue_(0.0);
 }
 
-// callback from the "Load Job" button
 void loadJob_(object a)
 {
   object openPanel = Cocoa.NSOpenPanel.openPanel();
@@ -60,9 +60,9 @@ void loadJob_(object a)
       set_job_info();
     }
   CasterToggleButton->setEnabled_(1);
+
 }
 
-// callback from the "Start/Stop" button
 void toggleCaster_(mixed ... args)
 {
   int state = CasterToggleButton->state();
@@ -75,20 +75,61 @@ void toggleCaster_(mixed ... args)
   else Driver->stop();
 }
 
-// callback from the "full rewind" button
 void backBegin_(object a)
 {
   Driver->rewindRibbon();
 }
 
-// calback from the "back one line" button
 void backLine_(object a)
 {
   Driver->backwardLine();
 }
 
-// callback from the "forward one line" button
 void forwardLine_(object a)
 {
   Driver->forwardLine();
+}
+
+void allOn_(object b)
+{
+	werror("allOn_(%s)\n", (string)
+	b->title());
+}
+
+void allOff_(object b)
+{
+	werror("allOff_(%s)\n", (string)b->title());
+	
+}
+
+void checkClicked_(object b)
+{
+	string pin = (string)b->title();
+	werror("checkClicked_(%s, %d)\n", pin, b->state());
+	
+	if(b->state())
+	  Driver->enablePin(b);
+	else
+  	  Driver->disablePin(b);
+	
+}
+
+void showPinControl_(object i)
+{
+	werror("showPinControl_(%s)\n", (string)(i->title()));
+	PinControlWindow->setDelegate_(this);
+	if(!PinControlWindow->isVisible())
+		PinControlWindow->makeKeyAndOrderFront_(i);
+	i->setEnabled_(0);
+	app->mainMenu()->update();
+	Driver->enableManualControl();
+}
+
+void windowWillClose_(object n)
+{
+	werror("windowWillClose_()");
+	PinControlItem->setEnabled_(1);
+	app->mainMenu()->update();
+	
+	Driver->disableManualControl();
 }

@@ -1,4 +1,3 @@
-// this object represents the e-ribbon
 
 Stdio.FILE file;
 
