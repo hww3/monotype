@@ -13,6 +13,18 @@ function getWedgeForMCA(mca, id)
   dojo.xhrGet({url: "/ribbon/get_wedge_for_mca/" + mca, load: function(d){ setWedge(d, id);}});
 }
 
+function enableFile()
+{
+  dojo.byId("input_file").disabled=false;
+  dojo.byId("input_text").disabled=true;
+}
+
+function enableText()
+{
+  dojo.byId("input_file").disabled=true;
+  dojo.byId("input_text").disabled=false;
+}
+
 function setWedge(data, wedgeid)
 {
   var s = dojo.byId(wedgeid);
@@ -27,6 +39,8 @@ function setWedge(data, wedgeid)
      }
   }
 }
+
+
 
 </script>
 
@@ -117,8 +131,14 @@ Width Adjustment Mechanisms<p>
 <input type="checkbox" name="spacing" checked="1" value="justification"> Justification Wedges 
 
 <p>
-Input File: <input type="file" name="input-file">
-
+<input type="radio" name="input_type" value="file" checked="1" 
+onclick="enableFile();"> Input 
+File: <input type="file" name="input-file" id="input_file">
+<br/>
+<input type="radio" name="input_type" value="text" 
+onclick="enableText();"> Text Input: <textarea 
+name="input_text" rows="5 cols="80" id="input_text" 
+disabled="true"></textarea>
 <p>
 <input type="submit" value="Generate Ribbon"/>
 </form>

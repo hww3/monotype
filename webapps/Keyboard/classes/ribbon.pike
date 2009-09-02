@@ -79,7 +79,9 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 		"dict_dir": combine_path(app->config->app_dir, "config")
 		]);
 		
-		string data = id->variables["input-file"];
+		string data;
+		if(id->variables->input_type=="file") data = id->variables["input-file"];
+		else data = id->variables->input_text;
 		// = "Now is the time for all good men to come to the aid of their country. Mary had a little lamb, its fleece was white as snow. Everywhere that mary went, the lamb was sure to go.<qo>";
 	
 	object g = Monotype.Generator(settings);
