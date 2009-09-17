@@ -1,6 +1,6 @@
 import Public.Parser.XML2;
 import Monotype;
-
+array problems = ({});
 string name;
 string description;
 int matcase_size;
@@ -91,9 +91,11 @@ void set(string column, int row, Matrix mat)
   else if(!mat->is_fs)
   {
     string key =((mat->style && sizeof(mat->style) && mat->style!="R")?(mat->style+"|"):"") + mat->activator;
-    if(elements[key]) werror(
-sprintf("Matcase contains duplicate mat: " + key + ":new %s %d, orig %s %d\n", 
-    column, row, elements[key]->col_pos, elements[key]->row_pos));
+    if(elements[key]) 
+    { 
+       add_problem(column, row, sprintf("Matcase contains duplicate mat: " + key + ":new %s %d, orig %s %d\n", 
+	    column, row, elements[key]->col_pos, elements[key]->row_pos));
+    }
     elements[key] = mat;
   if(mat->style =="R" && mat->character == "0")
   { 
@@ -101,6 +103,12 @@ sprintf("Matcase contains duplicate mat: " + key + ":new %s %d, orig %s %d\n",
   }
 
   }
+}
+
+private void add_problem(string column, int row, string desc)
+{
+       problems += ({ ({column, row, desc}) });
+       werror(desc);
 }
 
 void set_size(int size)

@@ -61,11 +61,22 @@ werror ("line should be %d units.\n",lineunits);
   
   foreach(m->get_ligatures();; object lig)
   {
-     ligatures += ({lig->activator});	
+     ligatures += ({ ({lig->style, lig->activator}) });	
   }
 
-  ligature_replacements_from = ligatures + map(ligatures, lambda(string a){return "<A" + a + ">";});
+  foreach(ligatures;;array lig)
+  {
+    if(!ligature_replacements_to[lig[0]])
+      ligature_replacements_to[lig[0]] = ({});
+    if(!ligature_replacements_from[lig[0]])
+      ligature_replacements_from[lig[0]] = ({});
+    ligature_replacements_from[lig[0]] += ({ lig[1], "<A" + lig[1] + ">" });
+    ligature_replacements_to[lig[0]] += (({ "<A" + lig[1] + ">" }) * 2 ); 
+  }
+/*
+  ligature_replacements_from = ligatures + map(ligatures, lambda(array a){return "<A" + a[1] + ">";});
   ligature_replacements_to = map(ligatures, lambda(string a){return "<A" + a + ">";}) * 2;
+*/
 
 #if constant(Public.Tools.Language.Hyphenate)
   // TODO: make this selectable.
@@ -124,8 +135,13 @@ mixed i_parse_data(object parser, string data, mapping extra)
 	// possible situations where that might happen include ending the job with a ligature
 	// where this callback wouldn't be called.
 
+    string mod = "R";
+    if(isitalics) mod = "I";
+    else if (issmallcaps) mod = "S";
+    else if (isbold) mod = "B";
+
     string xdata = replace(data, ({"\r", "\t"}), ({" ", " "}));
-    string dts = replace(xdata, ligature_replacements_from, ligature_replacements_to );
+    string dts = replace(xdata, ligature_replacements_from[mod], ligature_replacements_to[mod] );
 
 	if(dts !=  xdata) return dts;
 
@@ -163,7 +179,7 @@ int process_setting_buffer(int|void exact)
 	       continue;
 	  	 else
   	       lastjs = i;
-//	werror(" %O", data_to_set[i]);
+	//werror(" %O", data_to_set[i]);
 	   current_line->add(data_to_set[i], create_modifier(), space_adjust);
 	
 	   if(current_line->is_overset()) // back up to before the last space.

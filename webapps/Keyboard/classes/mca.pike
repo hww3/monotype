@@ -228,7 +228,7 @@ werror("args:%O, %O\n", getcwd(),combine_path(app->config["locations"]["matcases
   view->add("mca", mca);
   view->add("rows", r);   
   view->add("cols", c);
-
+  view->add("problems", mca->problems);
   // generate "elements not in matcase" data
   mapping not_in_matcase = copy_value(case_contents);
  

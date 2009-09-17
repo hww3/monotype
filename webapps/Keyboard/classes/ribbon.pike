@@ -2,7 +2,7 @@ import Fins;
 
 inherit DocController;
 
-int __quiet = 1;
+//int __quiet = 1;
 
 public void index(Request id, Response response, Template.View v, mixed ... args)
 {
@@ -46,7 +46,9 @@ public void do_generate(Request id, Response response, Template.View v, mixed ..
 		"stopbar": app->load_wedge(id->variables->wedge),
 		"matcase": app->load_matcase(id->variables->mca),
 		"jobname": id->variables->jobname,
-		"dict_dir": combine_path(app->config->app_dir, "config")
+		"dict_dir": combine_path(app->config->app_dir, "config"),
+		"min_little": (int)(id->variables->min_just/"/")[1], 
+		"min_big": (int)(id->variables->min_just/"/")[1]
 		]);
 		
 		string data = id->variables["input-file"];
@@ -65,7 +67,7 @@ public void do_generate(Request id, Response response, Template.View v, mixed ..
 public void do_validate(Request id, Response response, Template.View v, mixed ... args)
 {
 	
-//	werror("%O\n", id->variables);
+	werror("%O\n", id->variables);
 	int job_id = random(9999999);
 	id->misc->session_variables["job_" + job_id] = id->variables;
 	
@@ -76,7 +78,9 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 		"stopbar": app->load_wedge(id->variables->wedge),
 		"matcase": app->load_matcase(id->variables->mca),
 		"jobname": id->variables->jobname,
-		"dict_dir": combine_path(app->config->app_dir, "config")
+		"dict_dir": combine_path(app->config->app_dir, "config"),
+		"min_little": (int)(id->variables->min_just/"/")[1], 
+		"min_big": (int)(id->variables->min_just/"/")[0]
 		]);
 		
 		string data;

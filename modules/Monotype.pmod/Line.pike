@@ -11,7 +11,11 @@ import Monotype;
 	int big;
 	int little; 
 	int spaces; 
-	
+
+	int min_space_units;
+	int min_little;
+	int min_big;	
+
 	// set to true if the line has been broken using hyphenation.
 	int is_broken;
 	
@@ -36,9 +40,12 @@ import Monotype;
 	{
 		m = _m;
 		s = _s;
+		min_little = config->min_little||1;
+		min_big = config->min_big||1;
 		
 		setwidth = config->setwidth;
 		lineunits = config->lineunits;		
+		min_space_units = m->elements["JS"]->get_set_width() - 2;
 	}
 	
 	// remove a sort from the line; recalculate the justification
@@ -49,7 +56,7 @@ import Monotype;
 	   if(elements[-1]->is_real_js)
 	   {
 		 linespaces--;
-	     linelength -= (elements[-1]->matrix->get_set_width() -2);
+	     linelength -= (min_space_units);
 	   }
 	   else
 	     linelength -= elements[-1]->get_set_width();
@@ -88,7 +95,7 @@ import Monotype;
 
 	array low_calculate_justification(float justspace)
 	{
-	  justspace = justspace + ((m->elements["JS"]->get_set_width()-2)-m->elements["JS"]->get_set_width());
+	  justspace = justspace + ((min_space_units)-m->elements["JS"]->get_set_width());
 	  justspace *= (setwidth * 1.537);	
 
 	  int w = ((int)round(justspace)) + 53; // 53 increments of the 0.0005 is equivalent to 3/8.
@@ -131,7 +138,7 @@ import Monotype;
 //		    displayline += ({" " });
 		    elements += ({RealJS(js)});		
 		}
-	    linelength += (js->get_set_width() - 2);
+	    linelength += (min_space_units);
 	    linespaces ++;
 		return;
 	  }
@@ -177,7 +184,9 @@ import Monotype;
 
 	int is_overset()
 	{
-		return (linelength > lineunits);
+		calculate_justification();
+//werror("min_big: %d min_little: %d big: %d little: %d\n", min_big, min_little, big, little);
+		return (linelength > lineunits) || (linespaces && ((big*15)+little)<((min_big*15)+min_little) );
 	}
 
 	int can_justify()
