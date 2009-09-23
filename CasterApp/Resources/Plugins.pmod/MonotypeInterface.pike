@@ -163,12 +163,14 @@ static void create(object driver, mapping config)
   pincodes = mkmapping(codes, pinmap);
 
   iow = Public.IO.IOWarrior.IOWarrior();
+
   iow->count_interfaces();
 
   // shut everything off initially.
   iow->write_interface(0, sprintf("%04c", 0));
   
   iow->set_report_callback(report_callback, 0);
+
   Public.ObjectiveC.add_backend_runloop();
 }
 

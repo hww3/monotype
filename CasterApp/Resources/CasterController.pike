@@ -22,9 +22,48 @@ object LineLength;
 object Thermometer;
 object Status;
 
+object cA;
+object cB;
+object cC;
+object cD;
+object cE;
+object cF;
+object cG;
+object cH;
+object cI;
+object cJ;
+object cK;
+object cL;
+object cM;
+object cN;
+
+object cS;
+object c0005;
+object c0075;
+
+object c1;
+object c2;
+object c3;
+object c4;
+object c5;
+object c6;
+object c7;
+object c8;
+object c9;
+object c10;
+object c11;
+object c12;
+object c13;
+object c14;
+
 mapping jobinfo;
 
 object app;
+
+array buttonstotouch = 
+	({"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N",
+		"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", 
+		"S", "0005", "0075"});
 
 static void create()
 {
@@ -57,6 +96,7 @@ void loadJob_(object a)
   if(sizeof(files))
     foreach(files;;mixed file)
     {
+	werror("fILE:%O\n",(string)( file->__objc_classname));
       jobinfo = Driver->loadRibbon((string)file);
       set_job_info();
     }
@@ -99,12 +139,22 @@ void allOn_(object b)
 {
 	werror("allOn_(%s)\n", (string)
 	b->title());
+	werror("allOff_(%s)\n", (string)b->title());
+	foreach(buttonstotouch;; string b)
+	{
+	  this["c" + b]->setState_(1);
+	}
+	Driver->allOn();
 }
 
 void allOff_(object b)
 {
 	werror("allOff_(%s)\n", (string)b->title());
-	
+	foreach(buttonstotouch;; string b)
+	{
+	  this["c" + b]->setState_(0);
+	}
+	Driver->allOff();
 }
 
 void checkClicked_(object b)
@@ -118,23 +168,30 @@ void checkClicked_(object b)
   	  Driver->disablePin(b);
 	
 }
+object pcmi;
+int was_caster_enabled;
 
 void showPinControl_(object i)
 {
 	werror("showPinControl_(%s)\n", (string)(i->title()));
 	PinControlWindow->setDelegate_(this);
-	if(!PinControlWindow->isVisible())
+//	if(!PinControlWindow->isVisible())
 		PinControlWindow->makeKeyAndOrderFront_(i);
-	i->setEnabled_(0);
+	pcmi = i;
+	pcmi->setEnabled_(0);
 	app->mainMenu()->update();
+	was_caster_enabled = CasterToggleButton->isEnabled();
+	CasterToggleButton->setEnabled_(0);
 	Driver->enableManualControl();
 }
+
 
 void windowWillClose_(object n)
 {
 	werror("windowWillClose_()");
-	PinControlItem->setEnabled_(1);
+	pcmi->setEnabled_(1);
 	app->mainMenu()->update();
 	
 	Driver->disableManualControl();
+	CasterToggleButton->setEnabled_(was_caster_enabled);
 }

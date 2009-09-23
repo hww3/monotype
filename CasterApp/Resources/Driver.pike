@@ -122,15 +122,15 @@ import Public.ObjectiveC;
   	  plugin = ((program)"Plugins.pmod/MonotypeInterface")(this, config);
     };
 
-    if(e)
+    if(1||e)
     {
-	/*
+	
 	  object a = Cocoa.NSAlert()->init();
 	  a->addButtonWithTitle_("OK");
 	  a->setMessageText_("No Monotype interface found, using Simulator.");
 	  a->runModal();
-*/
-	  AppKit()->NSRunAlertPanel("Interface not present", "No Monotype interface found, using simulator.", "OK", "", "");
+
+//  AppKit()->NSRunAlertPanel("Interface not present", "No Monotype interface found, using simulator.", "OK", "", "");
 	
 	  plugin = ((program)"Plugins.pmod/Simulator")(this, config);
     }
