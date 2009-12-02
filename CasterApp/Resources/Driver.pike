@@ -1,5 +1,9 @@
 import Public.ObjectiveC;
 
+  constant all_codes = ({"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N",
+                         "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14",
+                         "S", "0005", "0075"});
+
   object plugin;
   object ribbon;
   object ui;
@@ -7,69 +11,84 @@ import Public.ObjectiveC;
 
   int wasStarted;
 
+  int inManualControl = 0;
+  array(string) manualCode = ({});
+
   void enableManualControl()
   {
-	  allOff();
-      wasStarted = plugin->started;	  
-      plugin->stop();
+    allOff();
+    wasStarted = plugin->started;	  
+    int inManualControl = 1;
+    plugin->start();
   }
 
   void disableManualControl()
   {
-	  allOff();
-	  if(wasStarted)
-	    plugin->start();
-
+    allOff();
+    if(!wasStarted)
+      plugin->stop();
+    int inManualControl = 0;
   }
 
   void allOn()
   {
-	if(plugin->allOn)
-		plugin->allOn();	
+    manualCode = copy_value(all_codes);
   }
   
   void allOff()
   {
-	if(plugin->allOff)
-		plugin->allOff();
+    manualCode = ({});
   }
 
   void enablePin(string pin)
   {
-    if(plugin->enablePin)
-	  plugin->enablePin(pin);
+    manualCode = Array.uniq(manualCode + ({pin}));
   }
 
   void disablePin(string pin)
   {
-    if(plugin->disablePin)
-	  plugin->disablePin(pin);
+    manualCode -= ({pin});
   }
  
   array getNextCode()
   {
-    return ribbon->get_next_code(); 
+    if(inManualControl) 
+      return manualCode;
+    else
+      return ribbon->get_next_code(); 
   }
 
   void stop()
   {
+    if(inManualControl)
+      return;
+
     plugin->stop();		
   }
 
   void start()
   {
-	plugin->start();
+    if(inManualControl)
+      return;
+
+    plugin->start();
   }
 
   void forwardLine()
   {
-	ribbon->skip_to_line_end();
+    if(inManualControl)
+      return;
+
+    ribbon->skip_to_line_end();
   }
 
   void backwardLine()
   {
-	ribbon->skip_to_line_beginning();
-	processedCode();
+    if(inManualControl)
+      return;
+
+    ribbon->skip_to_line_beginning();
+    processedCode();
   }
 
   void codesEnded()
@@ -79,8 +98,11 @@ import Public.ObjectiveC;
   
   void rewindRibbon()
   {
-	ribbon->rewind(-1);
-	processedCode();
+    if(inManualControl)
+      return;
+ 
+    ribbon->rewind(-1);
+    processedCode();
   }
   
   int currentPos()
@@ -104,6 +126,7 @@ import Public.ObjectiveC;
 
   void processedCode()
   {
+    if(!inManualControl)
 	ui->Thermometer->setDoubleValue_(((float)ribbon->current_pos/jobinfo->code_count)*100);
   }
 
@@ -122,7 +145,7 @@ import Public.ObjectiveC;
   	  plugin = ((program)"Plugins.pmod/MonotypeInterface")(this, config);
     };
 
-    if(1||e)
+    if(e)
     {
 	
 	  object a = Cocoa.NSAlert()->init();
