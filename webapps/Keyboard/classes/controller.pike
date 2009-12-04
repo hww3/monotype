@@ -1,5 +1,5 @@
 
-inherit Fins.FinsController;
+inherit Fins.DocController;
 
 object mca;
 object wedge;
@@ -24,7 +24,4 @@ void start()
 
 void index(object id, object response, mixed ... args)
 {
-  object v = view->get_view("index");
-
-  response->set_view(v);
 }

@@ -10,6 +10,7 @@
 
 </head>
 <body class="tundra">
+<h2>Monotype Mat Case Arrangement Editor</h2>
 
 <% yield(); %>
 

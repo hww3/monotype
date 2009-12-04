@@ -7,6 +7,10 @@ Select a Wedge to edit:
 
 <p>
 
-<%#action_link "action": "new"%>New Wedge</a>
+<ul>
+<li><%#action_link "action": "new"%>New Wedge</a>
+</ul>
 <p>
-<%#action_link "controller": "/" %>Main Menu</a>
+<ul>
+<li><%#action_link "controller": "/" %>Main Menu</a>
+</ul>

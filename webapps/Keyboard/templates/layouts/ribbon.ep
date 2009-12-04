@@ -10,6 +10,7 @@
 
 </head>
 <body class="tundra">
+<h2>Monotype Ribbon Generator</h2>
 
 <% yield(); %>
 
