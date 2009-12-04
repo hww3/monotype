@@ -2,6 +2,11 @@ import Fins;
 
 inherit DocController;
 
+void start()
+{
+  before_filter(app->admin_user_filter);
+}
+
 //int __quiet = 1;
 
 public void index(Request id, Response response, Template.View v, mixed ... args)

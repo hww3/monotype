@@ -4,6 +4,12 @@ inherit DocController;
 
 int __quiet = 1;
 
+void start()
+{
+  before_filter(app->admin_user_filter);
+}
+
+
 public void index(Request id, Response response, Template.View view, mixed args)
 {
   array m = app->get_wedges();

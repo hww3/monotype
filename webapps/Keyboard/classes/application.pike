@@ -39,3 +39,17 @@ array get_wedges()
 {
 	return map(glob("*.xml", get_dir(config["locations"]["wedges"]) || ({})), lambda(string s){return (s/".xml")[0];});
 }
+
+
+int admin_user_filter(Fins.Request id, Fins.Response response, mixed ... args)
+{
+   if(!id->misc->session_variables->user)
+   {
+      response->flash("msg", "You must login to perform this action.");
+      response->redirect(controller->auth->login, 0, ([ "return_to": id->not_query ]));
+      return 0;
+   }
+
+   return 1;
+}
+
