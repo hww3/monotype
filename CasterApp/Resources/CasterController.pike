@@ -150,9 +150,9 @@ void allOn_(object b)
 void allOff_(object b)
 {
 	werror("allOff_(%s)\n", (string)b->title());
-	foreach(buttonstotouch;; string b)
+	foreach(buttonstotouch;; string but)
 	{
-	  this["c" + b]->setState_(0);
+	  this["c" + but]->setState_(0);
 	}
 	Driver->allOff();
 }
@@ -163,9 +163,9 @@ void checkClicked_(object b)
 	werror("checkClicked_(%s, %d)\n", pin, b->state());
 	
 	if(b->state())
-	  Driver->enablePin(b);
+	  Driver->enablePin(b, pin);
 	else
-  	  Driver->disablePin(b);
+  	  Driver->disablePin(b, pin);
 	
 }
 object pcmi;
@@ -182,6 +182,7 @@ void showPinControl_(object i)
 	app->mainMenu()->update();
 	was_caster_enabled = CasterToggleButton->isEnabled();
 	CasterToggleButton->setEnabled_(0);
+	allOff_(i);
 	Driver->enableManualControl();
 }
 

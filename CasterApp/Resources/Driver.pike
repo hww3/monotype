@@ -16,9 +16,10 @@ import Public.ObjectiveC;
 
   void enableManualControl()
   {
+werror("**\n** manual control enabled.\n**\n");
     allOff();
     wasStarted = plugin->started;	  
-    int inManualControl = 1;
+    inManualControl = 1;
     plugin->start();
   }
 
@@ -40,8 +41,10 @@ import Public.ObjectiveC;
     manualCode = ({});
   }
 
-  void enablePin(string pin)
+  void enablePin(object control, string pin)
   {
+werror("enablePin(%O)\n", pin);
+
     manualCode = Array.uniq(manualCode + ({pin}));
   }
 
@@ -54,8 +57,10 @@ import Public.ObjectiveC;
   {
     if(inManualControl) 
       return manualCode;
-    else
+    else if(ribbon)
       return ribbon->get_next_code(); 
+	else
+	  throw(Error.Generic("No ribbon and not in manual control!\n"));
   }
 
   void stop()

@@ -112,6 +112,8 @@ void value_changed(int nv)
 //	write("on: %O\n", started); 
 	if(started)
 	  start_code();
+	else
+	  end_code();
   }
   else
   { 
@@ -125,6 +127,8 @@ void value_changed(int nv)
 void start_code()
 {
   array code_str = driver->getNextCode();
+
+werror("***\n*** code: %O\n***\n", code_str);
 
   if(!code_str)
   {
