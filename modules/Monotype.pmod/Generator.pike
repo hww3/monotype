@@ -193,6 +193,7 @@ int process_setting_buffer(int|void exact)
 			object x = current_line->remove();
 //			 werror("removing a character: %O, %O \n", x?(x->activator?x->activator:"JS"):"", ((x && x->get_set_width)?x->get_set_width():0));
 		  }
+	    werror("removed word, justification is %d/%d", current_line->big, current_line->little);
 		  if(exact) return 1;
 		  if(line_mode)
 		  {
