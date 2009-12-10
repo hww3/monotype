@@ -445,6 +445,7 @@ void low_quad_out(int amount, int|void atbeginning)
 	//  werror("to quad out %d, we need the following: %O\n", total, toadd);  
 	  foreach(toadd;;int i)
 	  {
+	werror("adding %d\n", i);
 	    current_line->add("SPACE_" + i, 0, 0, atbeginning);	
 		if(current_line->is_overset())
 		{
