@@ -1,0 +1,14 @@
+<html>
+<head>
+<style type="text/css">
+    @import "/dojo/dijit/themes/tundra/tundra.css";
+    @import "/dojo/dojo/resources/dojo.css"
+</style>
+</head>
+<body class="tundra">
+<h2>Monotype Wedge Editor</h2>
+
+<% yield(); %>
+
+</body>
+</html>
