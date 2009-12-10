@@ -178,6 +178,7 @@ import Monotype;
 	  calculate_justification();
 //	  if(interactive)
 //	    werror("%s %d %s %s\n", displayline * "", lineunits-linelength, can_justify()?("* "+ big + " " + little):"", is_overset()?(" OVERSET "):"");
+
 	}
 
 

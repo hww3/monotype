@@ -446,6 +446,11 @@ void low_quad_out(int amount, int|void atbeginning)
 	  foreach(toadd;;int i)
 	  {
 	    current_line->add("SPACE_" + i, 0, 0, atbeginning);	
+		if(current_line->is_overset())
+		{
+			current_line->remove();
+			break;
+		}
 	  }
 }
 
