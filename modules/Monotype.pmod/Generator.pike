@@ -216,6 +216,7 @@ int process_setting_buffer(int|void exact)
 				werror("attempting to hyphenate word %O from %O to %O\n", word, i, bs);
 				array wp = hyphenate_word(word);
 				werror("word parts are %O\n", wp * ", ");
+				
 				if(sizeof(wp)>1)
 				{
 					array new_data_to_set = data_to_set;
@@ -451,7 +452,37 @@ void low_quad_out(int amount, int|void atbeginning)
 		if(current_line->is_overset())
 		{
 			current_line->remove();
-			break;
+			if(current->line->can_justify())
+				break;
+			else
+			{
+				werror("what's smaller than %d?\n", i);
+				array whats_left = ({});
+				// generate an array of available spaces smaller than the one that didn't fit.
+				foreach(m->spaces; mixed u ;)
+				{
+				   if(u < i)
+						whatsleft += ({u});
+				}
+				u = reverse(sort(u));
+				
+				// ok, the plan is to take each space, starting with the biggest and try to add as many
+				// of each as possible without going over.
+				foreach(u;;int toadd)
+				{   
+				  int cj;
+				
+					do
+					{
+			    		current_line->add("SPACE_" + toadd, 0, 0, atbeginning);	
+						cj = current_line->can_justify();
+					}
+					while(!cj && !current_line->is_overset());
+					
+					if(current_line->is_overset())
+						current_line->remove();
+				}
+			}
 		}
 	  }
 }
