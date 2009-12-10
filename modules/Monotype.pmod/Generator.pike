@@ -63,7 +63,7 @@ werror ("line should be %d units.\n",lineunits);
   
   foreach(m->get_ligatures();; object lig)
   {
-     ligatures += ({ ({lig->style, lig->activator}) });	
+     ligatures += ({ ({lig->style||"R", lig->activator}) });	
   }
 
   foreach(ligatures;;array lig)
