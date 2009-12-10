@@ -42,9 +42,13 @@ public void do_generate(Request id, Response response, Template.View v, mixed ..
     // the job settings are stored in a mapping stored in the session object when we validate the file.
     // we can then retrieve them in the next step, here.
 	id->variables = id->misc->session_variables["job_" + id->variables->job_id];
+werror("job_id is %d\n", (int)id->variables->job_id);
 	m_delete(id->misc->session_variables, "job_" + id->variables->job_id);
 
 	mapping settings = ([
+		"spacing_justification": (int)id->variables->justification,
+		"spacing_unitadding": (int)id->variables->unitadding,
+		"spacing_unitshift": (int)id->variables->unitshift,
 		"mould": (int)id->variables->points,
 		"setwidth": (float)id->variables->set,
 		"linelengthp": (float)id->variables->linelength,
@@ -56,9 +60,9 @@ public void do_generate(Request id, Response response, Template.View v, mixed ..
 		"min_big": (int)(id->variables->min_just/"/")[1]
 		]);
 		
-		settings += mkmapping(id->variables->spacing, allocate(sizeof(id->variables->spacing), 1);
-		
-		string data = id->variables["input-file"];
+		string data;
+		if(id->variables->input_type=="file") data = id->variables["input-file"];
+		else data = id->variables->input_text;
 		// = "Now is the time for all good men to come to the aid of their country. Mary had a little lamb, its fleece was white as snow. Everywhere that mary went, the lamb was sure to go.<qo>";
 	
 	object g = Monotype.Generator(settings);
@@ -79,6 +83,9 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 	id->misc->session_variables["job_" + job_id] = id->variables;
 	
 	mapping settings = ([
+		"spacing_justification": (int)id->variables->justification,
+		"spacing_unitadding": (int)id->variables->unitadding,
+		"spacing_unitshift": (int)id->variables->unitshift,
 		"mould": (int)id->variables->points,
 		"setwidth": (float)id->variables->set,
 		"linelengthp": (float)id->variables->linelength,

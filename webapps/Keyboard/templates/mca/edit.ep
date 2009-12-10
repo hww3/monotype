@@ -311,7 +311,8 @@ Small Caps:
 <%}	%>
 <p>
 <div style="clear: left;">
-<% if( sizeof(data->problems) ) { %>
+
+<% if( data && data->problems && sizeof(data->problems) ) { %>
 <b>Problems:</b>
 <br>
 

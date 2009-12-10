@@ -14,5 +14,9 @@
 
 <% yield(); %>
 
+<ul>
+<li><%#action_link "controller": "/" %>Main Menu</a>
+</ul>
+
 </body>
 </html>

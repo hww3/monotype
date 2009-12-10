@@ -445,31 +445,31 @@ void low_quad_out(int amount, int|void atbeginning)
   	  toadd = simple_find_space(amount, m->spaces);
       toadd = sort(toadd);
 	//  calculate_justification();
-	//  werror("to quad out %d, we need the following: %O\n", total, toadd);  
+//	  werror("to quad out %d, we need the following: %O\n", amount, toadd);  
 	  foreach(toadd;;int i)
 	  {
-	werror("adding %d\n", i);
+//	werror("adding %d\n", i);
 	    current_line->add("SPACE_" + i, 0, 0, atbeginning);	
 		if(current_line->is_overset())
 		{
 			current_line->remove();
-			if(current->line->can_justify())
+			if(current_line->can_justify())
 				break;
 			else
 			{
 				werror("what's smaller than %d?\n", i);
-				array whats_left = ({});
+				array whatsleft = ({});
 				// generate an array of available spaces smaller than the one that didn't fit.
 				foreach(m->spaces; mixed u ;)
 				{
 				   if(u < i)
 						whatsleft += ({u});
 				}
-				u = reverse(sort(u));
+				whatsleft = reverse(sort(whatsleft));
 				
 				// ok, the plan is to take each space, starting with the biggest and try to add as many
 				// of each as possible without going over.
-				foreach(u;;int toadd)
+				foreach(whatsleft;;int toadd)
 				{   
 				  int cj;
 				

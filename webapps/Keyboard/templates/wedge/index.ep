@@ -1,16 +1,14 @@
 Select a Wedge to edit:
+<ul>
 <% foreach(data->wedges; int i; string wedge) { %>
 
   <li> <%#action_link "action": "edit", "args": wedge%><%=wedge %></a>
 
 <% } %>
-
+</ul>
 <p>
 
 <ul>
 <li><%#action_link "action": "new"%>New Wedge</a>
 </ul>
 <p>
-<ul>
-<li><%#action_link "controller": "/" %>Main Menu</a>
-</ul>

@@ -126,9 +126,9 @@ Line Length (picas)
   <input type="text" name="linelength" size="5" value="30"/> 
 <p>
 Width Adjustment Mechanisms<p>
-<input type="checkbox" name="spacing" value="unitadding"> Unit Adding <br/>
-<input type="checkbox" name="spacing" value="unitshift">Unit Shift <br/>
-<input type="checkbox" name="spacing" checked="1" value="justification"> Justification Wedges 
+<input type="checkbox" name="initadding" value="1"> Unit Adding <br/>
+<input type="checkbox" name="unitshift" value="1">Unit Shift <br/>
+<input type="checkbox" name="justification" checked="1" value="1"> Justification Wedges 
 <p>
 Minimum Justifying Space Size (3/8 is default)
 <select name="min_just">

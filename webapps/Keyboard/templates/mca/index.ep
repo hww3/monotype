@@ -1,11 +1,12 @@
 <div><font color="read"><i><%#flash%></i></font></div>
 Select a MCA to edit:
+<ul>
 <% foreach(data->mcas; int i; string mca) { %>
 
   <li> <%#action_link "action": "edit", "args": mca%><%=mca %></a> (<%#action_link "action" : "copy", "args": mca%>Copy</a>)
 
 <% } %>
-
+</ul>
 <p>
 
 <ul>
@@ -13,6 +14,4 @@ Select a MCA to edit:
 </ul>
 
 <p>
-<ul>
-<li><%#action_link "controller": "/" %>Main Menu</a>
-</ul>
+
