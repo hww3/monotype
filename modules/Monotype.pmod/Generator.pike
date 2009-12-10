@@ -584,7 +584,7 @@ string generate_ribbon()
 object new_line()
 {
   if(!current_line->linespaces && current_line->linelength != current_line->lineunits) throw(Error.Generic(sprintf("Off-length line: expected %d, got %d\n", current_line->lineunits, current_line->linelength)));
-  else if(current_line->linespaces && !current_line->can_justify()) throw(Error.Generic(sprintf("Bad Justification: %d %d\n", current_line->big, current_line->little)));
+  else if(current_line->linespaces && !current_line->can_justify()) throw(Error.Generic(sprintf("Bad Justification: %d %d >> %s\n", current_line->big, current_line->little, (string)current_line)));
   
   numline++;
   lines += ({current_line});

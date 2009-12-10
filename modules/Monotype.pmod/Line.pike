@@ -36,6 +36,19 @@ import Monotype;
 	
 	object m, s;
 	
+	mixed _cast(string t)
+	{
+	   if(t!="string") throw(Error.Generic("invalid cast type " + t + ".\n"));
+	
+		string s = "";
+		
+		foreach(elements;;mixed e)
+		{
+		  s += e->character;
+		}
+		return s;
+	}
+	
 	static void create(object _m, object _s, mapping config)
 	{
 		m = _m;
