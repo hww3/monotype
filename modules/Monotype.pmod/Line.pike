@@ -36,7 +36,7 @@ import Monotype;
 	
 	object m, s;
 	
-	mixed _cast(string t)
+	static mixed cast(string t)
 	{
 	   if(t!="string") throw(Error.Generic("invalid cast type " + t + ".\n"));
 	
