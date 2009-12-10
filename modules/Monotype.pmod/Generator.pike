@@ -68,6 +68,7 @@ werror ("line should be %d units.\n",lineunits);
 
   foreach(ligatures;;array lig)
   {
+	werror("lig:%O\n", lig);
     if(!ligature_replacements_to[lig[0]])
       ligature_replacements_to[lig[0]] = ({});
     if(!ligature_replacements_from[lig[0]])
