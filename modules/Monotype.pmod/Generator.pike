@@ -187,6 +187,7 @@ int process_setting_buffer(int|void exact)
 	
 	   if(current_line->is_overset()) // back up to before the last space.
 	   {
+	    werror("word didn't fit, justification is %d/%d", current_line->big, current_line->little);
 		  for(int j = i; j >= lastjs; j--)
 		  {
 			object x = current_line->remove();
