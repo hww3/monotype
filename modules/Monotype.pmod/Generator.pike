@@ -51,6 +51,8 @@ array data_to_set = ({});
 */
 void create(mapping settings)
 {	
+
+	werror("Monotype.Generator(%O)\n", settings);
   int lineunits = (int)(18 * (1/(settings->setwidth/12.0)) * settings->linelengthp);
 werror ("line should be %d units.\n",lineunits);
   m = settings->matcase;

@@ -56,6 +56,8 @@ public void do_generate(Request id, Response response, Template.View v, mixed ..
 		"min_big": (int)(id->variables->min_just/"/")[1]
 		]);
 		
+		settings += mkmapping(id->variables->spacing, allocate(sizeof(id->variables->spacing), 1);
+		
 		string data = id->variables["input-file"];
 		// = "Now is the time for all good men to come to the aid of their country. Mary had a little lamb, its fleece was white as snow. Everywhere that mary went, the lamb was sure to go.<qo>";
 	
