@@ -27,12 +27,16 @@ object load_wedge(string wedgename)
 
 int delete_wedge(string wedgename)
 {
+
+	werror("deleting " combine_path(getcwd(), config["locations"]["wedges"], wedgename) + "\n");
+
 	return rm(combine_path(getcwd(), config["locations"]["wedges"], wedgename));	
 }
 
 
 int delete_matcase(string matcase)
 {
+    werror("deleting " + combine_path(getcwd(), config["locations"]["matcases"], matcase));
 	return rm(combine_path(getcwd(), config["locations"]["matcases"], matcase));	
 }
 
