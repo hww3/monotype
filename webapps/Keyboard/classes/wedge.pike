@@ -103,7 +103,7 @@ public void delete(Request id, Response response, Template.View view, mixed args
   }
   else
   {
-    response->redirect(do_delete, args[0]);
+    response->redirect(do_delete, args);
   }
 }
 
