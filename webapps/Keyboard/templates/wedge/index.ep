@@ -1,3 +1,5 @@
+<div><font color="read"><i><%#flash%></i></font></div>
+
 Select a Wedge to edit:
 <ul>
 <% foreach(data->wedges; int i; string wedge) { %>
