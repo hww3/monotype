@@ -63,6 +63,51 @@ public void save(Request id, Response response, Template.View view, mixed args)
 	response->redirect(index);	
 }
 
+public void do_delete(Request id, Response response, Template.View view, mixed args)
+{
+  object wedge;
+
+  if(!sizeof(args))
+  {
+	response->set_data("You must provide a wedge to delete.");
+  }
+
+  wedge = app->load_wedge(args[0]);
+
+  if(!wedge)
+  {
+    response->flash("Wedge " + args[0] + " was not found.");
+    response->redirect(index);
+  }
+  else
+  {
+    response->flash("Wedge " + args[0] + " successfully deleted.");
+    app->delete_wedge(args[0]);
+    response->redirect(index);
+  }
+}
+
+public void delete(Request id, Response response, Template.View view, mixed args)
+{
+  object wedge;
+
+  if(!sizeof(args))
+  {
+	response->set_data("You must provide a wedge to delete.");
+  }
+  wedge = app->load_wedge(args[0]);
+  if(!wedge)
+  {
+    response->flash("Wedge " + args[0] + " was not found.");
+    response->redirect(index);
+  }
+  else
+  {
+    response->redirect(do_delete, args[0]);
+  }
+}
+
+
 public void edit(Request id, Response response, Template.View view, mixed args)
 {
   object wedge;

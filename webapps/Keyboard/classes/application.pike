@@ -25,6 +25,17 @@ object load_wedge(string wedgename)
 	return Monotype.load_stopbar(combine_path(getcwd(), config["locations"]["wedges"], wedgename));	
 }
 
+int delete_wedge(string wedgename)
+{
+	return rm(combine_path(getcwd(), config["locations"]["wedges"], wedgename));	
+}
+
+
+int delete_matcase(string matcase)
+{
+	return rm(combine_path(getcwd(), config["locations"]["matcases"], matcase));	
+}
+
 object load_matcase(string matcasename)
 {
 	return Monotype.load_matcase(combine_path(getcwd(), config["locations"]["matcases"], matcasename));

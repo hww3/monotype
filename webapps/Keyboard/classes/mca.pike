@@ -59,6 +59,53 @@ public void index(Request id, Response response, Template.View view, mixed args)
   view->add("mcas", m);
 }
 
+
+public void do_delete(Request id, Response response, Template.View view, mixed args)
+{
+  object mca;
+
+  if(!sizeof(args))
+  {
+	response->set_data("You must provide a matcase to delete.");
+  }
+
+  mca = app->load_matcase(args[0]);
+
+  if(!mca)
+  {
+    response->flash("MCA " + args[0] + " was not found.");
+    response->redirect(index);
+  }
+  else
+  {
+    response->flash("MCA " + args[0] + " successfully deleted.");
+    app->delete_matcase(args[0]);
+    response->redirect(index);
+  }
+}
+
+public void delete(Request id, Response response, Template.View view, mixed args)
+{
+  object mca;
+
+  if(!sizeof(args))
+  {
+	response->set_data("You must provide an MCA to delete.");
+  }
+
+  mca = app->load_matcase(args[0]);
+
+  if(!mca)
+  {
+    response->flash("MCA " + args[0] + " was not found.");
+    response->redirect(index);
+  }
+  else
+  {
+    response->redirect(do_delete, args[0]);
+  }
+}
+
 public void copy(Request id, Response response, Template.View view, mixed args)
 {
   Monotype.MatCaseLayout mca;
