@@ -197,8 +197,15 @@ public void setMat(Request id, Response response, Template.View view, mixed args
 
     string matxml = id->variables->matrix;
     string m2;
-    if (!(m2 = utf8_to_string(matxml)))
-      matxml = string_to_utf8(matxml);
+
+    mixed e = catch
+    {
+
+      m2 = utf8_to_string(matxml);
+    };
+
+    if(e || !m2)
+        matxml = string_to_utf8(matxml);
 
     object n = Public.Parser.XML2.parse_xml(matxml);
     object m = Monotype.Matrix(n);
