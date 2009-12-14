@@ -191,7 +191,16 @@ public void setMat(Request id, Response response, Template.View view, mixed args
   }
   else
   {
-    object n = Public.Parser.XML2.parse_xml(id->variables->matrix);
+
+// we might get the mat from the client as xml, or we might not. 
+// we try both approaches and hope the one we select is okay.
+
+    string matxml = id->variables->matrix;
+    string m2;
+    if (!(m2 = utf8_to_string(matxml)))
+      matxml = string_to_utf8(matxml);
+
+    object n = Public.Parser.XML2.parse_xml(matxml);
     object m = Monotype.Matrix(n);
     werror("n: %O", n);
     mca->set(id->variables->col, (int)id->variables->row, m);
@@ -217,8 +226,8 @@ public void getMat(Request id, Response response, Template.View view, mixed args
    mat = column[row];
   if(mat) resp = mat->dump();
   else resp = "";
-//werror("mat: %O\n", (string)resp);
-  response->set_data(resp);
+  // we try to encode the string as utf8.
+  response->set_data(string_to_utf8((string)resp));
 }
 
 public void replaceMat(Request id, Response response, Template.View view, mixed args)
