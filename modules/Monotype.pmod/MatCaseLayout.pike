@@ -93,7 +93,27 @@ void set(string column, int row, Matrix mat)
     string key =((mat->style && sizeof(mat->style) && mat->style!="R")?(mat->style+"|"):"") + mat->activator;
     if(elements[key]) 
     { 
-       add_problem(column, row, sprintf("Matcase contains duplicate mat: " + key + ":new %s %d, orig %s %d\n", 
+       string key2 = activator;
+       switch(mat->style)
+       {
+          case "I":
+            key2 = "Italic " + key2;
+            break;
+
+          case "S":
+            key2 = "SmallCap " + key2;
+            break;
+
+          case "B":
+            key2 = "Bold " + key2;
+            break;
+
+          default:
+            key2 = "Roman " + key2;
+            break;
+       }
+
+       add_problem(column, row, sprintf("Matcase contains duplicate mat: " + key2 + ":new %s %d, orig %s %d\n", 
 	    column, row, elements[key]->col_pos, elements[key]->row_pos));
     }
     elements[key] = mat;

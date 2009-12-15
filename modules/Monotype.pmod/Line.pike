@@ -58,6 +58,8 @@ import Monotype;
 		
 		setwidth = config->setwidth;
 		lineunits = config->lineunits;		
+		if(!m->elements["JS"])
+		  throw(Error.Generic("MCA " + m->name + " has no Justifying Space.\n"));
 		min_space_units = m->elements["JS"]->get_set_width() - 2;
 	}
 	
