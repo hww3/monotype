@@ -180,5 +180,5 @@ onclick="enableText();"> Text Input: <textarea
 name="input_text" rows="5 cols="80" id="input_text" 
 disabled="true"></textarea>
 <p>
-<input type="submit" value="Generate Ribbon"/>
+<input type="submit" value="Preview Ribbon"/>
 </form>
