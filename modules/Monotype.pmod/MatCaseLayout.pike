@@ -93,7 +93,7 @@ void set(string column, int row, Matrix mat)
     string key =((mat->style && sizeof(mat->style) && mat->style!="R")?(mat->style+"|"):"") + mat->activator;
     if(elements[key]) 
     { 
-       string key2 = activator;
+       string key2 = mat->activator;
        switch(mat->style)
        {
           case "I":

@@ -60,7 +60,8 @@ import Monotype;
 		lineunits = config->lineunits;		
 		if(!m->elements["JS"])
 		  throw(Error.Generic("MCA " + m->name + " has no Justifying Space.\n"));
-		min_space_units = m->elements["JS"]->get_set_width() - 2;
+		min_space_units = 4; // per page 15
+//		min_space_units = m->elements["JS"]->get_set_width() - 2;
 	}
 	
 	// remove a sort from the line; recalculate the justification
@@ -110,8 +111,14 @@ import Monotype;
 
 	array low_calculate_justification(float justspace)
 	{
-	  justspace = justspace + ((min_space_units)-m->elements["JS"]->get_set_width());
+
+//	  werror("units needed to justify: %f, minimum space units: %d\n", justspace, min_space_units);
+
+	  justspace = justspace + ((min_space_units)-6);
+//	  justspace = justspace + ((min_space_units)-m->elements["JS"]->get_set_width());
 	  justspace *= (setwidth * 1.537);	
+
+//	  werror("calculated justification increments: %f->%d\n", justspace, (int)round(justspace));
 
 	  int w = ((int)round(justspace)) + 53; // 53 increments of the 0.0005 is equivalent to 3/8.
 
@@ -201,8 +208,13 @@ import Monotype;
 	int is_overset()
 	{
 		calculate_justification();
+int overset = (linelength > lineunits) ;//|| (linespaces && ((big*15)+little)<((min_big*15)+min_little) );
+if(overset)
+{
+ werror("overset: units in line: %d, lineunits: %d, linespaces: %d, big: %d, little: %d\n", linelength, lineunits, linespaces, big, little);
+}
+ return overset;
 //werror("min_big: %d min_little: %d big: %d little: %d\n", min_big, min_little, big, little);
-		return (linelength > lineunits) || (linespaces && ((big*15)+little)<((min_big*15)+min_little) );
 	}
 
 	int can_justify()

@@ -49,7 +49,7 @@ array simple_find_space(int amount, mapping spaces)
 
 public int findSpace(int space, object set, object sol)
 {
-  //werror("findSpace(space=%O, set=%O, sol=%O)\n", space, set->vals, sol->vals);
+//  werror("findSpace(space=%O, set=%O, sol=%O)\n", space, set->vals, sol->vals);
   if(!sizeof(set->vals)) return 0;
 
   int largestItem = sizeof(set->vals)?set->vals[-1]:0;
@@ -58,6 +58,9 @@ public int findSpace(int space, object set, object sol)
   if(lastItem <= space)
   {
     int remainder = space % lastItem;
+    
+    // if the total space is evenly divisible by the largest fixed space available,
+    // use it to set the whole gap.
     if(remainder == 0)
     {
       int count = space / lastItem;
@@ -70,15 +73,23 @@ public int findSpace(int space, object set, object sol)
       return sol->vals;
     }
 
+    // if there are no available spaces left, stop
     if(sizeof(set->vals) < 1) return 0;
+
     int count = space / lastItem;
 //werror("sol->vals=(%O)\n", sol->vals);
     object solClone = box(copy_value(sol->vals));
+
+    // use the largest space available and fill as much of the needed space as possible.
     for(int j = 0; j < count; j++)
       solClone->vals += ({ lastItem });
+
     object setClone = box(copy_value(set->vals));
+
+    // remove the space size we just used from the possible spaces
     setClone->vals = setClone->vals - (({setClone->vals[-1]}));
 
+    // repeat
     if(!findSpace(remainder, setClone, solClone)) 
     {
       if(sizeof(setClone->vals) > 0) 

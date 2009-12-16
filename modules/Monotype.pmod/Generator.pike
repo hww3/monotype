@@ -438,21 +438,29 @@ void quad_out()
 void low_quad_out(int amount, int|void atbeginning)
 {
 	  array toadd = ({});
-
+werror("spaces in case: %O\n", m->spaces);
+werror("requested to add %d, on line already: %d\n", amount, current_line->linelength);
+int ix;
 	toadd = Monotype.findspace()->simple_find_space(amount, m->spaces);
-//	werror("spaces: %O, %O\n", amount, toadd);
-	if(!toadd)
+//	werror("jzfindspaces: %O, %O\n", amount, toadd);
+	if(!toadd || !sizeof(toadd))
+          toadd = Monotype.IterativeSpaceFinder()->findspaces(amount, m->spaces);
+//	werror("iterativespaces: %O, %O\n", amount, toadd);
+	if(!toadd || !sizeof(toadd))
   	  toadd = simple_find_space(amount, m->spaces);
       toadd = sort(toadd);
+	werror("spaces: %O, %O\n", amount, toadd);
 	//  calculate_justification();
 //	  werror("to quad out %d, we need the following: %O\n", amount, toadd);  
 	  foreach(toadd;;int i)
 	  {
-//	werror("adding %d\n", i);
+ix+=i;
+//	werror("adding %d, at %d\n", i, ix);
 	    current_line->add("SPACE_" + i, 0, 0, atbeginning);	
 		if(current_line->is_overset())
 		{
-			current_line->remove();
+werror("overset. added %d, at %d\n", current_line->linelength, ix);
+			current_line->remove();ix-=i;
 			if(current_line->can_justify())
 				break;
 			else
@@ -475,17 +483,23 @@ void low_quad_out(int amount, int|void atbeginning)
 				
 					do
 					{
+ix+=toadd;
 			    		current_line->add("SPACE_" + toadd, 0, 0, atbeginning);	
 						cj = current_line->can_justify();
 					}
 					while(!cj && !current_line->is_overset());
 					
 					if(current_line->is_overset())
+{
+ix-=toadd;
 						current_line->remove();
+}
 				}
 			}
 		}
 	  }
+
+werror("asked to add %d units of space; added %d.\n", amount, ix);
 }
 
 // this an inferior quad-out mechanism. we currently favor
@@ -616,7 +630,7 @@ string generate_ribbon()
 // add the current line to the job, if it's justifyable.
 object new_line()
 {
-  if(!current_line->linespaces && current_line->linelength != current_line->lineunits) throw(Error.Generic(sprintf("Off-length line: expected %d, got %d\n", current_line->lineunits, current_line->linelength)));
+  if(!current_line->linespaces && current_line->linelength != current_line->lineunits) throw(Error.Generic(sprintf("Off-length line: expected %d, got %d - %s\n", current_line->lineunits, current_line->linelength, (string)current_line)));
   else if(current_line->linespaces && !current_line->can_justify()) throw(Error.Generic(sprintf("Bad Justification: %d %d >> %s\n", current_line->big, current_line->little, (string)current_line)));
   
   numline++;
