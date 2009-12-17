@@ -122,8 +122,14 @@ Point Size
   <option>24</option>
 </select>
 <p>
-Line Length (picas)
+Line Length (picas/ciceros)
   <input type="text" name="linelength" size="5" value="30"/> 
+<input type="radio" name="pointsystem" value="12.0" checked="1"/> UK-Anglo 
+Pica 
+&nbsp;
+<input type="radio" name="pointsystem" value="12.84"/> Cicero
+&nbsp;
+<input type="radio" name="pointsystem" value="12.8"/> Old English Pica
 <p>
 Width Adjustment Mechanisms<p>
 <input type="checkbox" name="initadding" value="1"> Unit Adding <br/>

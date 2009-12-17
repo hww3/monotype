@@ -53,7 +53,8 @@ void create(mapping settings)
 {	
 
 	werror("Monotype.Generator(%O)\n", settings);
-  int lineunits = (int)(18 * (1/(settings->setwidth/12.0)) * settings->linelengthp);
+  int lineunits = (int)(18 * (settings->pointsystem||12) * 
+			(1/settings->setwidth) * settings->linelengthp);
 werror ("line should be %d units.\n",lineunits);
   m = settings->matcase;
   s = settings->stopbar;
