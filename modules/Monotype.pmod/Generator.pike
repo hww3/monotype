@@ -599,12 +599,23 @@ string generate_ribbon()
             string row_pos = me->row_pos;
             string col_pos = me->col_pos;
 
-	        int wedgewidth = s->get(me->row_pos);
+	        int wedgewidth;
+	        if(me->row_pos == 16 && ! config->unit_shift)
+			{
+				throw(Error.Generic("Cannot use 16 row matcase without unit shift.\n"));
+			}
+			
+			// get the width of the requested row unless it's 16, which doesn't exist.
+			// in that case, get the width of row 15.
+	 		wedgewidth = s->get(me->row_pos!=16?me->row_pos:15);
 	
 	      //werror("want %d, wedge provides %d\n", mat->get_set_width(), wedgewidth);
-	      if(wedgewidth != me->get_set_width()) // we need to adjust the justification wedges
+	      if(me->row_pos == 16 || (wedgewidth != me->get_set_width())) // we need to adjust the justification wedges
 	      {
 	        int nf, nc;
+	
+	// TODO: we need to check to make sure we don't try to open the mould too wide.
+	
 		werror("needs adjustment: have %d, need %d!\n", wedgewidth, me->get_set_width());
 	        // first, we should calculate what difference we need, in units of set.
 	        int neededunits = me->get_set_width() - wedgewidth;
@@ -621,16 +632,16 @@ string generate_ribbon()
 			else if(config->unit_shift && me->row_pos > 1 && (s->get(me->row_pos - 1) == me->get_set_width()))
 			{
 			  row_pos = (me->row_pos - 1);
-			  if(col_pos == "D") col_pos = "E F";
-			  col_pos = "D " + col_pos;
+			  if(col_pos == "D") col_pos = "EF";
+			  col_pos = "D" + col_pos;
 			}
 			
 			// 3. unit adding + unit shift
 			else if(config->unit_adding && config->unit_shift && me->row_pos > 1 && (me->get_set_width() == (config->unit_adding + s->get(me->row_pos - 1))))
 			{
 			  row_pos = (me->row_pos - 1);
-			  if(col_pos == "D") col_pos = "E F";
-			  col_pos = "D " + col_pos;
+			  if(col_pos == "D") col_pos = "EF";
+			  col_pos = "D" + col_pos;
 
               buf+=sprintf("0075 ");			
 			}
@@ -659,7 +670,7 @@ string generate_ribbon()
 	      c = " ";
       
       werror(string_to_utf8(c));
-	  buf+=sprintf("%s %s [%s]\n", row_pos, col_pos, string_to_utf8(c));
+	  buf+=sprintf("%s %s [%s]\n", row_pos, (col_pos/"")*" ", string_to_utf8(c));
   }
  }
 }  

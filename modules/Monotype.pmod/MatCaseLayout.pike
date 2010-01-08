@@ -24,10 +24,10 @@ void create(int|void size)
 	case Monotype.MATCASE_15_15:
 	  break;
 	case Monotype.MATCASE_15_17:
-	  validcolumns += (<"NI", "NL" >);
+	  validcolumns = (<"NI", "NL" >) + validcolumns;
 	  break;
 	case Monotype.MATCASE_16_17:
-      validcolumns += (<"NI", "NL" >);
+      validcolumns = (<"NI", "NL" >) + validcolumns;
 	  maxrow = 16;
 	  break;
   }
