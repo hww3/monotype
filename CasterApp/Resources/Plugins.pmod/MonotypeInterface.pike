@@ -3,6 +3,7 @@ inherit "Plugin";
 object iow;
 object driver;
 
+
 int cv;
 int state;
 int started = 0;
@@ -35,8 +36,8 @@ array codes = ({
 	"2",
 	"3",
 	"4",
-	"5",
 	"6",
+	"5",
 	"7",
 	"8",
 	"9",
@@ -156,7 +157,7 @@ void end_code()
 void send_code_to_interface(array code_str)
 {
   int code = map_code_to_pins(code_str);
-//  werror("writing code %O\n", code); 
+  werror("writing code %032b\n", code); 
   iow->write_interface(0, sprintf("%04c", code));
 }
 

@@ -43,20 +43,25 @@ werror("**\n** manual control enabled.\n**\n");
 
   void enablePin(object control, string pin)
   {
-werror("enablePin(%O)\n", pin);
 
     manualCode = Array.uniq(manualCode + ({pin}));
+werror("enablePin(%O): manualCode is %s\n", pin, manualCode*"");
+
   }
 
-  void disablePin(string pin)
+  void disablePin(object control, string pin)
   {
+werror("disablePin(%O)\n", pin);
     manualCode -= ({pin});
   }
  
   array getNextCode()
   {
     if(inManualControl) 
+    {
+      werror("getNextCode(): manual code %s\n", manualCode*"");
       return manualCode;
+    }
     else if(ribbon)
       return ribbon->get_next_code(); 
 	else
