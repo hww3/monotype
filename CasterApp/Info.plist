@@ -7,7 +7,7 @@
 	<key>CFBundleExecutable</key>
 	<string>Caster</string>
 	<key>CFBundleGetInfoString</key>
-	<string>1.0, foo</string>
+	<string>0.9, foo</string>
 	<key>CFBundleIdentifier</key>
 	<string>org.welliver.Caster</string>
 	<key>CFBundlePackageType</key>
@@ -15,8 +15,10 @@
 	<key>CFBundleSignature</key>
 	<string>WvTx</string>
 	<key>NSMainNibFile</key>
-	<string>Caster</string>
+	<string>Caster.nib</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>CFBundleIconFile</key>
+	<string>Caster</string>
 </dict>
 </plist>
