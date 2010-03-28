@@ -94,7 +94,7 @@ void report_callback(mixed ... args)
   int nv;
 
   sscanf(args[0], "%04c", nv);
-//werror("callback: %O\n", nv);
+werror("callback: %O\n", nv);
   nv = nv & interesting_bits;
   if(nv != cv)
   {
@@ -110,7 +110,7 @@ void value_changed(int nv)
   if(nv&interesting_bits)
   {
 	state = 1;
-//	write("on: %O\n", started); 
+	write("on: %O\n", started); 
 	if(started)
 	  start_code();
 	else
@@ -119,7 +119,7 @@ void value_changed(int nv)
   else
   { 
 	state = 0;
-//	write("off\n");
+	write("off\n");
 	if(started)
   	  end_code();
   }
@@ -193,11 +193,13 @@ int map_code_to_pins(array codes)
 
 void start()
 {
+	werror("start()\n");
 	started = 1;
 }
 
 void stop()
 {
+	werror("stop()\n");
 	started = 0;
 }
 

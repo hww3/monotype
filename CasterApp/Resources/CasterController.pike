@@ -108,7 +108,7 @@ void loadJob_(object a)
 void toggleCaster_(mixed ... args)
 {
   int state = CasterToggleButton->state();
-
+werror("state: %O\n", state);
   LoadJobButton->setEnabled_(!state);
   SkipForwardButton->setEnabled_(state);
   SkipBackwardButton->setEnabled_(state);

@@ -25,10 +25,11 @@ werror("**\n** manual control enabled.\n**\n");
 
   void disableManualControl()
   {
+	werror("disableManualControl()\n");
     allOff();
     if(!wasStarted)
       plugin->stop();
-    int inManualControl = 0;
+    inManualControl = 0;
   }
 
   void allOn()
@@ -70,6 +71,8 @@ werror("disablePin(%O)\n", pin);
 
   void stop()
   {
+	
+	werror("Driver.stop()\n");
     if(inManualControl)
       return;
 
@@ -78,6 +81,7 @@ werror("disablePin(%O)\n", pin);
 
   void start()
   {
+	werror("Driver.start()\n");
     if(inManualControl)
       return;
 
@@ -157,13 +161,13 @@ werror("disablePin(%O)\n", pin);
 
     if(e)
     {
-	
+/*	
 	  object a = Cocoa.NSAlert()->init();
 	  a->addButtonWithTitle_("OK");
 	  a->setMessageText_("No Monotype interface found, using Simulator.");
 	  a->runModal();
-
-//  AppKit()->NSRunAlertPanel("Interface not present", "No Monotype interface found, using simulator.", "OK", "", "");
+*/
+  AppKit()->NSRunAlertPanel("Interface not present", "No Monotype interface found, using simulator.", "OK", "", "");
 	
 	  plugin = ((program)"Plugins.pmod/Simulator")(this, config);
     }
