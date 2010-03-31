@@ -46,9 +46,9 @@ werror("job_id is %d\n", (int)id->variables->job_id);
 	m_delete(id->misc->session_variables, "job_" + id->variables->job_id);
 
 	mapping settings = ([
-		"spacing_justification": (int)id->variables->justification,
-		"spacing_unitadding": (int)id->variables->unitadding,
-		"spacing_unitshift": (int)id->variables->unitshift,
+		"justification": (int)id->variables->justification,
+		"unit_adding": (int)id->variables->unitadding,
+		"unit_shift": (int)(id->variables->unitshift?id->variables->unitshift_units:0),
 		"mould": (int)id->variables->points,
 		"pointsystem": (float)id->variables->pointsystem,
 		"setwidth": (float)id->variables->set,
@@ -84,9 +84,9 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 	id->misc->session_variables["job_" + job_id] = id->variables;
 	
 	mapping settings = ([
-		"spacing_justification": (int)id->variables->justification,
-		"spacing_unitadding": (int)id->variables->unitadding,
-		"spacing_unitshift": (int)id->variables->unitshift,
+		"justification": (int)id->variables->justification,
+		"unit_adding": (int)id->variables->unitadding,
+		"unit_shift": (int)(id->variables->unitshift?id->variables->unitshift_units:0),
 		"mould": (int)id->variables->points,
 		"setwidth": (float)id->variables->set,
                 "pointsystem": (float)id->variables->pointsystem,

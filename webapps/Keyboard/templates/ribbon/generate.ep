@@ -132,7 +132,12 @@ Pica
 <input type="radio" name="pointsystem" value="12.8"/> Old English Pica
 <p>
 Width Adjustment Mechanisms<p>
-<input type="checkbox" name="initadding" value="1"> Unit Adding <br/>
+<input type="checkbox" name="unitadding" value="1"/> Unit Adding <select name="unitadding_units">
+<option>1
+<option>2
+<option>3
+</select> Units
+<br/>
 <input type="checkbox" name="unitshift" value="1">Unit Shift <br/>
 <input type="checkbox" name="justification" checked="1" value="1"> Justification Wedges 
 <p>
