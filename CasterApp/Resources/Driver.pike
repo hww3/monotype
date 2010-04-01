@@ -45,7 +45,7 @@ werror("**\n** manual control enabled.\n**\n");
   void enablePin(object control, string pin)
   {
 
-    manualCode = Array.uniq(manualCode + ({pin}));
+    manualCode = __builtin.uniq_array(manualCode + ({pin}));
 werror("enablePin(%O): manualCode is %s\n", pin, manualCode*"");
 
   }
