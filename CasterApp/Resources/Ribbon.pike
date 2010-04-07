@@ -53,7 +53,7 @@ void parse_header()
 		
 		if(s && sizeof(s))
 		{
-			array l = s / ":";
+			array l = array_sscanf(s, "%s: %s");
 			if(sizeof(l) != 2) throw(Error.Generic("Invalid header " + s + "\n"));
 			job_info[String.trim_whites(lower_case(l[0]))] = String.trim_whites(l[1]);
 		}
