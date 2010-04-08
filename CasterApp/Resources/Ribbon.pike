@@ -50,7 +50,8 @@ void parse_header()
 	do
 	{
 		s = file->gets();
-		
+		catch(s = String.trim_all_whites(s));
+
 		if(s && sizeof(s))
 		{
 			array l = array_sscanf(s, "%s: %s");
