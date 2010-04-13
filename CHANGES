@@ -1,6 +1,8 @@
 20100412
 - MCA editor displays mats with a width different than that supplied by the default wedge
   in yellow.
+- added hyphenation dictionaries for dutch and german.
+- added option to disable hyphenation completely.
 
 20100401
 - Enabled Unit Shift and Unit Adding

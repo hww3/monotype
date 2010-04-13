@@ -182,7 +182,7 @@ Minimum Justifying Space Size (3/8 is default)
 <option>3/10
 </select>
 <p>
-<input type="radio" name="hyphenate" checked="1"/> Enable Hyphenation for <select name="lang">
+<input type="checkbox" name="hyphenate" value="1" checked="1"/> Enable Hyphenation for <select name="lang">
 <option value="en_US">English (US)
 <option value="nl_NL">Dutch
 <option value="de_DE">German

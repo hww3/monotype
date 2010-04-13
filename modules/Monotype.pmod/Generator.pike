@@ -101,7 +101,10 @@ werror ("line should be %d units.\n",lineunits);
   string lang = "en";
   if(config->lang) lang = config->lang;
   if(config->hyphenate)
+  {
+    werror("loading hyphenator " + dicts[lang] + "\n");
     hyphenator = Public.Tools.Language.Hyphenate.Hyphenate(combine_path(config->dict_dir, dicts[lang]));
+  }
 #endif
 }
 
@@ -204,13 +207,13 @@ int process_setting_buffer(int|void exact)
 	
 	   if(current_line->is_overset()) // back up to before the last space.
 	   {
-	    werror("word didn't fit, justification is %d/%d", current_line->big, current_line->little);
+	    werror("word didn't fit, justification is %d/%d\n", current_line->big, current_line->little);
 		  for(int j = i; j >= lastjs; j--)
 		  {
 			object x = current_line->remove();
 //			 werror("removing a character: %O, %O \n", x?(x->activator?x->activator:"JS"):"", ((x && x->get_set_width)?x->get_set_width():0));
 		  }
-	    werror("removed word, justification is %d/%d", current_line->big, current_line->little);
+	    werror("removed word, justification is %d/%d\n", current_line->big, current_line->little);
 		  if(exact) return 1;
 		  if(line_mode)
 		  {
@@ -224,9 +227,11 @@ int process_setting_buffer(int|void exact)
 
 		  // TODO: we probably want to attempt hyphenation when as soon as a word won't fit, not just when we can't justify using a whole word.
 		  // if we can't justify, having removed the last word, see if hyphenating will help, regardless if we hyphenated the last line.		
+		werror("numline: %O, is_broken: %O, can_justify: %O\n", 
+                          numline,  1||lines[-1]->is_broken, current_line->can_justify());
 		  if(1 && numline && (!lines[-1]->is_broken || !current_line->can_justify())) 
 				  {	
-//			werror("trying to hyphenate, justification is %d.\n", current_line->can_justify());
+			werror("trying to hyphenate, justification is %d.\n", current_line->can_justify());
 			int bs = search(data_to_set, " ", i+1);
 			if(bs!=-1)
 			{
@@ -402,7 +407,8 @@ int process_setting_buffer(int|void exact)
 array hyphenate_word(string word)
 {
 #if constant(Public.Tools.Language.Hyphenate)
-  word = hyphenator->hyphenate(word);
+  if(hyphenator)
+    word = hyphenator->hyphenate(word);
 #endif /* have Public.Tools.Language.Hyphenate */
 	
 	array wp = word/"-";
@@ -582,8 +588,6 @@ string generate_ribbon()
 
           foreach(reverse(current_line->elements);; object me)
           {
-	        int needs_adjustment;
-	    
             if(me->is_real_js)
             {
               // if we've previously changed the justification wedges in order to
@@ -624,7 +628,7 @@ string generate_ribbon()
 	
 		werror("needs adjustment: have %d, need %d!\n", wedgewidth, me->get_set_width());
 	        // first, we should calculate what difference we need, in units of set.
-	        int neededunits = me->get_set_width() - wedgewidth;
+	        int needed_units = me->get_set_width() - wedgewidth;
 			 
 			// at this point, we'd select the appropriate mechanism for handling the difference
 			// presumably, we'd use the following techniques, were they available to us:
@@ -657,7 +661,7 @@ string generate_ribbon()
 	        // then, figure out what that adjustment is in terms of 0075 and 0005
 	        else
 	        {
-                [nc, nf] = current_line->calculate_wordspacing_code(neededunits);
+                [nc, nf] = current_line->calculate_wordspacing_code(needed_units);
 		        // if it's not what we have now, make the adjustment
 
  		        if(cf != nf || cc != nc)
