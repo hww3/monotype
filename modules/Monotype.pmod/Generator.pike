@@ -10,6 +10,8 @@ constant dicts = (["en_US": "hyph_en_US.dic",
 		   "nl_NL": "hyph_nl_NL.dic",
 		   "de_DE": "hyph_de_DE.dic",
 		   "de_CH": "hyph_de_CH.dic",
+                   "fr_FR": "hyph_fr_FR.dic",
+
 		]);
 
 object hyphenator;

@@ -2,3 +2,6 @@ syntax: glob
 
 webapps/Keyboard/lib
 webapps/Keyboard/dojo
+webapps/Keyboard/logs
+webapps/mca
+webapps/wedges

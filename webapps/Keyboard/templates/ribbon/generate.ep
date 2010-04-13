@@ -187,6 +187,7 @@ Minimum Justifying Space Size (3/8 is default)
 <option value="nl_NL">Dutch
 <option value="de_DE">German
 <option value="de_CH">German (Switzerland)
+<option value="fr_FR">French
 </select>
 <p>
 <input type="radio" name="input_type" value="file" checked="1" 

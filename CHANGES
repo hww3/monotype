@@ -1,3 +1,7 @@
+20100413
+- added French hyphenation dictionary
+- alter error message for "off-length line" to more accurately describe the problem
+
 20100412
 - MCA editor displays mats with a width different than that supplied by the default wedge
   in yellow.
