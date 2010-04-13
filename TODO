@@ -1,0 +1,4 @@
+- ribbon generator: add extra units to last line (trigger caster stop)
+- ribbon generator: add alignment characters to first line
+- caster controller: add override button to manual pin control
+
