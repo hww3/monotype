@@ -6,7 +6,11 @@ constant MODE_LEFT = 1;
 constant MODE_RIGHT = 2;
 constant MODE_CENTER = 3;
 
-constant dicts = (["en": "hyph_en_US.dic"]);
+constant dicts = (["en_US": "hyph_en_US.dic",
+		   "nl_NL": "hyph_nl_NL.dic",
+		   "de_DE": "hyph_de_DE.dic",
+		   "de_CH": "hyph_de_CH.dic",
+		]);
 
 object hyphenator;
 
@@ -95,7 +99,9 @@ werror ("line should be %d units.\n",lineunits);
 #if constant(Public.Tools.Language.Hyphenate)
   // TODO: make this selectable.
   string lang = "en";
-  hyphenator = Public.Tools.Language.Hyphenate.Hyphenate(combine_path(config->dict_dir, dicts[lang]));
+  if(config->lang) lang = config->lang;
+  if(config->hyphenate)
+    hyphenator = Public.Tools.Language.Hyphenate.Hyphenate(combine_path(config->dict_dir, dicts[lang]));
 #endif
 }
 

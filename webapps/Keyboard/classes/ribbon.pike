@@ -57,6 +57,8 @@ werror("job_id is %d\n", (int)id->variables->job_id);
 		"matcase": app->load_matcase(id->variables->mca),
 		"jobname": id->variables->jobname,
 		"dict_dir": combine_path(app->config->app_dir, "config"),
+                "lang": id->variables->lang,
+                "hyphenate": (int)id->variables->hyphenate,
 		"min_little": (int)(id->variables->min_just/"/")[1], 
 		"min_big": (int)(id->variables->min_just/"/")[1]
 		]);

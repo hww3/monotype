@@ -182,6 +182,13 @@ Minimum Justifying Space Size (3/8 is default)
 <option>3/10
 </select>
 <p>
+<input type="radio" name="hyphenate" checked="1"/> Enable Hyphenation for <select name="lang">
+<option value="en_US">English (US)
+<option value="nl_NL">Dutch
+<option value="de_DE">German
+<option value="de_CH">German (Switzerland)
+</select>
+<p>
 <input type="radio" name="input_type" value="file" checked="1" 
 onclick="enableFile();"> Input 
 File: <input type="file" name="input-file" id="input_file">

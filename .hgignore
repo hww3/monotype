@@ -1,0 +1,4 @@
+syntax: glob
+
+webapps/Keyboard/lib
+webapps/Keyboard/dojo
