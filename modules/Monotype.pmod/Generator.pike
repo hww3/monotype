@@ -683,7 +683,8 @@ string generate_ribbon()
 // add the current line to the job, if it's justifyable.
 object new_line()
 {
-  if(!current_line->linespaces && current_line->linelength != current_line->lineunits) throw(Error.Generic(sprintf("Off-length line: expected %d, got %d - %s\n", current_line->lineunits, current_line->linelength, (string)current_line)));
+  if(!current_line->linespaces && current_line->linelength != current_line->lineunits) 
+throw(Error.Generic(sprintf("Off-length line: need %d units to justify, line has %d units - %s\n", current_line->lineunits, current_line->linelength, (string)current_line)));
   else if(current_line->linespaces && !current_line->can_justify()) throw(Error.Generic(sprintf("Bad Justification: %d %d >> %s\n", current_line->big, current_line->little, (string)current_line)));
   
   numline++;

@@ -44,7 +44,10 @@ import Monotype;
 		
 		foreach(elements;;mixed e)
 		{
-		  s += e->character;
+                  if(e->character)
+  		    s += e->character;
+                  else
+                    s+= "_";
 		}
 		return s;
 	}
