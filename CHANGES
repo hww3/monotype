@@ -1,3 +1,10 @@
+20100412
+- MCA editor displays mats with a width different than that supplied by the default wedge
+  in yellow.
+
+20100401
+- Enabled Unit Shift and Unit Adding
+
 20090916
 - added ability to select minimum justification code (3/8 default)
 - added list of identified problems to MCA design view

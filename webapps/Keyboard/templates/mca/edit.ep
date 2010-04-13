@@ -302,7 +302,7 @@ Small Caps:
 		}
 %>
 
-<div class="cell" dojoType="dojo.dnd.Source" id='<%=v + cv%>' accept="R,I,B,S,U" onDropExternal="foo" onClick="openWidget(this, <%=v%>, '<%=cv%>', <%=u%>)" >
+<div class="cell" dojoType="dojo.dnd.Source" id='<%=v + cv%>' <%=st%> accept="R,I,B,S,U" onDropExternal="foo" onClick="openWidget(this, <%=v%>, '<%=cv%>', <%=u%>)" >
   <div class="dojoDndItem" id='<%=v + cv%>' ><%=ch%></div>
 </div>
 	<%}%>
