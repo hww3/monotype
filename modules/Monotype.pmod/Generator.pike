@@ -22,7 +22,7 @@ mapping config;
 
 int interactive = 0;
 
-int numline;
+int ln;
 
 array lines = ({});
 
@@ -422,7 +422,7 @@ Line make_new_line()
 	Line l;
 	
 	l = Line(m, s, config);
-	
+	l->line_number = ++ln;
 	return l;
 }
 
@@ -682,7 +682,7 @@ string generate_ribbon()
 	      c = " ";
       
       werror(string_to_utf8(c));
-	  buf+=sprintf("%s %s [%s]\n", row_pos, (col_pos/"")*" ", string_to_utf8(c));
+	  buf+=sprintf("%s %s [%s]\n", (string)row_pos, (col_pos/"")*" ", string_to_utf8(c));
   }
  }
 }  
@@ -697,9 +697,9 @@ object new_line()
 {
   if(!current_line->linespaces && current_line->linelength != current_line->lineunits) 
 throw(Error.Generic(sprintf("Off-length line with no justifying spaces: need %d units to justify, line has %d units - %s\n", current_line->lineunits, current_line->linelength, (string)current_line)));
-  else if(current_line->linespaces && !current_line->can_justify()) throw(Error.Generic(sprintf("Bad Justification: %d %d >> %s\n", current_line->big, current_line->little, (string)current_line)));
+  else if(current_line->linespaces && !current_line->can_justify()) 
+throw(Error.Generic(sprintf("Unable to justify line; justification code would be: %d/%d, text on line is %s\n", current_line->big, current_line->little, (string)current_line)));
   
-  numline++;
   lines += ({current_line});
   current_line = make_new_line();
 }

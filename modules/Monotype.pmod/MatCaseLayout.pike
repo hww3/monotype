@@ -127,7 +127,7 @@ void set(string column, int row, Matrix mat)
 
 private void add_problem(string column, int row, string desc)
 {
-       problems += ({ ({column, row, desc}) });
+       problems += ({ ({column, row, string_to_utf8(desc)}) });
        werror(desc);
 }
 

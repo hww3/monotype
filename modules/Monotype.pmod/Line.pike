@@ -12,6 +12,8 @@ import Monotype;
 	int little; 
 	int spaces; 
 
+        int line_number;
+
 	int min_space_units;
 	int min_little;
 	int min_big;	
@@ -151,7 +153,7 @@ import Monotype;
 	  {
 		object js = m->elements["JS"];
 	    // houston, we have a problem!
-	    if(!js) error("No Justifying Space!\n");
+	    if(!js) error("No Justifying Space in MCA!\n");
 
 		if(atbeginning)
 		{
@@ -184,7 +186,11 @@ import Monotype;
 
 	  mat = m->elements[code];
 
-	  if(!mat){ errors += ({("invalid activator " + string_to_utf8(activator) + "!\n")}); werror("invalid activator %O", activator);}
+	  if(!mat)
+          { 
+                errors += ({("Reqested activator [" + string_to_utf8(activator) + "] not in MCA.\n")}); 
+		werror("invalid activator %O", string_to_utf8(activator));
+          }
 	  else
 	  {	
 		if(atbeginning)
