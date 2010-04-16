@@ -1,3 +1,6 @@
+20100415
+- x/0 justifications should really be x-1/15.
+
 20100413
 - added French hyphenation dictionary
 - alter error message for "off-length line" to more accurately describe the problem

@@ -127,7 +127,12 @@ import Monotype;
 
 	  int w = ((int)round(justspace)) + 53; // 53 increments of the 0.0005 is equivalent to 3/8.
 
-	  return ({ w/15, w%15 });
+          int small,large;
+          large = w/15;
+          small = w%15;
+          if(small == 0) large--,small=15;
+        
+	  return ({ large, small });
 	}
 
 	// calculates the large (0.0075) and small (0.0005) justification settings
@@ -229,7 +234,7 @@ if(overset)
 	int can_justify()
 	{
 	//	werror("linespaces: %O big: %O little: %O\n", linespaces, big, little);
-	  	return(linespaces && (big < 15) && (little < 15));
+	  	return(linespaces && ((big <= 15) && (big > 0))  && ((little <= 15) && (little > 0)));
 	}
 	
 	class MatWrapper

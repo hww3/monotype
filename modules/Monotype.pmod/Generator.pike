@@ -22,7 +22,7 @@ mapping config;
 
 int interactive = 0;
 
-int ln;
+int numline;
 
 array lines = ({});
 
@@ -204,7 +204,7 @@ int process_setting_buffer(int|void exact)
 	       continue;
 	  	 else
   	       lastjs = i;
-	//werror(" %O", data_to_set[i]);
+//	werror(" %O", data_to_set[i]);
 	   current_line->add(data_to_set[i], create_modifier(), space_adjust);
 	
 	   if(current_line->is_overset()) // back up to before the last space.
@@ -393,9 +393,12 @@ int process_setting_buffer(int|void exact)
 		process_setting_buffer();
 		space_adjust = 0;
 	}
-	else if(Regexp.SimpleRegexp("<[A].*>")->match(data))
+	else if(Regexp.SimpleRegexp("<[Aa].*>")->match(data))
 	{
-		data_to_set+= ({(data[2..sizeof(data)-2])});
+                if(data[2..sizeof(data)-2] == "JS")
+                  data_to_set += ({ " " });
+                else
+   		  data_to_set+= ({(data[2..sizeof(data)-2])});
 /*		if(is_overset())
 		{
 			lineerrors+=({"Item (%d unit) won't fit on line... dropping.\n"});
@@ -422,7 +425,7 @@ Line make_new_line()
 	Line l;
 	
 	l = Line(m, s, config);
-	l->line_number = ++ln;
+	l->line_number = ++numline;
 	return l;
 }
 
