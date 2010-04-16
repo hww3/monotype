@@ -1,4 +1,9 @@
 - ribbon generator: add extra units to last line (trigger caster stop)
 - ribbon generator: add alignment characters to first line
-- caster controller: add override button to manual pin control
-
+- caster controller: add "force valves on" button to manual pin control
+- ribbon generator: display set text up to point of error when problem occurs.
+- ribbon generator: show sorts that have been adjusted for width during preview.
+- ribbon generator: automatically add justifying space when quadding out and no js is present.
+- mca editor: allow drag and drop within mca.
+- mca editor: allow available sorts display to be customized.
+- keyboard app: allow users to log in and have private arrangements/wedges.
