@@ -27,8 +27,8 @@ int numline;
 array lines = ({});
 
 array ligatures = ({});
-array ligature_replacements_from = ({});
-array ligature_replacements_to = ({});
+mapping ligature_replacements_from = ([]);
+mapping ligature_replacements_to = ([]);
 
 //! the matcase and stopbar objects
 object m;
@@ -98,8 +98,10 @@ werror ("line should be %d units.\n",lineunits);
   ligature_replacements_to = map(ligatures, lambda(string a){return "<A" + a + ">";}) * 2;
 */
 
+werror("ligs from:%O\n", ligature_replacements_from);
+werror("ligs to:%O\n", ligature_replacements_to);
+
 #if constant(Public.Tools.Language.Hyphenate)
-  // TODO: make this selectable.
   string lang = "en";
   if(config->lang) lang = config->lang;
   if(config->hyphenate)
