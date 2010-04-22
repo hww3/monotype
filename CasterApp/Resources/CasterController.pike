@@ -22,6 +22,8 @@ object LineLength;
 object Thermometer;
 object Status;
 
+object IgnoreCycleButton;
+
 object cA;
 object cB;
 object cC;
@@ -59,7 +61,7 @@ object c14;
 mapping jobinfo;
 
 object app;
-
+int icc;
 array buttonstotouch = 
 	({"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N",
 		"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", 
@@ -182,8 +184,23 @@ void showPinControl_(object i)
 	app->mainMenu()->update();
 	was_caster_enabled = CasterToggleButton->isEnabled();
 	CasterToggleButton->setEnabled_(0);
-	allOff_(i);
 	Driver->enableManualControl();
+	ignoreCycleClicked_(IgnoreCycleButton);
+	allOff_(i);
+}
+
+void ignoreCycleClicked_(object button)
+{
+	werror("***\n***\n***");
+	icc = button->state();
+	if(icc)
+	{
+		Driver->forceOn();
+	}
+	else
+	{
+		Driver->forceOff();
+	}
 }
 
 

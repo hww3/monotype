@@ -12,6 +12,8 @@ import Public.ObjectiveC;
   int wasStarted;
 
   int inManualControl = 0;
+  int forced = 0;
+
   array(string) manualCode = ({});
 
   void enableManualControl()
@@ -32,6 +34,17 @@ werror("**\n** manual control enabled.\n**\n");
     inManualControl = 0;
   }
 
+  void forceOn()
+  {
+	forced = 1;
+	plugin->do_start_code(getNextCode());
+  }
+
+  void forceOff()
+  {
+	forced = 0;
+  }
+
   void allOn()
   {
     manualCode = copy_value(all_codes);
@@ -46,6 +59,8 @@ werror("**\n** manual control enabled.\n**\n");
   {
 
     manualCode = __builtin.uniq_array(manualCode + ({pin}));
+    if(forced)
+       plugin->do_start_code(getNextCode());
 werror("enablePin(%O): manualCode is %s\n", pin, manualCode*"");
 
   }
@@ -54,6 +69,8 @@ werror("enablePin(%O): manualCode is %s\n", pin, manualCode*"");
   {
 werror("disablePin(%O)\n", pin);
     manualCode -= ({pin});
+    if(forced)
+       plugin->do_start_code(getNextCode());
   }
  
   array getNextCode()

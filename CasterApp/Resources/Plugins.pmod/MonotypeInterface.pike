@@ -111,6 +111,9 @@ void value_changed(int nv)
   {
 	state = 1;
 	write("on: %O\n", started); 
+
+	if(driver->forced) return;
+	
 	if(started)
 	  start_code();
 	else
@@ -140,6 +143,11 @@ werror("***\n*** code: %O\n***\n", code_str);
 	return;
   }
 
+  do_start_code(code_str);
+}
+
+void do_start_code(array code_str)
+{
   send_code_to_interface(code_str);
   
   driver->setStatus((code_str*"-"));

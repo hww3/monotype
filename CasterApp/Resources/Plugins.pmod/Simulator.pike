@@ -13,6 +13,11 @@ void stop()
 	remove_call_out(call_out_id);
 }
 
+void do_start_code(array code_str)
+{
+	
+}
+
 void process_code()
 {
 	array code = driver->getNextCode();
