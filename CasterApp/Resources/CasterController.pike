@@ -12,6 +12,8 @@ object CasterToggleButton;
 object LoadJobButton;
 object PinControlItem;
 object PinControlWindow;
+object JumpToLineWindow;
+object JumpToLineItem;
 
 object CurrentLine;
 
@@ -173,6 +175,7 @@ void checkClicked_(object b)
 	
 }
 object pcmi;
+object jlmi;
 int was_caster_enabled;
 
 void showPinControl_(object i)
@@ -191,6 +194,16 @@ void showPinControl_(object i)
 	allOff_(i);
 }
 
+void showJumpToLine_(object i)
+{
+	JumpToLineWindow->setDelegate_(this);
+	JumpToLineWindow->makeKeyAndOrderFront_(i);
+	
+	jlmi = i;
+	jlmi->setEnabled_(0);
+	app->mainMenu()->update();	
+}
+
 void ignoreCycleClicked_(object button)
 {
 	icc = button->state();
@@ -207,10 +220,20 @@ void ignoreCycleClicked_(object button)
 
 void windowWillClose_(object n)
 {
-	werror("windowWillClose_()");
-	pcmi->setEnabled_(1);
-	app->mainMenu()->update();
+	werror("\n\nn: %O\n\n", ((string)n->var_name));
 	
-	Driver->disableManualControl();
-	CasterToggleButton->setEnabled_(was_caster_enabled);
+	if(n->object == PinControlWindow)
+	{
+		werror("windowWillClose_()");
+		pcmi->setEnabled_(1);
+		app->mainMenu()->update();
+		
+		Driver->disableManualControl();
+		CasterToggleButton->setEnabled_(was_caster_enabled);
+	}
+	else if(n->object == JumpToLineWindow)
+	{
+		jlmi->setEnabled_(1);
+		app->mainMenu()->update();
+	}
 }
