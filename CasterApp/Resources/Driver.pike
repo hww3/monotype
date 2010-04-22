@@ -43,6 +43,7 @@ werror("**\n** manual control enabled.\n**\n");
   void forceOff()
   {
 	forced = 0;
+	plugin->do_start_code(({}));
   }
 
   void allOn()

@@ -191,7 +191,6 @@ void showPinControl_(object i)
 
 void ignoreCycleClicked_(object button)
 {
-	werror("***\n***\n***");
 	icc = button->state();
 	if(icc)
 	{
