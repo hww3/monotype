@@ -112,6 +112,7 @@ werror("disablePin(%O)\n", pin);
       return;
 
     ribbon->skip_to_line_end();
+	setLineStatus(ribbon->current_line);
   }
 
   void backwardLine()
@@ -120,6 +121,7 @@ werror("disablePin(%O)\n", pin);
       return;
 
     ribbon->skip_to_line_beginning();
+	setLineStatus(ribbon->current_line);
     processedCode();
   }
 
@@ -134,6 +136,7 @@ werror("disablePin(%O)\n", pin);
       return;
  
     ribbon->rewind(-1);
+	setLineStatus(ribbon->current_line);
     processedCode();
   }
   
@@ -154,6 +157,7 @@ werror("disablePin(%O)\n", pin);
   {
 	werror("%O\n", ui->Status);
 	ui->Status->setStringValue_(s);
+	setLineStatus(ribbon->current_line);
   }
 
   void processedCode()
@@ -168,8 +172,16 @@ werror("disablePin(%O)\n", pin);
 
      jobinfo = ribbon->get_info();
      setStatus(sprintf("Loaded %d codes in %d lines.", jobinfo->code_count, jobinfo->line_count));
+     setLineStatus("0");
      return jobinfo;
   }
+
+  void setLineStatus(string s)
+  {
+//	werror("%O\n", ui->Status);
+	ui->CurrentLine->setStringValue_(s + "/" + jobinfo->line_count);
+  }
+
 
   static void create(object _ui, mapping config)
   {

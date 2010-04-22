@@ -13,6 +13,8 @@ object LoadJobButton;
 object PinControlItem;
 object PinControlWindow;
 
+object CurrentLine;
+
 object JobName;
 object Face;
 object Wedge;
