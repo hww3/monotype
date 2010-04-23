@@ -126,6 +126,20 @@ werror("state: %O\n", state);
   else Driver->stop();
 }
 
+void stopCaster()
+{
+  int state = CasterToggleButton->state();
+  if(state)
+  {
+	  CasterToggleButton->setState_(!state);
+	  LoadJobButton->setEnabled_(state);
+	  SkipForwardButton->setEnabled_(!state);
+	  SkipBackwardButton->setEnabled_(!state);
+	  SkipBeginButton->setEnabled_(!state);
+	  Driver->stop();
+  }	
+}
+
 // callback from the skip to beginning button
 void backBegin_(object a)
 {
@@ -189,6 +203,7 @@ void showPinControl_(object i)
 		PinControlWindow->makeKeyAndOrderFront_(i);
 	pcmi = i;
 	pcmi->setEnabled_(0);
+	JumpToLineItem->setEnabled_(0);
 	app->mainMenu()->update();
 	was_caster_enabled = CasterToggleButton->isEnabled();
 	CasterToggleButton->setEnabled_(0);
@@ -199,6 +214,7 @@ void showPinControl_(object i)
 
 void showJumpToLine_(object i)
 {
+	stopCaster();
 	JumpToLineWindow->setDelegate_(this);
 	int code = app->runModalForWindow_(JumpToLineWindow);
 	JumpToLineWindow->close();
@@ -207,8 +223,9 @@ void showJumpToLine_(object i)
 	{
 		string line_to_jump_to = (string)JumpToLineBox->stringValue();
 		werror("destination line: %O\n", line_to_jump_to);
+		Driver->jump_to_line((int)line_to_jump_to);
 	}
-	werror("\n\n\ncode: %O\n\n\n", code);
+//	werror("\n\n\ncode: %O\n\n\n", code);
 /*
 	JumpToLineWindow->makeKeyAndOrderFront_(i);
 	
@@ -238,6 +255,7 @@ void windowWillClose_(object n)
 	{
 		werror("windowWillClose_()");
 		pcmi->setEnabled_(1);
+		JumpToLineItem->setEnabled_(1);
 		app->mainMenu()->update();
 		
 		Driver->disableManualControl();
