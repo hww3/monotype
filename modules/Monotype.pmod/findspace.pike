@@ -40,7 +40,7 @@ array simple_find_space(int amount, mapping spaces)
 	array y = x - z;
 	
 	foreach(y;;)
-	  z = ({9, 18}) + z;
+	  z = ({18, 9}) + z;
 	
 //	  return sol->vals;
 //	else return 0;

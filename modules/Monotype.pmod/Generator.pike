@@ -197,15 +197,17 @@ int process_setting_buffer(int|void exact)
 	
 	if(!current_line)
 	  current_line = make_new_line();
-//werror("data_to_set: %O\n", data_to_set);
+werror("data_to_set: %O\n", data_to_set);
  
   	  for(int i = 0; i<sizeof(data_to_set) ;i++)
 	  {
-	   if(data_to_set[i] == " ")
-	     if(current_line->elements && sizeof(current_line->elements) && current_line->elements[-1]->is_real_js) 
-	       continue;
-	  	 else
-  	       lastjs = i;
+	    if(data_to_set[i] == " ")
+            {
+	      if(current_line->elements && sizeof(current_line->elements) && current_line->elements[-1]->is_real_js) 
+	        continue;
+	   	  else
+  	        lastjs = i;
+            }
 //	werror(" %O", data_to_set[i]);
 	   current_line->add(data_to_set[i], create_modifier(), space_adjust);
 	
@@ -233,7 +235,7 @@ int process_setting_buffer(int|void exact)
 		  // if we can't justify, having removed the last word, see if hyphenating will help, regardless if we hyphenated the last line.		
 		werror("numline: %O, is_broken: %O, can_justify: %O\n", 
                           numline,  1||lines[-1]->is_broken, current_line->can_justify());
-		  if(1 && numline && (!lines[-1]->is_broken || !current_line->can_justify())) 
+		  if(1 && numline && sizeof(lines) && (!lines[-1]->is_broken || !current_line->can_justify())) 
 				  {	
 			werror("trying to hyphenate, justification is %d.\n", current_line->can_justify());
 			int bs = search(data_to_set, " ", i+1);
@@ -377,7 +379,8 @@ int process_setting_buffer(int|void exact)
     else if(Regexp.SimpleRegexp("<[sS][0-9]*>")->match(data))
 	{
 		process_setting_buffer();
-		current_line->add("SPACE_" + data[2..sizeof(data)-2]);
+		low_quad_out((int)(data[2..sizeof(data)-2]));
+//		current_line->add("SPACE_" + data[2..sizeof(data)-2]);
 		if(current_line->is_overset())
 		{
 			current_line->errors += ({"Fixed space (%d unit) won't fit on line... dropping.\n"});
@@ -436,6 +439,7 @@ int create_modifier()
 	int modifier;
 	
 	if(isitalics) modifier|=MODIFIER_ITALICS;
+	if(isbold) modifier|=MODIFIER_BOLD;
 	if(issmallcaps) modifier|=MODIFIER_SMALLCAPS;
 
   return modifier;
@@ -478,11 +482,11 @@ int ix;
 //	werror("iterativespaces: %O, %O\n", amount, toadd);
 	if(!toadd || !sizeof(toadd))
   	  toadd = simple_find_space(amount, m->spaces);
-      toadd = sort(toadd);
+     // toadd = sort(toadd);
 	werror("spaces: %O, %O\n", amount, toadd);
 	//  calculate_justification();
 //	  werror("to quad out %d, we need the following: %O\n", amount, toadd);  
-	  foreach(toadd;;int i)
+	  foreach(reverse(toadd);;int i)
 	  {
 ix+=i;
 //	werror("adding %d, at %d\n", i, ix);
@@ -698,10 +702,22 @@ string generate_ribbon()
 }
 
 // add the current line to the job, if it's justifyable.
-object new_line()
+void new_line(int|void q)
 {
-  if(!current_line->linespaces && current_line->linelength != current_line->lineunits) 
-throw(Error.Generic(sprintf("Off-length line with no justifying spaces: need %d units to justify, line has %d units - %s\n", current_line->lineunits, current_line->linelength, (string)current_line)));
+/*
+  if(!q && !current_line->linespaces && current_line->linelength != current_line->lineunits) 
+  {
+      current_line->remove();
+      current_line->add(" ", create_modifier(), space_adjust);
+      quad_out();
+      new_line(1);           
+      return;
+  }
+  else */if(!current_line->linespaces && current_line->linelength != current_line->lineunits)
+  {
+      throw(Error.Generic(sprintf("Off-length line without justifying spaces: need %d units to justify, line has %d units. Consider adding a justifying space to line - %s\n", 
+		current_line->lineunits, current_line->linelength, (string)current_line)));
+  }
   else if(current_line->linespaces && !current_line->can_justify()) 
 throw(Error.Generic(sprintf("Unable to justify line; justification code would be: %d/%d, text on line is %s\n", current_line->big, current_line->little, (string)current_line)));
   

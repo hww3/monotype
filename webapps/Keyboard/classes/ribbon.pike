@@ -136,7 +136,8 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 		+ units + "px\">&nbsp;</div><div>Just Code / Comments</div>");
 	b+=("</div>");
 
-	foreach(g->lines + (err?({g->current_line}):({})); int i; mixed line)
+//	foreach(g->lines + (err?({g->current_line}):({})); int i; mixed line)
+	foreach(g->lines; int i; mixed line)
 	{
 		int setonline;
 		int last_was_space = 0;

@@ -1,5 +1,10 @@
 20100504
 - ribbon generator: display set text up to point of error when problem occurs.
+- ribbon generator: <sN> command will accept any number of units and will assemble the
+     required number of fixed spaces to reach the total requested.
+- ribbon generator: cast fixed spaces on the line in the order provided by the
+     quadding algorithm rather than sorting them by size. This should keep the mould 
+     cooler when quading using 9 and 18 unit spaces.
 
 20100423
 - caster controller: add current line to display 
