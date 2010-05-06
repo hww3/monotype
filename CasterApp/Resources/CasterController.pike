@@ -12,6 +12,12 @@ object CasterToggleButton;
 object LoadJobButton;
 object PinControlItem;
 object PinControlWindow;
+object JumpToLineWindow;
+object JumpToLineItem;
+
+object JumpToLineBox;
+
+object CurrentLine;
 
 object JobName;
 object Face;
@@ -21,6 +27,8 @@ object LineLength;
 
 object Thermometer;
 object Status;
+
+object IgnoreCycleButton;
 
 object cA;
 object cB;
@@ -59,7 +67,7 @@ object c14;
 mapping jobinfo;
 
 object app;
-
+int icc;
 array buttonstotouch = 
 	({"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N",
 		"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", 
@@ -101,7 +109,8 @@ void loadJob_(object a)
       set_job_info();
     }
   CasterToggleButton->setEnabled_(1);
-
+  JumpToLineItem->setEnabled_(1);
+  app->mainMenu()->update();
 }
 
 // callback from the start/stop button
@@ -115,6 +124,20 @@ werror("state: %O\n", state);
   SkipBeginButton->setEnabled_(state);
   if(state) Driver->start();
   else Driver->stop();
+}
+
+void stopCaster()
+{
+  int state = CasterToggleButton->state();
+  if(state)
+  {
+	  CasterToggleButton->setState_(!state);
+	  LoadJobButton->setEnabled_(state);
+	  SkipForwardButton->setEnabled_(!state);
+	  SkipBackwardButton->setEnabled_(!state);
+	  SkipBeginButton->setEnabled_(!state);
+	  Driver->stop();
+  }	
 }
 
 // callback from the skip to beginning button
@@ -169,6 +192,7 @@ void checkClicked_(object b)
 	
 }
 object pcmi;
+object jlmi;
 int was_caster_enabled;
 
 void showPinControl_(object i)
@@ -179,20 +203,74 @@ void showPinControl_(object i)
 		PinControlWindow->makeKeyAndOrderFront_(i);
 	pcmi = i;
 	pcmi->setEnabled_(0);
+	JumpToLineItem->setEnabled_(0);
 	app->mainMenu()->update();
 	was_caster_enabled = CasterToggleButton->isEnabled();
 	CasterToggleButton->setEnabled_(0);
-	allOff_(i);
 	Driver->enableManualControl();
+	ignoreCycleClicked_(IgnoreCycleButton);
+	allOff_(i);
+}
+
+void showJumpToLine_(object i)
+{
+	stopCaster();
+	JumpToLineWindow->setDelegate_(this);
+	int code = app->runModalForWindow_(JumpToLineWindow);
+	JumpToLineWindow->close();
+	
+	if(code) // we clicked OK
+	{
+		string line_to_jump_to = (string)JumpToLineBox->stringValue();
+		werror("destination line: %O\n", line_to_jump_to);
+		Driver->jump_to_line((int)line_to_jump_to);
+	}
+//	werror("\n\n\ncode: %O\n\n\n", code);
+/*
+	JumpToLineWindow->makeKeyAndOrderFront_(i);
+	
+	jlmi = i;
+	jlmi->setEnabled_(0);
+	app->mainMenu()->update();	
+	*/
+}
+
+void ignoreCycleClicked_(object button)
+{
+	icc = button->state();
+	if(icc)
+	{
+		Driver->forceOn();
+	}
+	else
+	{
+		Driver->forceOff();
+	}
 }
 
 
 void windowWillClose_(object n)
 {
-	werror("windowWillClose_()");
-	pcmi->setEnabled_(1);
-	app->mainMenu()->update();
-	
-	Driver->disableManualControl();
-	CasterToggleButton->setEnabled_(was_caster_enabled);
+	if(n->var_object == PinControlWindow)
+	{
+		werror("windowWillClose_()");
+		pcmi->setEnabled_(1);
+		JumpToLineItem->setEnabled_(1);
+		app->mainMenu()->update();
+		
+		Driver->disableManualControl();
+		CasterToggleButton->setEnabled_(was_caster_enabled);
+	}
+}
+
+void jumpCancelClicked_(object b)
+{
+	app->stopModalWithCode_(0);
+//  JumpToLineWindow->performClose_(b);
+}
+
+void jumpOKClicked_(object b)
+{
+	app->stopModalWithCode_(1);
+  //JumpToLineWindow->performClose_(b);
 }

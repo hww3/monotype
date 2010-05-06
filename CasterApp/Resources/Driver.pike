@@ -12,8 +12,30 @@ import Public.ObjectiveC;
   int wasStarted;
 
   int inManualControl = 0;
+  int forced = 0;
+
   array(string) manualCode = ({});
 
+void jump_to_line(int line)
+  {
+	werror("\n\n\njump_to_line: %O\n", line);
+   	ribbon->rewind(-1);
+	setLineStatus(ribbon->current_line);
+    processedCode();
+	if(line <= 0) return;
+	
+	do
+	{
+		werror("\n\nskipping forward.\n");
+	    ribbon->skip_to_line_end();
+		ribbon->get_next_code();
+		setLineStatus(ribbon->current_line);
+		if(!ribbon->current_code) break;
+		werror("cl: %O\n", ribbon->current_line);
+		processedCode();
+	} while (ribbon->current_line < line);
+	ribbon->return_code();
+  }
   void enableManualControl()
   {
 werror("**\n** manual control enabled.\n**\n");
@@ -32,6 +54,18 @@ werror("**\n** manual control enabled.\n**\n");
     inManualControl = 0;
   }
 
+  void forceOn()
+  {
+	forced = 1;
+	plugin->do_start_code(getNextCode());
+  }
+
+  void forceOff()
+  {
+	forced = 0;
+	plugin->do_start_code(({}));
+  }
+
   void allOn()
   {
     manualCode = copy_value(all_codes);
@@ -46,6 +80,8 @@ werror("**\n** manual control enabled.\n**\n");
   {
 
     manualCode = __builtin.uniq_array(manualCode + ({pin}));
+    if(forced)
+       plugin->do_start_code(getNextCode());
 werror("enablePin(%O): manualCode is %s\n", pin, manualCode*"");
 
   }
@@ -54,6 +90,8 @@ werror("enablePin(%O): manualCode is %s\n", pin, manualCode*"");
   {
 werror("disablePin(%O)\n", pin);
     manualCode -= ({pin});
+    if(forced)
+       plugin->do_start_code(getNextCode());
   }
  
   array getNextCode()
@@ -94,6 +132,7 @@ werror("disablePin(%O)\n", pin);
       return;
 
     ribbon->skip_to_line_end();
+	setLineStatus(ribbon->current_line);
   }
 
   void backwardLine()
@@ -102,6 +141,7 @@ werror("disablePin(%O)\n", pin);
       return;
 
     ribbon->skip_to_line_beginning();
+	setLineStatus(ribbon->current_line);
     processedCode();
   }
 
@@ -116,6 +156,7 @@ werror("disablePin(%O)\n", pin);
       return;
  
     ribbon->rewind(-1);
+	setLineStatus(ribbon->current_line);
     processedCode();
   }
   
@@ -136,6 +177,7 @@ werror("disablePin(%O)\n", pin);
   {
 	werror("%O\n", ui->Status);
 	ui->Status->setStringValue_(s);
+	setLineStatus(ribbon->current_line);
   }
 
   void processedCode()
@@ -150,8 +192,16 @@ werror("disablePin(%O)\n", pin);
 
      jobinfo = ribbon->get_info();
      setStatus(sprintf("Loaded %d codes in %d lines.", jobinfo->code_count, jobinfo->line_count));
+     setLineStatus("0");
      return jobinfo;
   }
+
+  void setLineStatus(string s)
+  {
+//	werror("%O\n", ui->Status);
+	ui->CurrentLine->setStringValue_(s + "/" + jobinfo->line_count);
+  }
+
 
   static void create(object _ui, mapping config)
   {

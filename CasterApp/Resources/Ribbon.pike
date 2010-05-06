@@ -2,6 +2,7 @@
 Stdio.FILE file;
 
 int current_pos = 0;
+int current_line = 0;
 multiset current_code, last_code;
 int body_start;
 
@@ -72,6 +73,8 @@ void rewind(int where)
 	{
 		file->seek(body_start);
 		current_pos = 0;
+		current_line = 0;
+		current_code = (<>);
 	}
 }
 
@@ -117,11 +120,20 @@ array get_next_code()
 	array code = low_get_next_code();
 	if(code)
 	{
+		werror("have code.\n");
   	  current_code = (multiset)code;
       current_pos++;
+	  if(current_code && current_code["0075"] && current_code["0005"])
+	  {
+		werror("have end of line\n");
+		current_line++;
+	  }
     }
     else 
+    {
+	werror("no code.\n");
       current_code = 0;
+    }
 	return code;
 }
 
@@ -134,6 +146,11 @@ array get_previous_code()
 	{
   	  last_code = (multiset)code;
       current_pos--;
+	  if(last_code && last_code["0075"] && last_code["0005"])
+	  {
+		current_line--;
+	  }
+
     }
     else 
       current_code = 0;
@@ -149,6 +166,7 @@ void skip_to_line_beginning()
 	  if(! last_code)
 	  {
 		// we must be at the full beginning.
+		current_line=0;
 		return;
 	  }
 	  else
@@ -171,6 +189,7 @@ void skip_to_line_end()
 			// we want to have both the 0075-0005 and 0005 code sequences, so we put the line end back.
 			current_code = last_code;
 			last_code = 0;
+			current_line--;
 			return_code();
 			return;
 		}
