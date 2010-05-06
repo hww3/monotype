@@ -109,15 +109,34 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 		// = "Now is the time for all good men to come to the aid of their country. Mary had a little lamb, its fleece was white as snow. Everywhere that mary went, the lamb was sure to go.<qo>";
 	
 	object g = Monotype.Generator(settings);
-	g->parse(data);
+
+	Error.Generic err = Error.mkerror(catch(g->parse(data)));
 	
 	object b = String.Buffer();
 
+	if(err)
+	{
+		b+="<div style=\"clear: left\">\n";
+		b+="An error occurred while validating the ribbon: <p><b>";
+		b+=(err->message());
+		b+="</b><p/>";
+		b+="The ribbon will be displayed up to the point of the error.";
+		b+="<!--\n\n";
+		b+=err->describe();
+		b+="\n\n-->";
+		b+="</div>\n";
+	}
+
+	int units;
+        if(g->lines && sizeof(g->lines)) units = g->lines[-1]->units;
+        else if(g->current_line) units = g->current_line->units;
+
 	b+="<div style=\"clear: left\">";
-	b+=("<div style=\"position:relative; float:left; width:35px\">Line</div><div style=\"position:relative; float:left; width:" + g->lines[-1]->units + "px\">&nbsp;</div><div>Just Code / Comments</div>");
+	b+=("<div style=\"position:relative; float:left; width:35px\">Line</div><div style=\"position:relative; float:left; width:" 
+		+ units + "px\">&nbsp;</div><div>Just Code / Comments</div>");
 	b+=("</div>");
 
-	foreach(g->lines; int i; mixed line)
+	foreach(g->lines + (err?({g->current_line}):({})); int i; mixed line)
 	{
 		int setonline;
 		int last_was_space = 0;

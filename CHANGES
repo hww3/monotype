@@ -1,3 +1,13 @@
+20100504
+- ribbon generator: display set text up to point of error when problem occurs.
+
+20100423
+- caster controller: add current line to display 
+- caster controller: add "jump to line" feature
+
+20100422
+- caster controller: add "force valves on" button to manual pin control
+
 20100415
 - x/0 justifications should really be x-1/15.
 
