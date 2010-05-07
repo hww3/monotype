@@ -35,6 +35,7 @@ void jump_to_line(int line)
 		processedCode();
 	} while (ribbon->current_line < line);
 	ribbon->return_code();
+ribbon->current_line--;
   }
   void enableManualControl()
   {
