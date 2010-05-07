@@ -30,5 +30,13 @@ void process_code()
 	}
 	driver->setStatus((code*"-"));
 	driver->processedCode();
-	call_out_id = call_out(process_code, 0.75);
+	driver->setCycleStatus(1);
+	call_out_id = call_out(stop_code, 0.375);
+}
+
+void stop_code()
+{
+	driver->setCycleStatus(0);
+	call_out_id = call_out(process_code, 0.375);
+
 }

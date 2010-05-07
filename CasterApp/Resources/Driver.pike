@@ -203,6 +203,11 @@ werror("disablePin(%O)\n", pin);
   }
 
 
+  void setCycleStatus(int(0..1) status)
+  {
+    ui->CycleIndicator->setIntValue_(status);
+  }
+
   static void create(object _ui, mapping config)
   {
 	mixed e = catch{

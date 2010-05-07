@@ -110,6 +110,7 @@ void value_changed(int nv)
   if(nv&interesting_bits)
   {
 	state = 1;
+	driver->setCycleStatus(1);
 	write("on: %O\n", started); 
 
 	if(driver->forced) return;
@@ -122,6 +123,7 @@ void value_changed(int nv)
   else
   { 
 	state = 0;
+	driver->setCycleStatus(0);
 	write("off\n");
 	if(started)
   	  end_code();
