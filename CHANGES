@@ -1,3 +1,6 @@
+20100505
+- caster controller: add cycle status indicator
+
 20100504
 - ribbon generator: display set text up to point of error when problem occurs.
 - ribbon generator: <sN> command will accept any number of units and will assemble the
