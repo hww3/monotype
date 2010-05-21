@@ -42,7 +42,7 @@ dojo.declare(
 		emptyradio : 0,
 		
 		templateString:
-			"<div style=\"border-width:2px; width:300px; overflow:hidden; display:compact; height:250px; position:fixed; z-index:200;\">" + 
+			"<div style=\"border-width:2px; border-style: solid; border-color: gray; width:300px; overflow:hidden; display:compact; height:250px; position:fixed; background-color: white; z-index:200;\">" + 
 			"<table width=\"100%\">" + 
 			"<tr><td colspan='2'>Col: <b>${column}</b> Row: <b>${row}</b> Default Set: <b>${default_set_width}</b></td></tr>" + 
 			"<tr><td><input dojoType=\"dijit.form.RadioButton\" dojoAttachEvent='onClick:_onClickJustRadio' type=\"radio\" dojoAttachPoint='justradio' name=\"type${name}\" value=\"just\"></td><td width=\"90%\"> Justifying Space <td/></tr>\n" + 
