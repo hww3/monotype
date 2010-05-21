@@ -35,6 +35,7 @@ void jump_to_line(int line)
 		processedCode();
 	} while (ribbon->current_line < line);
 	ribbon->return_code();
+ribbon->current_line--;
   }
   void enableManualControl()
   {
@@ -202,6 +203,11 @@ werror("disablePin(%O)\n", pin);
 	ui->CurrentLine->setStringValue_(s + "/" + jobinfo->line_count);
   }
 
+
+  void setCycleStatus(int(0..1) status)
+  {
+    ui->CycleIndicator->setIntValue_(status);
+  }
 
   static void create(object _ui, mapping config)
   {

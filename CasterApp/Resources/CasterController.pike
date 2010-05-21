@@ -28,6 +28,8 @@ object LineLength;
 object Thermometer;
 object Status;
 
+object CycleIndicator;
+
 object IgnoreCycleButton;
 
 object cA;
@@ -274,3 +276,4 @@ void jumpOKClicked_(object b)
 	app->stopModalWithCode_(1);
   //JumpToLineWindow->performClose_(b);
 }
+
