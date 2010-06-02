@@ -248,6 +248,7 @@ Small Caps:
 <%foreach(data->cols; int k; string v){%>
 <div class="cell"><b><%=v%></b></div>
 <%}%>
+<div class="cell"><font style="color:grey"><%=data->wedge->name%></font></div>
 </div>
 
 <%
@@ -307,6 +308,10 @@ Small Caps:
 </div>
 	<%}%>
 	</div>
+
+<div class="cell"
+><b><%=v%></b><br/><font style="color: grey"><%=u%>U</font></div>
+
 	<p/>
 <%}	%>
 <p>
