@@ -7,7 +7,7 @@ import Public.ObjectiveC;
   object plugin;
   object ribbon;
   object ui;
-  mapping jobinfo;
+  mapping jobinfo = ([]);
 
   int wasStarted;
 
@@ -70,11 +70,15 @@ werror("**\n** manual control enabled.\n**\n");
   void allOn()
   {
     manualCode = copy_value(all_codes);
+    if(forced)
+       plugin->do_start_code(getNextCode());
   }
   
   void allOff()
   {
     manualCode = ({});
+    if(forced)
+       plugin->do_start_code(getNextCode());
   }
 
   void enablePin(object control, string pin)
@@ -133,7 +137,7 @@ werror("disablePin(%O)\n", pin);
       return;
 
     ribbon->skip_to_line_end();
-	setLineStatus(ribbon->current_line);
+	setLineStatus(ribbon?ribbon->current_line:"0");
   }
 
   void backwardLine()
@@ -178,7 +182,7 @@ werror("disablePin(%O)\n", pin);
   {
 	werror("%O\n", ui->Status);
 	ui->Status->setStringValue_(s);
-	setLineStatus(ribbon->current_line);
+	setLineStatus(ribbon?ribbon->current_line:"0");
   }
 
   void processedCode()
