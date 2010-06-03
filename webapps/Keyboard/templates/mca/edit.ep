@@ -231,7 +231,9 @@ Small Caps:
 <p>
 	<style>
 	div.cell {
-		font-size: 14pt; width:35px; height:35px; border-width:1px; border-style: solid; position:relative; float:left;
+		font-size: 14pt; width:35px; height:35px; 
+border-width:1px; border-style: solid; position:relative; float:left; 
+line-height: 15.5px;
 	}
 	input.mine { border-width:1px; border-style: solid; border-color: background-color: #dddddd; }
 	</style>
