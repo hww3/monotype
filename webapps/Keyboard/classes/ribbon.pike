@@ -125,6 +125,8 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 		b+=err->describe();
 		b+="\n\n-->";
 		b+="</div>\n";
+
+		Tools.Logging.Log.exception("An error occurred.", err);
 	}
 
 	int units;

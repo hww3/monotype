@@ -15,6 +15,21 @@ multiset validcolumns = (<"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
 mapping matcase = ([]);
 mapping elements = ([]);
 
+string encode(object o)
+{
+  Node n = dump();
+  string xml = n->render_xml(0,0);
+  return encode_value(xml);
+}
+
+object decode(string v)
+{
+  object m = this_program()();
+  object n = Public.Parser.XML2.parse_xml(decode_value(v), "mca_internal.xml");
+  m->load(n);
+  return m;
+}
+
 void create(int|void size)
 {
   matcase_size = size;
