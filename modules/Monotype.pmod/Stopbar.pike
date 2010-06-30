@@ -71,6 +71,7 @@ Node dump()
 
   foreach(bars; mixed i; mixed v)
   {
+werror("adding bar %O\n", i);
     Node y = n->new_child("bar", (string)v);
     y->set_attribute("row", (string)i);
   }

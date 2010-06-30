@@ -387,13 +387,13 @@ werror("data_to_set: %O\n", data_to_set);
 		}
 	}
 	// letterspacing
-	else if(Regexp.SimpleRegexp("<[Ll][0-9]*>")->match(data))
+	else if(Regexp.SimpleRegexp("<[Ll][\\-0-9]*>")->match(data))
 	{
 		process_setting_buffer();
 		space_adjust = (int)(data[2..sizeof(data)-2]);
 	}
 	// end letterspacing
-	else if(Regexp.SimpleRegexp("</[Ll][0-9]*>")->match(data))
+	else if(Regexp.SimpleRegexp("</[Ll][\\-0-9]*>")->match(data))
 	{
 		process_setting_buffer();
 		space_adjust = 0;
