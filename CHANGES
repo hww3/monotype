@@ -1,3 +1,9 @@
+20100602
+- caster controller: fix errors when using manual pin control before
+    loading a ribbon file.
+- caster controller: "all on" and "all off" buttons work properly with
+    cycle sensor override.
+
 20100505
 - caster controller: add cycle status indicator
 
