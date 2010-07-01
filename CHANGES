@@ -1,3 +1,9 @@
+20100630
+- ribbon generator: treat carriage returns a line feeds (no more
+    mysterious justifying spaces at the beginning of lines)
+- identified problem in hyphenation engine that drops trailing 
+    periods from hyphenated words.
+
 20100602
 - caster controller: fix errors when using manual pin control before
     loading a ribbon file.
