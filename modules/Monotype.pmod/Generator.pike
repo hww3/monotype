@@ -167,7 +167,7 @@ mixed i_parse_data(object parser, string data, mapping extra)
     else if (issmallcaps) mod = "S";
     else if (isbold) mod = "B";
 
-    string xdata = replace(data, ({"\r", "\t"}), ({" ", " "}));
+    string xdata = replace(data, ({"\r", "\t"}), ({"\n", " "}));
     string dts = replace(xdata, ligature_replacements_from[mod], ligature_replacements_to[mod] );
 
 	if(dts !=  xdata) return dts;
