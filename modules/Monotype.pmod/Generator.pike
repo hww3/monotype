@@ -422,6 +422,12 @@ array hyphenate_word(string word)
 #endif /* have Public.Tools.Language.Hyphenate */
 	
 	array wp = word/"-";
+	
+	if(!(sizeof(wp) > 1) && config->unnatural_word_breaks)
+	{
+		wp = word/"";
+	}
+	
 	return wp;
 }
 

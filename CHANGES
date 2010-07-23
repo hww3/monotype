@@ -1,3 +1,9 @@
+20100722
+- ribbon generator: only allow adjustment of 1 unit for JS when
+    working with set sizes larger than 12.
+- ribbon generator: allow non-standard hyphenation, useful when
+    generating "font" ribbons.
+
 20100630
 - ribbon generator: treat carriage returns a line feeds (no more
     mysterious justifying spaces at the beginning of lines)

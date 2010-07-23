@@ -57,8 +57,9 @@ werror("job_id is %d\n", (int)id->variables->job_id);
 		"matcase": app->load_matcase(id->variables->mca),
 		"jobname": id->variables->jobname,
 		"dict_dir": combine_path(app->config->app_dir, "config"),
-                "lang": id->variables->lang,
-                "hyphenate": (int)id->variables->hyphenate,
+        "lang": id->variables->lang,
+        "hyphenate": (int)id->variables->hyphenate,
+		"unnatural_word_breaks": (int)id->variables->unnatural_word_breaks,
 		"min_little": (int)(id->variables->min_just/"/")[1], 
 		"min_big": (int)(id->variables->min_just/"/")[1]
 		]);
@@ -97,8 +98,9 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 		"matcase": app->load_matcase(id->variables->mca),
 		"jobname": id->variables->jobname,
 		"dict_dir": combine_path(app->config->app_dir, "config"),
-                "lang": id->variables->lang,
-                "hyphenate": (int)id->variables->hyphenate,
+		"lang": id->variables->lang,
+		"hyphenate": (int)id->variables->hyphenate,
+		"unnatural_word_breaks": (int)id->variables->unnatural_word_breaks,
 		"min_little": (int)(id->variables->min_just/"/")[1], 
 		"min_big": (int)(id->variables->min_just/"/")[0]
 		]);
