@@ -14,6 +14,7 @@ import Monotype;
 
         int line_number;
 
+	int max_reduction_units;
 	int min_space_units;
 	int min_little;
 	int min_big;	
@@ -65,8 +66,12 @@ import Monotype;
 		lineunits = config->lineunits;		
 		if(!m->elements["JS"])
 		  throw(Error.Generic("MCA " + m->name + " has no Justifying Space.\n"));
-		min_space_units = 4; // per page 15
-//		min_space_units = m->elements["JS"]->get_set_width() - 2;
+//		min_space_units = 4; // per page 15
+		if(setwidth <= 12.0)
+			max_reduction_units = 2;
+		else
+			max_reduction_units = 1;
+		min_space_units = m->elements["JS"]->get_set_width() - max_reduction_units;
 	}
 	
 	// remove a sort from the line; recalculate the justification
@@ -95,7 +100,7 @@ import Monotype;
 
 	  justspace = calc_justspace();
 	  units = justspace;
-	
+	werror("justspace: %f\n", justspace);
 	  [big, little] = low_calculate_justification(justspace);
 	}
 
@@ -119,9 +124,11 @@ import Monotype;
 
 //	  werror("units needed to justify: %f, minimum space units: %d\n", justspace, min_space_units);
 
-	  justspace = justspace + ((min_space_units)-6);
+	  justspace = justspace + ((min_space_units)-(m->elements["JS"]->get_set_width()));
 //	  justspace = justspace + ((min_space_units)-m->elements["JS"]->get_set_width());
+//	werror("calculated justification increments: %f->%d\n", justspace, (int)round(justspace));
 	  justspace *= (setwidth * 1.537);	
+//		  werror("calculated justification increments: %f->%d\n", justspace, (int)round(justspace));
 
 //	  werror("calculated justification increments: %f->%d\n", justspace, (int)round(justspace));
 
