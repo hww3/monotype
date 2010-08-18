@@ -100,7 +100,7 @@ import Monotype;
 
 	  justspace = calc_justspace();
 	  units = justspace;
-	werror("justspace: %f\n", justspace);
+//	werror("justspace: %f\n", justspace);
 	  [big, little] = low_calculate_justification(justspace);
 	}
 
@@ -200,8 +200,9 @@ import Monotype;
 
 	  if(!mat)
           { 
-                errors += ({("Reqested activator [" + string_to_utf8(activator) + "] not in MCA.\n")}); 
-		werror("invalid activator %O", string_to_utf8(activator));
+                errors += ({("Requested activator [" + 
+			string_to_utf8(activator) + "], code [" + string_to_utf8(code) + "] not in MCA.\n")}); 
+		werror("invalid activator %O/%O\n", string_to_utf8(activator),code);
           }
 	  else
 	  {	
@@ -215,8 +216,8 @@ import Monotype;
 //		    displayline += ({ activator });
 		    elements += ({MatWrapper(mat, adjust_space)});		
 		}
-		if(stealth)
-	    	linelength+=(mat->get_set_width() + adjust_space);
+		if(!stealth)
+ 	    	  linelength+=(mat->get_set_width() + adjust_space);
 	  }
 
 	if(!stealth)

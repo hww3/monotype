@@ -1,3 +1,7 @@
+20100817
+- ribbon generator: add option to trip caster with long line
+    at end of the job.
+
 20100722
 - ribbon generator: only allow adjustment of 1 unit for JS when
     working with set sizes larger than 12.

@@ -86,7 +86,6 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 	werror("%O\n", id->variables);
 	int job_id = random(9999999);
 	id->misc->session_variables["job_" + job_id] = id->variables;
-	
 	mapping settings = ([
 		"justification": (int)id->variables->justification,
 		"unit_adding": (int)id->variables->unitadding,
@@ -102,10 +101,16 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 		"lang": id->variables->lang,
 		"hyphenate": (int)id->variables->hyphenate,
 		"unnatural_word_breaks": (int)id->variables->unnatural_word_breaks,
-		"trip_at_end": (int)id->variables->trip_at_end,
+// we don't need this to be shown in the "soft proof".
+//		"trip_at_end": (int)id->variables->trip_at_end,
+
 		"min_little": (int)(id->variables->min_just/"/")[1], 
 		"min_big": (int)(id->variables->min_just/"/")[0]
 		]);
+
+	int max_red = 2;
+        if(settings->setwidth > 12.0)	
+	  max_red = 1;
 		
 		string data;
 		if(id->variables->input_type=="file") data = id->variables["input-file"];
@@ -167,14 +172,14 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 			}
 			// need some better work on this.
 		    int w = e->matrix->get_set_width();
-		    w = (w-2 + line->units);
+		    w = (w-max_red + line->units);
 		    setonline+=w;
 
  		// spill is used to even out the display lines, as we're not able to depict fractional units accurately on the screen.
 		    spill += (line->units-floor(line->units));
 		if(spill > 1.0) { w+=1; spill -=1.0; }
 
-		total_set += (e->matrix->get_set_width()-2);
+		total_set += (e->matrix->get_set_width()-max_red);
 		    b += ("<div style=\"position:relative; float:left; background:orange; width:" + (int)(w) + "px\"> &nbsp; </div>");
 			last_was_space = 1;
 		  }
@@ -209,7 +214,7 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
   			   tobeadded += string_to_utf8(ch||" &nbsp; ");
 		  }
 		
-//		  if((total_set-last_set) <= 2) werror("%d %d whee!\n", i, col);
+//		  if((total_set-last_set) <= max_red) werror("%d %d whee!\n", i, col);
 		  last_set = total_set;
         }		
 		

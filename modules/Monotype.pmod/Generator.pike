@@ -479,8 +479,8 @@ void quad_out()
 void low_quad_out(int amount, int|void atbeginning)
 {
 	  array toadd = ({});
-werror("spaces in case: %O\n", m->spaces);
-werror("requested to add %d, on line already: %d\n", amount, current_line->linelength);
+//werror("spaces in case: %O\n", m->spaces);
+//werror("requested to add %d, on line already: %d\n", amount, current_line->linelength);
 int ix;
 	toadd = Monotype.findspace()->simple_find_space(amount, m->spaces);
 //	werror("jzfindspaces: %O, %O\n", amount, toadd);
@@ -490,7 +490,7 @@ int ix;
 	if(!toadd || !sizeof(toadd))
   	  toadd = simple_find_space(amount, m->spaces);
      // toadd = sort(toadd);
-	werror("spaces: %O, %O\n", amount, toadd);
+//	werror("spaces: %O, %O\n", amount, toadd);
 	//  calculate_justification();
 //	  werror("to quad out %d, we need the following: %O\n", amount, toadd);  
 	  foreach(reverse(toadd);;int i)
@@ -743,7 +743,7 @@ throw(Error.Generic(sprintf("Unable to justify line; justification code would be
 	if(spacesize)
 	{
 		// add at least 18 units of space to the line.
-		for(int i = 0; i <= 18; i+=spacesize)
+		for(int i = spacesize; i <= 18; i+=spacesize)
 	 		current_line->add("SPACE_" + spacesize, 0, 0, 1, 1);
 	}
 	else
