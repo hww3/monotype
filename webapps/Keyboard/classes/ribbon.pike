@@ -60,6 +60,7 @@ werror("job_id is %d\n", (int)id->variables->job_id);
         "lang": id->variables->lang,
         "hyphenate": (int)id->variables->hyphenate,
 		"unnatural_word_breaks": (int)id->variables->unnatural_word_breaks,
+		"trip_at_end": (int)id->variables->trip_at_end,
 		"min_little": (int)(id->variables->min_just/"/")[1], 
 		"min_big": (int)(id->variables->min_just/"/")[1]
 		]);
@@ -101,6 +102,7 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 		"lang": id->variables->lang,
 		"hyphenate": (int)id->variables->hyphenate,
 		"unnatural_word_breaks": (int)id->variables->unnatural_word_breaks,
+		"trip_at_end": (int)id->variables->trip_at_end,
 		"min_little": (int)(id->variables->min_just/"/")[1], 
 		"min_big": (int)(id->variables->min_just/"/")[0]
 		]);

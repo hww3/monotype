@@ -156,7 +156,7 @@ import Monotype;
 
 
 	// add a sort to the current line
-	void add(string activator, int|void modifier, int|void adjust_space, int|void atbeginning)
+	void add(string activator, int|void modifier, int|void adjust_space, int|void atbeginning, int|void stealth)
 	{
 	  object mat;
 
@@ -215,9 +215,11 @@ import Monotype;
 //		    displayline += ({ activator });
 		    elements += ({MatWrapper(mat, adjust_space)});		
 		}
-	    linelength+=(mat->get_set_width() + adjust_space);
+		if(stealth)
+	    	linelength+=(mat->get_set_width() + adjust_space);
 	  }
 
+	if(!stealth)
 	  calculate_justification();
 //	  if(interactive)
 //	    werror("%s %d %s %s\n", displayline * "", lineunits-linelength, can_justify()?("* "+ big + " " + little):"", is_overset()?(" OVERSET "):"");

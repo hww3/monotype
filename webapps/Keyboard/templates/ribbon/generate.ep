@@ -192,6 +192,8 @@ Minimum Justifying Space Size (3/8 is default)
 <br>
 <input type="checkbox" name="unnatural_word_breaks" value="1"/> Allow hard (non-standard) breaks for hyphenation
 <p>
+<input type="checkbox" checked="1" name="trip_at_end" value="1"/> Trip caster when complete 
+<p>
 <input type="radio" name="input_type" value="file" checked="1" 
 onclick="enableFile();"> Input 
 File: <input type="file" name="input-file" id="input_file">

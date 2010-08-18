@@ -367,6 +367,7 @@ werror("data_to_set: %O\n", data_to_set);
 	  process_setting_buffer();
 		
 	  quad_out();
+	
 	  new_line();
     }
 	else if(data == "<p>")
@@ -710,6 +711,7 @@ string generate_ribbon()
 // add the current line to the job, if it's justifyable.
 void new_line(int|void q)
 {
+	
 /*
   if(!q && !current_line->linespaces && current_line->linelength != current_line->lineunits) 
   {
@@ -726,7 +728,30 @@ void new_line(int|void q)
   }
   else if(current_line->linespaces && !current_line->can_justify()) 
 throw(Error.Generic(sprintf("Unable to justify line; justification code would be: %d/%d, text on line is %s\n", current_line->big, current_line->little, (string)current_line)));
-  
+
+// if this is the first line and we've opted to make the first line long 
+//  (to kick the caster off,) add an extra space at the beginning.
+  if(config->trip_at_end && numline == 1)
+  {
+	string activator = "";
+	array spaces = indices(m->spaces);
+	int spacesize;
+	spaces = sort(spaces);
+
+	if(sizeof(spaces))
+	  spacesize = spaces[-1];
+	if(spacesize)
+	{
+		// add at least 18 units of space to the line.
+		for(int i = 0; i <= 18; i+=spacesize)
+	 		current_line->add("SPACE_" + spacesize, 0, 0, 1, 1);
+	}
+	else
+	{
+		throw(Error.Generic("No spaces in matcase, unable to produce a caster-trip line.\n"));
+	}
+		
+  }
   lines += ({current_line});
   current_line = make_new_line();
 }
