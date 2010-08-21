@@ -23,12 +23,18 @@ mapping config;
 int interactive = 0;
 
 int numline;
+int pagenumber;
 
 array lines = ({});
 
 array ligatures = ({});
 mapping ligature_replacements_from = ([]);
 mapping ligature_replacements_to = ([]);
+
+string eheader_code = "";
+string efooter_code = "";
+string oheader_code = "";
+string ofooter_code = "";
 
 //! the matcase and stopbar objects
 object m;
@@ -125,6 +131,10 @@ void parse(string input)
 
   // feed the data to the parser and have it do its thing.
   parser->finish(s);
+
+  // put the footer at the end of the set text if we have one.
+  if(config->page_length)
+	insert_footer();
 }
 
 // TODO: make this method re-entrant.
@@ -162,13 +172,30 @@ mixed i_parse_data(object parser, string data, mapping extra)
 	// possible situations where that might happen include ending the job with a ligature
 	// where this callback wouldn't be called.
 
+	if(in_header)
+	{
+		if(in_even)
+		  eheader_code += data;
+		if(in_odd)
+		  oheader_code += data;
+		return 0;
+	}
+	else if(in_footer)
+	{
+		if(in_even)
+		  efooter_code += data;
+		if(in_odd)
+		  ofooter_code += data;
+		return 0;
+	}	
+
     string mod = "R";
     if(isitalics) mod = "I";
     else if (issmallcaps) mod = "S";
     else if (isbold) mod = "B";
 
     string xdata = replace(data, ({"\r", "\t"}), ({"\n", " "}));
-    string dts = replace(xdata, ligature_replacements_from[mod], ligature_replacements_to[mod] );
+    string dts = replace(xdata, ligature_replacements_from[mod] || ({}), ligature_replacements_to[mod] || ({}));
 
 	if(dts !=  xdata) return dts;
 
@@ -191,12 +218,72 @@ mixed i_parse_data(object parser, string data, mapping extra)
   //  process_setting_buffer();
 }
 
+void insert_header()
+{
+	pagenumber++;
+
+	string header_code;
+	if(pagenumber%2) header_code = oheader_code;
+	else header_code = eheader_code;
+	
+	current_line = make_new_line();
+	
+	if(!in_do_header && sizeof(header_code))
+	{
+		in_do_header = 1;
+		current_line->errors += ({"* New Page Begins -"});
+		werror("parsing header: %O\n", header_code);
+		array _data_to_set = data_to_set;
+		data_to_set = ({});
+		object parser = Parser.HTML();
+		mapping extra = ([]);
+		parser->_set_tag_callback(i_parse_tags);
+		parser->_set_data_callback(i_parse_data);
+		parser->set_extra(extra);
+
+		// feed the data to the parser and have it do its thing.
+		parser->finish(header_code);
+		data_to_set = _data_to_set;
+		in_do_header = 0;
+	}
+}
+
+void insert_footer()
+{
+	string footer_code;
+	if(pagenumber%2) footer_code = ofooter_code;
+	else footer_code = efooter_code;
+	
+	current_line = make_new_line();
+	
+	if(!in_do_footer && sizeof(footer_code))
+	{
+		in_do_footer = 1;
+		werror("parsing footer: %O\n", footer_code);
+		array _data_to_set = data_to_set;
+		data_to_set = ({});
+		object parser = Parser.HTML();
+		mapping extra = ([]);
+		parser->_set_tag_callback(i_parse_tags);
+		parser->_set_data_callback(i_parse_data);
+		parser->set_extra(extra);
+
+		// feed the data to the parser and have it do its thing.
+		parser->finish(footer_code);
+		data_to_set = _data_to_set;
+		in_do_footer = 0;
+	}
+}
+
 int process_setting_buffer(int|void exact)
 {
 	int lastjs = 0;
 	
 	if(!current_line)
+	{
 	  current_line = make_new_line();
+	  insert_header();
+	}
 werror("data_to_set: %O\n", data_to_set);
  
   	  for(int i = 0; i<sizeof(data_to_set) ;i++)
@@ -304,65 +391,196 @@ werror("data_to_set: %O\n", data_to_set);
 	return 0;
 }
 
+int in_do_footer;
+int in_do_header;
+int in_footer;
+int in_header;
+int in_even;
+int in_odd;
+
 // TODO: this is just aweful. we need to come up with something a little more robust.
 	mixed i_parse_tags(object parser, string data, mapping extra)
 {
+    string lcdata = lower_case(data);
 
-	if(data == "<i>")
+	if(lcdata == "<footer>")
+	{
+		in_even = 1;
+		in_odd = 1;
+		in_footer = 1;
+		return 0;
+	}
+
+	if(lcdata == "</footer>")
+	{
+		in_footer = 0;
+		return 0;
+	}
+
+	if(lcdata == "<header>")
+	{
+		in_even = 1;
+		in_odd = 1;
+		in_header = 1;
+		return 0;
+	}
+
+	if(lcdata == "</header>")
+	{
+		in_header = 0;
+		return 0;
+	}
+
+	if(lcdata == "<ofooter>")
+	{
+		in_even = 0;
+		in_odd = 1;
+		in_footer = 1;
+		return 0;
+	}
+
+	if(lcdata == "</ofooter>")
+	{
+		in_footer = 0;
+		return 0;
+	}
+
+	if(lcdata == "<oheader>")
+	{
+		in_even = 0;
+		in_odd = 1;
+		in_header = 1;
+		return 0;
+	}
+
+	if(lcdata == "</oheader>")
+	{
+		in_header = 0;
+		return 0;
+	}
+
+	if(lcdata == "<efooter>")
+	{
+		in_even = 1;
+		in_odd = 0;
+		in_footer = 1;
+		return 0;
+	}
+
+	if(lcdata == "</efooter>")
+	{
+		in_footer = 0;
+		return 0;
+	}
+
+	if(lcdata == "<eheader>")
+	{
+		in_even = 1;
+		in_odd = 0;
+		in_header = 1;
+		return 0;
+	}
+
+	if(lcdata == "</eheader>")
+	{
+		in_header = 0;
+		return 0;
+	}
+
+
+    if(in_footer)
+    {
+		if(in_even)
+		  efooter_code += data;
+		if(in_odd)
+		  ofooter_code += data;
+		return 0;
+    }
+
+    if(in_header)
+    {
+		if(in_even)
+  		  eheader_code += data;
+		if(in_odd)
+		  oheader_code += data;
+		return 0;
+    }
+	
+	if(lcdata == "<i>")
 	{
 		process_setting_buffer();
 		isitalics ++;
 	}
-	if(data == "</i>")
+	if(lcdata == "</i>")
 	{
 		process_setting_buffer();
 		isitalics --;
 		if(isitalics < 0) isitalics = 0;
 	}
-	if(data == "<b>")
+	if(lcdata == "<b>")
 	{
 		process_setting_buffer();
 		process_setting_buffer();
 		isbold ++;
 	}
-	if(data == "</b>")
+	if(lcdata == "</b>")
 	{
 		process_setting_buffer();
 		isbold --;
 		if(isbold < 0) isbold = 0;
 	}
-    if(data == "<sc>")
+    if(lcdata == "<sc>")
     {
 	   process_setting_buffer();
        issmallcaps ++;
     }
-    if(data == "</sc>")
+    if(lcdata == "</sc>")
     {
 	  process_setting_buffer();
       issmallcaps --;
       if(issmallcaps < 0) issmallcaps = 0;
     }
-	if(data == "<left>")
+	if(lcdata == "<left>")
 	{
 		process_setting_buffer();
 		line_mode = MODE_LEFT;
 	}
-	if(data == "<center>")
-	{
-		process_setting_buffer();
-		line_mode = MODE_CENTER;
-	}
-	if(data == "<right>")
-	{
-		process_setting_buffer();
-		line_mode = MODE_RIGHT;
-	}
-	if(data == "<justify>")
+	if(lcdata == "</left>")
 	{
 		process_setting_buffer();
 		line_mode = MODE_JUSTIFY;
 	}
-	else if(data == "<qo>")
+	if(lcdata == "<center>")
+	{
+		process_setting_buffer();
+		line_mode = MODE_CENTER;
+	}
+	if(lcdata == "</center>")
+	{
+		process_setting_buffer();
+		line_mode = MODE_JUSTIFY;
+	}
+	if(lcdata == "<right>")
+	{
+		process_setting_buffer();
+		line_mode = MODE_RIGHT;
+	}
+	if(lcdata == "</right>")
+	{
+		process_setting_buffer();
+		line_mode = MODE_JUSTIFY;
+	}
+	if(lcdata == "<justify>")
+	{
+		process_setting_buffer();
+		line_mode = MODE_JUSTIFY;
+	}
+	if(lcdata == "</justify>")
+	{
+		process_setting_buffer();
+		line_mode = MODE_LEFT;
+	}
+	else if(lcdata == "<qo>")
 	{
 	  process_setting_buffer();
 		
@@ -370,13 +588,14 @@ werror("data_to_set: %O\n", data_to_set);
 	
 	  new_line();
     }
-	else if(data == "<p>")
+	else if(lcdata == "<p>")
 	{
 	  process_setting_buffer();	
 	  if(!current_line->can_justify())
         quad_out();
 	  new_line();
     }
+	// insert fixed spaces
     else if(Regexp.SimpleRegexp("<[sS][0-9]*>")->match(data))
 	{
 		process_setting_buffer();
@@ -399,6 +618,7 @@ werror("data_to_set: %O\n", data_to_set);
 		process_setting_buffer();
 		space_adjust = 0;
 	}
+	// insert an activator
 	else if(Regexp.SimpleRegexp("<[Aa].*>")->match(data))
 	{
                 if(data[2..sizeof(data)-2] == "JS")
@@ -410,6 +630,11 @@ werror("data_to_set: %O\n", data_to_set);
 			lineerrors+=({"Item (%d unit) won't fit on line... dropping.\n"});
 		}
 		*/
+	}
+
+	else if(lcdata == "<pagenumber>")
+	{
+	   		  data_to_set+= ({(string)pagenumber});
 	}
     
 }
@@ -753,5 +978,14 @@ throw(Error.Generic(sprintf("Unable to justify line; justification code would be
 		
   }
   lines += ({current_line});
-  current_line = make_new_line();
+
+  if(config->page_length && !(numline%config->page_length))
+  {
+		insert_footer();		
+		insert_header();		
+  }
+  else
+    current_line = make_new_line();
+
+
 }

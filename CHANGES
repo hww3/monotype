@@ -1,3 +1,14 @@
+20100820
+- ribbon generator: display bold and small caps in a more 
+    illustrative style within "soft proof".
+- ribbon generator: offset colors of adjacent fixed spaces within "soft proof"
+    in order to visualize space sizes when quadding.
+- ribbon generator: header and footer support - set line length in the ribbon
+    generator and use the <header></header><footer></footer>, <eheader></eheader>,
+    <efooter></efooter>, <oheader></oheader>, <ofooter></ofooter> commands to
+    specify head and footer definitions for all pages, even and odd pages, respectively.
+- ribbon generator: added <pagenumber> command to insert current page number.
+
 20100817
 - ribbon generator: add option to trip caster with long line
     at end of the job.

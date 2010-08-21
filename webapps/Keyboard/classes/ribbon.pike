@@ -61,6 +61,7 @@ werror("job_id is %d\n", (int)id->variables->job_id);
         "hyphenate": (int)id->variables->hyphenate,
 		"unnatural_word_breaks": (int)id->variables->unnatural_word_breaks,
 		"trip_at_end": (int)id->variables->trip_at_end,
+		"page_length": (int)id->variables->page_length,
 		"min_little": (int)(id->variables->min_just/"/")[1], 
 		"min_big": (int)(id->variables->min_just/"/")[1]
 		]);
@@ -103,7 +104,7 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 		"unnatural_word_breaks": (int)id->variables->unnatural_word_breaks,
 // we don't need this to be shown in the "soft proof".
 //		"trip_at_end": (int)id->variables->trip_at_end,
-
+		"page_length": (int)id->variables->page_length,
 		"min_little": (int)(id->variables->min_just/"/")[1], 
 		"min_big": (int)(id->variables->min_just/"/")[0]
 		]);
@@ -150,6 +151,7 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 //	foreach(g->lines + (err?({g->current_line}):({})); int i; mixed line)
 	foreach(g->lines; int i; mixed line)
 	{
+		int mod;
 		int setonline;
 		int last_was_space = 0;
 		int last_set;
@@ -194,8 +196,11 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 			// need some better work on this.
 		    int w = e->get_set_width();
 		    setonline+=w;
-		    
+		    mod++;
+		if(mod%2)					    
 		    b += ("<div style=\"position:relative; float:left; background:pink; width:" + w + "px\">&nbsp;</div>");
+		else
+		    b += ("<div style=\"position:relative; float:left; background:lightpink; width:" + w + "px\">&nbsp;</div>");
 			last_was_space = 1;
 		  }
   		  else
@@ -207,6 +212,10 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 			
 			  if(e->style == "I")
 			   ch = "<i>" + ch + "</i>";
+			  if(e->style == "B")
+			   ch = "<b>" + ch + "</b>";
+			  if(e->style == "S")
+			   ch = "<font size=\"-1\">" + ch + "</font>";
 			    
 			 if(sizeof(e->character) > 1) 
 			  tobeadded += ("<u>" + string_to_utf8(ch||" &nbsp; ") + "</u>");

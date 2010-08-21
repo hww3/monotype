@@ -131,6 +131,8 @@ Pica
 &nbsp;
 <input type="radio" name="pointsystem" value="12.8"/> Old English Pica
 <p>
+Page Length (in lines) <input type="text" name="page_length" size="5" value="42"/>
+<p>
 Width Adjustment Mechanisms<p>
 <input type="checkbox" name="unitadding" value="1"/> Unit Adding <select name="unitadding_units">
 <option>1

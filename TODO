@@ -14,6 +14,6 @@ TODO
     (completed 20-apr-2010)
 - ribbon generator: display set text up to point of error when problem occurs. 
     (completed 4-may-2010)
-- ribbon generator: automatically add justifying space when quadding out and no js is present. (attempted but
-    generates undesirable results)
+- ribbon generator: automatically add justifying space when quadding out and no js is present. 
+	(attempted but generates undesirable results)
 
