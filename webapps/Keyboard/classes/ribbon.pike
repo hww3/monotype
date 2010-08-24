@@ -60,6 +60,7 @@ werror("job_id is %d\n", (int)id->variables->job_id);
         "lang": id->variables->lang,
         "hyphenate": (int)id->variables->hyphenate,
 		"unnatural_word_breaks": (int)id->variables->unnatural_word_breaks,
+		"hyphenate_no_hyphen": (int)id->variables->hyphenate_no_hyphen,
 		"trip_at_end": (int)id->variables->trip_at_end,
 		"page_length": (int)id->variables->page_length,
 		"min_little": (int)(id->variables->min_just/"/")[1], 
@@ -102,6 +103,7 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 		"lang": id->variables->lang,
 		"hyphenate": (int)id->variables->hyphenate,
 		"unnatural_word_breaks": (int)id->variables->unnatural_word_breaks,
+		"hyphenate_no_hyphen": (int)id->variables->hyphenate_no_hyphen,
 // we don't need this to be shown in the "soft proof".
 //		"trip_at_end": (int)id->variables->trip_at_end,
 		"page_length": (int)id->variables->page_length,

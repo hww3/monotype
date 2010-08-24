@@ -24,6 +24,7 @@ int interactive = 0;
 
 int numline;
 int pagenumber;
+int linesonpage;
 
 array lines = ({});
 
@@ -221,6 +222,7 @@ mixed i_parse_data(object parser, string data, mapping extra)
 void insert_header()
 {
 	pagenumber++;
+    linesonpage = 1;
 
 	string header_code;
 	if(pagenumber%2) header_code = oheader_code;
@@ -281,7 +283,7 @@ int process_setting_buffer(int|void exact)
 	
 	if(!current_line)
 	{
-	  current_line = make_new_line();
+//	  current_line = make_new_line();
 	  insert_header();
 	}
 werror("data_to_set: %O\n", data_to_set);
@@ -343,7 +345,7 @@ werror("data_to_set: %O\n", data_to_set);
 					// TODO: we need to reapply ligatures
 					for(fp = sizeof(wp)-2; fp >=0; fp--)
 					{
-						string syl = (" "+(wp[0..fp] * "") + "-");
+						string syl = (" "+(wp[0..fp] * "") + ((config->unnatural_word_breaks && config->hyphenate_no_hyphen)?"":"-"));
   					  data_to_set = syl/"";
 					//	if(syl != replace(syl, ligature_replacements_from, ligature_replacements_to))
 						{
@@ -636,7 +638,11 @@ int in_odd;
 	{
 	   		  data_to_set+= ({(string)pagenumber});
 	}
-    
+    else if(lcdata == "<pagebreak>")
+	{
+	   		 break_page();
+	}
+	
 }
 
 // TODO: hyphenation seems to barf on wide characters.
@@ -663,6 +669,7 @@ Line make_new_line()
 	
 	l = Line(m, s, config);
 	l->line_number = ++numline;
+	linesonpage++;
 	return l;
 }
 
@@ -788,6 +795,12 @@ array simple_find_space(int amount, mapping spaces)
   }
 
  return toadd;
+}
+
+void break_page()
+{
+	insert_footer();		
+	insert_header();		
 }
 
 // actually generates the ribbon file from an array of lines of sorts.
@@ -979,10 +992,9 @@ throw(Error.Generic(sprintf("Unable to justify line; justification code would be
   }
   lines += ({current_line});
 
-  if(config->page_length && !(numline%config->page_length))
+  if(config->page_length && !(linesonpage%config->page_length))
   {
-		insert_footer();		
-		insert_header();		
+	break_page();
   }
   else
     current_line = make_new_line();
