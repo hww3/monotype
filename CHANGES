@@ -1,3 +1,8 @@
+20100823
+- ribbon generator: added <pagebreak> command
+- ribbon generator: added option to omit hyphen when using non-standard line breaks
+    (useful for generating fonting e-ribbons.)
+
 20100820
 - ribbon generator: display bold and small caps in a more 
     illustrative style within "soft proof".
