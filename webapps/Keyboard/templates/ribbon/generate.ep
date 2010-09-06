@@ -193,6 +193,8 @@ Minimum Justifying Space Size (3/8 is default)
 </select>
 <br>
 <input type="checkbox" name="unnatural_word_breaks" value="1"/> Allow hard (non-standard) breaks for hyphenation
+<input type="checkbox" name="hyphenate_no_hyphen" value="1"/> Do not include hyphen in hyphenated words
+
 <p>
 <input type="checkbox" checked="1" name="trip_at_end" value="1"/> Trip caster when complete 
 <p>
