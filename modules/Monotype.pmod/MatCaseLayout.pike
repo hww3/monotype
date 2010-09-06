@@ -134,7 +134,7 @@ void set(string column, int row, Matrix mat)
     elements[key] = mat;
   if(mat->style =="R" && mat->character == "0")
   { 
-    werror("loaded %s: %O\n", key, (mapping)mat);
+    werror(string_to_utf8(sprintf("loaded %s: %O\n", key, (mapping)mat)));
   }
 
   }
@@ -143,7 +143,7 @@ void set(string column, int row, Matrix mat)
 private void add_problem(string column, int row, string desc)
 {
        problems += ({ ({column, row, string_to_utf8(desc)}) });
-       werror(desc);
+       werror(string_to_utf8(desc));
 }
 
 void set_size(int size)
