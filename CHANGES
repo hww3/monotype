@@ -1,3 +1,6 @@
+20100907
+- mca editor: added bold elements to drag-n-drop.
+
 20100823
 - ribbon generator: added <pagebreak> command
 - ribbon generator: added option to omit hyphen when using non-standard line breaks
