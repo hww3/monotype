@@ -51,7 +51,7 @@ array full_alphabet_elements =
 mapping case_contents = ([
 							"R": full_alphabet_elements,
 			  				"S": small_caps_elements,
-							"B": full_alphabet_elements
+							"B": full_alphabet_elements,
                           	"I": full_alphabet_elements
 						]);
 
