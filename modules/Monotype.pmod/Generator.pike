@@ -59,11 +59,12 @@ array data_to_set = ({});
 
 
 /*
-  setwidth
-  linelengthp
-  matcase
-  stopbar
-  mould
+  Settings (partial):
+    setwidth
+    linelengthp
+    matcase
+    stopbar
+    mould
 */
 void create(mapping settings)
 {	
