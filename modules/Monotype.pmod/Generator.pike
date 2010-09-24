@@ -634,10 +634,27 @@ int in_odd;
 		}
 		*/
 	}
-
+	else if(has_prefix("<setpagenumber ",lcdata))
+	{
+		int matches, pn;
+		matches = sscanf(lcdata, "<setpagenumber %d%*s>", pn);
+		if(matches)
+		  pagenumber = pn;
+		else
+			current_line->errors += ({"Failed to set page number, unable to extract desired number.\n"});
+			
+	}
 	else if(lcdata == "<pagenumber>")
 	{
 	   		  data_to_set+= ({(string)pagenumber});
+	}
+	else if(lcdata == "<romanpagenumber>")
+	{
+	   		  data_to_set+= ({String.int2roman(pagenumber)});
+	}
+	else if(lcdata == "<lowercaseromanpagenumber>")
+	{
+	   		  data_to_set+= ({lower_case(String.int2roman(pagenumber))});
 	}
     else if(lcdata == "<pagebreak>")
 	{

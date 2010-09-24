@@ -1,3 +1,7 @@
+20100923
+- ribbon generator: added <setpagenumber n> command.
+- ribbon generator: added <romanpagenumber> and <lowercaseromanpagenumber> commands.
+
 20100907
 - mca editor: added bold elements to drag-n-drop.
 
