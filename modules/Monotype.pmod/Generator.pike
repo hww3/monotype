@@ -646,15 +646,15 @@ int in_odd;
 	}
 	else if(lcdata == "<pagenumber>")
 	{
-	   		  data_to_set+= ({(string)pagenumber});
+	   		  data_to_set+= ({((string)pagenumber)/""});
 	}
 	else if(lcdata == "<romanpagenumber>")
 	{
-	   		  data_to_set+= ({String.int2roman(pagenumber)});
+	   		  data_to_set+= ({(String.int2roman(pagenumber))/""});
 	}
 	else if(lcdata == "<lowercaseromanpagenumber>")
 	{
-	   		  data_to_set+= ({lower_case(String.int2roman(pagenumber))});
+	   		  data_to_set+= ({lower_case(String.int2roman(pagenumber))/""});
 	}
     else if(lcdata == "<pagebreak>")
 	{
