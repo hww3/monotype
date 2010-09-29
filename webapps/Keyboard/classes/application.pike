@@ -68,3 +68,14 @@ int admin_user_filter(Fins.Request id, Fins.Response response, mixed ... args)
    return 1;
 }
 
+int admin_only_user_filter(Fins.Request id, Fins.Response response, mixed ... args)
+{
+   if(!id->misc->session_variables->user || !id->misc->session_variables->user["is_admin"])
+   {
+      response->flash("msg", "You must be an admin user to perform this action.");
+      response->redirect(controller->auth->login, 0, ([ "return_to": id->not_query ]));
+      return 0;
+   }
+
+   return 1;
+}
