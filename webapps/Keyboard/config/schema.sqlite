@@ -9,3 +9,19 @@ CREATE TABLE users (
   name char(36) NOT NULL default '',
   email char(64) NOT NULL default ''
 );
+
+CREATE TABLE matcasearrangements (
+  id integer primary key,
+  owner_id integer not null,
+  name char(128) not null,
+  xml text not null,
+  is_public int(1) default '0'
+);
+
+CREATE TABLE stopbars (
+  id integer primary key,
+  owner_id integer not null,
+  name char(128) not null,
+  xml text not null,
+  is_public int(1) default '0'
+);

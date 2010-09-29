@@ -2,9 +2,12 @@
 
 inherit Fins.Model.DataObject;
 
-void post_define()
+void post_define(object context)
 {
 // Add any post configuration logic here
   set_alternate_key("username");
+  has_many(context, "Matcasearrangements", "mcas", "owner");
+  has_many(context, "Stopbars", "stopbars", "owner");
+//  belongs_to(context, "Matcasearrangement", "mcas", )
 }
 
