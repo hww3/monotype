@@ -2,7 +2,7 @@
 
 inherit Fins.Model.DataObject;
 
-void post_define()
+void post_define(object context)
 {
 // Add any post configuration logic here
 

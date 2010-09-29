@@ -14,7 +14,7 @@ CREATE TABLE matcasearrangements (
   id integer primary key,
   owner_id integer not null,
   name char(128) not null,
-  xml text not null,
+  xml blob not null,
   is_public int(1) default '0'
 );
 
@@ -22,6 +22,6 @@ CREATE TABLE stopbars (
   id integer primary key,
   owner_id integer not null,
   name char(128) not null,
-  xml text not null,
+  xml blob not null,
   is_public int(1) default '0'
 );
