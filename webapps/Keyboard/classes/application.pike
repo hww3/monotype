@@ -1,6 +1,15 @@
 
 inherit Fins.Application;
 
+void migrate_old_to_db()
+{
+	foreach(old_get_wedges();;string q)
+	  save_wedge(old_load_wedge(q));
+
+	foreach(old_get_mcas();;string q)
+	  save_matcase(old_load_matcase(q));
+}
+
 void save_matcase(Monotype.MatCaseLayout mca)
 {
 	string file_name;
