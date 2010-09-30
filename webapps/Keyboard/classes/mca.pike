@@ -2,9 +2,10 @@ import Fins;
 
 inherit DocController;
 
+
 void start()
 {
-  before_filter(app->admin_user_filter);
+    before_filter(app->admin_user_filter);
 }
 
 
@@ -59,6 +60,7 @@ mapping case_contents = ([
 public void index(Request id, Response response, Template.View view, mixed args)
 {
   array m = app->get_mcas();
+  view->add("owner", id->misc->session_variables->user);
   view->add("mcas", m);
 }
 
@@ -72,7 +74,7 @@ public void do_delete(Request id, Response response, Template.View view, mixed a
 	response->set_data("You must provide a matcase to delete.");
   }
 
-  mca = app->load_matcase(args[0]);
+  mca = app->load_matcase(args[0], id->misc->session_variables->user);
 
   if(!mca)
   {
@@ -82,7 +84,7 @@ public void do_delete(Request id, Response response, Template.View view, mixed a
   else
   {
     response->flash("MCA " + args[0] + " successfully deleted.");
-    app->delete_matcase(args[0]);
+    app->delete_matcase(args[0], id->misc->session_variables->user);
     response->redirect(index);
   }
 }
@@ -96,7 +98,7 @@ public void delete(Request id, Response response, Template.View view, mixed args
 	response->set_data("You must provide an MCA to delete.");
   }
 
-  mca = app->load_matcase(args[0]);
+  mca = app->load_matcase(args[0], id->misc->session_variables->user);
 
   if(!mca)
   {
@@ -125,8 +127,7 @@ public void copy(Request id, Response response, Template.View view, mixed args)
 
   if(id->variables->size)
   {
-	string file_name = combine_path(getcwd(), app->config["locations"]["matcases"], id->variables->name + ".xml");
-	if(file_stat(file_name))
+	if(app->mca_exists(id->variables->name, id->misc->session_variables->user))
 	{
 		response->flash("MCA " + id->variables->name + " already exists.");
 		return;
@@ -137,7 +138,7 @@ public void copy(Request id, Response response, Template.View view, mixed args)
 	mca->set_description(id->variables->description);
 	mca->set_wedge(id->variables->wedge);
 	mca->set_size((int)id->variables->size);
-    app->save_matcase(mca);		
+    app->save_matcase(mca, id->misc->session_variables->user, id->variables->is_public);		
     response->redirect(edit, ({id->variables->name}));
   }
 }
@@ -148,8 +149,7 @@ public void new(Request id, Response response, Template.View view, mixed args)
 	Monotype.MatCaseLayout l;
 	if(id->variables->size)
 	{
-		string file_name = combine_path(getcwd(), app->config["locations"]["matcases"], id->variables->name + ".xml");
-		if(file_stat(file_name))
+		if(app->mca_exists(id->variables->name, id->misc->session_variables->user))
 		{
 			response->flash("MCA " + id->variables->name + " already exists.");
 			return;
@@ -160,7 +160,7 @@ public void new(Request id, Response response, Template.View view, mixed args)
 		l->set_name(id->variables->name);
 		l->set_wedge(id->variables->wedge);
 		
-		app->save_matcase(l);
+		app->save_matcase(l, id->misc->session_variables->user, id->variables->is_public);
 		
 		response->redirect(edit, ({id->variables->name}));
 	}
@@ -176,11 +176,12 @@ public void cancel(Request id, Response response, Template.View view, mixed args
 
 public void save(Request id, Response response, Template.View view, mixed args)
 {
-	app->save_matcase(id->misc->session_variables->mca);
+	werror("save\n");
+	app->save_matcase(id->misc->session_variables->mca, id->misc->session_variables->user, id->variables->is_public);
 	id->misc->session_variables->mca = 0;
-	
+
 	response->flash("Your changes were saved.");
-	response->redirect(index);	
+	response->redirect(index);
 }
 
 public void setMat(Request id, Response response, Template.View view, mixed args)
@@ -273,11 +274,12 @@ public void edit(Request id, Response response, Template.View view, mixed args)
 	response->set_data("You must provide a mat case layout to edit.");
   }
 
+view->add("now", (string)time());
 
 werror("args:%O, %O\n", getcwd(),combine_path(app->config["locations"]["matcases"], args[0]));
   mca = app->load_matcase(args[0]);
   if(mca->wedge)
-    view->add("wedge", app->load_wedge(mca->wedge));
+    view->add("wedge", app->load_wedge(mca->wedge, id->misc->session_variables->user));
   id->misc->session_variables->mca = mca;
 
   array r,c;

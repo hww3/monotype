@@ -21,8 +21,7 @@ public void new(Request id, Response response, Template.View view, mixed args)
 	
 	if(id->variables->name)
 	{
-		string file_name = combine_path(getcwd(), app->config["locations"]["wedges"], upper_case(id->variables->name) + ".xml");
-		if(file_stat(file_name))
+		if(app->wedge_exists(id->variables->name, id->misc->session_variables->user))	
 		{
 			response->flash("Wedge " + upper_case(id->variables->name) + " already exists.");
 			return;
@@ -31,7 +30,7 @@ public void new(Request id, Response response, Template.View view, mixed args)
 		Monotype.Stopbar l = Monotype.Stopbar();
 		l->set_name(upper_case(id->variables->name));
 		
-		app->save_wedge(l);
+		app->save_wedge(l, id->misc->session_variables->user, id->variables->is_public);
 		
 		response->redirect(edit, ({id->variables->name}));
 	}
@@ -56,7 +55,7 @@ public void save(Request id, Response response, Template.View view, mixed args)
 		id->misc->session_variables->wedge->set(r, (int) id->variables[q]);
 	}
 	
-	app->save_wedge(id->misc->session_variables->wedge);
+	app->save_wedge(id->misc->session_variables->wedge, id->misc->session_variables->users, id->variables->is_public);
 	id->misc->session_variables->wedge = 0;
 	
 	response->flash("Your changes were saved.");
@@ -72,7 +71,7 @@ public void do_delete(Request id, Response response, Template.View view, mixed a
 	response->set_data("You must provide a wedge to delete.");
   }
 
-  wedge = app->load_wedge(args[0]);
+  wedge = app->load_wedge(args[0], id->misc->session_variables->user);
 
   if(!wedge)
   {
@@ -82,7 +81,7 @@ public void do_delete(Request id, Response response, Template.View view, mixed a
   else
   {
     response->flash("Wedge " + args[0] + " successfully deleted.");
-    app->delete_wedge(args[0]);
+    app->delete_wedge(args[0], id->misc->session_variables->user);
     response->redirect(index);
   }
 }
@@ -95,7 +94,7 @@ public void delete(Request id, Response response, Template.View view, mixed args
   {
 	response->set_data("You must provide a wedge to delete.");
   }
-  wedge = app->load_wedge(args[0]);
+  wedge = app->load_wedge(args[0], id->misc->session_variables->user);
   if(!wedge)
   {
     response->flash("Wedge " + args[0] + " was not found.");
@@ -118,7 +117,7 @@ public void edit(Request id, Response response, Template.View view, mixed args)
   }
 
 werror("args:%O, %O\n", getcwd(),combine_path(app->config["locations"]["wedges"], args[0]));
-  wedge = app->load_wedge(args[0]);
+  wedge = app->load_wedge(args[0], id->misc->session_variables->user);
   id->misc->session_variables->wedge = wedge;
   view->add("wedge", wedge);
 }

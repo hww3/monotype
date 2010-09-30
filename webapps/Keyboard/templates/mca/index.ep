@@ -1,11 +1,13 @@
 <div><font color="read"><i><%#flash%></i></font></div>
 Select a MCA to edit:
 <ul>
-<% foreach(data->mcas; int i; string mca) { %>
-
-  <li> <%#action_link "action": "edit", "args": mca%><%=mca %></a> (<%#action_link "action" : "copy", "args": mca%>Copy</a> |
- <%#action_link "action": "delete", "args": mca%>Delete</a>)
-
+<% foreach(data->mcas; int i; object mca) { %>
+  <% if(mca["owner"] == data->owner || mca["is_public"]) { %>
+  <li> <%#action_link "action": "edit", "args": (string)mca["id"]%><%=mca["name"] %></a> 
+ (<%#action_link "action" : "copy", "args": (string)mca["id"]%>Copy</a> 
+<% if(mca["owner"] == data->owner) { %>
+  | <%#action_link "action": "delete", "args": (string)mca["id"]%>Delete</a><% } %>)
+<% } %>
 <% } %>
 </ul>
 <p>
