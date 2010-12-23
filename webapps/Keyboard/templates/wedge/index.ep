@@ -2,10 +2,10 @@
 
 Select a Wedge to edit:
 <ul>
-<% foreach(data->wedges; int i; string wedge) { %>
-
-  <li> <%#action_link "action": "edit", "args": wedge%><%=wedge %></a>
-       (<%#action_link "action": "delete", "args": wedge%>Delete</a>)
+<% foreach(data->wedges; int i; object wedge) { %>
+<%=wedge["dump"]%>
+  <li> <%#action_link "action": "edit", "args": wedge.name%><%=wedge["name"] %></a>
+       (<%#action_link "action": "delete", "args": wedge.name%>Delete</a>)
 
 <% } %>
 </ul>
