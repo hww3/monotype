@@ -1,6 +1,18 @@
 
 inherit Fins.Application;
 
+int is_desktop = 0;
+
+void start()
+{
+	// among other things, if we're a desktop version of this app, 
+	// we always log in autmatically as the user 'desktop'
+	if(all_constants()["NSApp"])
+	{
+	 	is_desktop = 1;
+	}
+}
+
 void migrate_old_to_db()
 {
 	foreach(old_get_wedges();;string q)
@@ -52,6 +64,7 @@ void save_wedge(Monotype.Stopbar wedge, object user, int|void is_public)
 	mv(file_name, file_name + ".bak");
 	Stdio.write_file(file_name, Public.Parser.XML2.render_xml(node));
 */
+werror("**** user: %O\n", user);
 	object wedge_db;
 	catch(wedge_db = master()->resolv("Fins.Model.find.stopbars")((["name": wedge->name, "owner": user]))[0]);
 	
@@ -190,7 +203,12 @@ int(0..1) old_wedge_exists(string name)
 
 int admin_user_filter(Fins.Request id, Fins.Response response, mixed ... args)
 {
-	werror("user: %O\n", id->misc->session_variables->user);
+   if(is_desktop && !id->misc->session_variables->user)
+   {
+	 object user = master()->resolv("Fins.Model.find.users_by_alt")("desktop");
+	 id->misc->session_variables->user = user;
+   }
+//	werror("user: %O\n", id->misc->session_variables->user);
    if(!id->misc->session_variables->user)
    {
       response->flash("msg", "You must login to perform this action.");
@@ -203,6 +221,12 @@ int admin_user_filter(Fins.Request id, Fins.Response response, mixed ... args)
 
 int admin_only_user_filter(Fins.Request id, Fins.Response response, mixed ... args)
 {
+   if(is_desktop && !id->misc->session_variables->user)
+   {
+	 object user = master()->resolv("Fins.Model.find.users_by_alt")("desktop");
+	 id->misc->session_variables->user = user;
+   }
+
    if(!id->misc->session_variables->user || !id->misc->session_variables->user["is_admin"])
    {
       response->flash("msg", "You must be an admin user to perform this action.");

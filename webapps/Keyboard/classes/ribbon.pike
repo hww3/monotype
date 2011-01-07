@@ -4,7 +4,7 @@ inherit DocController;
 
 void start()
 {
-//  before_filter(app->admin_user_filter);
+  before_filter(app->admin_user_filter);
 }
 
 //int __quiet = 1;

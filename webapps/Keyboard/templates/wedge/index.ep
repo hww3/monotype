@@ -5,7 +5,8 @@ Select a Wedge to edit:
 <% foreach(data->wedges; int i; object wedge) { %>
 <%=wedge["dump"]%>
   <li> <%#action_link "action": "edit", "args": wedge.name%><%=wedge["name"] %></a>
-       (<%#action_link "action": "delete", "args": wedge.name%>Delete</a>)
+       [ <%#action_link "action": "delete", "args": wedge.name%>Delete</a> | 
+		<%#action_link "action": "download", "args": wedge.name%>Download</a> ]
 
 <% } %>
 </ul>

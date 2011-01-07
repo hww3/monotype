@@ -55,7 +55,7 @@ public void save(Request id, Response response, Template.View view, mixed args)
 		id->misc->session_variables->wedge->set(r, (int) id->variables[q]);
 	}
 	
-	app->save_wedge(id->misc->session_variables->wedge, id->misc->session_variables->users, id->variables->is_public);
+	app->save_wedge(id->misc->session_variables->wedge, id->misc->session_variables->user, id->variables->is_public);
 	id->misc->session_variables->wedge = 0;
 	
 	response->flash("Your changes were saved.");
@@ -122,3 +122,21 @@ werror("args:%O, %O\n", getcwd(),combine_path(app->config["locations"]["wedges"]
   view->add("wedge", wedge);
 }
 
+public void download(Request id, Response response, Template.View view, mixed args)
+{
+	object wedge;
+	
+	  if(!sizeof(args))
+	  {
+		response->set_data("You must provide a wedge to download.");
+	  }
+
+	  wedge = app->load_wedge(args[0], id->misc->session_variables->user);
+	
+	response->set_data(Public.Parser.XML2.render_xml(wedge->dump()));
+    response->set_header("content-disposition", "attachment; filename=" + 
+        args[0] + ".xml");	
+    response->set_type("application/x-monotype-e-stopbar");
+    response->set_charset("utf-8");
+   
+}

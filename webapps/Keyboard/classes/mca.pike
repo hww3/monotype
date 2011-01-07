@@ -2,12 +2,10 @@ import Fins;
 
 inherit DocController;
 
-
 void start()
 {
-    before_filter(app->admin_user_filter);
+  before_filter(app->admin_user_filter);
 }
-
 
 int __quiet = 1;
 
@@ -114,7 +112,7 @@ public void delete(Request id, Response response, Template.View view, mixed args
 public void copy(Request id, Response response, Template.View view, mixed args)
 {
   Monotype.MatCaseLayout mca;
-  mca = app->load_matcase(args[0]);
+  mca = app->load_matcase(args[0], id->misc->session_variables->user);
 
   view->add("mca", mca);
   view->add("wedges", app->get_wedges());
@@ -277,7 +275,7 @@ public void edit(Request id, Response response, Template.View view, mixed args)
 view->add("now", (string)time());
 
 werror("args:%O, %O\n", getcwd(),combine_path(app->config["locations"]["matcases"], args[0]));
-  mca = app->load_matcase(args[0]);
+  mca = app->load_matcase(args[0], id->misc->session_variables->user);
   if(mca->wedge)
     view->add("wedge", app->load_wedge(mca->wedge, id->misc->session_variables->user));
   id->misc->session_variables->mca = mca;

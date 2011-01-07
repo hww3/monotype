@@ -14,7 +14,7 @@ werror("**** " + (string)folder  + "\n");
 	}
 	if(!fm->fileExistsAtPath_((string)folder + "/RibbonGeneratorData.sqlite3"))
 	{
-		fm->copyPath_toPath_handler_(combine_path(getcwd(), "Keyboard/config/Keyboard.sqlite3"), 
+		fm->copyPath_toPath_handler_(combine_path(getcwd(), "Keyboard/config/Keyboard_desktop.sqlite3"), 
 			combine_path((string)folder, "RibbonGeneratorData.sqlite3"), 0);
 	}
 
