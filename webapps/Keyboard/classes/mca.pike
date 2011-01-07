@@ -325,3 +325,21 @@ if(matrix->character == "0")
 }
 
 
+public void download(Request id, Response response, Template.View view, mixed args)
+{
+	object mca;
+	
+	  if(!sizeof(args))
+	  {
+		response->set_data("You must provide an MCA to download.");
+	  }
+
+	  mca = app->load_matcase_dbobj_by_id(args[0], id->misc->session_variables->user);
+	
+	response->set_data(mca["xml"]);
+    response->set_header("content-disposition", "attachment; filename=" + 
+        mca["name"] + ".xml");	
+    response->set_type("application/x-monotype-e-matcase");
+    response->set_charset("utf-8");
+   
+}

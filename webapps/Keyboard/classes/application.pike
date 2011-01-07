@@ -142,6 +142,38 @@ object load_matcase(string matcasename, object user)
 //	return Monotype.load_matcase(combine_path(getcwd(), config["locations"]["matcases"], matcasename));
 }
 
+object load_matcase_dbobj(string matcasename, object user)
+{
+	object mca_db;
+	if(user)
+		catch(mca_db = master()->resolv("Fins.Model.find.matcasearrangements")((["name": matcasename, "owner": user]))[0]);
+	else
+		catch(mca_db = master()->resolv("Fins.Model.find.matcasearrangements")((["id": (int)matcasename]))[0]);
+	
+	werror("**** %O\n", mca_db);
+	if(mca_db)
+  	  return mca_db;
+	else return 0;
+	
+//	return Monotype.load_matcase(combine_path(getcwd(), config["locations"]["matcases"], matcasename));
+}
+
+object load_matcase_dbobj_by_id(string id, object user)
+{
+	object mca_db;
+	if(user)
+		catch(mca_db = master()->resolv("Fins.Model.find.matcasearrangements")((["id": (int)id, "owner": user]))[0]);
+	else
+		catch(mca_db = master()->resolv("Fins.Model.find.matcasearrangements")((["id": (int)id]))[0]);
+	
+	werror("**** %O\n", mca_db);
+	if(mca_db)
+  	  return mca_db;
+	else return 0;
+	
+//	return Monotype.load_matcase(combine_path(getcwd(), config["locations"]["matcases"], matcasename));
+}
+
 object old_load_matcase(string matcasename)
 {
 	return Monotype.load_matcase(combine_path(getcwd(), config["locations"]["matcases"], matcasename));
