@@ -1,4 +1,4 @@
-<div><font color="read"><i><%#flash%></i></font></div>
+<div><font color="red"><i><%#flash%></i></font></div>
 
 Select a Wedge to edit:
 <ul>
@@ -12,7 +12,10 @@ Select a Wedge to edit:
 </ul>
 <p>
 
+<form action="<%#action_url "action": "upload"%>" method="post" enctype="multipart/form-data">
 <ul>
 <li><%#action_link "action": "new"%>New Wedge</a>
+<li>Upload wedge file: <input type="file" name="file"> <input type="submit" name="Upload"/>
 </ul>
+</form>
 <p>

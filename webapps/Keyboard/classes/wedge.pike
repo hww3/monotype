@@ -116,6 +116,14 @@ public void edit(Request id, Response response, Template.View view, mixed args)
 	response->set_data("You must provide a wedge to edit.");
   }
 
+/*
+object dbo = app->load_wedge_dbobj_by_id(args[0]);
+if(dbo && dbo["owner"] == id->misc->session_variables->user)
+  view->add("is_owner", 1);
+else
+  view->add("is_owner", 0);
+*/
+
 werror("args:%O, %O\n", getcwd(),combine_path(app->config["locations"]["wedges"], args[0]));
   wedge = app->load_wedge(args[0], id->misc->session_variables->user);
   id->misc->session_variables->wedge = wedge;
@@ -139,4 +147,43 @@ public void download(Request id, Response response, Template.View view, mixed ar
     response->set_type("application/x-monotype-e-stopbar");
     response->set_charset("utf-8");
    
+}
+
+public void upload(Request id, Response response, Template.View view, mixed args)
+{
+   object wedge;
+
+   mixed e = catch(wedge = Monotype.load_stopbar_string(id->variables->file));
+   if(e)
+	{
+		response->flash("Unable to read wedge definition. Are you sure you uploaded a stop bar definition file?");
+		response->redirect(index);
+		return;
+	}
+	
+	if(wedge->name)
+	{
+		object nw;
+		
+		object e = catch(nw = app->load_wedge(wedge->name, id->misc->session_variables->user));
+
+		if(nw)
+		{
+			response->flash("You already have a wedge named " + wedge->name +". Please delete the existing definition and retry.");
+			response->redirect(index);
+			return;			
+		}
+	}
+	else
+	{
+		response->flash("No wedge name specified. Are you sure you uploaded a stop bar definition file?");
+		response->redirect(index);
+		return;		
+	}
+
+	app->save_wedge(wedge, id->misc->session_variables->user, id->variables->is_public);
+	
+	response->flash("Wedge " + wedge->name + " was successfully imported.");
+	response->redirect(index);
+	return;	
 }

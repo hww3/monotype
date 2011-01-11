@@ -275,10 +275,17 @@ public void edit(Request id, Response response, Template.View view, mixed args)
 view->add("now", (string)time());
 
 werror("args:%O, %O\n", getcwd(),combine_path(app->config["locations"]["matcases"], args[0]));
-  mca = app->load_matcase(args[0], id->misc->session_variables->user);
+  mca = app->load_matcase(args[0]);
+werror("**** mca: %O wedge: %O\n", mca, mca);
   if(mca->wedge)
     view->add("wedge", app->load_wedge(mca->wedge, id->misc->session_variables->user));
   id->misc->session_variables->mca = mca;
+
+object dbo = app->load_matcase_dbobj_by_id(args[0]);
+if(dbo && dbo["owner"] == id->misc->session_variables->user)
+  view->add("is_owner", 1);
+else
+  view->add("is_owner", 0);
 
   array r,c;
   switch(mca->matcase_size)
@@ -342,4 +349,43 @@ public void download(Request id, Response response, Template.View view, mixed ar
     response->set_type("application/x-monotype-e-matcase");
     response->set_charset("utf-8");
    
+}
+
+public void upload(Request id, Response response, Template.View view, mixed args)
+{
+   object mca;
+
+   mixed e = catch(mca = Monotype.load_matcase_string(id->variables->file));
+   if(e)
+	{
+		response->flash("Unable to read the Matcase. Are you sure you uploaded an MCA definition file?");
+		response->redirect(index);
+		return;
+	}
+	
+	if(mca->name)
+	{
+		object nw;
+		
+		object e = catch(nw = app->load_matcase(mca->name, id->misc->session_variables->user));
+
+		if(nw)
+		{
+			response->flash("You already have an MCA named " + mca->name +". Please delete the existing definition and retry.");
+			response->redirect(index);
+			return;			
+		}
+	}
+	else
+	{
+		response->flash("No matcase name specified. Are you sure you uploaded an MCA definition file?");
+		response->redirect(index);
+		return;		
+	}
+
+	app->save_matcase(mca, id->misc->session_variables->user, id->variables->is_public);
+	
+	response->flash("Matcase Arrangement " + mca->name + " was successfully imported.");
+	response->redirect(index);
+	return;	
 }

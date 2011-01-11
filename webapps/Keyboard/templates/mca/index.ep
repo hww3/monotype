@@ -7,15 +7,19 @@ Select a MCA to edit:
  [ <%#action_link "action" : "copy", "args": (string)mca["id"]%>Copy</a> 
  | <%#action_link "action" : "download", "args": (string)mca["id"]%>Download</a>
 <% if(mca["owner"] == data->owner) { %>
-  | <%#action_link "action": "delete", "args": (string)mca["id"]%>Delete</a><% } %> ]
+  | <%#action_link "action": "delete", "args": (string)mca["name"]%>Delete</a><% } %> ]
 <% } %>
 <% } %>
 </ul>
 <p>
 
+<form action="<%#action_url "action": "upload"%>" method="post" enctype="multipart/form-data">
+
 <ul>
 <li> <%#action_link "action": "new"%>New MCA</a>
+<li>Upload MCA file: <input type="file" name="file"> <input type="submit" name="Upload"/>
 </ul>
+</form>
 
 <p>
 
