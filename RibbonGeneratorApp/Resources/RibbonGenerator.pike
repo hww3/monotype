@@ -4,6 +4,9 @@ object NSApp;
 
 int main(int argc, array argv)
 {
+  string sparklePath = combine_path(getcwd(), "../Frameworks/Sparkle.framework");
+  int res = Public.ObjectiveC.load_bundle(sparklePath);
+  werror("Loaded Sparkle: %O\n", (res==0)?"Okay":"Not Okay");
   NSApp = Cocoa.NSApplication.sharedApplication();
   add_constant("NSApp", NSApp);
   master()->add_module_path("modules");
