@@ -1,12 +1,15 @@
 
 Stdio.FILE file;
 
+function line_changed_func;
+
 int current_pos = 0;
 int current_line = 0;
 multiset current_code, last_code;
 int body_start;
 
 mapping job_info = ([]);
+array(array(string)) line_contents = ({});
 
 
 static void create(string filename)
@@ -21,27 +24,58 @@ static void create(string filename)
 	parse_body();
 }
 
+array get_current_line_contents()
+{
+	werror("line contents: %O\n", line_contents);
+	return (line_contents[current_line]) + ({});
+}
+
+void line_changed()
+{
+	if(line_changed_func)
+		line_changed_func(this);
+}
+
 void parse_body()
 {
+	ADT.Stack codes = ADT.Stack();
+
 	int pos = file->tell();
 	body_start = pos;
 	int total_lines, total_codes;
 	multiset last;
+        array line_codes = ({});
+
 	foreach(file;int i;string l)
 	{
 		// we're looking for 0005+0075 followed by a 0075 code (end of line and reset).
         // 0005 followed by 0075 is used in double justification.
 		multiset c = (multiset)((l/" ")-({""}));
-		if(c["0075"] && (last && last["0005"] && last["0075"])) total_lines++;
+        string s = 0;
+		sscanf(l, "%*s\[%s]", s);
+
+		if(s) line_codes += ({s});
+
+		if(c["0075"] && (last && last["0005"] && last["0075"])) 
+		{
+			werror("got new line. %O\n", line_codes); 
+          codes->push(line_codes);
+          line_codes = ({});
+		  total_lines++;
+		}
 		if(!sizeof(c)) continue;
 		last = c;
 		total_codes ++;
 	}
 
+	if(sizeof(line_codes)) codes->push(line_codes);
+
 	job_info->code_count = total_codes + 1;
 	job_info->line_count = total_lines;
 	
 	file->seek(pos);
+	line_contents = (array)codes;
+	werror("linecontents: %O\n", line_contents);
 }
 
 void parse_header()
@@ -127,6 +161,7 @@ array get_next_code()
 	  {
 		werror("have end of line\n");
 		current_line++;
+		line_changed();
 	  }
     }
     else 
@@ -149,6 +184,7 @@ array get_previous_code()
 	  if(last_code && last_code["0075"] && last_code["0005"])
 	  {
 		current_line--;
+		line_changed();
 	  }
 
     }
@@ -167,6 +203,7 @@ void skip_to_line_beginning()
 	  {
 		// we must be at the full beginning.
 		current_line=0;
+		line_changed();
 		return;
 	  }
 	  else
@@ -190,6 +227,7 @@ void skip_to_line_end()
 			current_code = last_code;
 			last_code = 0;
 			current_line--;
+			line_changed();
 			return_code();
 			return;
 		}

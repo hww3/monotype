@@ -194,7 +194,7 @@ werror("disablePin(%O)\n", pin);
   mapping loadRibbon(string filename)
   {
      ribbon = ((program)"Ribbon")(filename);
-
+     ribbon->line_changed_func = ribbon_line_changed;
      jobinfo = ribbon->get_info();
      setStatus(sprintf("Loaded %d codes in %d lines.", jobinfo->code_count, jobinfo->line_count));
      setLineStatus("0");
@@ -207,6 +207,11 @@ werror("disablePin(%O)\n", pin);
 	ui->CurrentLine->setStringValue_(s + "/" + jobinfo->line_count);
   }
 
+  void setLineContents(string s)
+  {
+//	werror("%O\n", ui->Status);
+	ui->LineContentsLabel->setStringValue_(reverse(s));
+  }
 
   void setCycleStatus(int(0..1) status)
   {
@@ -232,4 +237,10 @@ werror("disablePin(%O)\n", pin);
 	  plugin = ((program)"Plugins.pmod/Simulator")(this, config);
     }
 	ui = _ui;
+  }
+
+  void ribbon_line_changed(object ribbon)
+  {
+	array current_line = ribbon->get_current_line_contents();
+	setLineContents(current_line *"");
   }
