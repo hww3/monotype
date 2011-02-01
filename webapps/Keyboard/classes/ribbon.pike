@@ -158,7 +158,8 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 		int last_was_space = 0;
 		int last_set;
 		b+="<div style=\"clear: left\">";
-		b+=("<div style=\"position:relative; float:left; width:35px\">" + (i+1) + "</div>");
+		b+=("<div style=\"position:relative; float:left; width:35px\">" + (i+1) 
+			+ "/"  + (sizeof(g->lines) - i)+ "</div>");
 		string tobeadded = "";
 		int tobeaddedwidth = 0;
 		int total_set; 
@@ -218,7 +219,11 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 			   ch = "<b>" + ch + "</b>";
 			  if(e->style == "S")
 			   ch = "<font size=\"-1\">" + ch + "</font>";
-			    
+
+
+			if(e->mat && e->get_set_width() != e->mat->get_set_width())
+			  ch = "<span style=\"text-decoration: overline; color: blue\">" + ch + "</span>";
+			  
 			 if(sizeof(e->character) > 1) 
 			  tobeadded += ("<u>" + string_to_utf8(ch||" &nbsp; ") + "</u>");
 			 else
