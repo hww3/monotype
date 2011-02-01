@@ -42,12 +42,13 @@ void start()
 //! default user authenticator
 static mixed default_find_user(Request id, Response response, Template.View t)
 {
-array r = ({id->variables->username});
-/*
+//array r = ({id->variables->username});
+
   mixed r = Fins.Model.find.users( ([ "username": id->variables->username,
+									  "is_active" : 1,
                                       "password": id->variables->password 
                                     ]) );
-*/
+
   t->add("username", id->variables->username);
 
   if(r && sizeof(r)) return r[0];
@@ -60,11 +61,10 @@ string password_template_name = "auth/sendpassword";
 //! default user authenticator
 static mixed default_find_user_password(Request id, Response response, Template.View t)
 {
-array r = ({});
-/*
-  mixed r = Fins.Model.find.users( ([ "username": id->variables->username,
+
+  mixed r = Fins.Model.find.users( ([ "username": id->variables->username, "is_active" : 1
                                     ]) );
-*/
+
   t->add("username", id->variables->username);
 
   if(r && sizeof(r)) return r[0];
@@ -84,7 +84,7 @@ static string get_return_address()
 }
 
 // _login is used for ajaxy logins.
-function _login = login;
+function/*(Request, Response, Template.View, mixed ...:void )*/ _login = login;
 
 public void login(Request id, Response response, Template.View t, mixed ... args)
 {

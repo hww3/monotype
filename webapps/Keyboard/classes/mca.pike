@@ -7,7 +7,6 @@ void start()
   before_filter(app->admin_user_filter);
 }
 
-
 int __quiet = 1;
 
    array cols15 = ({ /* 15 elements */
@@ -59,6 +58,7 @@ mapping case_contents = ([
 public void index(Request id, Response response, Template.View view, mixed args)
 {
   array m = app->get_mcas();
+  view->add("owner", id->misc->session_variables->user);
   view->add("mcas", m);
 }
 
@@ -72,7 +72,7 @@ public void do_delete(Request id, Response response, Template.View view, mixed a
 	response->set_data("You must provide a matcase to delete.");
   }
 
-  mca = app->load_matcase(args[0]);
+  mca = app->load_matcase(args[0], id->misc->session_variables->user);
 
   if(!mca)
   {
@@ -82,7 +82,7 @@ public void do_delete(Request id, Response response, Template.View view, mixed a
   else
   {
     response->flash("MCA " + args[0] + " successfully deleted.");
-    app->delete_matcase(args[0]);
+    app->delete_matcase(args[0], id->misc->session_variables->user);
     response->redirect(index);
   }
 }
@@ -96,7 +96,7 @@ public void delete(Request id, Response response, Template.View view, mixed args
 	response->set_data("You must provide an MCA to delete.");
   }
 
-  mca = app->load_matcase(args[0]);
+  mca = app->load_matcase(args[0], id->misc->session_variables->user);
 
   if(!mca)
   {
@@ -112,7 +112,7 @@ public void delete(Request id, Response response, Template.View view, mixed args
 public void copy(Request id, Response response, Template.View view, mixed args)
 {
   Monotype.MatCaseLayout mca;
-  mca = app->load_matcase(args[0]);
+  mca = app->load_matcase(args[0], id->misc->session_variables->user);
 
   view->add("mca", mca);
   view->add("wedges", app->get_wedges());
@@ -125,8 +125,7 @@ public void copy(Request id, Response response, Template.View view, mixed args)
 
   if(id->variables->size)
   {
-	string file_name = combine_path(getcwd(), app->config["locations"]["matcases"], id->variables->name + ".xml");
-	if(file_stat(file_name))
+	if(app->mca_exists(id->variables->name, id->misc->session_variables->user))
 	{
 		response->flash("MCA " + id->variables->name + " already exists.");
 		return;
@@ -137,7 +136,7 @@ public void copy(Request id, Response response, Template.View view, mixed args)
 	mca->set_description(id->variables->description);
 	mca->set_wedge(id->variables->wedge);
 	mca->set_size((int)id->variables->size);
-    app->save_matcase(mca);		
+    app->save_matcase(mca, id->misc->session_variables->user, id->variables->is_public);		
     response->redirect(edit, ({id->variables->name}));
   }
 }
@@ -148,8 +147,7 @@ public void new(Request id, Response response, Template.View view, mixed args)
 	Monotype.MatCaseLayout l;
 	if(id->variables->size)
 	{
-		string file_name = combine_path(getcwd(), app->config["locations"]["matcases"], id->variables->name + ".xml");
-		if(file_stat(file_name))
+		if(app->mca_exists(id->variables->name, id->misc->session_variables->user))
 		{
 			response->flash("MCA " + id->variables->name + " already exists.");
 			return;
@@ -160,7 +158,7 @@ public void new(Request id, Response response, Template.View view, mixed args)
 		l->set_name(id->variables->name);
 		l->set_wedge(id->variables->wedge);
 		
-		app->save_matcase(l);
+		app->save_matcase(l, id->misc->session_variables->user, id->variables->is_public);
 		
 		response->redirect(edit, ({id->variables->name}));
 	}
@@ -176,11 +174,12 @@ public void cancel(Request id, Response response, Template.View view, mixed args
 
 public void save(Request id, Response response, Template.View view, mixed args)
 {
-	app->save_matcase(id->misc->session_variables->mca);
+	werror("save\n");
+	app->save_matcase(id->misc->session_variables->mca, id->misc->session_variables->user, id->variables->is_public);
 	id->misc->session_variables->mca = 0;
-	
+
 	response->flash("Your changes were saved.");
-	response->redirect(index);	
+	response->redirect(index);
 }
 
 public void setMat(Request id, Response response, Template.View view, mixed args)
@@ -273,12 +272,20 @@ public void edit(Request id, Response response, Template.View view, mixed args)
 	response->set_data("You must provide a mat case layout to edit.");
   }
 
+view->add("now", (string)time());
 
 werror("args:%O, %O\n", getcwd(),combine_path(app->config["locations"]["matcases"], args[0]));
   mca = app->load_matcase(args[0]);
+werror("**** mca: %O wedge: %O\n", mca, mca);
   if(mca->wedge)
-    view->add("wedge", app->load_wedge(mca->wedge));
+    view->add("wedge", app->load_wedge(mca->wedge, id->misc->session_variables->user));
   id->misc->session_variables->mca = mca;
+
+object dbo = app->load_matcase_dbobj_by_id(args[0]);
+if(dbo && dbo["owner"] == id->misc->session_variables->user)
+  view->add("is_owner", 1);
+else
+  view->add("is_owner", 0);
 
   array r,c;
   switch(mca->matcase_size)
@@ -325,3 +332,60 @@ if(matrix->character == "0")
 }
 
 
+public void download(Request id, Response response, Template.View view, mixed args)
+{
+	object mca;
+	
+	  if(!sizeof(args))
+	  {
+		response->set_data("You must provide an MCA to download.");
+	  }
+
+	  mca = app->load_matcase_dbobj_by_id(args[0], id->misc->session_variables->user);
+	
+	response->set_data(mca["xml"]);
+    response->set_header("content-disposition", "attachment; filename=" + 
+        mca["name"] + ".xml");	
+    response->set_type("application/x-monotype-e-matcase");
+    response->set_charset("utf-8");
+   
+}
+
+public void upload(Request id, Response response, Template.View view, mixed args)
+{
+   object mca;
+
+   mixed e = catch(mca = Monotype.load_matcase_string(id->variables->file));
+   if(e)
+	{
+		response->flash("Unable to read the Matcase. Are you sure you uploaded an MCA definition file?");
+		response->redirect(index);
+		return;
+	}
+	
+	if(mca->name)
+	{
+		object nw;
+		
+		object e = catch(nw = app->load_matcase(mca->name, id->misc->session_variables->user));
+
+		if(nw)
+		{
+			response->flash("You already have an MCA named " + mca->name +". Please delete the existing definition and retry.");
+			response->redirect(index);
+			return;			
+		}
+	}
+	else
+	{
+		response->flash("No matcase name specified. Are you sure you uploaded an MCA definition file?");
+		response->redirect(index);
+		return;		
+	}
+
+	app->save_matcase(mca, id->misc->session_variables->user, id->variables->is_public);
+	
+	response->flash("Matcase Arrangement " + mca->name + " was successfully imported.");
+	response->redirect(index);
+	return;	
+}

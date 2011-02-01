@@ -16,8 +16,10 @@ object JumpToLineWindow;
 object JumpToLineItem;
 
 object JumpToLineBox;
+object MainWindow;
 
 object CurrentLine;
+object LineContentsLabel;
 
 object JobName;
 object Face;
@@ -277,3 +279,10 @@ void jumpOKClicked_(object b)
   //JumpToLineWindow->performClose_(b);
 }
 
+void _finishedMakingConnections()
+{
+	MainWindow->makeKeyAndOrderFront_(this);
+	werror("**** _AWAKING\n");
+//	sleep(100);
+	
+}

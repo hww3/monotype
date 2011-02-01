@@ -186,7 +186,7 @@ static void create(object driver, mapping config)
   
   iow->set_report_callback(report_callback, 0);
 
-  Public.ObjectiveC.add_backend_runloop();
+//  Public.ObjectiveC.add_backend_runloop();
 }
 
 int map_code_to_pins(array codes)
