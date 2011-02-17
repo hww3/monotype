@@ -107,27 +107,46 @@ werror("callback: %O\n", nv);
 void value_changed(int nv)
 {
 //  write(nv + "\n");
+// we'd want to flip the action if we have a permanently attached sensor.
+//if(!driver->ui->CycleSensorMode)
+
   if(nv&interesting_bits)
   {
+	if(!driver->ui->CycleSensorMode)
+		doStart();
+	else
+		doEnd();
+  }
+  else
+  {
+	if(!driver->ui->CycleSensorMode)
+	  doEnd(); 
+	else
+	  doStart();
+  }
+}
+
+void doStart()
+{
 	state = 1;
 	driver->setCycleStatus(1);
 	write("on: %O\n", started); 
 
 	if(driver->forced) return;
-	
+
 	if(started)
 	  start_code();
 	else
 	  end_code();
-  }
-  else
-  { 
+}
+
+void doEnd()
+{
 	state = 0;
 	driver->setCycleStatus(0);
 	write("off\n");
 	if(started)
-  	  end_code();
-  }
+  	  end_code();	
 }
 
 void start_code()

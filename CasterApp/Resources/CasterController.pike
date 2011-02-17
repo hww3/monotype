@@ -17,6 +17,9 @@ object JumpToLineItem;
 
 object JumpToLineBox;
 object MainWindow;
+object PreferenceWindow;
+
+object CycleSensorTypeCheckbox;
 
 object CurrentLine;
 object LineContentsLabel;
@@ -70,6 +73,8 @@ object c14;
 
 mapping jobinfo;
 
+int CycleSensorMode;
+
 object app;
 int icc;
 array buttonstotouch = 
@@ -84,6 +89,36 @@ static void create()
   ::create();
 	
    app = Cocoa.NSApplication.sharedApplication();
+
+}
+
+// among other things here, we set default preferences.
+void initialize()
+{
+	registerDefaultPreferences();
+	setupPreferences();
+//	throw(Error.Generic("whee!"));
+}
+
+void registerDefaultPreferences()
+{
+	object defaults = Cocoa.NSUserDefaults.standardUserDefaults();
+	mapping defs = ([]);
+	
+	defs->cycleSensorIsPermanent = "YES";
+	
+	defaults->registerDefaults_(defs);
+}
+
+void setupPreferences()
+{
+	int bool;
+	object defaults = Cocoa.NSUserDefaults.standardUserDefaults();
+	bool = (defaults->boolForKey_("cycleSensorIsPermanent"));
+	CycleSensorTypeCheckbox->setState_(bool);
+	CycleSensorMode = bool;
+	
+	werror("SET DEFAULT: %O\n", defaults->boolForKey_("cycleSensorIsPermanent"));
 }
 
 void set_job_info()
@@ -115,6 +150,20 @@ void loadJob_(object a)
   CasterToggleButton->setEnabled_(1);
   JumpToLineItem->setEnabled_(1);
   app->mainMenu()->update();
+}
+
+void toggleCycleSensorType_(object checkbox)
+{
+	int state = checkbox->state();
+	
+	werror("state: %O\n", state);
+	object defaults = Cocoa.NSUserDefaults.standardUserDefaults();
+	werror("SET DEFAULT: %O\n", indices(defaults));
+
+	defaults->setBool_forKey_(state, "cycleSensorIsPermanent");
+	CycleSensorMode = state;
+	werror("SET DEFAULT: %O\n", defaults->boolForKey_("cycleSensorIsPermanent"));
+	
 }
 
 // callback from the start/stop button
@@ -216,6 +265,22 @@ void showPinControl_(object i)
 	allOff_(i);
 }
 
+void showPreferences_(object i)
+{
+	stopCaster();
+	PreferenceWindow->setDelegate_(this);
+	PreferenceWindow->makeKeyAndOrderFront_(i);
+
+//	werror("\n\n\ncode: %O\n\n\n", code);
+/*
+	JumpToLineWindow->makeKeyAndOrderFront_(i);
+	
+	jlmi = i;
+	jlmi->setEnabled_(0);
+	app->mainMenu()->update();	
+	*/
+}
+
 void showJumpToLine_(object i)
 {
 	stopCaster();
@@ -281,6 +346,8 @@ void jumpOKClicked_(object b)
 
 void _finishedMakingConnections()
 {
+	
+	initialize();
 	MainWindow->makeKeyAndOrderFront_(this);
 	werror("**** _AWAKING\n");
 //	sleep(100);
