@@ -325,7 +325,13 @@ werror("data_to_set: %O\n", data_to_set);
 		  // if we can't justify, having removed the last word, see if hyphenating will help, regardless if we hyphenated the last line.		
 		werror("numline: %O, is_broken: %O, can_justify: %O\n", 
                           numline,  1||lines[-1]->is_broken, current_line->can_justify());
-		  if(1 && numline && sizeof(lines) && (!lines[-1]->is_broken || !current_line->can_justify())) 
+		int can_try_hyphenation = 0;
+		if(1 && numline && sizeof(lines) && (!lines[-1]->is_broken || !current_line->can_justify()))
+		  can_try_hyphenation = 1;
+		else if(config->unnatural_word_breaks)
+		  can_try_hyphenation = 1; 
+
+		  if(can_try_hyphenation)
 				  {	
 			werror("trying to hyphenate, justification is %d.\n", current_line->can_justify());
 			int bs = search(data_to_set, " ", i+1);
@@ -671,14 +677,16 @@ array hyphenate_word(string word)
     word = hyphenator->hyphenate(word);
 #endif /* have Public.Tools.Language.Hyphenate */
 	
-	array wp = word/"-";
+    array wp = word/"-";
+werror("config->unnatural_word_breaks: %O\n", config->unnatural_word_breaks)	;
+
+    if(!(sizeof(wp) > 1) && config->unnatural_word_breaks)
+    {
+werror("splitting unnaturally.\n");
+	wp = word/"";
+    }
 	
-	if(!(sizeof(wp) > 1) && config->unnatural_word_breaks)
-	{
-		wp = word/"";
-	}
-	
-	return wp;
+    return wp;
 }
 
 Line make_new_line()
