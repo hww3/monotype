@@ -33,3 +33,31 @@ object load_stopbar(string ml)
   m->load(n);
   return m;
 }
+
+//!
+object load_matcase_string(string ml)
+{
+  object m = master()->resolv("Monotype.MatCaseLayout")();                                            
+  werror("Loading matcase from " + ml + ".xml\n");
+  object n = Public.Parser.XML2.parse_xml(ml);
+  m->load(n);
+
+/*  for(int x = 3; x < 23; x++)
+  {
+    if(m->elements["S" + x])
+      spaces += ({x});
+  }
+  werror("Spaces in matcase: [ %{%d %}]\n", spaces);
+*/
+  return m;
+}
+
+//!
+object load_stopbar_string(string ml)
+{
+  object m = master()->resolv("Monotype.Stopbar")();                                            
+  werror("Loading stopbar from " + ml + ".xml\n");
+  object n = Public.Parser.XML2.parse_xml(ml);
+  m->load(n);
+  return m;
+}

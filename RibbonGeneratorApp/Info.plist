@@ -5,26 +5,26 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string>Caster</string>
+	<string>RibbonGenerator</string>
 	<key>CFBundleGetInfoString</key>
-	<string>0.9.8, foo</string>
-        <key>CFBundleVersion</key>
-        <string>0.9.8</string>
+	<string>0.9.5, foo</string>
+	<key>CFBundleVersion</key>
+	<string>0.9.5</string>
 	<key>CFBundleIdentifier</key>
-	<string>org.welliver.Caster</string>
+	<string>org.welliver.RibbonGenerator</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleSignature</key>
 	<string>WvTx</string>
 	<key>NSMainNibFile</key>
-	<string>Caster.nib</string>
+	<string>MainMenu.nib</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>CFBundleIconFile</key>
-	<string>Caster</string>
-        <key>SUFeedURL</key>
-        <string>http://hww3.riverweb.com/dist/monotype/updates/Caster/appcast.xml</string>
-        <key>SUPublicDSAKeyFile</key>
-        <string>dsa_pub.pem</string>
+	<string>RibbonGenerator</string>
+	<key>SUFeedURL</key>
+	<string>http://hww3.riverweb.com/dist/monotype/updates/RibbonGenerator/appcast.xml</string>
+	<key>SUPublicDSAKeyFile</key>
+	<string>dsa_pub.pem</string>
 </dict>
 </plist>

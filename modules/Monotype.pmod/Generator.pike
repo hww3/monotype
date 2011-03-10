@@ -640,12 +640,12 @@ int in_odd;
 		}
 		*/
 	}
-	else if(has_prefix("<setpagenumber ",lcdata))
+	else if(has_prefix(lcdata, "<setpagenumber "))
 	{
 		int matches, pn;
 		matches = sscanf(lcdata, "<setpagenumber %d%*s>", pn);
 		if(matches)
-		  pagenumber = pn;
+		  pagenumber = (pn-1); // we always increment before going into header, so account for that here.
 		else
 			current_line->errors += ({"Failed to set page number, unable to extract desired number.\n"});
 			

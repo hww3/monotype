@@ -4,7 +4,7 @@ inherit DocController;
 
 void start()
 {
-//  before_filter(app->admin_user_filter);
+  before_filter(app->admin_user_filter);
 }
 
 //int __quiet = 1;
@@ -28,7 +28,7 @@ public void get_wedge_for_mca(Request id, Response response, Template.View v, mi
 	string w;
 	werror("args: %O\n", args);
 	
-	object mca = app->load_matcase(args[0]);
+	object mca = app->load_matcase(args[0], id->misc->session_variables->user);
 
     if(!mca) w = "000";
 
@@ -53,8 +53,8 @@ werror("job_id is %d\n", (int)id->variables->job_id);
 		"pointsystem": (float)id->variables->pointsystem,
 		"setwidth": (float)id->variables->set,
 		"linelengthp": (float)id->variables->linelength,
-		"stopbar": app->load_wedge(id->variables->wedge),
-		"matcase": app->load_matcase(id->variables->mca),
+		"stopbar": app->load_wedge(id->variables->wedge, id->misc->session_variables->user),
+		"matcase": app->load_matcase(id->variables->mca, id->misc->session_variables->user),
 		"jobname": id->variables->jobname,
 		"dict_dir": combine_path(app->config->app_dir, "config"),
         "lang": id->variables->lang,
@@ -96,8 +96,8 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 		"setwidth": (float)id->variables->set,
                 "pointsystem": (float)id->variables->pointsystem,
 		"linelengthp": (float)id->variables->linelength,
-		"stopbar": app->load_wedge(id->variables->wedge),
-		"matcase": app->load_matcase(id->variables->mca),
+		"stopbar": app->load_wedge(id->variables->wedge, id->misc->session_variables->user),
+		"matcase": app->load_matcase(id->variables->mca, id->misc->session_variables->user),
 		"jobname": id->variables->jobname,
 		"dict_dir": combine_path(app->config->app_dir, "config"),
 		"lang": id->variables->lang,
@@ -158,7 +158,8 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 		int last_was_space = 0;
 		int last_set;
 		b+="<div style=\"clear: left\">";
-		b+=("<div style=\"position:relative; float:left; width:35px\">" + (i+1) + "</div>");
+		b+=("<div style=\"position:relative; float:left; width:35px\">" + (i+1) 
+			+ "/"  + (sizeof(g->lines) - i)+ "</div>");
 		string tobeadded = "";
 		int tobeaddedwidth = 0;
 		int total_set; 
@@ -218,7 +219,11 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 			   ch = "<b>" + ch + "</b>";
 			  if(e->style == "S")
 			   ch = "<font size=\"-1\">" + ch + "</font>";
-			    
+
+
+			if(e->mat && e->get_set_width() != e->mat->get_set_width())
+			  ch = "<span style=\"text-decoration: overline; color: blue\">" + ch + "</span>";
+			  
 			 if(sizeof(e->character) > 1) 
 			  tobeadded += ("<u>" + string_to_utf8(ch||" &nbsp; ") + "</u>");
 			 else
