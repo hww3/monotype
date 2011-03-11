@@ -16,8 +16,8 @@ public void index(Request id, Response response, Template.View v, mixed ... args
 
 public void generate(Request id, Response response, Template.View v, mixed ... args)
 {
-	array m = app->get_mcas();
-    v->add("mcas", m);
+   werror("matcases: %O\n", app->get_mcas());
+    v->add("mcas", app->get_mcas());
     v->add("wedges", app->get_wedges());
   
 	return;

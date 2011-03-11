@@ -50,15 +50,15 @@ Job Name <input type="text" name="jobname"/>
 <p>
 Matcase
 <select id="mca" name="mca" onChange="getWedge(this);">
-<%foreach(data->mcas; int i; string c){%>
-  <option><%=c%></option>
+<%foreach(data->mcas; int i; object c){%>
+  <option><%=c.name%></option>
 <%}%>
 </select>
 <p>
 Wedge
 <select id="wedge" name="wedge">
-<%foreach(data->wedges; int i; string w){%>
-  <option><%=w%></option>
+<%foreach(data->wedges; int i; object w){%>
+  <option><%=w.name%></option>
 <%}%>
 </select>
 <p>
