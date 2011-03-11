@@ -6,7 +6,7 @@
 </style>
 </head>
 <body class="tundra">
-<h2>Monotype Wedge Editor</h2>
+<h2>Monotype User Editor</h2>
 
 <% yield(); %>
 

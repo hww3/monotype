@@ -1,5 +1,5 @@
 
-inherit Fins.DocController;
+inherit "mono_doccontroller";
 
 object mca;
 object wedge;
