@@ -1,6 +1,6 @@
 import Fins;
 
-inherit DocController;
+inherit "mono_doccontroller";
 
 void start()
 {
