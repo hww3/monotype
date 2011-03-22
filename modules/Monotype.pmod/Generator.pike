@@ -292,12 +292,12 @@ werror("data_to_set: %O\n", data_to_set);
   	  for(int i = 0; i<sizeof(data_to_set) ;i++)
 	  {
 	    if(data_to_set[i] == " ")
-            {
+        {
 	      if(current_line->elements && sizeof(current_line->elements) && current_line->elements[-1]->is_real_js) 
 	        continue;
 	   	  else
   	        lastjs = i;
-            }
+        }
 //	werror(" %O", data_to_set[i]);
 	   current_line->add(data_to_set[i], create_modifier(), space_adjust);
 	

@@ -1,6 +1,5 @@
 TODO
 
-- ribbon generator: allow substitution of punctuation from roman for italics
 - ribbon generator: allow unit variations when quadding
 - ribbon generator: add alignment characters to first line
 - ribbon generator: show warning if mca has unusual space availability.
@@ -8,6 +7,8 @@ TODO
 - mca editor: allow available sorts display to be customized.
 - keyboard app: allow users to log in and have private arrangements/wedges.
 
+- ribbon generator: allow substitution of punctuation from roman for italics
+     (completed 21-mar-2011)
 - ribbon generator: show sorts that have been adjusted for width during preview. 
      (completed 15-feb-2011)
 - ribbon generator: add extra units to last line (trigger caster stop) 
