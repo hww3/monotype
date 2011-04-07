@@ -6,6 +6,8 @@ Cocoa.NSApplication app;
 object Spinner;
 Cocoa.NSButton LaunchBrowser;
 Cocoa.NSTextField StartupLabel;
+Cocoa.NSButton ViewLog;
+
 void create()
 {
 //  ::create();
@@ -13,6 +15,11 @@ void create()
 
 //spinner->startAnimation_(this);
 
+void doViewLog_(Cocoa.NSObject obj)
+{
+	object s = Cocoa.NSWorkspace.sharedWorkspace();
+	s->openFile_withApplication_(combine_path(getenv("HOME"), "Library/Application Support/Monotype Caster Control/debug.log"), "Console");	
+}
 
 void doLaunchBrowser_(Cocoa.NSObject obj)
 {
@@ -43,6 +50,7 @@ void applicationWillFinishLaunching_(object event)
 werror("***\n*** starting!\n**\n");
    finserve = Fins.AdminTools.FinServe(({}));
    finserve->project = "Keyboard";
+   finserve->config_name = "desktop";
    finserve->my_port = 5675;
    finserve->ready_callback = finserveStarted;
    Thread.Thread(finserve->do_startup);

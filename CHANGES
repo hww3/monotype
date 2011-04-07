@@ -1,3 +1,6 @@
+20110405
+- standalone ribbon generator stores logs in ~/Library/Application Support.
+
 20110104
 - standalone ribbon generator seems to work now; stores data in 
     ~/Library/Application Support, and copies fresh db if not present.
