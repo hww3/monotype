@@ -1,3 +1,4 @@
+#charset utf8
 // represents a line in a job.
 // big and little are the calculated justification settings
 // spaces is the number of justification spaces
@@ -38,6 +39,7 @@ import Monotype;
 	float setwidth;
 	
 	object m, s;
+        mapping config;
 	
 	static mixed cast(string t)
 	{
@@ -55,8 +57,9 @@ import Monotype;
 		return s;
 	}
 	
-	static void create(object _m, object _s, mapping config)
+	static void create(object _m, object _s, mapping _config)
 	{
+                config = _config;
 		m = _m;
 		s = _s;
 		min_little = config->min_little||1;
@@ -188,7 +191,14 @@ import Monotype;
 	    return;
 	  }
 */
+
+ 	  if(modifier & MODIFIER_SMALLCAPS && config->allow_lowercase_smallcaps)
+          {
+		activator = upper_case(activator);
+	  }
+
 	  string code = activator;
+
 	  if(modifier&MODIFIER_ITALICS)
 	      code = "I|" + code;	 
 	  else if(modifier&MODIFIER_SMALLCAPS)
@@ -198,12 +208,21 @@ import Monotype;
 
 	  mat = m->elements[code];
 
+       if(!mat && (modifier&MODIFIER_ITALICS) && config->allow_punctuation_substitution && (<".", ",", ":", ";", "'", "’", "‘", "!", "?", "-", "–">)[activator])
+      {
+	    if(mat = m->elements[activator])
+		    errors += ({"Substituted activator " + string_to_utf8(activator) + " from roman alphabet."});
+		else
+		    errors += ({"Unable to substitute activator [" + string_to_utf8(activator) + "] from roman alphabet."});
+		
+      }
+
 	  if(!mat)
-          { 
+      { 
                 errors += ({("Requested activator [" + 
 			string_to_utf8(activator) + "], code [" + string_to_utf8(code) + "] not in MCA.\n")}); 
 		werror("invalid activator %O/%O\n", string_to_utf8(activator),code);
-          }
+      }
 	  else
 	  {	
 		if(atbeginning)

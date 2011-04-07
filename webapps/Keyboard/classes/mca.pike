@@ -1,6 +1,6 @@
 import Fins;
 
-inherit DocController;
+inherit "mono_doccontroller";
 
 void start()
 {
@@ -278,7 +278,24 @@ werror("args:%O, %O\n", getcwd(),combine_path(app->config["locations"]["matcases
   mca = app->load_matcase(args[0]);
 werror("**** mca: %O wedge: %O\n", mca, mca);
   if(mca->wedge)
-    view->add("wedge", app->load_wedge(mca->wedge, id->misc->session_variables->user));
+  {
+    object wedge = app->load_wedge(mca->wedge, id->misc->session_variables->user);
+    if(!wedge) // if a user doesn't have their own wedge, try loading a global one.
+    {
+      int wedgeid;
+      array x = Fins.Model.find.stopbars(([ "name": mca->wedge ]));
+      if(sizeof(x))
+      {
+         wedgeid = x[0]["id"];
+         wedge = app->load_wedge(wedgeid);
+      }
+      else
+      {
+        throw(Error.Generic("Unable to load wedge " + mca->wedge + " for user.")); 
+      }
+    }
+    view->add("wedge", wedge);
+  }
   id->misc->session_variables->mca = mca;
 
 object dbo = app->load_matcase_dbobj_by_id(args[0]);

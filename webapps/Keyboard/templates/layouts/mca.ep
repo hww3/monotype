@@ -17,6 +17,9 @@
 <ul>
 <li><%#action_link "controller": "/" %>Main Menu</a>
 </ul>
+<% if(data->user){ %>
+<p>Connected as <%$user.name%>
+<% } %>
 
 </body>
 </html>

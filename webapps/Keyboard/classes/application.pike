@@ -198,7 +198,7 @@ array old_get_mcas()
 
 array old_get_wedges()
 {
-	return map(glob("*.xml", get_dir(config["locations"]["wedges"]) || ({})), lambda(string s){return (s/".xml")[0];});
+	return sort(map(glob("*.xml", get_dir(config["locations"]["wedges"]) || ({})), lambda(string s){return (s/".xml")[0];}));
 }
 
 int(0..1) mca_exists(string name, object user)

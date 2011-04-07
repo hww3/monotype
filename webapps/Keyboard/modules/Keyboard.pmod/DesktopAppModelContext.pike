@@ -1,4 +1,8 @@
 inherit Fins.Model.DataModelContext;
+
+
+#if constant(Public.ObjectiveC)
+
 import Public.ObjectiveC;
 
 void set_url(string url)
@@ -21,3 +25,5 @@ werror("**** " + (string)folder  + "\n");
 	sql_url = "sqlite://" + combine_path((string)folder, "RibbonGeneratorData.sqlite3");
 	werror("**** " + sql_url);
 }
+
+#endif

@@ -1,4 +1,4 @@
-inherit Fins.ScaffoldController;
+inherit "mono_scaffoldcontroller";
 
 string  model_component = "User";
 

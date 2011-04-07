@@ -1,6 +1,14 @@
 20110405
 - standalone ribbon generator stores logs in ~/Library/Application Support.
 
+20110301
+- ribbon generator: sort mcas and wedges alphabetically
+- ribbon generator: add larger set widths
+- ribbon generator: display adjusted width casts with an overscore in soft 
+    proof
+- ribbon generator: sort out hyphenation a little better (unnatural line 
+    breaks in particular)
+
 20110104
 - standalone ribbon generator seems to work now; stores data in 
     ~/Library/Application Support, and copies fresh db if not present.

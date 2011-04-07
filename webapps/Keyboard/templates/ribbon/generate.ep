@@ -50,15 +50,15 @@ Job Name <input type="text" name="jobname"/>
 <p>
 Matcase
 <select id="mca" name="mca" onChange="getWedge(this);">
-<%foreach(data->mcas; int i; string c){%>
-  <option><%=c%></option>
+<%foreach(data->mcas; int i; object c){%>
+  <option><%=c.name%></option>
 <%}%>
 </select>
 <p>
 Wedge
 <select id="wedge" name="wedge">
-<%foreach(data->wedges; int i; string w){%>
-  <option><%=w%></option>
+<%foreach(data->wedges; int i; object w){%>
+  <option><%=w.name%></option>
 <%}%>
 </select>
 <p>
@@ -95,10 +95,15 @@ Set Width
 <option>12.50</option>
 <option>12.75</option>
 <option>13</option>
+<option>13.5</option>
 <option>14</option>
 <option>15</option>
 <option>16</option>
+<option>17</option>
 <option>18</option>
+<option>19</option>
+<option>20</option>
+<option>22</option>
 <option>24</option>
 </select>
 
@@ -194,7 +199,10 @@ Minimum Justifying Space Size (3/8 is default)
 <br>
 <input type="checkbox" name="unnatural_word_breaks" value="1"/> Allow hard (non-standard) breaks for hyphenation
 <input type="checkbox" name="hyphenate_no_hyphen" value="1"/> Do not include hyphen in hyphenated words
-
+<p>
+<input type="checkbox" name="allow_punctuation_substitution" value="1"/> Subsitute roman punctuation when not found in italic alphabet
+<p>
+<input type="checkbox" name="allow_lowercase_smallcaps" value="1"/> Treat lower case in small-caps passages as upper-case
 <p>
 <input type="checkbox" checked="1" name="trip_at_end" value="1"/> Trip caster when complete 
 <p>

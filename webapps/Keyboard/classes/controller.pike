@@ -1,5 +1,5 @@
 
-inherit Fins.DocController;
+inherit "mono_doccontroller";
 
 object mca;
 object wedge;
@@ -19,7 +19,7 @@ void start()
   auth = load_controller("auth/controller");
   users = load_controller("users");
 
-//  before_filter(app->admin_user_filter);
+  before_filter(app->admin_user_filter);
 }
 
 
