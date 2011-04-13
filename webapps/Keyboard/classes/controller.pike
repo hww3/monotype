@@ -27,3 +27,8 @@ void start()
 void index(object id, object response, mixed ... args)
 {
 }
+
+void changes(object id, object response, object v, mixed ... args)
+{
+	v->add("changes" , Stdio.read_file("CHANGES"));
+}

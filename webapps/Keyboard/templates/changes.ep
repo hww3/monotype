@@ -1,0 +1,5 @@
+<h3>Change Log</h3>
+<p>
+<pre>
+<%=data->changes%>
+</pre>

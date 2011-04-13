@@ -1,4 +1,3 @@
-
 import Public.ObjectiveC;
 object NSApp;
 
