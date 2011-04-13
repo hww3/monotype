@@ -2,7 +2,15 @@ PUBLIC_OBJECTIVEC=/Users/hww3/Public_ObjectiveC
 FINS_REPO="http://hg.welliver.org/"
 RIBBON_GENERATOR=RibbonGenerator
 CASTER_CONTROL=Caster
-#all: stub framework fins webapp
+
+
+# note: Public.ObjectiveC must be available and built
+#
+#       Pike.framework must be present in the Public.ObjectiveC build directory
+#       and must have Public.Parser.XML2, Public.IO.IOWarror and Public.ObjectiveC 
+#		modules installed.
+#
+#       additionally, Pike.framework must have been built with SQLite enabled.
 
 all: ribbongenerator castercontrol
 
@@ -25,11 +33,6 @@ ccapp: ccstub
 
 stub: 
 	${PUBLIC_OBJECTIVEC}/mkapp ${RIBBON_GENERATOR}
-
-# note: Public.ObjectiveC must be available and built
-#       Pike.framework must be present in the Public.ObjectiveC build directory
-#       and must have Public.Parser.XML2 and Public.ObjectiveC modules installed.
-#       additionally, Pike.framework must have been built with SQLite enabled.
 
 framework: stub
 	cp -rf RibbonGeneratorApp/* ${RIBBON_GENERATOR}.app/Contents/
