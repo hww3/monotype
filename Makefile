@@ -9,6 +9,11 @@ ribbongenerator: stub framework fins webapp
 stub: 
 	${PUBLIC_OBJECTIVEC}/mkapp ${RIBBON_GENERATOR}
 
+# note: Public.ObjectiveC must be available and built
+#       Pike.framework must be present in the Public.ObjectiveC build directory
+#       and must have Public.Parser.XML2 and Public.ObjectiveC modules installed.
+#       additionally, Pike.framework must have been built with SQLite enabled.
+
 framework: stub
 	cp -rf RibbonGeneratorApp/* ${RIBBON_GENERATOR}.app/Contents/
 
