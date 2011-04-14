@@ -1,7 +1,7 @@
 /* Localized versions of Info.plist keys */
 
 CFBundleName = "Monotype Composition Caster";
-CFBundleShortVersionString = "Monotype Composition Caster version 0.9.9";
-CFBundleGetInfoString = "Monotype Composition Caster version 0.9.9, Copyright 2009-2011 Bill Welliver.";
-NSHumanReadableCopyright = "Copyright 2009-2011 Bill Welliver.";
+CFBundleShortVersionString = "${casterControlVersion}, ${releaseType}";
+CFBundleGetInfoString = "${casterControlVersion}, ${releaseType}";
+NSHumanReadableCopyright = "Copyright ${copyrightYear}, ${copyrightName}.";
 

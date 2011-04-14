@@ -7,9 +7,9 @@
 	<key>CFBundleExecutable</key>
 	<string>Caster</string>
 	<key>CFBundleGetInfoString</key>
-	<string>0.9.9, foo</string>
-        <key>CFBundleVersion</key>
-        <string>0.9.9</string>
+	<string>${casterControlVersion}, ${releaseType}</string>
+    <key>CFBundleVersion</key>
+    <string>${casterControlVersion}</string>
 	<key>CFBundleIdentifier</key>
 	<string>org.welliver.Caster</string>
 	<key>CFBundlePackageType</key>

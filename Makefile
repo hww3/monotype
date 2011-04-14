@@ -20,10 +20,16 @@ clean:
 	rm -rf Fins_build
 	rm -rf ConfigFiles_build
 
-castercontrol: ccstub ccapp
+castercontrol: ccstub ccapp ccapply_versions
 
-ribbongenerator: stub framework fins webapp
+ribbongenerator: stub framework fins webapp rgapply_versions
 	
+
+ccapply_versions:
+	pike tools/apply_versions.pike version.cfg ${CASTER_CONTROL}.app 
+
+rgapply_versions:
+	pike tools/apply_versions.pike version.cfg ${RIBBON_GENERATOR}.app
 
 ccstub: 
 	${PUBLIC_OBJECTIVEC}/mkapp ${CASTER_CONTROL}
