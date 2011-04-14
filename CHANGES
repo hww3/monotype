@@ -1,3 +1,6 @@
+20110413
+- standalone apps are now generated via build scripts for consistency
+
 20110405
 - standalone ribbon generator stores logs in ~/Library/Application Support.
 
