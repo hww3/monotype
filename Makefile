@@ -1,3 +1,4 @@
+SPARKLE_HOME=/Users/hww3/Downloads/Sparkle 1/
 PUBLIC_OBJECTIVEC=/Users/hww3/Public_ObjectiveC
 FINS_REPO="http://hg.welliver.org/"
 RIBBON_GENERATOR=RibbonGenerator
@@ -33,12 +34,14 @@ rgapply_versions:
 
 ccstub: 
 	${PUBLIC_OBJECTIVEC}/mkapp ${CASTER_CONTROL}
+	cp -rf $SPARKLE_HOME/Sparkle.framework ${RIBBON_GENERATOR}.app/Contents/Frameworks
 
 ccapp: ccstub
 		cp -rf CasterApp/* ${CASTER_CONTROL}.app/Contents/
 
 stub: 
 	${PUBLIC_OBJECTIVEC}/mkapp ${RIBBON_GENERATOR}
+	cp -rf $SPARKLE_HOME/Sparkle.framework ${RIBBON_GENERATOR}.app/Contents/Frameworks
 
 framework: stub
 	cp -rf RibbonGeneratorApp/* ${RIBBON_GENERATOR}.app/Contents/
