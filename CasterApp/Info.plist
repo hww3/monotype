@@ -22,9 +22,9 @@
 	<string>NSApplication</string>
 	<key>CFBundleIconFile</key>
 	<string>Caster</string>
-        <key>SUFeedURL</key>
-        <string>http://hww3.riverweb.com/dist/monotype/updates/Caster/appcast.xml</string>
-        <key>SUPublicDSAKeyFile</key>
-        <string>dsa_pub.pem</string>
+    <key>SUFeedURL</key>
+    <string>http://hww3.riverweb.com/dist/monotype/updates/Caster/appcast.xml</string>
+    <key>SUPublicDSAKeyFile</key>
+    <string>dsa_pub.pem</string>
 </dict>
 </plist>

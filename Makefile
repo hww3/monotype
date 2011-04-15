@@ -34,14 +34,14 @@ rgapply_versions:
 
 ccstub: 
 	${PUBLIC_OBJECTIVEC}/mkapp ${CASTER_CONTROL}
-	cp -rf $SPARKLE_HOME/Sparkle.framework ${RIBBON_GENERATOR}.app/Contents/Frameworks
+	cp -rf "${SPARKLE_HOME}/Sparkle.framework" ${CASTER_CONTROL}.app/Contents/Frameworks
 
 ccapp: ccstub
 		cp -rf CasterApp/* ${CASTER_CONTROL}.app/Contents/
 
 stub: 
 	${PUBLIC_OBJECTIVEC}/mkapp ${RIBBON_GENERATOR}
-	cp -rf $SPARKLE_HOME/Sparkle.framework ${RIBBON_GENERATOR}.app/Contents/Frameworks
+	cp -rf "${SPARKLE_HOME}/Sparkle.framework" ${RIBBON_GENERATOR}.app/Contents/Frameworks
 
 framework: stub
 	cp -rf RibbonGeneratorApp/* ${RIBBON_GENERATOR}.app/Contents/
