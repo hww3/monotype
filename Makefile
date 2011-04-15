@@ -3,7 +3,7 @@ PUBLIC_OBJECTIVEC=/Users/hww3/Public_ObjectiveC
 FINS_REPO="http://hg.welliver.org/"
 RIBBON_GENERATOR=RibbonGenerator
 CASTER_CONTROL=Caster
-
+PRIVATE_KEY_DIR=/Users/hww3/Dropbox/Development/Sparkle
 
 # note: Public.ObjectiveC must be available and built
 #
@@ -13,7 +13,18 @@ CASTER_CONTROL=Caster
 #
 #       additionally, Pike.framework must have been built with SQLite enabled.
 
-all: ribbongenerator castercontrol
+all: RibbonGenerator.app Caster.app
+
+hash: zip
+	@/bin/echo
+	@/bin/echo -n "Caster Control Hash: "
+	@ruby "${SPARKLE_HOME}/Extras/Signing Tools/sign_update.rb" ${CASTER_CONTROL}-`pike tools/get_value.pike version.cfg casterControlVersion`.zip ${PRIVATE_KEY_DIR}/dsa_priv.pem
+	@/bin/echo -n "Ribbon Generator Hash: "
+	@ruby "${SPARKLE_HOME}/Extras/Signing Tools/sign_update.rb" ${RIBBON_GENERATOR}-`pike tools/get_value.pike version.cfg ribbonGeneratorVersion`.zip ${PRIVATE_KEY_DIR}/dsa_priv.pem
+
+zip: all
+	zip -ry ${CASTER_CONTROL}-`pike tools/get_value.pike version.cfg casterControlVersion`.zip ${CASTER_CONTROL}.app
+	zip -ry ${RIBBON_GENERATOR}-`pike tools/get_value.pike version.cfg ribbonGeneratorVersion`.zip ${RIBBON_GENERATOR}.app
 
 clean:
 	rm -rf ${CASTER_CONTROL}.app
@@ -21,10 +32,9 @@ clean:
 	rm -rf Fins_build
 	rm -rf ConfigFiles_build
 
-castercontrol: ccstub ccapp ccapply_versions
+Caster.app: ccstub ccapp ccapply_versions
 
-ribbongenerator: stub framework fins webapp rgapply_versions
-	
+RibbonGenerator.app: stub framework fins webapp rgapply_versions
 
 ccapply_versions:
 	pike tools/apply_versions.pike version.cfg ${CASTER_CONTROL}.app 
