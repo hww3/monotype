@@ -11,7 +11,7 @@
 <% yield(); %>
 
 <% if(data->user){ %>
-<p>Connected as <%$user.name%>
+<p>Connected as <%$user.name%> / Version ${ribbonGeneratorVersion}
 <% } %>
 </body>
 </html>

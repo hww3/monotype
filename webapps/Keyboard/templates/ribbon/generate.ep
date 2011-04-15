@@ -44,7 +44,6 @@ function setWedge(data, wedgeid)
 
 </script>
 
-<h1>Ribbon Generator</h1>
 <form action="<%#action_url "action": "do_validate" %>" method="post" enctype="multipart/form-data">
 Job Name <input type="text" name="jobname"/> 
 <p>

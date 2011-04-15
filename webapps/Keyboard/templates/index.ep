@@ -5,5 +5,7 @@ Choose an option:
 <li><%#action_link "action": "wedge"%>Stopbar Arrangements</a>
 <li><%#action_link "action": "ribbon"%>Ribbon Generator</a>
 <p>
+<%if(data->is_desktop){ %>
 <li><%#action_link "action": "users"%>User Management</a>
+<% } %>
 </ul>
