@@ -12,8 +12,8 @@ Arrangement Type: <input type="radio" name="size" value="0" checked="true"/> 15x
 <p>
 
 Default Wedge: <select name="wedge">
-<% foreach(data->wedges; int i; string w) { %>
-  <option><%=w %></option>
+<% foreach(data->wedges; int i; object w) { %>
+  <option><%=w["name"] %></option>
 <% } %>
 </select>
 

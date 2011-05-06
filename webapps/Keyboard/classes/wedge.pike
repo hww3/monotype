@@ -14,6 +14,7 @@ public void index(Request id, Response response, Template.View view, mixed args)
 {
   array m = app->get_wedges();
   view->add("wedges", m);
+  view->add("owner", id->misc->session_variables->user);
 }
 
 public void new(Request id, Response response, Template.View view, mixed args)
@@ -116,15 +117,14 @@ public void edit(Request id, Response response, Template.View view, mixed args)
 	response->set_data("You must provide a wedge to edit.");
   }
 
-/*
-object dbo = app->load_wedge_dbobj_by_id(args[0]);
-if(dbo && dbo["owner"] == id->misc->session_variables->user)
-  view->add("is_owner", 1);
-else
-  view->add("is_owner", 0);
-*/
 
-werror("args:%O, %O\n", getcwd(),combine_path(app->config["locations"]["wedges"], args[0]));
+  object dbo = app->load_wedge_dbobj_by_id(args[0]);
+  if(dbo && dbo["owner"] == id->misc->session_variables->user)
+    view->add("is_owner", 1);
+  else
+    view->add("is_owner", 0);
+
+  werror("args:%O, %O\n", getcwd(),combine_path(app->config["locations"]["wedges"], args[0]));
   wedge = app->load_wedge(args[0], id->misc->session_variables->user);
   id->misc->session_variables->wedge = wedge;
   view->add("wedge", wedge);

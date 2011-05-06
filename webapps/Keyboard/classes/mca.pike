@@ -72,11 +72,11 @@ public void do_delete(Request id, Response response, Template.View view, mixed a
 	response->set_data("You must provide a matcase to delete.");
   }
 
-  mca = app->load_matcase(args[0], id->misc->session_variables->user);
+  mca = app->load_matcase_by_id(args[0], id->misc->session_variables->user);
 
   if(!mca)
   {
-    response->flash("MCA " + args[0] + " was not found.");
+    response->flash("MCA ID " + args[0] + " was not found.");
     response->redirect(index);
   }
   else
@@ -93,14 +93,18 @@ public void delete(Request id, Response response, Template.View view, mixed args
 
   if(!sizeof(args))
   {
-	response->set_data("You must provide an MCA to delete.");
+    response->set_data("You must provide an MCA to delete.");
+    response->redirect(index);
+    return;    
   }
-
-  mca = app->load_matcase(args[0], id->misc->session_variables->user);
+  
+werror("delete()\n");
+  mca = app->load_matcase_by_id(args[0], id->misc->session_variables->user);
+werror("delete(%O)\n", mca);
 
   if(!mca)
   {
-    response->flash("MCA " + args[0] + " was not found.");
+    response->flash("MCA ID " + args[0] + " was not found.");
     response->redirect(index);
   }
   else
@@ -251,7 +255,7 @@ public void replaceMat(Request id, Response response, Template.View view, mixed 
   object matrix = Monotype.Matrix(); 
 
   object mca = id->misc->session_variables->mca;
-  object wedge = app->load_wedge(mca->wedge);
+  object wedge = app->load_wedge_by_name(mca->wedge);
   int sw = wedge->get(row);
 
   matrix->set_character(mat->character);
@@ -274,9 +278,8 @@ public void edit(Request id, Response response, Template.View view, mixed args)
 
 view->add("now", (string)time());
 
-werror("args:%O, %O\n", getcwd(),combine_path(app->config["locations"]["matcases"], args[0]));
   mca = app->load_matcase(args[0]);
-werror("**** mca: %O wedge: %O\n", mca, mca);
+werror("**** mca: %O wedge: %O\n", mca, mca?mca->wedge:0);
   if(mca->wedge)
   {
     object wedge = app->load_wedge(mca->wedge, id->misc->session_variables->user);

@@ -4,9 +4,16 @@ Select a Wedge to edit:
 <ul>
 <% foreach(data->wedges; int i; object wedge) { %>
 <%=wedge["dump"]%>
-  <li> <%#action_link "action": "edit", "args": wedge.name%><%=wedge["name"] %></a>
-       [ <%#action_link "action": "delete", "args": wedge.name%>Delete</a> | 
-		<%#action_link "action": "download", "args": wedge.name%>Download</a> ]
+
+  <% if(wedge["owner"] == data->owner || wedge["is_public"]) { %>
+  <li> <%#action_link "action": "edit", "args": (string)wedge["id"]%><%=wedge["name"] %></a>
+ [ 
+  <%#action_link "action" : "download", "args": (string)wedge["id"]%>Download</a>
+<% if(wedge["owner"] == data->owner) { %>
+  | <%#action_link "action": "delete", "args": (string)wedge["id"]%>Delete</a><% } %> ]
+
+<% } %>
+
 
 <% } %>
 </ul>

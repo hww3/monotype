@@ -7,7 +7,7 @@ Select a MCA to edit:
  [ <%#action_link "action" : "copy", "args": (string)mca["id"]%>Copy</a> 
  | <%#action_link "action" : "download", "args": (string)mca["id"]%>Download</a>
 <% if(mca["owner"] == data->owner) { %>
-  | <%#action_link "action": "delete", "args": (string)mca["name"]%>Delete</a><% } %> ]
+  | <%#action_link "action": "delete", "args": (string)mca["id"]%>Delete</a><% } %> ]
 <% } %>
 <% } %>
 </ul>

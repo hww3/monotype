@@ -38,7 +38,7 @@ object load_stopbar(string ml)
 object load_matcase_string(string ml)
 {
   object m = master()->resolv("Monotype.MatCaseLayout")();                                            
-  werror("Loading matcase from " + ml + ".xml\n");
+//  werror("Loading matcase from " + ml + ".xml\n");
   object n = Public.Parser.XML2.parse_xml(ml);
   m->load(n);
 
@@ -56,7 +56,7 @@ object load_matcase_string(string ml)
 object load_stopbar_string(string ml)
 {
   object m = master()->resolv("Monotype.Stopbar")();                                            
-  werror("Loading stopbar from " + ml + ".xml\n");
+//  werror("Loading stopbar from " + ml + ".xml\n");
   object n = Public.Parser.XML2.parse_xml(ml);
   m->load(n);
   return m;
