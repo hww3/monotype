@@ -50,7 +50,9 @@ Job Name <input type="text" name="jobname"/>
 Matcase
 <select id="mca" name="mca" onChange="getWedge(this);">
 <%foreach(data->mcas; int i; object c){%>
-  <option><%=c.name%></option>
+  <% if(c["owner"] == data->owner || c["is_public"]) { %>
+  <option value="<%=c.id%>"><%=c.name%></option>
+  <% } %>
 <%}%>
 </select>
 <p>

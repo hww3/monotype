@@ -22,7 +22,7 @@ void migrate_old_to_db()
 	  save_matcase(old_load_matcase(q), master()->resolv("Fins.Model.find.users_by_id")(1));
 }
 
-void save_matcase(Monotype.MatCaseLayout mca, object user, int|void is_public)
+object save_matcase(Monotype.MatCaseLayout mca, object user, int|void is_public)
 {
 	string file_name;
 	if(!mca) throw(Error.Generic("No MCA provided.\n"));
@@ -53,6 +53,7 @@ void save_matcase(Monotype.MatCaseLayout mca, object user, int|void is_public)
 	mv(file_name, file_name + ".bak");
 	Stdio.write_file(file_name, Public.Parser.XML2.render_xml(node));	
 */
+  return mca_db;
 }
 
 void save_wedge(Monotype.Stopbar wedge, object user, int|void is_public)
@@ -102,7 +103,10 @@ object load_matcase(string matcasename, object user)
 object load_matcase_by_id(string id, object user)
 {
 	object mca_db;
-	catch(mca_db = master()->resolv("Fins.Model.find.matcasearrangements")((["id": (int)id, "owner": user]))[0]);
+	if(user)
+		catch(mca_db = master()->resolv("Fins.Model.find.matcasearrangements")((["id": (int)id, "owner": user]))[0]);
+	else
+		catch(mca_db = master()->resolv("Fins.Model.find.matcasearrangements")((["id": (int)id]))[0]);
 	
 	if(mca_db)
   	  return Monotype.load_matcase_string(mca_db["xml"]);
@@ -115,10 +119,13 @@ object load_matcase_by_id(string id, object user)
 object load_wedge(string wedgename, object user)
 {
 	object wedge_db;
+/*
 	if(user)
 		catch(wedge_db = master()->resolv("Fins.Model.find.stopbars")((["name": wedgename, "owner": user]))[0]);
 	else
-	catch(wedge_db = master()->resolv("Fins.Model.find.stopbars")((["id": (int)wedgename]))[0]);
+*/
+
+	catch(wedge_db = master()->resolv("Fins.Model.find.stopbars")((["name": wedgename]))[0]);
 	
 	if(wedge_db)
   	  return Monotype.load_stopbar_string(wedge_db["xml"]);
@@ -201,10 +208,13 @@ object load_matcase_dbobj_by_id(string id, object user)
 object load_wedge_dbobj(string wedgename, object user)
 {
 	object wedge_db;
+/*
 	if(user)
 		catch(wedge_db = master()->resolv("Fins.Model.find.wedges")((["name": wedgename, "owner": user]))[0]);
 	else
-		catch(wedge_db = master()->resolv("Fins.Model.find.wedges")((["id": (int)wedgename]))[0]);
+		
+*/
+	catch(wedge_db = master()->resolv("Fins.Model.find.wedges")((["name": wedgename]))[0]);
 	
 	werror("**** %O\n", wedge_db);
 	if(wedge_db)

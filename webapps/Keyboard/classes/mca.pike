@@ -87,6 +87,65 @@ public void do_delete(Request id, Response response, Template.View view, mixed a
   }
 }
 
+public void unshare(Request id, Response response, Template.View view, mixed args)
+{
+  object mca;
+
+  if(!sizeof(args))
+  {
+    response->set_data("You must provide an MCA to share.");
+    response->redirect(index);
+    return;    
+  }
+  
+werror("unshare()\n");
+  mca = app->load_matcase_dbobj_by_id(args[0], id->misc->session_variables->user);
+werror("unshare(%O)\n", mca);
+
+  if(!mca)
+  {
+    response->flash("MCA ID " + args[0] + " was not found or not owned by you.");
+    response->redirect(index);
+  }
+  else
+  {
+	mca["is_public"] = 0;
+	response->flash("MCA " + mca["name"] + " is now unshared.");
+    response->redirect(index);
+  }
+}
+
+
+
+public void share(Request id, Response response, Template.View view, mixed args)
+{
+  object mca;
+
+  if(!sizeof(args))
+  {
+    response->set_data("You must provide an MCA to share.");
+    response->redirect(index);
+    return;    
+  }
+  
+werror("share()\n");
+  mca = app->load_matcase_dbobj_by_id(args[0], id->misc->session_variables->user);
+werror("share(%O)\n", mca);
+
+  if(!mca)
+  {
+    response->flash("MCA ID " + args[0] + " was not found or not owned by you.");
+    response->redirect(index);
+  }
+  else
+  {
+	mca["is_public"] = 1;
+	response->flash("MCA " + mca["name"] + " is now shared.");
+    response->redirect(index);
+  }
+}
+
+
 public void delete(Request id, Response response, Template.View view, mixed args)
 {
   object mca;
@@ -116,7 +175,7 @@ werror("delete(%O)\n", mca);
 public void copy(Request id, Response response, Template.View view, mixed args)
 {
   Monotype.MatCaseLayout mca;
-  mca = app->load_matcase(args[0], id->misc->session_variables->user);
+  mca = app->load_matcase_by_id(args[0], id->misc->session_variables->user);
 
   view->add("mca", mca);
   view->add("wedges", app->get_wedges());
@@ -140,8 +199,8 @@ public void copy(Request id, Response response, Template.View view, mixed args)
 	mca->set_description(id->variables->description);
 	mca->set_wedge(id->variables->wedge);
 	mca->set_size((int)id->variables->size);
-    app->save_matcase(mca, id->misc->session_variables->user, id->variables->is_public);		
-    response->redirect(edit, ({id->variables->name}));
+    object mca_db = app->save_matcase(mca, id->misc->session_variables->user, id->variables->is_public);		
+    response->redirect(edit, ({(string)mca_db["id"]}));
   }
 }
 
@@ -255,7 +314,7 @@ public void replaceMat(Request id, Response response, Template.View view, mixed 
   object matrix = Monotype.Matrix(); 
 
   object mca = id->misc->session_variables->mca;
-  object wedge = app->load_wedge_by_name(mca->wedge);
+  object wedge = app->load_wedge(mca->wedge);
   int sw = wedge->get(row);
 
   matrix->set_character(mat->character);
@@ -282,21 +341,23 @@ view->add("now", (string)time());
 werror("**** mca: %O wedge: %O\n", mca, mca?mca->wedge:0);
   if(mca->wedge)
   {
-    object wedge = app->load_wedge(mca->wedge, id->misc->session_variables->user);
+    object wedge = app->load_wedge(mca->wedge);
     if(!wedge) // if a user doesn't have their own wedge, try loading a global one.
+/*
     {
       int wedgeid;
       array x = Fins.Model.find.stopbars(([ "name": mca->wedge ]));
       if(sizeof(x))
       {
          wedgeid = x[0]["id"];
-         wedge = app->load_wedge(wedgeid);
+         wedge = app->w(wedgeid);
       }
       else
+*/
       {
         throw(Error.Generic("Unable to load wedge " + mca->wedge + " for user.")); 
       }
-    }
+   // }
     view->add("wedge", wedge);
   }
   id->misc->session_variables->mca = mca;

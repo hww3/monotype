@@ -19,6 +19,7 @@ public void generate(Request id, Response response, Template.View v, mixed ... a
    werror("matcases: %O\n", app->get_mcas());
     v->add("mcas", app->get_mcas());
     v->add("wedges", app->get_wedges());
+    v->add("owner", id->misc->session_variables->user);
   
 	return;
 }
@@ -28,7 +29,7 @@ public void get_wedge_for_mca(Request id, Response response, Template.View v, mi
 	string w;
 	werror("args: %O\n", args);
 	
-	object mca = app->load_matcase(args[0], id->misc->session_variables->user);
+	object mca = app->load_matcase(args[0]);
 
     if(!mca) w = "000";
 
@@ -53,8 +54,8 @@ werror("job_id is %d\n", (int)id->variables->job_id);
 		"pointsystem": (float)id->variables->pointsystem,
 		"setwidth": (float)id->variables->set,
 		"linelengthp": (float)id->variables->linelength,
-		"stopbar": app->load_wedge(id->variables->wedge, id->misc->session_variables->user),
-		"matcase": app->load_matcase(id->variables->mca, id->misc->session_variables->user),
+		"stopbar": app->load_wedge(id->variables->wedge),
+		"matcase": app->load_matcase_by_id(id->variables->mca),
 		"jobname": id->variables->jobname,
 		"dict_dir": combine_path(app->config->app_dir, "config"),
         "lang": id->variables->lang,
@@ -98,8 +99,8 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 		"setwidth": (float)id->variables->set,
                 "pointsystem": (float)id->variables->pointsystem,
 		"linelengthp": (float)id->variables->linelength,
-		"stopbar": app->load_wedge(id->variables->wedge, id->misc->session_variables->user),
-		"matcase": app->load_matcase(id->variables->mca, id->misc->session_variables->user),
+		"stopbar": app->load_wedge(id->variables->wedge),
+		"matcase": app->load_matcase_by_id(id->variables->mca),
 		"jobname": id->variables->jobname,
 		"dict_dir": combine_path(app->config->app_dir, "config"),
 		"lang": id->variables->lang,

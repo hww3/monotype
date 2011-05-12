@@ -11,6 +11,8 @@ New Name: <input type="text" name="name"/>
   string a2 = "";
   string a3 = "";
 
+  werror("%O\n", data->mca);
+
   switch(data->mca->matcase_size)
   {
     case Monotype.MATCASE_15_15:
@@ -33,11 +35,11 @@ Arrangement Type: <input type="radio" name="size" value="0" <%=a1%>/> 15x15
 
 Default Wedge: <select name="wedge">
 <% 
-  foreach(data->wedges; int i; string w) { 
+  foreach(data->wedges; int i; object w) { 
     string sel = "";
-    if(data->mca->wedge == w) sel = "selected";
+    if(data->mca->wedge == w["name"]) sel = "selected";
 %>
-  <option <%=sel%>><%=w %></option>
+  <option <%=sel%>><%=w["name"] %></option>
 <% } %>
 </select>
 
