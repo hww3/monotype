@@ -1,5 +1,5 @@
 SPARKLE_HOME=/Users/hww3/Downloads/Sparkle 1/
-PUBLIC_OBJECTIVEC=/Users/hww3/Public_ObjectiveC
+PUBLIC_OBJECTIVEC=/Users/hww3/devel/Public_ObjectiveC
 FINS_REPO="http://hg.welliver.org/"
 RIBBON_GENERATOR=RibbonGenerator
 CASTER_CONTROL=Caster
