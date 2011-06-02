@@ -33,7 +33,7 @@ public void new(Request id, Response response, Template.View view, mixed args)
 		
 		app->save_wedge(l, id->misc->session_variables->user, id->variables->is_public);
 		
-		response->redirect(edit, ({id->variables->name}));
+		response->redirect(edit, ({upper_case(id->variables->name)}));
 	}
 }
 

@@ -15,11 +15,23 @@ void start()
 
 void migrate_old_to_db()
 {
+  migrate_wedges();
+  migrate_mcas();
+}
+
+void migrate_wedges()
+{
 	foreach(old_get_wedges();;string q)
 	  save_wedge(old_load_wedge(q), master()->resolv("Fins.Model.find.users_by_id")(1));
+}
 
-	foreach(old_get_mcas();;string q)
-	  save_matcase(old_load_matcase(q), master()->resolv("Fins.Model.find.users_by_id")(1));
+void migrate_mcas()
+{
+  foreach(old_get_mcas();;string q)
+  {
+    foreach(master()->resolv("Fins.Model.find.users_all")();;object user)
+      save_matcase(old_load_matcase(q), user);
+  }
 }
 
 object save_matcase(Monotype.MatCaseLayout mca, object user, int|void is_public)
@@ -116,7 +128,7 @@ object load_matcase_by_id(string id, object user)
 }
 
 
-object load_wedge(string wedgename, object user)
+object load_wedge(string wedgename)
 {
 	object wedge_db;
 /*
@@ -260,13 +272,12 @@ array get_wedges()
 
 array old_get_mcas()
 {
-	return map(glob("*.xml", get_dir(config["locations"]["matcases"]) || ({})), lambda(string s){return (s/".xml")[0];});
+	return map(glob("*.xml", get_dir(config["locations"]["matcases"]) || ({})), lambda(string s){return (s/".xml")[0];}) - ({""});
 }
 
 array old_get_wedges()
 {
-	return sort(map(glob("*.xml", get_dir(config["locations"]["wedges"]) || ({})), lambda(string s){return (s/".xml")[0];}));
-}
+	return sort(map(glob("*.xml", get_dir(config["locations"]["wedges"]) || ({})), lambda(string s){return (s/".xml")[0];})) - ({""}); }
 
 int(0..1) mca_exists(string name, object user)
 {
