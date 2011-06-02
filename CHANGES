@@ -1,3 +1,31 @@
+20110601
+- IMPORTANT: New standalone versions of the ribbon generator and caster 
+     controller are available and support Mac OSX 10.6 (Snow Leopard) only. My 
+     only pre 10.6 computer died last month, so it will be practically 
+     impossible to make the new tool available to non-intel Mac users. I can 
+     still fix most kinds of bugs in the existing software, but I recommend 
+     upgrading when possible.
+- Each user gets private storage for mats and stopbars. Initially a copy of 
+    all stopbars and matcases will be copied into each user's private area. 
+    Each user may then delete any unwanted items.
+- A user may mark a stopbar or matcase as "public", which allows them to be 
+    seen and copied (but not modified) by other users.
+- Stopbars and matcases may be downloaded to your own computer for safekeeping
+     or manual modification (for experts only!)
+- Stopbars and matcases can be imported from files on your local computer 
+    (such as those exported from the standalone ribbon generator). Note that 
+    you must make sure that any stopbar referenced by a matcase is already 
+    loaded into the system before importing the matcase. failure to do so will
+    result in an error.
+- New ribbon generator option to treat lower and upper case characters as 
+    equal when using small-caps
+- New ribbon generator  option to allow substitution of roman punctuation 
+    when setting italics and the italic alphabet is missing punctuation
+- Soft proof will display sorts whose widths have been adjusted from the 
+    standard wedge width on a colored background with an overbar above the sort.
+- Caster Control and Ribbon Generator apps have a new "check for updates" 
+    feature.
+
 20110413
 - standalone apps are now generated via build scripts for consistency
 - caster control app now has preference for permanent cycle sensor install
