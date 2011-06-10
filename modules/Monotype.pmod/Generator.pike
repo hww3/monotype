@@ -751,7 +751,9 @@ int ix;
 //	werror("spaces: %O, %O\n", amount, toadd);
 	//  calculate_justification();
 //	  werror("to quad out %d, we need the following: %O\n", amount, toadd);  
-	  foreach(reverse(toadd);;int i)
+toadd = sort(toadd);
+
+	  foreach(toadd;;int i)
 	  {
 ix+=i;
 //	werror("adding %d, at %d\n", i, ix);
@@ -810,6 +812,9 @@ array simple_find_space(int amount, mapping spaces)
 	int total = left;
 
 	array toadd = ({});
+
+  if(spaces[9] && spaces[18])
+     spaces[27] = 1;
 
   foreach(reverse(indices(spaces)); int i; int space)
   {
