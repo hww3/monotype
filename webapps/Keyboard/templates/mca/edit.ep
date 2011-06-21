@@ -200,39 +200,23 @@ Save
 <% } %>
 <p>
 <div id="matsInCaseContainer">
-<div><b>Mats Not In Case</b>
-</div>
+<div><b>Mats Not In Case</b></div>
 <div id="matsInCaseNodeQ" dojoType="dojo.dnd.Source" accept="Q" style="position:relative; float:left" class="container"></div>
 <div style="clear: left;">
-<div style="position:relative; float:left">
-Roman: 
-</div>
+<div style="position:relative; float:left">Roman: </div>
 <div id="matsInCaseNodeR" dojoType="dojo.dnd.Source" accept="R" style="position:relative; float:left" class="container"></div>
 </div>
-</div>
 <div style="clear: left;">
-<div style="position:relative; float:left">
-Italic: 
-</div>
+<div style="position:relative; float:left">Italic: </div>
 <div id="matsInCaseNodeI" dojoType="dojo.dnd.Source" accept="I" style="position:relative; float:left" class="container"></div>
 </div>
-</div>
 <div style="clear: left;">
-<div style="position:relative; float:left">
-Bold: 
-</div>
+<div style="position:relative; float:left">Bold: </div>
 <div id="matsInCaseNodeB" dojoType="dojo.dnd.Source" accept="B" style="position:relative; float:left" class="container"></div>
 </div>
-</div>
 <div style="clear: left;">
-<div style="position:relative; float:left">
-Small Caps: 
-</div>
+<div style="position:relative; float:left">Small Caps: </div>
 <div id="matsInCaseNodeS" dojoType="dojo.dnd.Source" accept="S" style="position:relative; float:left" class="container"></div>
-</div>
-</div>
-</div>
-</table>
 </div>
 </div>
 <p>

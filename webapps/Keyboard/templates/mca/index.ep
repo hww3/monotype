@@ -1,4 +1,3 @@
-<div><font color="read"><i><%#flash%></i></font></div>
 Select a MCA to edit:
 <ul>
 <% foreach(data->mcas; int i; object mca) { %>

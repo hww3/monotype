@@ -1,3 +1,7 @@
+20110620
+- Fix a problem starting the standalone ribbon generator the first time
+- Apply a new layout to the UI
+
 20110601
 - IMPORTANT: New standalone versions of the ribbon generator and caster 
      controller are available and support Mac OSX 10.6 (Snow Leopard) only. My 
