@@ -1,17 +1,87 @@
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
 <head>
+<% if(data->controller =="/")  %> 
+  <title>CompCAT</title>
+<% %>
+<% if(data->controller =="/mca")  %> 
+  <title>CompCAT: MCA Editor</title>
+<% %>
+<% if(data->controller =="/wedge")  %> 
+  <title>CompCAT: Stopbar Editor</title>
+<% %>
+<% if(data->controller =="/ribbon")  %> 
+  <title>CompCAT: Ribbon Generator</title>
+<% %>
+
+<meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
+
+<link rel="stylesheet" type="text/css" media="screen" href="/static/Underground.css" />
 <style type="text/css">
     @import "/dojo/dijit/themes/tundra/tundra.css";
     @import "/dojo/dojo/resources/dojo.css"
 </style>
 </head>
-<body class="tundra">
-<h2>Monotype Computer Interface Tools</h2>
 
-<% yield(); %>
+<body>
+<!-- wrap starts here -->
+<div id="wrap">
 
-<% if(data->user){ %>
-<p>Connected as <%$user.name%> / Version ${ribbonGeneratorVersion}
-<% } %>
+		<!-- header -->
+		<div id="header">			
+					
+			<span id="slogan">monotype computer interface tools</span>
+			
+			<!-- tabs -->
+			<ul>
+	<li<% if(data->controller =="/")  %> id="current" <%  %>><%#action_link "controller":"/"%><span>Home</span></a></li>
+	<li<% if (data->controller == "/mca"){ %> id="current" <% } %>><%#action_link "controller":"/mca"%><span>MCAs</span></a></li>			 
+	<li<% if (data->controller == "/wedge"){ %> id="current" <% } %>><%#action_link "controller":"/wedge"%><span>Stopbars</span></a></li>			
+	<li<% if (data->controller == "/ribbon"){ %> id="current" <% } %>><%#action_link "controller":"/ribbon"%><span>Ribbons</span></a></li>			
+			</ul>
+											
+		</div>
+		
+		<div id="header-logo">			
+			
+			<div id="logo">comp<span class="red">cat</span></div>		
+			
+						
+		</div>
+		
+       	<div id="main">
+
+		<%if (data->user){ %>
+		Connected as <%$user.name%> / Version ${ribbonGeneratorVersion}
+		<% } %>
+
+<div><font color="red"><i><%#flash%></i></font></div>
+
+<%yield();%>
+
+	</div> <!-- main -->
+
+<!-- wrap ends here -->
+</div>
+		
+<!-- footer starts here -->
+<div class="footer">
+	
+		<p>	
+		    &copy; 2007-2011 H William Welliver III
+
+            &nbsp;&nbsp;&nbsp;&nbsp;
+
+	    	<a href="http://hww3.riverweb.com/space/letterpress/monotype">compcat</a>
+
+		    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		    <%#action_link "controller" : "/"%>Home</a>
+		</p>
+		
+</div>	
+	
 </body>
 </html>
+

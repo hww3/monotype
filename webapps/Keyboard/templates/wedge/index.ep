@@ -1,5 +1,4 @@
-<div><font color="red"><i><%#flash%></i></font></div>
-
+<h1>Stopbar Management</h1>
 Select a Wedge to edit:
 <ul>
 <% foreach(data->wedges; int i; object wedge) { %>

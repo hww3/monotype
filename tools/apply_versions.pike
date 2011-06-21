@@ -17,7 +17,8 @@ int main(int argc, array argv)
 	
 	foreach(Stdio.read_file(inputFile)/"\n"; int ln; string line)
 	{	
-		array args = ({});	
+		array args = ({});
+		if(!sizeof(String.trim_all_whites(line))) continue;	
 		foreach(line/"="; int i; string x)
 		  args += ({String.trim_all_whites(x)});
 		if(sizeof(args) != 2)

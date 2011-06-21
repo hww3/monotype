@@ -1,4 +1,4 @@
-<h3>Change Log</h3>
+<h1>Change Log</h1>
 <p>
 <pre>
 <%=data->changes%>

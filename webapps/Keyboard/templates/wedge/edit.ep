@@ -1,6 +1,6 @@
 
 <form id="form" action="<%#action_url "action": "save"%>">
-Wedge: <b><%=data->wedge->name%></b> &nbsp; 
+<h1>Stopbar: <b><%=data->wedge->name%></b> &nbsp; </h1>
 <%#action_link "action": "cancel"%>Cancel</a> &nbsp; <a href="#" onclick="javascript:document.forms[0].submit()">Save</a>
 <p>
 	<style>

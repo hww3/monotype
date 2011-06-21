@@ -189,7 +189,8 @@ function openWidget(v, row, col, units)
 }
 </script>
 
-Layout: <b><%=data->mca->name%></b> &nbsp; Default Wedge: <b><%=data->mca->wedge%></b> &nbsp;
+<h1>Layout: <b><%=data->mca->name%></b> &nbsp; Default Wedge: <b><%=data->mca->wedge%></b> &nbsp;</h1>
+
 <%#action_link "action": "cancel"%>Cancel</a> &nbsp;
 <% if(data->is_owner) {
 %>
