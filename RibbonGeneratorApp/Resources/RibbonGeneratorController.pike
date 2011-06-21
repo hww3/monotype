@@ -48,6 +48,17 @@ int applicationShouldTerminateAfterLastWindowClosed_(object q)
 void applicationWillFinishLaunching_(object event)
 {
 werror("***\n*** starting!\n**\n");
+// are we running in a desktop mode?
+	object fm = Cocoa.NSFileManager.defaultManager();
+	string url = "~/Library/Application Support/Monotype Caster Control";
+	object folder = Cocoa.NSString.stringWithCString_(url)->stringByExpandingTildeInPath();
+werror("**** checking path...\n");
+werror("**** " + (string)folder  + "\n");
+	if(!fm->fileExistsAtPath_(folder))
+	{
+		fm->createDirectoryAtPath_attributes_(folder, ([]));
+	}
+
    finserve = Fins.AdminTools.FinServe(({}));
    finserve->project = "Keyboard";
    finserve->config_name = "desktop";
