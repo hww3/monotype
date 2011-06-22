@@ -222,7 +222,7 @@ Save
 <p>
 	<style>
 	div.cell {
-		font-size: 14pt; width:35px; height:35px; 
+		font-size: 13pt; width:35px; height:35px; 
 border-width:1px; border-style: solid; position:relative; float:left; 
 line-height: 15.5px;
 	}
