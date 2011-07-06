@@ -14,7 +14,8 @@ import Monotype;
 	int spaces; 
 
         int line_number;
-
+		int line_on_page;
+		
 	int max_reduction_units;
 	int min_space_units;
 	int min_little;
@@ -220,7 +221,7 @@ import Monotype;
 	  if(!mat)
       { 
                 errors += ({("Requested activator [" + 
-			string_to_utf8(activator) + "], code [" + string_to_utf8(code) + "] not in MCA.\n")}); 
+			string_to_utf8(activator) + "] (" + sprintf("%q", code)+ "), code [" + string_to_utf8(code) + "] not in MCA.\n")}); 
 		werror("invalid activator %O/%O\n", string_to_utf8(activator),code);
       }
 	  else

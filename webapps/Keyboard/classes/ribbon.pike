@@ -245,7 +245,7 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 			  tobeadded = "";
 			  tobeaddedwidth = 0;
 			}
-		b+=(" &nbsp; " /* +total_set + " " +(setonline) */ + " &lt;== " + line->big + " " + line->little /*+ " " + line->units*/);
+		b+=(" &nbsp; " /* +total_set + " " +(setonline) */ + " &lt;== " + line->big + " " + line->little /*+ " " + line->units*/ + "[" + line->line_on_page + "]");
 		if(line->errors && sizeof(line->errors))
 		  b+= (line->errors * ", ");
 		b+=("</div>\n");

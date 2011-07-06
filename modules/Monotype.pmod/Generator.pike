@@ -223,13 +223,13 @@ mixed i_parse_data(object parser, string data, mapping extra)
 void insert_header()
 {
 	pagenumber++;
-    linesonpage = 1;
-
+    linesonpage = 0;
 	string header_code;
 	if(pagenumber%2) header_code = oheader_code;
 	else header_code = eheader_code;
 	
 	current_line = make_new_line();
+    current_line->line_on_page = linesonpage;
 	
 	if(!in_do_header && sizeof(header_code))
 	{
@@ -696,6 +696,7 @@ Line make_new_line()
 	l = Line(m, s, config);
 	l->line_number = ++numline;
 	linesonpage++;
+	l->line_on_page = linesonpage;
 	return l;
 }
 
