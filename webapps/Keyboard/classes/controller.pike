@@ -7,6 +7,7 @@ object ribbon;
 
 object auth;
 object users;
+object prefs;
 
 object dojo;
 
@@ -18,6 +19,7 @@ void start()
   dojo = Fins.StaticController(app, "dojo");
   auth = load_controller("auth/controller");
   users = load_controller("users");
+  prefs = load_controller("prefs");
 
   before_filter(app->admin_user_filter);
 }

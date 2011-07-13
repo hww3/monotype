@@ -15,6 +15,9 @@
 <% if(data->controller =="/ribbon")  %> 
   <title>CompCAT: Ribbon Generator</title>
 <% %>
+<% if(data->controller =="/prefs")  %> 
+  <title>CompCAT: Preferences</title>
+<% %>
 
 <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
 
@@ -45,6 +48,7 @@
 	<li<% if (data->controller == "/mca"){ %> id="current" <% } %>><%#action_link "controller":"/mca"%><span>MCAs</span></a></li>			 
 	<li<% if (data->controller == "/wedge"){ %> id="current" <% } %>><%#action_link "controller":"/wedge"%><span>Stopbars</span></a></li>			
 	<li<% if (data->controller == "/ribbon"){ %> id="current" <% } %>><%#action_link "controller":"/ribbon"%><span>Ribbons</span></a></li>			
+	<li<% if (data->controller == "/prefs"){ %> id="current" <% } %>><%#action_link "controller":"/prefs"%><span>Preferences</span></a></li>			
 			</ul>
 											
 		</div>
