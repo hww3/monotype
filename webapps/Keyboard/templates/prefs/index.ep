@@ -1,0 +1,12 @@
+<h1>Preferences</h1>
+<p>
+<%#action_form "method":"post", "action":"save"%>
+Sorts Pallete Location: 
+<select name="sorts_palette_location">
+	<option <%if(data->sorts_palette_location["value"] == "top") %> selected="1" <% %>value="top">Top</option>
+	<option <%if(data->sorts_palette_location["value"] == "left") %> selected="1" <% %>value="left">Left</option>
+</select>
+<p>
+	
+<input type="submit" name="submit" value="Save"/>
+</form>
