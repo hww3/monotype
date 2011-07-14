@@ -9,5 +9,6 @@ void post_define(object context)
   has_many(context, "Matcasearrangements", "mcas", "owner");
   has_many(context, "Stopbars", "stopbars", "owner");
 //  belongs_to(context, "Matcasearrangement", "mcas", )
+  has_many_by_index(context, "Preference", "name");
 }
 
