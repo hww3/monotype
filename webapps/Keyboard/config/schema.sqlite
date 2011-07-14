@@ -25,3 +25,12 @@ CREATE TABLE stopbars (
   xml blob not null,
   is_public int(1) default '0'
 );
+
+CREATE TABLE preferences (
+  id integer primary key, 
+  user_id integer not null,
+  name char(64) NOT NULL default '',
+  type integer NOT NULL default 0,    
+  value char(64) NOT NULL default ''
+) ;
+
