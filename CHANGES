@@ -1,3 +1,8 @@
+20110802
+- Ligatures should now be applied to hyphenated word-parts.
+- Fixed some bugs surrounding spaces at end or beginning of lines as well as 
+    truncated single-syllable words when hyphenating.
+
 20110620
 - Fix a problem starting the standalone ribbon generator the first time
 - Apply a new layout to the UI
