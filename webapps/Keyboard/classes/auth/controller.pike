@@ -52,7 +52,7 @@ static mixed default_find_user(Request id, Response response, Template.View t)
 //array r = ({id->variables->username});
 
   mixed r = Fins.Model.find.users( ([ "username": id->variables->username,
-									  "is_active" : 1,
+					  "is_active" : 1,
                                       "password": id->variables->password 
                                     ]) );
 
