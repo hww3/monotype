@@ -287,18 +287,20 @@ int process_setting_buffer(int|void exact)
 //	  current_line = make_new_line();
 	  insert_header();
 	}
-werror("data_to_set: %O\n", data_to_set);
+// werror("data_to_set: %O\n", data_to_set);
  
   	  for(int i = 0; i<sizeof(data_to_set) ;i++)
 	  {
 	    if(data_to_set[i] == " ")
         {
+          lastjs = i;
 	      if(current_line->elements && sizeof(current_line->elements) && current_line->elements[-1]->is_real_js) 
+		  {
+			werror("continue\n");
 	        continue;
-	   	  else
-  	        lastjs = i;
-        }
-//	werror(" %O", data_to_set[i]);
+		  }
+     	}
+//	werror("+ %O", data_to_set[i]);
 	   current_line->add(data_to_set[i], create_modifier(), space_adjust);
 	
 	   if(current_line->is_overset()) // back up to before the last space.
@@ -307,7 +309,7 @@ werror("data_to_set: %O\n", data_to_set);
 		  for(int j = i; j >= lastjs; j--)
 		  {
 			object x = current_line->remove();
-//			 werror("removing a character: %O, %O \n", x?(x->activator?x->activator:"JS"):"", ((x && x->get_set_width)?x->get_set_width():0));
+			 werror("removing a character: %O, %O \n", x?(x->activator?x->activator:"JS"):"", ((x && x->get_set_width)?x->get_set_width():0));
 		  }
 	    werror("removed word, justification is %d/%d\n", current_line->big, current_line->little);
 		  if(exact) return 1;
@@ -323,6 +325,7 @@ werror("data_to_set: %O\n", data_to_set);
 
 		  // TODO: we probably want to attempt hyphenation when as soon as a word won't fit, not just when we can't justify using a whole word.
 		  // if we can't justify, having removed the last word, see if hyphenating will help, regardless if we hyphenated the last line.		
+//werror("left to set: %O\n", data_to_set[i..] * "");
 		werror("numline: %O, is_broken: %O, can_justify: %O\n", 
                           numline,  1||lines[-1]->is_broken, current_line->can_justify());
 		int can_try_hyphenation = 0;
@@ -348,17 +351,26 @@ werror("data_to_set: %O\n", data_to_set);
 					int new_i = i;
 					int new_lastjs = lastjs;
 					int fp;
+
+					string mod = "R";
+				    if(isitalics) mod = "I";
+				    else if (issmallcaps) mod = "S";
+				    else if (isbold) mod = "B";
 					
 					// TODO: we need to reapply ligatures
 					for(fp = sizeof(wp)-2; fp >=0; fp--)
 					{
+					    
 						string syl = (" "+(wp[0..fp] * "") + ((config->unnatural_word_breaks && config->hyphenate_no_hyphen)?"":"-"));
-  					  data_to_set = syl/"";
-					//	if(syl != replace(syl, ligature_replacements_from, ligature_replacements_to))
+						string lsyl = replace(syl, ligature_replacements_from[mod]||({}), ligature_replacements_to[mod]||({}));
+  			//		    data_to_set = replace(syl/"", ligature_replacements_from[mod] || ({}), ligature_replacements_to[mod] || ({}));
+						if(syl != lsyl)
 						{
 							// we have a ligature in this word part. it must be applied.
-					//		data_to_set = break_ligatures(syl);
+							data_to_set = break_ligatures(lsyl);
 						}
+						else data_to_set = syl/"";
+						
 					werror("seeing if %O will fit...", syl);
 					  int res = process_setting_buffer(1);
 					  if(!res)
@@ -366,7 +378,17 @@ werror("data_to_set: %O\n", data_to_set);
 						werror("yes!\n");
 						// it fit!
 						if(sizeof(wp)>=fp)
-						  data_to_set = (wp[fp+1..] * "" / "") + new_data_to_set[bs..];
+						{	
+							string lsyl = replace(wp[fp+1..]*"", ligature_replacements_from[mod]||({}), ligature_replacements_to[mod]||({}));
+			  			//		    data_to_set = replace(syl/"", ligature_replacements_from[mod] || ({}), ligature_replacements_to[mod] || ({}));
+							if((wp[fp+1..]*"") != lsyl)
+							{
+								// we have a ligature in this word part. it must be applied.
+								data_to_set = break_ligatures(lsyl) + new_data_to_set[bs..];
+							}
+							else 
+						  		data_to_set = (wp[fp+1..] * "" / "") + new_data_to_set[bs..];
+						}
 //						werror("data to set is %O\n", data_to_set * "");
 						i = -1;
 						current_line->is_broken = 1;
@@ -382,7 +404,15 @@ werror("data_to_set: %O\n", data_to_set);
 						error(sprintf("unable to fit syllable %O on line. unable to justify.\n", wp[0]));
 					  else if(fp == 0)
 					  {
-						data_to_set = ((word)/"") + new_data_to_set[bs..];
+							string lsyl = replace(word, ligature_replacements_from[mod]||({}), ligature_replacements_to[mod]||({}));
+			  			//		    data_to_set = replace(syl/"", ligature_replacements_from[mod] || ({}), ligature_replacements_to[mod] || ({}));
+							if(word != lsyl)
+							{
+								// we have a ligature in this word part. it must be applied.
+								data_to_set = break_ligatures(lsyl) + new_data_to_set[bs..];
+							}
+							else data_to_set = ((word)/"") + new_data_to_set[bs..];
+
 						i = -1;
 //						werror("data to set is %O\n", data_to_set * "");
 					  }
@@ -674,7 +704,10 @@ array hyphenate_word(string word)
 {
 #if constant(Public.Tools.Language.Hyphenate)
   if(hyphenator)
+  {
     word = hyphenator->hyphenate(word);
+werror("hyphenator present\n");
+  }
 #endif /* have Public.Tools.Language.Hyphenate */
 	
     array wp = word/"-";
