@@ -196,14 +196,15 @@ function openWidget(v, row, col, units)
 </a>
  &nbsp;
 
+<%#action_link "action": "save", "args": data->now%>
+	<button href="<%#action_url "action": "save", "args": data->now%>"
 <% if(data->is_owner) {
 %>
-<%#action_link "action": "save", "args": data->now%>
-	<button href="<%#action_url "action": "save", "args": data->now%>">Save</button>
-</a> &nbsp;
 <% } else { %>
-Save
+disabled="true"
 <% } %>
+>Save</button>
+</a> &nbsp;
 <p>
 <div id="matsInCaseContainer">
 <div><b>Mats Not In Case</b></div>
@@ -369,14 +370,15 @@ line-height: 15.5px;
 <%#action_link "action": "cancel"%>
 <button href="<%#action_url "action": "cancel"%>">Cancel</button>
 </a>		
+<%#action_link "action": "save", "args": data->now%>
+	<button href="<%#action_url "action": "save", "args": data->now%>"
 <% if(data->is_owner) {
 %>
-<%#action_link "action": "save", "args": data->now%>
-	<button href="<%#action_url "action": "save", "args": data->now%>">Save</button>
-</a> &nbsp;
 <% } else { %>
-Save
+disabled="true"
 <% } %>
+>Save</button>
+</a> &nbsp;
 
 </div>
 </div>
