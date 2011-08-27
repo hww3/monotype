@@ -216,14 +216,14 @@ public void new(Request id, Response response, Template.View view, mixed args)
 			return;
 		}
 		
-        l = Monotype.MatCaseLayout((int)id->variables->size);
+        	l = Monotype.MatCaseLayout((int)id->variables->size);
 		l->set_description(id->variables->description);
 		l->set_name(id->variables->name);
 		l->set_wedge(id->variables->wedge);
 		
-		app->save_matcase(l, id->misc->session_variables->user, id->variables->is_public);
+		object mca_db = app->save_matcase(l, id->misc->session_variables->user, id->variables->is_public);
 		
-		response->redirect(edit, ({id->variables->name}));
+		response->redirect(edit, ({(string)mca_db["id"]}));
 	}
 }
 
@@ -249,7 +249,7 @@ public void setMat(Request id, Response response, Template.View view, mixed args
 {
 	werror("setting mat for " + id->variables->col + " " + id->variables->row + " with " + id->variables->matrix);
  object mca = id->misc->session_variables->mca;
-//werror("%O", mkmapping(indices(id), values(id)) );
+werror("%O", mkmapping(indices(id), values(id)) );
   if(id->variables->matrix == "")
   {
     mca->delete(id->variables->col, (int)id->variables->row);
@@ -335,10 +335,11 @@ public void edit(Request id, Response response, Template.View view, mixed args)
 	response->set_data("You must provide a mat case layout to edit.");
   }
 
-view->add("now", (string)time());
+  view->add("now", (string)time());
 
   mca = app->load_matcase(args[0]);
-werror("**** mca: %O wedge: %O\n", mca, mca?mca->wedge:0);
+  werror("**** name: %O mca: %O wedge: %O\n", args[0], mca, mca?mca->wedge:0);
+
   if(mca->wedge)
   {
     object wedge = app->load_wedge(mca->wedge);
@@ -360,6 +361,7 @@ werror("**** mca: %O wedge: %O\n", mca, mca?mca->wedge:0);
    // }
     view->add("wedge", wedge);
   }
+
   id->misc->session_variables->mca = mca;
 
 object dbo = app->load_matcase_dbobj_by_id(args[0]);
