@@ -152,7 +152,7 @@ type: t.type};
 function saveMat(wgt)
 {
   isEditing = false;
-  dojo.xhrPost({ widget: wgt, url: "/mca/setMat?col=" + wgt.column + "&row=" + wgt.row + "&matrix=" + wgt.getValue(),
+  dojo.xhrPost({ widget: wgt, content: {matrix: wgt.getValue()}, url: "/mca/setMat?col=" + wgt.column + "&row=" + wgt.row + "&xmatrix=" + wgt.getValue(),
 					load: function(response, ioArgs){wgt.setNewVal(); wgt.close();} 
 	});
 }
