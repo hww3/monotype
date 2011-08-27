@@ -28,7 +28,7 @@
 </style>
 
 <% if(data->controller == "/mca" || data->controller == "/ribbon") { %>
-<script type="text/javascript" src="/dojo/dojo/dojo.js" djConfig="parseOnLoad:true, isDebug:true"></script>
+<script type="text/javascript" src="/dojo/dojo/dojo.js" djConfig="parseOnLoad:true, isDebug:false"></script>
 <script type="text/javascript" src="/dojo/dijit/dijit.js"></script>
 <% } %>
 </head>

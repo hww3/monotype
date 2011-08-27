@@ -191,10 +191,16 @@ function openWidget(v, row, col, units)
 
 <h1>Layout: <b><%=data->mca->name%></b> &nbsp; Default Wedge: <b><%=data->mca->wedge%></b> &nbsp;</h1>
 
-<%#action_link "action": "cancel"%>Cancel</a> &nbsp;
+<%#action_link "action": "cancel"%>
+<button href="<%#action_url "action": "cancel"%>">Cancel</button>
+</a>
+ &nbsp;
+
 <% if(data->is_owner) {
 %>
-		 <%#action_link "action": "save", "args": data->now %>Save</a>
+<%#action_link "action": "save", "args": data->now%>
+	<button href="<%#action_url "action": "save", "args": data->now%>">Save</button>
+</a> &nbsp;
 <% } else { %>
 Save
 <% } %>
@@ -360,11 +366,14 @@ line-height: 15.5px;
 </script>
 
 <div style="left:5px; clear:left">
-		<%#action_link "action": "cancel"%>Cancel</a> &nbsp;
-		
+<%#action_link "action": "cancel"%>
+<button href="<%#action_url "action": "cancel"%>">Cancel</button>
+</a>		
 <% if(data->is_owner) {
 %>
- <%#action_link "action": "save", "args": data->now %>Save</a>
+<%#action_link "action": "save", "args": data->now%>
+	<button href="<%#action_url "action": "save", "args": data->now%>">Save</button>
+</a> &nbsp;
 <% } else { %>
 Save
 <% } %>

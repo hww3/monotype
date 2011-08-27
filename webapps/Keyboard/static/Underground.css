@@ -137,6 +137,14 @@ input.button {
 	background: #FFF;
 	color: #CC0000;
 }
+button { 
+	margin: 0; 
+	font: bolder 12px Arial, Sans-serif; 
+	border: 1px solid #CCC; 
+	padding: 5px 3px;
+	background: #FFF;
+	color: #CC0000;
+}
 /* search form */
 form.search {
 	position: absolute;

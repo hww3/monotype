@@ -1,7 +1,15 @@
 
 <form id="form" action="<%#action_url "action": "save"%>">
 <h1>Stopbar: <b><%=data->wedge->name%></b> &nbsp; </h1>
-<%#action_link "action": "cancel"%>Cancel</a> &nbsp; <a href="#" onclick="javascript:document.forms[0].submit()">Save</a>
+
+<%#action_link "action": "cancel"%>
+<button href="<%#action_url "action": "cancel"%>">Cancel</button>
+</a>
+ &nbsp;
+
+
+<button onclick="javascript:document.forms[0].submit()">Save</button>
+
 <p>
 	<style>
 	div.cell {
@@ -23,8 +31,15 @@
 <%}%>
 
 <div style="left:5px; clear:left">
-	
-	<%#action_link "action": "cancel"%>Cancel</a> <a href="#" onclick="javascript:document.forms[0].submit()">Save</a>
+
+<%#action_link "action": "cancel"%>
+<button href="<%#action_url "action": "cancel"%>">Cancel</button>
+</a>
+ &nbsp;
+
+
+<button onclick="javascript:document.forms[0].submit()">Save</button>
+<p>	
 	</form>
 	
 </div>
