@@ -1,3 +1,8 @@
+20110827
+- made some changes in the Ribbon Generator GUI for consistency: buttons, etc.
+- fix an error thrown when creating new MCAs.
+- fix for some characters (such as + signs) not being saved correctly in MCAs.
+
 20110802
 - Ligatures should now be applied to hyphenated word-parts.
 - Fixed some bugs surrounding spaces at end or beginning of lines as well as 
