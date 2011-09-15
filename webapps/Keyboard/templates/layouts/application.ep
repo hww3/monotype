@@ -21,19 +21,18 @@
 
 <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
 
-<link rel="stylesheet" type="text/css" media="screen" href="/static/Underground.css" />
-<style type="text/css">
-    @import "/dojo/dijit/themes/tundra/tundra.css";
-    @import "/dojo/dojo/resources/dojo.css"
-</style>
-
 <% if(data->controller == "/mca" || data->controller == "/ribbon") { %>
 <script type="text/javascript" src="/dojo/dojo/dojo.js" djConfig="parseOnLoad:true, isDebug:false"></script>
 <script type="text/javascript" src="/dojo/dijit/dijit.js"></script>
 <% } %>
+
+<style type="text/css">
+    @import "/dojo/dijit/themes/nihilo/nihilo.css";
+</style>
+<link rel="stylesheet" type="text/css" media="screen" href="/static/Underground.css" />
 </head>
 
-<body>
+<body class="nihilo">
 <!-- wrap starts here -->
 <div id="wrap">
 
@@ -63,7 +62,7 @@
        	<div id="main">
 
 		<%if (data->user){ %>
-		Connected as <%$user.name%> / Version ${ribbonGeneratorVersion}
+		Connected as <%$user.name%> / Version 1.1.1
 		<% } %>
 
 <div><font color="red"><i><%#flash%></i></font></div>

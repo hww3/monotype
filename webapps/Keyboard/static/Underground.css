@@ -114,6 +114,7 @@ label {
 	font-weight:bold;
 	margin:5px 0;
 }
+
 input {
 	padding: 3px 5px;
 	border:1px solid #eee;
@@ -145,6 +146,7 @@ button {
 	background: #FFF;
 	color: #CC0000;
 }
+
 /* search form */
 form.search {
 	position: absolute;
