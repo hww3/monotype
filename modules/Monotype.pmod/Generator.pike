@@ -109,7 +109,7 @@ werror ("line should be %d units.\n",lineunits);
 werror("ligs from:%O\n", ligature_replacements_from);
 werror("ligs to:%O\n", ligature_replacements_to);
 
-#if constant(Public.Tools.Language.Hyphenate)
+#if constant(Public.Tools.Language.Hyphenate.Hyphenate)
   string lang = "en";
   if(config->lang) lang = config->lang;
   if(config->hyphenate)
@@ -117,6 +117,8 @@ werror("ligs to:%O\n", ligature_replacements_to);
     werror("loading hyphenator " + dicts[lang] + "\n");
     hyphenator = Public.Tools.Language.Hyphenate.Hyphenate(combine_path(config->dict_dir, dicts[lang]));
   }
+#else
+werror("No hyphentation engine present, functionality will be disabled.\n");
 #endif
 }
 

@@ -185,6 +185,8 @@ function openWidget(v, row, col, units)
       d.innerHTML = response; 
       var e = new dijit.form.MatrixEditor({srcId: v.id, row: row, column: col, default_set_width: units, onSave: saveMat, onCancel: cancelMat}, d);
       } 
+
+	var x = new dijit.ToolTipDialog(({id: v.id, content: e}));
   });
 }
 </script>

@@ -1,7 +1,7 @@
 inherit Fins.Model.DataModelContext;
 
 
-#if constant(Public.ObjectiveC)
+#if constant(Public.ObjectiveC.load_bundle)
 
 import Public.ObjectiveC;
 
