@@ -1,24 +1,64 @@
-<style type="text/css">
-#        @import url("/dojo/dojo/resources/dojo.css");
-        @import url("/dojo/dojo/resources/dnd.css");
-</style>
-
 <script type="text/javascript">
-   dojo.require("dijit.form.MatrixEditor");
-   dojo.require("dojo.dnd.Source");
+     dojo.require("dojox.layout.FloatingPane");
+     dojo.require("dijit.form.Button");
    dojo.require("dojox.collections.ArrayList");
-  
+   dojo.require("dojo.dnd.Source");
+   dojo.require("dojo.dnd.Manager");
+   dojo.require("dijit.TooltipDialog");
+   dojo.require("dijit.form.MatrixEditor");
    var isEditing = false;
 
 function dndDropComplete(s, n, c)
 {
-return;
+  return;
   var mat = s.getItem(n[0].id).data;
-  var manager = dojo.dnd.manager();
+//  var manager = dojo.dnd.Manager();
   alert("source: " + s);
   replaceMat(row, col, mat);
 }
 
+var micDisplayPane;
+var displayPaneSource;
+function paneClosed()
+{
+var div = micDisplayPane.attr("content");
+var div2 = dojo.byId("matsInCaseDisplay");
+if(div && div2)
+{
+  div2.innerHTML=displayPaneSource;
+micDisplayPane.set("content", "");
+init();
+}
+}
+
+function floatMICDisplay()
+{
+  var div = dojo.byId("matsInCaseContainer");
+  if(div)
+  {
+  micDisplayPane = new dojox.layout.FloatingPane({
+      title: "Available Sorts",
+      resizable: false,
+      dockable: false,
+	  content: div,
+	  onclose: function(){alert("close");},
+      style: "position:absolute;top:0;left:0;",
+      id: "matsInCaseContainer"
+  }, dojo.byId("float1"));
+//  dijit.byId("micDisplayButton").set("enabled", false);
+micDisplayPane.close = function() {
+
+if(!this.closable){ return; } 
+ paneClosed();
+ this.destroyRecursive();
+};
+ 
+
+  micDisplayPane.startup();
+  micDisplayPane.show();
+//micDisplayPane.connect(this, "onclose", function(){alert("close");})
+  }
+}
 
 // based on dojo.dnd.Source.checkAcceptance()
 function checkAcceptanceWithoutSelfDrop(source, nodes){
@@ -51,6 +91,7 @@ function checkAcceptanceWithoutSelfDrop(source, nodes){
 		// create a table/tr/td-based node structure; each item here needs an
 		// image, a name, a brief description, and a quantity available
 		var nameTd = document.createElement("span");
+		nameTd.id = "dnd" + item.type + item.character;
 		var n;
 
 		if(item.style == "U")
@@ -88,11 +129,13 @@ function checkAcceptanceWithoutSelfDrop(source, nodes){
 			node = table;
 		}
 
-		return {node: nameTd, data: item, type: [item.type]};
+		item.id = "dnd" + item.type + item.character;
+		
+		return {node: nameTd, data: item, id: "dnd" + item.type + item.character, type: item.type};
 	};
 
 
-function foo(source, nodes, copy)
+function processExternalDrop(source, nodes, copy)
 {
 		// summary: called only on the current target, when drop is performed
 		//	from an external source
@@ -105,20 +148,17 @@ function foo(source, nodes, copy)
 		if(this.creator){
 			// use defined creator
 			this._normalizedCreator = function(node, hint){
-				return oldCreator.call(this, 
-source.getItem(node.id).data, hint);
+				return oldCreator.call(this, source.getItem(node.id).data, hint);
 			};
 		}else{
 			// we have no creator defined => move/clone nodes
 /*			if(copy){
 				// clone nodes
-				this._normalizedCreator = function(node, 
-hint){
+				this._normalizedCreator = function(node, hint){
 					var t = source.getItem(node.id);
 					var n = node.cloneNode(true);
 					n.id = dojo.dnd.getUniqueId();
-					return {node: n, data: t.data, 
-type: t.type};
+					return {node: n, data: t.data, type: t.type};
 				};
 			}else */ {
 				// move nodes
@@ -151,9 +191,10 @@ type: t.type};
 
 function saveMat(wgt)
 {
+//alert("saveMat");
   isEditing = false;
   dojo.xhrPost({ widget: wgt, content: {matrix: wgt.getValue()}, url: "/mca/setMat?col=" + wgt.column + "&row=" + wgt.row + "&xmatrix=" + wgt.getValue(),
-					load: function(response, ioArgs){wgt.setNewVal(); wgt.close();} 
+					load: function(response, ioArgs){wgt.setNewVal();} 
 	});
 }
 
@@ -168,26 +209,25 @@ function replaceMat(pos, data, newmat)
 function cancelMat(wgt)
 {
   isEditing = false;
-  wgt.close();
+//  wgt.close();
 }
+
+
 
 function openWidget(v, row, col, units)
 {
   if(this.isEditing == true) { return; }
   this.isEditing = true;
 
-  // get the widget div
-  var d = dojo.byId("widget");
-
   // get the mat element, set it to be the contents of the widget div, then create the widget
-  dojo.xhrGet({ url: "/mca/getMat?col=" + col + "&row=" + row, load: function(response, ioArgs){ 
-//alert("mat:" + response);
-      d.innerHTML = response; 
-      var e = new dijit.form.MatrixEditor({srcId: v.id, row: row, column: col, default_set_width: units, onSave: saveMat, onCancel: cancelMat}, d);
-      } 
+  dojo.xhrGet({ url: "/mca/getMat?col=" + col + "&row=" + row, handleAs: "xml", load: function(response, ioArgs){ 
 
-	var x = new dijit.ToolTipDialog(({id: v.id, content: e}));
-  });
+    var me = new dijit.TooltipDialog(({id: v.id}));
+    var e = new dijit.form.MatrixEditor(({srcId: v.id, row: row, column: col, default_set_width: units, onSave: saveMat, onCancel: cancelMat, mat: response, popup: me}));
+    me.set('content', e);
+	dijit.popup.open({ popup: me, around: dojo.byId(v.id) });
+    dojo.connect(me, "onClose", function(){ isEditing = false; });
+  }});
 }
 </script>
 
@@ -207,27 +247,30 @@ disabled="true"
 <% } %>
 >Save</button>
 </a> &nbsp;
-<p>
+<p><div id="float1"></div>
+<div id="matsInCaseDisplay">
 <div id="matsInCaseContainer">
 <div><b>Mats Not In Case</b></div>
-<div id="matsInCaseNodeQ" dojoType="dojo.dnd.Source" accept="Q" style="position:relative; float:left" class="container"></div>
+<div id="matsInCaseNodeQ" dojoId="matsInCaseNodeQ" xdojoType="dojo.dnd.Source" accept="Q" style="position:relative; float:left" class="container"></div>
 <div style="clear: left;">
 <div style="position:relative; float:left">Roman: </div>
-<div id="matsInCaseNodeR" dojoType="dojo.dnd.Source" accept="R" style="position:relative; float:left" class="container"></div>
+<div id="matsInCaseNodeR" dojoId="matsInCaseNodeR" xdojoType="dojo.dnd.Source" accept="R" style="position:relative; float:left" class="container"></div>
 </div>
 <div style="clear: left;">
 <div style="position:relative; float:left">Italic: </div>
-<div id="matsInCaseNodeI" dojoType="dojo.dnd.Source" accept="I" style="position:relative; float:left" class="container"></div>
+<div id="matsInCaseNodeI" dojoId="matsInCaseNodeI" xdojoType="dojo.dnd.Source" accept="I" style="position:relative; float:left" class="container"></div>
 </div>
 <div style="clear: left;">
 <div style="position:relative; float:left">Bold: </div>
-<div id="matsInCaseNodeB" dojoType="dojo.dnd.Source" accept="B" style="position:relative; float:left" class="container"></div>
+<div id="matsInCaseNodeB" dojoId="matsInCaseNodeB" xdojoType="dojo.dnd.Source" accept="B" style="position:relative; float:left" class="container"></div>
 </div>
 <div style="clear: left;">
 <div style="position:relative; float:left">Small Caps: </div>
-<div id="matsInCaseNodeS" dojoType="dojo.dnd.Source" accept="S" style="position:relative; float:left" class="container"></div>
+<div id="matsInCaseNodeS" dojoId="matsInCaseNodeS" xdojoType="dojo.dnd.Source" accept="S" style="position:relative; float:left" class="container"></div>
 </div>
 </div>
+</div>
+<button dojoType="dijit.form.Button" dojoId="micDisplayButton" id="micDisplayButton" onclick="floatMICDisplay">Float</button>
 <p>
 	<style>
 	div.cell {
@@ -237,8 +280,6 @@ line-height: 15.5px;
 	}
 	input.mine { border-width:1px; border-style: solid; border-color: background-color: #dddddd; }
 	</style>
-	<div style="z-axis: 200; " id="widget"></div>
-	<div>
 
 <style type="text/css">
 .dijitArrowButton {
@@ -305,11 +346,11 @@ line-height: 15.5px;
 		}
 %>
 
-<div class="cell" dojoType="dojo.dnd.Source" id='<%=v + cv%>' <%=st%> accept="R,I,B,S,U" onDropExternal="foo" onClick="openWidget(this, <%=v%>, '<%=cv%>', <%=u%>)" >
+<div class="cell" dojoType="dojo.dnd.Source" dojoId='<%=v + cv%>' id='<%=v + cv%>' <%=st%> accept="R,I,B,S,U" onDropExternal="processExternalDrop" onClick="openWidget(this, <%=v%>, '<%=cv%>', <%=u%>)" >
   <div class="dojoDndItem" id='<%=v + cv%>' ><%=ch%></div>
 </div>
 	<%}%>
-	</div>
+</div>
 
 <div class="cell"
 ><b><%=v%></b><br/><font style="color: grey"><%=u%>U</font></div>
@@ -334,11 +375,16 @@ line-height: 15.5px;
 <script type="text/javascript">
 	function init() {
 	var wishlist, mic, connected;
+	
+	displayPaneSource = dojo.byId("matsInCaseDisplay").innerHTML;
 <% foreach(data->not_in_matcase;string style; array elems) { 
 %>
-		wishlist = new dojo.dnd.Source("matsInCaseNode<%=style%>",
+		wishlist = new dojo.dnd.Source("matsInCaseNode<%=style%>"
+		,
 			{isSource:true, copyOnly: true, 
-                         creator: micNodeCreator, accept: ["<%=style%>"]});
+                          creator: micNodeCreator, accept: ["<%=style%>"]}
+
+);
 		wishlist.checkAcceptance = checkAcceptanceWithoutSelfDrop;
 
 		// we only need to connect the first one; the others will get it automatically.
@@ -347,19 +393,17 @@ line-height: 15.5px;
   		  dojo.connect(wishlist, "onDndDrop", dndDropComplete);
                   connected = 1;
                 }
-                mic = new dojox.collections.ArrayList();
 
+wishlist.insertNodes(false, [
 <%
      foreach(elems;; string mat)
      {
 %>
-
-  mic.add( <%= Tools.JSON.serialize((["character": mat, "style": style, "type": style])) %>);
-
+  <%= Tools.JSON.serialize((["data": mat, "character": mat, "style": style, "id": "dnd" + style + mat, "type": ({style}) ])) %>,
 <%
      }
 %>
-  wishlist.insertNodes(false, mic.toArray());
+]);
 <%
    } 
 %>

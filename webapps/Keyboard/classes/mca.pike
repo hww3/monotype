@@ -300,6 +300,7 @@ public void getMat(Request id, Response response, Template.View view, mixed args
   else resp = "";
   // we try to encode the string as utf8.
   response->set_data(string_to_utf8((string)resp));
+  response->set_type("text/xml");
 }
 
 public void replaceMat(Request id, Response response, Template.View view, mixed args)
