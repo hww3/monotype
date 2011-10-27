@@ -1,3 +1,19 @@
+20111028
+- Matrix editor uses a less intrusive popup mechanism that shouldn't run off 
+   the page.
+- MCA Description is now displayed and may be edited by clicking on the text.
+- Available Mats can now be "floated".
+- Both MCA Description and Available Mat boxes can be "folded up" to take less
+   screen real estate.
+- MCA Save button will be disabled until a change is made, making it easier to
+   determine if you've done anything to an MCA
+- Drag and Drop is now available within the MCA. In addition to dragging mats
+   from the available mat list, you can now drag and drop mats between positions
+   within the matcase. Dragging a mat (a) onto another mat (b) will delete the
+   mat you've dropped onto (b). Blue and Yellow coding in the MCA does not 
+   yet follow when you use DnD.
+- The Available Mats list will update itself when "floated" or "unfloated".
+  
 20110827
 - made some changes in the Ribbon Generator GUI for consistency: buttons, etc.
 - fix an error thrown when creating new MCAs.
