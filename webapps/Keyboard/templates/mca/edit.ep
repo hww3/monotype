@@ -1,50 +1,66 @@
 <script type="text/javascript">
-     dojo.require("dojox.layout.FloatingPane");
-     dojo.require("dijit.form.Button");
+   dojo.require("dojox.layout.FloatingPane");
+   dojo.require("dijit.form.Button");
    dojo.require("dojox.collections.ArrayList");
    dojo.require("dojo.dnd.Source");
    dojo.require("dojo.dnd.Manager");
    dojo.require("dijit.TooltipDialog");
+   dojo.require("dijit.TitlePane");
+   dojo.require("dijit.InlineEditBox");
+   dojo.require("dijit.form.Textarea");
    dojo.require("dijit.form.MatrixEditor");
    var isEditing = false;
-
+   var canSave = <% if(data->is_owner) {
+%>
+true
+<% } else { %>
+false
+<% } %>;
 function dndDropComplete(s, n, c)
 {
   return;
   var mat = s.getItem(n[0].id).data;
 //  var manager = dojo.dnd.Manager();
-  alert("source: " + s);
+ // alert("source: " + s);
   replaceMat(row, col, mat);
 }
 
 var micDisplayPane;
-var displayPaneSource;
+var displayPaneSource = null;
 function paneClosed()
 {
+dojo.query("#popOutLink").style({ display:"" }); 
 var div = micDisplayPane.attr("content");
-var div2 = dojo.byId("matsInCaseDisplay");
+var div2 = dijit.byId("matsInCaseDisplay");
 if(div && div2)
 {
-  div2.innerHTML=displayPaneSource;
+  div2.set('content', displayPaneSource);
 micDisplayPane.set("content", "");
 init();
+dijit.byId('matsInCaseDisplay').set('open', true);
+dojo.query("#displayContainer").style({ display:"" }); 
+dojo.byId("floatcontainer").innerHTML="<div id='float1'></div>";
 }
 }
 
 function floatMICDisplay()
 {
+  dojo.query("#popOutLink").style({ display:"none" }); 
   var div = dojo.byId("matsInCaseContainer");
   if(div)
   {
+//displayPaneSource = dijit.byId('matsInCaseDisplay').get('content');
+  dijit.byId('matsInCaseDisplay').set('open', false);
   micDisplayPane = new dojox.layout.FloatingPane({
-      title: "Available Sorts",
+      title: "Available Mats",
       resizable: false,
       dockable: false,
 	  content: div,
-	  onclose: function(){alert("close");},
       style: "position:absolute;top:0;left:0;",
       id: "matsInCaseContainer"
   }, dojo.byId("float1"));
+dojo.query("#displayContainer").style({ display:"none" }); 
+
 //  dijit.byId("micDisplayButton").set("enabled", false);
 micDisplayPane.close = function() {
 
@@ -62,18 +78,18 @@ if(!this.closable){ return; }
 
 // based on dojo.dnd.Source.checkAcceptance()
 function checkAcceptanceWithoutSelfDrop(source, nodes){
+//alert("checkAcceptance: " + this==source);
     if(this == source){ return false; }
-		if(this == source){
-			return !this.copyOnly || this.selfAccept;
-		}
+//	console.log(this.accept + " is acceptable!");
 		for(var i = 0; i < nodes.length; ++i){
 			var item = source.getItem(nodes[i].id)
                         var type = item.type;
+console.log("item " + nodes[i].id + " type is " + type);
 			// type instanceof Array
 			var flag = false;
 			for(var j = 0; j < type.length; ++j){
 				if(type[j] in this.accept){
-//alert(type[j] + " is acceptable!");
+console.log(this.accept + " is acceptable!");
 					flag = true;
 					break;
 				}
@@ -91,7 +107,7 @@ function checkAcceptanceWithoutSelfDrop(source, nodes){
 		// create a table/tr/td-based node structure; each item here needs an
 		// image, a name, a brief description, and a quantity available
 		var nameTd = document.createElement("span");
-		nameTd.id = "dnd" + item.type + item.character;
+		nameTd.id = item.id || ("dnd" + item.type + item.character);
 		var n;
 
 		if(item.style == "U")
@@ -129,63 +145,81 @@ function checkAcceptanceWithoutSelfDrop(source, nodes){
 			node = table;
 		}
 
-		item.id = "dnd" + item.type + item.character;
+		item.id = "2dnd" + item.type + item.character;
 		
-		return {node: nameTd, data: item, id: "dnd" + item.type + item.character, type: item.type};
+		return {node: nameTd, data: item, id: "3dnd" + item.type + item.character, type: item.type};
 	};
 
 
 function processExternalDrop(source, nodes, copy)
 {
-		// summary: called only on the current target, when drop is performed
-		//	from an external source
-		// source: Object: the source which provides items
-		// nodes: Array: the list of transferred items
-		// copy: Boolean: copy items, if true, move items otherwise
 		var target = this;
+		var oldid;
 		var oldCreator = this._normalizedCreator;
 		// transferring nodes from the source to the target
-		if(this.creator){
-			// use defined creator
-			this._normalizedCreator = function(node, hint){
-				return oldCreator.call(this, source.getItem(node.id).data, hint);
-			};
-		}else{
-			// we have no creator defined => move/clone nodes
-/*			if(copy){
-				// clone nodes
-				this._normalizedCreator = function(node, hint){
-					var t = source.getItem(node.id);
-					var n = node.cloneNode(true);
-					n.id = dojo.dnd.getUniqueId();
-					return {node: n, data: t.data, type: t.type};
-				};
-			}else */ {
-				// move nodes
-				this._normalizedCreator = function(node, hint){
-					var t = source.getItem(node.id);
-					t.row = this.parent.id;
-					t.column = this.parent.id;
-					source.delItem(node.id);
-					return {node: node, data: t.data, type: t.type};
-				};
+		var sourcenode = source.getItem(nodes[0].id);
+		oldid = nodes[0].id;
+		
+		// move nodes
+		target._normalizedCreator = function(node, hint){
+			source.delItem(node.id);
+			var n = node.cloneNode(true);
+			// node.removeChild(node.children[0]);
+	  	  	n.id = (target.node.id.replace('dnd-', ''));
+			source.delItem(n.id);
+//			target.delItem(n.id);
+			return {node: n, id: n.id, data: sourcenode.data, type: "X"};
+		};
+
+		var an = target.getAllNodes();
+        var isMove = 0;
+
+		dojo.forEach(an, function(n){ 
+			if(dojo.indexOf(source.getItem(nodes[0].id).type, 'X') != -1)
+			{
+			  // drop from within the grid
+				//alert("drop from in grid.");
+				moveMat(n.id, nodes[0].id); 
+				isMove = 1;
 			}
+			else
+			{
+			  //alert("drop from outside the grid.");
+			  // drop from outside the grid (aka, the available mats list)
+				replaceMat(n.id, target.getItem(n.id), source.getItem(nodes[0].id)); 				
+			}
+		});			
+
+		oldid = source.node.id.replace('dnd-', '');
+
+		if(isMove)
+		{
+			source.creator=micNodeCreator;
+		    source.selectAll();
+			source.deleteSelectedNodes();
+			source.clearItems();
+			source.insertNodes(true, ([{ mat: '', character:'', 'data': '', id: source.node.id.replace('dnd-', ''), type: 'R'}]));
 		}
+		else
+		{
+			source.deleteSelectedNodes();
+		}
+		
+	    target.selectAll();
+		target.deleteSelectedNodes();
+		target.clearItems();
+		target.insertNodes(true, nodes);
+
+/*		
+		if(!copy && this.creator){
+			source.deleteSelectedNodes();
+		}
+
 		this.selectNone();
 		if(!copy && !this.creator){
 			source.selectNone();
 		}
-
-		var an = this.getAllNodes();
-
-		dojo.forEach(an, function(n){ 
-					replaceMat(n.id, target.getItem(n.id), source.getItem(nodes[0].id)); 
-					target.delItem(n.id); n.parentNode.removeChild(n); });
-
-		this.insertNodes(true, nodes, this.before, this.current);
-		if(!copy && this.creator){
-			source.deleteSelectedNodes();
-		}
+*/
 		this._normalizedCreator = oldCreator;
 }
 
@@ -196,6 +230,12 @@ function saveMat(wgt)
   dojo.xhrPost({ widget: wgt, content: {matrix: wgt.getValue()}, url: "/mca/setMat?col=" + wgt.column + "&row=" + wgt.row + "&xmatrix=" + wgt.getValue(),
 					load: function(response, ioArgs){wgt.setNewVal();} 
 	});
+	
+	if(canSave)
+	   dojo.forEach(dojo.query(".SaveButton"), function(e){ e.disabled = false} );
+	else
+	   dojo.forEach(dojo.query(".SaveButton"), function(e){ e.disabled = true} );
+	
 }
 
 function replaceMat(pos, data, newmat)
@@ -204,7 +244,26 @@ function replaceMat(pos, data, newmat)
   dojo.xhrPost({ url: "/mca/replaceMat?pos=" + pos + "&matrix=" + dojo.toJson(newmat),
 					load: function(response, ioArgs){} 
 	});
+
+	if(canSave)
+	   dojo.forEach(dojo.query(".SaveButton"), function(e){ e.disabled = false} );
+	else
+	   dojo.forEach(dojo.query(".SaveButton"), function(e){ e.disabled = true} );
 }
+
+function moveMat(newpos, oldpos)
+{
+  isEditing = false;
+  dojo.xhrPost({ url: "/mca/moveMat?from=" + oldpos + "&to=" + newpos,
+					load: function(response, ioArgs){} 
+	});
+
+	if(canSave)
+	   dojo.forEach(dojo.query(".SaveButton"), function(e){ e.disabled = false} );
+	else
+	   dojo.forEach(dojo.query(".SaveButton"), function(e){ e.disabled = true} );
+}
+
 
 function cancelMat(wgt)
 {
@@ -229,6 +288,21 @@ function openWidget(v, row, col, units)
     dojo.connect(me, "onClose", function(){ isEditing = false; });
   }});
 }
+
+function saveDescription(id, value)
+{
+dojo.xhrPost({ content: {description: value}, url: "/mca/saveDescription",
+					load: function(response, ioArgs){
+					
+					if(canSave)
+					   dojo.forEach(dojo.query(".SaveButton"), function(e){ e.disabled = false} );
+					else
+					   dojo.forEach(dojo.query(".SaveButton"), function(e){ e.disabled = true} );
+										
+					} 
+	});
+
+}
 </script>
 
 <h1>Layout: <b><%=data->mca->name%></b> &nbsp; Default Wedge: <b><%=data->mca->wedge%></b> &nbsp;</h1>
@@ -239,18 +313,24 @@ function openWidget(v, row, col, units)
  &nbsp;
 
 <%#action_link "action": "save", "args": data->now%>
-	<button href="<%#action_url "action": "save", "args": data->now%>"
-<% if(data->is_owner) {
-%>
-<% } else { %>
-disabled="true"
-<% } %>
->Save</button>
+	<button class="SaveButton" href="<%#action_url "action": "save", "args": data->now%>" disabled="true">Save</button>
 </a> &nbsp;
-<p><div id="float1"></div>
-<div id="matsInCaseDisplay">
+<p>
+<div dojoType="dijit.TitlePane" id="description" title="Description">
+<span dojoType="dijit.InlineEditBox" editor="dijit.form.Textarea"  title="Description">
+<script type="dojo/connect" event="onChange" args="value">
+                  console.log(this.id + " changed to value " + value);
+                                saveDescription(this.id, value);
+             </script>
+<%=data->description%>
+</span>
+</div>
+
+<div id="floatcontainer"><span id="float1"></span></div>
+<div id="displayContainer">
+<div dojoType="dijit.TitlePane" id="matsInCaseDisplay" title="Available Mats">
 <div id="matsInCaseContainer">
-<div><b>Mats Not In Case</b></div>
+<div><div id="popOutLink">[<a href="#" onClick="floatMICDisplay();">Pop Out</a>]</div></div>
 <div id="matsInCaseNodeQ" dojoId="matsInCaseNodeQ" xdojoType="dojo.dnd.Source" accept="Q" style="position:relative; float:left" class="container"></div>
 <div style="clear: left;">
 <div style="position:relative; float:left">Roman: </div>
@@ -270,7 +350,7 @@ disabled="true"
 </div>
 </div>
 </div>
-<button dojoType="dijit.form.Button" dojoId="micDisplayButton" id="micDisplayButton" onclick="floatMICDisplay">Float</button>
+</div>
 <p>
 	<style>
 	div.cell {
@@ -346,8 +426,8 @@ line-height: 15.5px;
 		}
 %>
 
-<div class="cell" dojoType="dojo.dnd.Source" dojoId='<%=v + cv%>' id='<%=v + cv%>' <%=st%> accept="R,I,B,S,U" onDropExternal="processExternalDrop" onClick="openWidget(this, <%=v%>, '<%=cv%>', <%=u%>)" >
-  <div class="dojoDndItem" id='<%=v + cv%>' ><%=ch%></div>
+<div class="cell" dojoType="dojo.dnd.Source" dojoId='<%=v + cv%>' id='dnd-<%=v + cv%>' <%=st%> accept="X,R,I,B,S,U" delay="3" onDropExternal="processExternalDrop" onClick="openWidget(this, <%=v%>, '<%=cv%>', <%=u%>)" >
+  <div class="dojoDndItem" id='<%=v + cv%>' dndtype="X"><%=ch%></div>
 </div>
 	<%}%>
 </div>
@@ -373,40 +453,49 @@ line-height: 15.5px;
 <% } %>
 </div>
 <script type="text/javascript">
-	function init() {
-	var wishlist, mic, connected;
-	
-	displayPaneSource = dojo.byId("matsInCaseDisplay").innerHTML;
-<% foreach(data->not_in_matcase;string style; array elems) { 
-%>
-		wishlist = new dojo.dnd.Source("matsInCaseNode<%=style%>"
-		,
+var connected;
+function loadStyle(elements, style)
+{
+  //alert("style: " + style);
+  dojo.byId('matsInCaseNode' + style).innerHTML='';
+		wishlist = new dojo.dnd.Source("matsInCaseNode" + style,
 			{isSource:true, copyOnly: true, 
-                          creator: micNodeCreator, accept: ["<%=style%>"]}
+                          creator: micNodeCreator, accept: [style]}
 
 );
 		wishlist.checkAcceptance = checkAcceptanceWithoutSelfDrop;
 
 		// we only need to connect the first one; the others will get it automatically.
 		if(!connected)
-                {
+        {
   		  dojo.connect(wishlist, "onDndDrop", dndDropComplete);
                   connected = 1;
-                }
+        }
+		wishlist.clearItems();
+		var al = new dojox.collections.ArrayList();
+		for(var i = 0; i < elements.length; i++)
+		{
+		   al.add({'mat': elements[i], 'data': elements[i], 'character': elements[i], 'style': style, id: '4dnd' + style + elements[i], type: ([style])});
+		}
+		wishlist.insertNodes(false, al.toArray());
 
-wishlist.insertNodes(false, [
-<%
-     foreach(elems;; string mat)
-     {
-%>
-  <%= Tools.JSON.serialize((["data": mat, "character": mat, "style": style, "id": "dnd" + style + mat, "type": ({style}) ])) %>,
-<%
-     }
-%>
-]);
-<%
-   } 
-%>
+}
+
+	function init() {
+  	  var wishlist, mic, connected;
+	  connected = 0;
+	  if(displayPaneSource == null) displayPaneSource = dijit.byId("matsInCaseDisplay").get('content');
+
+	  dojo.xhrPost({handleAs: "json", url: "/mca/notInCase",
+						load: function(response, ioArgs){
+						
+						for(var key in response)
+						{
+						   loadStyle(response[key], key);
+						}		
+					}
+				});
+
 
   };
 	dojo.addOnLoad(init);
@@ -417,13 +506,7 @@ wishlist.insertNodes(false, [
 <button href="<%#action_url "action": "cancel"%>">Cancel</button>
 </a>		
 <%#action_link "action": "save", "args": data->now%>
-	<button href="<%#action_url "action": "save", "args": data->now%>"
-<% if(data->is_owner) {
-%>
-<% } else { %>
-disabled="true"
-<% } %>
->Save</button>
+	<button  class="SaveButton" href="<%#action_url "action": "save", "args": data->now%>" disabled="true">Save</button>
 </a> &nbsp;
 
 </div>

@@ -59,6 +59,14 @@ img {
     border: 1px solid #DCDCDC;
 	padding: 8px;
 }
+
+img.dijitArrowNode
+{
+  background: #FAFAFA;
+  border: 0px solid #DCDCDC;
+  padding: 0px;
+}
+
 img.float-right {
   margin: 5px 0px 10px 10px;  
 }
@@ -138,6 +146,16 @@ input.button {
 	background: #FFF;
 	color: #CC0000;
 }
+
+input.button[disabled] { 
+	margin: 0; 
+	font: bolder 12px Arial, Sans-serif; 
+	border: 1px solid #CCC; 
+	padding: 5px 3px;
+	background: #FFF;
+	color: #DDD;
+}
+
 button { 
 	margin: 0; 
 	font: bolder 12px Arial, Sans-serif; 
@@ -145,6 +163,16 @@ button {
 	padding: 5px 3px;
 	background: #FFF;
 	color: #CC0000;
+}
+
+button[disabled]
+{
+	margin: 0; 
+	font: bolder 12px Arial, Sans-serif; 
+	border: 1px solid #CCC; 
+	padding: 5px 3px;
+	background: #FFF;
+	color: #DDD;
 }
 
 /* search form */
@@ -203,6 +231,14 @@ form.search input.searchbutton {
 	height: 50px; 
 	margin: 0; padding: 0;	
 }
+
+#user {
+	float: right;
+	clear: both;
+	height: 50px; 
+	margin: 0; padding: 0;	
+}
+
 #header-logo #logo {
 	position: absolute;
 	top: 3px; left: 5px;

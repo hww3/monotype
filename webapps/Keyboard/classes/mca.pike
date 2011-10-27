@@ -327,6 +327,32 @@ public void replaceMat(Request id, Response response, Template.View view, mixed 
   response->set_data("");
 }
 
+// move a mat around in the MCA
+public void moveMat(Request id, Response response, Template.View view, mixed args)
+{
+  string col;
+  int row;
+
+  [row, col] = array_sscanf(id->variables->from, "%d%[A-O]s");
+
+  object mca = id->misc->session_variables->mca;
+  object wedge = app->load_wedge(mca->wedge);
+
+  object matrix = mca->get(col, row);
+  mca->delete(col, row);
+
+  [row, col] = array_sscanf(id->variables->to, "%d%[A-O]s");
+
+  wedge = app->load_wedge(mca->wedge);
+  int sw = wedge->get(row);
+  
+  matrix->set_set_width(sw);
+
+  mca->set(col, row, matrix);
+  response->set_data("OK");
+}
+
+
 public void edit(Request id, Response response, Template.View view, mixed args)
 {
   object mca;
@@ -392,6 +418,8 @@ else
   view->add("rows", r);   
   view->add("cols", c);
   view->add("problems", mca->problems);
+  view->add("description", mca->description);
+  
   // generate "elements not in matcase" data
   mapping not_in_matcase = copy_value(case_contents);
  
@@ -415,6 +443,38 @@ if(matrix->character == "0")
 
 }
 
+public void saveDescription(Request id, Response response, Template.View view, mixed args)
+{
+    werror("variables: %O\n", id->variables);
+    object mca = id->misc->session_variables->mca;
+    mca->set_description(id->variables->description);
+    response->set_data("Description Set: " + mca->get_description);
+    
+}
+
+public void notInCase(Request id, Response response, Template.View view, mixed args)
+{
+    object mca = id->misc->session_variables->mca;
+    mapping not_in_matcase = copy_value(case_contents);
+
+    foreach(mca->elements; string act; object matrix)
+    {
+      string style = matrix->style;
+      if(!style || style == "") style = "R";
+      array z;
+  if(matrix->character == "0")
+     werror("%O\n", (mapping)matrix);
+      if((z = not_in_matcase[style]) && search(z, matrix->character)!= -1)
+      {
+        not_in_matcase[style] -= ({ matrix->character });
+        if(matrix->character == "0") werror("removing " + matrix->character + "\n"); 
+      }
+
+    }  
+    
+    response->set_data(Tools.JSON.serialize(not_in_matcase));  
+    response->set_type("application/json");
+}
 
 public void download(Request id, Response response, Template.View view, mixed args)
 {

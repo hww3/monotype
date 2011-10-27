@@ -131,6 +131,7 @@ dojo.declare(
 		
 		setNewVal: function()
 		{
+//		  alerty();
 			//alert("this.origNode:" + this.origNode.innerHTML);
 			if(this._mat_type == "FS")
 			  this.origNode.innerHTML="<img src=\"/static/images/fs.png\">";
@@ -147,7 +148,7 @@ dojo.declare(
 				q = "<i>" + q + "</I>";
 			  if(this._style == "S")
 				q = "<tt>" + q + "</tt>";
-			  this.origNode.innerHTML=q;
+			  this.origNode.innerHTML='<div class="dojoDndItem" dndtype="X" id="' + this.origNode.id.replace('dnd-', '') + '">' +q + "</div>";
 			}
 			else this.origNode.innerHTML="";
 			this.origNode.style.color = 'blue';
