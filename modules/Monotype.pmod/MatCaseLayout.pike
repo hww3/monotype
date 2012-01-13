@@ -128,8 +128,8 @@ void set(string column, int row, Matrix mat)
             break;
        }
 
-       add_problem(column, row, sprintf("Matcase contains duplicate mat: " + key2 + ":new %s %d, orig %s %d\n", 
-	    column, row, elements[key]->col_pos, elements[key]->row_pos));
+       add_problem(column, row, sprintf("Matcase contains duplicate mat: %s:new %s %d, orig %s %d\n", 
+	    key2, column, row, elements[key]->col_pos, elements[key]->row_pos));
     }
     elements[key] = mat;
   if(mat->style =="R" && mat->character == "0")

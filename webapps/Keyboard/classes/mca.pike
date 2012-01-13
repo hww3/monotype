@@ -260,7 +260,7 @@ werror("%O", mkmapping(indices(id), values(id)) );
 // we might get the mat from the client as xml, or we might not. 
 // we try both approaches and hope the one we select is okay.
 
-    string matxml = id->variables->matrix;
+    string matxml = id->variables->xmatrix;
     string m2;
 
     mixed e = catch

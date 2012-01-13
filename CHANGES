@@ -1,3 +1,7 @@
+20120112
+- MCA editor should now properly allow ampersands and similar marks to be
+   set as matrix elements.
+
 20111028
 - Matrix editor uses a less intrusive popup mechanism that shouldn't run off 
    the page.
