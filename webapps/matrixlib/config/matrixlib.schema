@@ -1,0 +1,9 @@
+create table series
+(
+  id integer not null primary key
+  ,
+  name char(64) not null,
+  series char(12) not null unique,
+  comments text,
+  ua text
+ ); 
