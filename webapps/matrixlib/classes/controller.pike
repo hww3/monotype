@@ -2,10 +2,12 @@
 inherit Fins.FinsController;
 
 object series;
+object fonts;
 
 void start()
 {
   series = load_controller("series_controller");
+  fonts = load_controller("font_controller");
 }
 
 void index(object id, object response, mixed ... args)

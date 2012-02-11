@@ -1,7 +1,7 @@
 int main()
 {
 
- array x = Stdio.read_file("/tmp/fins/bmono.csv")/"\n";
+ array x = Stdio.read_file("matrixlib/sources/bmono.csv")/"\n";
  array e = ({});
  int ce = -1;
  for(int i = 1; i < sizeof(x); i++)

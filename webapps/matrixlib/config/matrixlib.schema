@@ -7,3 +7,15 @@ create table series
   comments text,
   ua text
  ); 
+
+create table fonts
+(
+  id integer not null primary key
+  ,
+  series_id int(12) not null,
+  size char(16),
+  condition char(16),
+  matcase_type char(16),
+  location char(16),
+  comments text
+);
