@@ -206,33 +206,35 @@ public void copy(Request id, Response response, Template.View view, mixed args)
 
 public void new(Request id, Response response, Template.View view, mixed args)
 {
-	view->add("wedges", app->get_wedges());
-	Monotype.MatCaseLayout l;
-	if(id->variables->size)
-	{
-		if(app->mca_exists(id->variables->name, id->misc->session_variables->user))
-		{
-			response->flash("MCA " + id->variables->name + " already exists.");
-			return;
-		}
+  view->add("wedges", app->get_wedges());
+  Monotype.MatCaseLayout l;
+  if(id->variables->size)
+  {
+    id->variables->name = String.trim_whites(id->variables->name);
+
+    if(app->mca_exists(id->variables->name, id->misc->session_variables->user))
+    {
+      response->flash("MCA " + id->variables->name + " already exists.");
+      return;
+    }
 		
-        	l = Monotype.MatCaseLayout((int)id->variables->size);
-		l->set_description(id->variables->description);
-		l->set_name(id->variables->name);
-		l->set_wedge(id->variables->wedge);
+    l = Monotype.MatCaseLayout((int)id->variables->size);
+    l->set_description(id->variables->description);
+    l->set_name(id->variables->name);
+    l->set_wedge(id->variables->wedge);
 		
-		object mca_db = app->save_matcase(l, id->misc->session_variables->user, id->variables->is_public);
+    object mca_db = app->save_matcase(l, id->misc->session_variables->user, id->variables->is_public);
 		
-		response->redirect(edit, ({(string)mca_db["id"]}));
-	}
+    response->redirect(edit, ({(string)mca_db["id"]}));
+  }
 }
 
 public void cancel(Request id, Response response, Template.View view, mixed args)
 {
-	id->misc->session_variables->mca = 0;
+  id->misc->session_variables->mca = 0;
 	
-	response->flash("Your changes were cancelled.");
-	response->redirect(index);
+  response->flash("Your changes were cancelled.");
+  response->redirect(index);
 }
 
 public void save(Request id, Response response, Template.View view, mixed args)

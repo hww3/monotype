@@ -19,22 +19,23 @@ public void index(Request id, Response response, Template.View view, mixed args)
 
 public void new(Request id, Response response, Template.View view, mixed args)
 {
-	
-	if(id->variables->name)
-	{
-		if(app->wedge_exists(id->variables->name, id->misc->session_variables->user))	
-		{
-			response->flash("Wedge " + upper_case(id->variables->name) + " already exists.");
-			return;
-		}
+  	
+  if(id->variables->name)
+  {
+    id->variables->name = String.trim_whites(id->variables->name);     
+    if(app->wedge_exists(id->variables->name, id->misc->session_variables->user))	
+    {
+      response->flash("Wedge " + upper_case(id->variables->name) + " already exists.");
+      return;
+    }
 		
-		Monotype.Stopbar l = Monotype.Stopbar();
-		l->set_name(upper_case(id->variables->name));
+    Monotype.Stopbar l = Monotype.Stopbar();
+    l->set_name(upper_case(id->variables->name));
 		
-		app->save_wedge(l, id->misc->session_variables->user, id->variables->is_public);
+    app->save_wedge(l, id->misc->session_variables->user, id->variables->is_public);
 		
-		response->redirect(edit, ({upper_case(id->variables->name)}));
-	}
+    response->redirect(edit, ({upper_case(id->variables->name)}));
+  }
 }
 
 public void cancel(Request id, Response response, Template.View view, mixed args)

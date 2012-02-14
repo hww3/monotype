@@ -113,7 +113,7 @@ public void login(Request id, Response response, Template.View t, mixed ... args
    switch(id->variables->action)
    {
       case "Cancel":
-         response->redirect(id->variables->return_to || default_action);
+         response->redirect_temp(id->variables->return_to || default_action);
          return;
          break;
       case "Login":
@@ -129,7 +129,7 @@ public void login(Request id, Response response, Template.View t, mixed ... args
              id->variables->return_to = id->variables->return_to + "&" + time();
            else
              id->variables->return_to = id->variables->return_to + "?" + time();
-           response->redirect(id->variables->return_to || default_action);
+           response->redirect_temp(id->variables->return_to || default_action);
            return;
         }
         else
@@ -150,7 +150,7 @@ public void logout(Request id, Response response, Template.View t, mixed ... arg
   }
 
   response->flash("You have been successfully logged out.");
-  response->redirect(id->referrer||default_action);
+  response->redirect_temp(id->referrer||default_action);
 }
 
 public void changepassword(Request id, Response response, Template.View t, mixed ... args)
@@ -168,7 +168,7 @@ public void changepassword(Request id, Response response, Template.View t, mixed
            {
               if(reset_password(id, response, t, r, id->variables->newpassword))
                response->flash("Password reset successfully.");
-               response->redirect(login, ({}), (["return_to": id->variables->return_to]));
+               response->redirect_temp(login, ({}), (["return_to": id->variables->return_to]));
            }
            else
            {
@@ -210,7 +210,7 @@ public void forgotpassword(Request id, Response response, Template.View t, mixed
                               mailmsg);
 
         response->flash("Your password has been located and will be sent to the email address on record for your account.\n");
-        response->redirect(login);
+        response->redirect_temp(login);
        }
   }
 }
