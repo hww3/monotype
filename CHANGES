@@ -1,4 +1,11 @@
 20120112
+- MCA editor: hopefully emit useful session information when no MCA is provided
+- MCA editor: fix for ampersands, quotation marks and other special characters.
+- Ribbon Generator: fix some problems with login
+- Ribbon Generator: eliminate double encoding of UTF-8 specials, which was 
+   causing garage characters on ribbon preview.
+
+20120112
 - MCA editor should now properly allow ampersands and similar marks to be
    set as matrix elements.
 
