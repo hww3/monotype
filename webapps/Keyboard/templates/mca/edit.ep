@@ -241,7 +241,7 @@ function saveMat(wgt)
 function replaceMat(pos, data, newmat)
 {
   isEditing = false;
-  dojo.xhrPost({ url: "/mca/replaceMat?pos=" + pos + "&matrix=" + dojo.toJson(newmat),
+  dojo.xhrPost({ url: "/mca/replaceMat?pos=" + pos + "&matrix=" + encodeURIComponent(dojo.toJson(newmat)),
 					load: function(response, ioArgs){} 
 	});
 

@@ -312,6 +312,7 @@ public void replaceMat(Request id, Response response, Template.View view, mixed 
 
   [row, col] = array_sscanf(id->variables->pos, "%d%[A-O]s");
 
+  werror("mca: %O\n", id->variables->matrix);
   mapping mat = Tools.JSON.deserialize(id->variables->matrix)->data;
   werror("%s %d: %O\n", col, row, mat); 
   object matrix = Monotype.Matrix(); 

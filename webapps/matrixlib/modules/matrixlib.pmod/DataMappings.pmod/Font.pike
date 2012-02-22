@@ -9,6 +9,7 @@ array(string) field_order = ({
     "matcase_type",
     "location",
     "condition",
+    "Matrices",
     "comments"
 });
 

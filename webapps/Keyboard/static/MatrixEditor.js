@@ -421,6 +421,7 @@ dojo.declare(
 				  textneu = textneu.replace(/&/,"%26amp;");
 				  textneu = textneu.replace(/</,"%26lt;");
 				  textneu = textneu.replace(/>/,"%26gt;");
+				  textneu = textneu.replace(/"/,"%26quot;");
 				  return(textneu);
 		                },
 		
