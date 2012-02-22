@@ -242,7 +242,7 @@ public void save(Request id, Response response, Template.View view, mixed args)
 	werror("save\n");
 if(catch(
 	app->save_matcase(id->misc->session_variables->mca, id->misc->session_variables->user, id->variables->is_public)))
-response->set_data(sprintf("<pre>%O</pre>\n", id->misc->session_variables));
+response->set_data(sprintf("<pre>Request Debug: %O\n\n%O</pre>\n", id->cookies, id->misc));
 	id->misc->session_variables->mca = 0;
 
 	response->flash("Your changes were saved.");
