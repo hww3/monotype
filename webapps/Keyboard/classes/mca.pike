@@ -240,7 +240,9 @@ public void cancel(Request id, Response response, Template.View view, mixed args
 public void save(Request id, Response response, Template.View view, mixed args)
 {
 	werror("save\n");
-	app->save_matcase(id->misc->session_variables->mca, id->misc->session_variables->user, id->variables->is_public);
+if(catch(
+	app->save_matcase(id->misc->session_variables->mca, id->misc->session_variables->user, id->variables->is_public)))
+response->set_data(sprintf("<pre>%O</pre>\n", id->misc->session_variables));
 	id->misc->session_variables->mca = 0;
 
 	response->flash("Your changes were saved.");

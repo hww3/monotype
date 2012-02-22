@@ -230,9 +230,9 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 			  ch = "<span style=\"text-decoration: overline; color: blue\">" + ch + "</span>";
 			  
 			 if(sizeof(e->character) > 1) 
-			  tobeadded += ("<u>" + string_to_utf8(ch||" &nbsp; ") + "</u>");
+			  tobeadded += ("<u>" + (ch||" &nbsp; ") + "</u>");
 			 else
-  			   tobeadded += string_to_utf8(ch||" &nbsp; ");
+  			   tobeadded += (ch||" &nbsp; ");
 		  }
 		
 //		  if((total_set-last_set) <= max_red) werror("%d %d whee!\n", i, col);
@@ -260,3 +260,4 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 //	response->set_data(b);
 	return;
 }
+
