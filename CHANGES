@@ -1,3 +1,8 @@
+20120225
+- Ribbon Generator: fix for problem where in an alphabet change around a 
+  word that would break a line causes an extra justifying space to be placed 
+  on the line.
+
 20120112
 - MCA editor: hopefully emit useful session information when no MCA is provided
 - MCA editor: fix for ampersands, quotation marks and other special characters.

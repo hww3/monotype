@@ -62,7 +62,7 @@
 			<div id="logo">comp<span class="red">cat</span></div>		
 <div id="user">			
 		<%if (data->user){ %>
-		Connected as <%$user.name%> / Version 1.1.1
+		Connected as <%$user.name%> / Version 1.1.2
 		<% } %>
 </div>
 						
@@ -83,7 +83,7 @@
 <div class="footer">
 	
 		<p>	
-		    &copy; 2007-2011 H William Welliver III
+		    &copy; 2007-2012 H William Welliver III
 
             &nbsp;&nbsp;&nbsp;&nbsp;
 
