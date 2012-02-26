@@ -164,6 +164,7 @@ import Monotype;
 	{
 	  object mat;
 
+//werror("Line.add(%O, %O)\n", activator, modifier);
 	  // justifying space
 	  if(activator == " ")
 	  {

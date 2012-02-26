@@ -308,11 +308,21 @@ int process_setting_buffer(int|void exact)
 	   if(current_line->is_overset()) // back up to before the last space.
 	   {
 	    werror("word didn't fit, justification is %d/%d\n", current_line->big, current_line->little);
-		  for(int j = i; j >= lastjs; j--)
+object x;
+//		  for(int j = i; j >= lastjs; j--)
+// TODO: if the non-fitting word was made up of components from more than one alphabet (roman, italic, etc),
+// the word will be removed and placed back on the line using only one alphabet, namely the one containing the 
+// last part of the word that fits. That's because we don't associate the alphabet with the text to be placed on
+// the line as part of the setting buffer. We should probably change the setting buffer to contain the alphabet
+// (and other settings) of the word, instead of relying on a global flag to contain this information. That way,
+// we can remove the whole word and hyphenate it while preserving changes in settings within the word.
+do
 		  {
-			object x = current_line->remove();
+			x = current_line->remove();
 			 werror("removing a character: %O, %O \n", x?(x->activator?x->activator:"JS"):"", ((x && x->get_set_width)?x->get_set_width():0));
 		  }
+while(x && x->activator);
+
 	    werror("removed word, justification is %d/%d\n", current_line->big, current_line->little);
 		  if(exact) return 1;
 		  if(line_mode)
@@ -560,7 +570,7 @@ int in_odd;
 	}
 	if(lcdata == "<b>")
 	{
-		process_setting_buffer();
+	//	process_setting_buffer();
 		process_setting_buffer();
 		isbold ++;
 	}
