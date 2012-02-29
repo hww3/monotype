@@ -143,13 +143,15 @@ public void login(Request id, Response response, Template.View t, mixed ... args
 
 public void logout(Request id, Response response, Template.View t, mixed ... args)
 {
-  if(id->misc->session_variables->userid)
+  if(id->misc->session_variables->user)
   {
      id->misc->session_variables->logout = time();
      m_delete(id->misc->session_variables, "user");
+     response->flash("You have been successfully logged out.");
   }
+  else 
+    response->flash("Not logged in.");
 
-  response->flash("You have been successfully logged out.");
   response->redirect_temp(id->referrer||default_action);
 }
 
