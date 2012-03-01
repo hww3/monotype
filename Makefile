@@ -44,27 +44,27 @@ rgapply_versions:
 
 ccstub: 
 	${PUBLIC_OBJECTIVEC}/mkapp ${CASTER_CONTROL}
-	cp -rf "${SPARKLE_HOME}/Sparkle.framework" ${CASTER_CONTROL}.app/Contents/Frameworks
+	cp -Rf "${SPARKLE_HOME}/Sparkle.framework" ${CASTER_CONTROL}.app/Contents/Frameworks
 
 ccapp: ccstub
-		cp -rf CasterApp/* ${CASTER_CONTROL}.app/Contents/
+		cp -Rf CasterApp/* ${CASTER_CONTROL}.app/Contents/
 
 stub: 
 	${PUBLIC_OBJECTIVEC}/mkapp ${RIBBON_GENERATOR}
-	cp -rf "${SPARKLE_HOME}/Sparkle.framework" ${RIBBON_GENERATOR}.app/Contents/Frameworks
+	cp -Rf "${SPARKLE_HOME}/Sparkle.framework" ${RIBBON_GENERATOR}.app/Contents/Frameworks
 
 framework: stub
-	cp -rf RibbonGeneratorApp/* ${RIBBON_GENERATOR}.app/Contents/
+	cp -Rf RibbonGeneratorApp/* ${RIBBON_GENERATOR}.app/Contents/
 
 
 fins: framework
 	if [ ! -d Fins_build ]; then hg clone ${FINS_REPO}/fins Fins_build; fi;
 	if [ ! -d ConfigFiles_build ]; then hg clone ${FINS_REPO}/pike_modules-public_tools_configfiles ConfigFiles_build; fi;
-	cp -rf Fins_build/lib/* ${RIBBON_GENERATOR}.app/Contents/Frameworks/Pike.framework/Resources/lib/modules
+	cp -Rf Fins_build/lib/* ${RIBBON_GENERATOR}.app/Contents/Frameworks/Pike.framework/Resources/lib/modules
 	mkdir -p ${RIBBON_GENERATOR}.app/Contents/Frameworks/Pike.framework/Resources/lib/modules/Public.pmod/Tools.pmod/ConfigFiles.pmod
-	cp -rf ConfigFiles_build/module.pmod.in/* ${RIBBON_GENERATOR}.app/Contents/Frameworks/Pike.framework/Resources/lib/modules/Public.pmod/Tools.pmod/ConfigFiles.pmod/
+	cp -Rf ConfigFiles_build/module.pmod.in/* ${RIBBON_GENERATOR}.app/Contents/Frameworks/Pike.framework/Resources/lib/modules/Public.pmod/Tools.pmod/ConfigFiles.pmod/
 
 webapp: fins
-	cp -rf webapps/Keyboard ${RIBBON_GENERATOR}.app/Contents/Resources
-	cp -rf modules/* ${RIBBON_GENERATOR}.app/Contents/Resources/Keyboard/modules
-	cp -rf CHANGES ${RIBBON_GENERATOR}.app/Contents/Resources
+	cp -Rf webapps/Keyboard ${RIBBON_GENERATOR}.app/Contents/Resources
+	cp -Rf modules/* ${RIBBON_GENERATOR}.app/Contents/Resources/Keyboard/modules
+	cp -Rf CHANGES ${RIBBON_GENERATOR}.app/Contents/Resources

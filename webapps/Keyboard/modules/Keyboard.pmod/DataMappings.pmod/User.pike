@@ -6,9 +6,11 @@ void post_define(object context)
 {
 // Add any post configuration logic here
   set_alternate_key("username");
-  has_many(context, "Matcasearrangements", "mcas", "owner");
-  has_many(context, "Stopbars", "stopbars", "owner");
+  has_many(context, "Matcasearrangement", "mcas", "owner");
+  has_many(context, "Stopbar", "stopbars", "owner");
 //  belongs_to(context, "Matcasearrangement", "mcas", )
   has_many_by_index(context, "Preference", "name");
+  set_renderer_for_field("is_admin", Fins.Helpers.Renderers.CheckBoxRenderer());
+  set_renderer_for_field("is_active", Fins.Helpers.Renderers.CheckBoxRenderer());
 }
 
