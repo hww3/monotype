@@ -24,6 +24,26 @@ werror("**** " + (string)folder  + "\n");
 
 	sql_url = "sqlite://" + combine_path((string)folder, "RibbonGeneratorData.sqlite3");
 	werror("**** " + sql_url);
+
+  run_upgrade();
 }
 
 #endif
+
+void run_upgrade()
+{
+  object s = Sql.Sql(sql_url);
+  if(sizeof(s->list_tables("preferences"))) return;
+
+  // ok, we need to create the preferences table.
+  werror("creating preferences table.\n");
+  s->query(
+#"CREATE TABLE preferences (
+  id integer primary key,
+  user_id integer not null,
+  name char(64) NOT NULL default '',
+  type integer NOT NULL default 0,
+  value char(64) NOT NULL default ''
+)"
+);
+}
