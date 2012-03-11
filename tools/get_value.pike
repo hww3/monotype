@@ -16,10 +16,13 @@ int main(int argc, array argv)
 	
 	foreach(Stdio.read_file(inputFile)/"\n"; int ln; string line)
 	{	
+               if(!sizeof(String.trim_all_whites(line))) continue;
 		array args = ({});	
 		foreach(line/"="; int i; string x)
+                {
 		  args += ({String.trim_all_whites(x)});
-		if(sizeof(args) != 2)
+                }
+ 		if(sizeof(args) != 2)
 		{
 		  werror("error in line %d of version config file %s.\n", ln, inputFile);
 		  exit(1);
