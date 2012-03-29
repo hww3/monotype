@@ -62,7 +62,7 @@
 			<div id="logo">comp<span class="red">cat</span></div>		
 <div id="user">			
 		<%if (data->user){ %>
-		Connected as <%$user.name%> / Version 1.1.2
+		Connected as <%$user.name%> / Version 1.1.3
 		<% } %>
 </div>
 						
