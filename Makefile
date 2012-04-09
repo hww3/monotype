@@ -19,8 +19,10 @@ hash: zip
 	@/bin/echo
 	@/bin/echo -n "Caster Control Hash: "
 	@ruby "${SPARKLE_HOME}/Extras/Signing Tools/sign_update.rb" ${CASTER_CONTROL}-`pike tools/get_value.pike version.cfg casterControlVersion`.zip ${PRIVATE_KEY_DIR}/dsa_priv.pem
+	@ls -l ${CASTER_CONTROL}-`pike tools/get_value.pike version.cfg casterControlVersion`.zip
 	@/bin/echo -n "Ribbon Generator Hash: "
 	@ruby "${SPARKLE_HOME}/Extras/Signing Tools/sign_update.rb" ${RIBBON_GENERATOR}-`pike tools/get_value.pike version.cfg ribbonGeneratorVersion`.zip ${PRIVATE_KEY_DIR}/dsa_priv.pem
+	@ls -l ${RIBBON_GENERATOR}-`pike tools/get_value.pike version.cfg ribbonGeneratorVersion`.zip
 
 zip: all
 	zip -ry ${CASTER_CONTROL}-`pike tools/get_value.pike version.cfg casterControlVersion`.zip ${CASTER_CONTROL}.app
@@ -32,9 +34,9 @@ clean:
 	rm -rf Fins_build
 	rm -rf ConfigFiles_build
 
-Caster.app: ccstub ccapp ccapply_versions
+Caster.app: ccapp ccapply_versions
 
-RibbonGenerator.app: stub framework fins webapp rgapply_versions
+RibbonGenerator.app: framework fins webapp rgapply_versions
 
 ccapply_versions:
 	pike tools/apply_versions.pike version.cfg ${CASTER_CONTROL}.app 
@@ -46,14 +48,14 @@ ccstub:
 	${PUBLIC_OBJECTIVEC}/mkapp ${CASTER_CONTROL}
 	cp -Rf "${SPARKLE_HOME}/Sparkle.framework" ${CASTER_CONTROL}.app/Contents/Frameworks
 
-ccapp: ccstub
+ccapp: 
 		cp -Rf CasterApp/* ${CASTER_CONTROL}.app/Contents/
 
 stub: 
 	${PUBLIC_OBJECTIVEC}/mkapp ${RIBBON_GENERATOR}
 	cp -Rf "${SPARKLE_HOME}/Sparkle.framework" ${RIBBON_GENERATOR}.app/Contents/Frameworks
 
-framework: stub
+framework: 
 	cp -Rf RibbonGeneratorApp/* ${RIBBON_GENERATOR}.app/Contents/
 
 
