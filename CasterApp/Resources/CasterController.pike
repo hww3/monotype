@@ -144,7 +144,7 @@ void loadJob_(object a)
     foreach(files;;mixed file)
     {
 	werror("fILE:%O\n",(string)( file->__objc_classname));
-      jobinfo = Driver->loadRibbon((string)file);
+      jobinfo = Driver->loadRibbon((string)file->UTF8String());
       set_job_info();
     }
   CasterToggleButton->setEnabled_(1);
@@ -214,8 +214,8 @@ void forwardLine_(object a)
 void allOn_(object b)
 {
 	werror("allOn_(%s)\n", (string)
-	b->title());
-	werror("allOff_(%s)\n", (string)b->title());
+	b->title()->UTF8String());
+	werror("allOff_(%s)\n", (string)b->title()->UTF8String());
 	foreach(buttonstotouch;; string b)
 	{
 	  this["c" + b]->setState_(1);
@@ -225,7 +225,7 @@ void allOn_(object b)
 
 void allOff_(object b)
 {
-	werror("allOff_(%s)\n", (string)b->title());
+	werror("allOff_(%s)\n", (string)b->title()->UTF8String());
 	foreach(buttonstotouch;; string but)
 	{
 	  this["c" + but]->setState_(0);
@@ -235,7 +235,7 @@ void allOff_(object b)
 
 void checkClicked_(object b)
 {
-	string pin = (string)b->title();
+	string pin = (string)b->title()->UTF8String();
 	werror("checkClicked_(%s, %d)\n", pin, b->state());
 	
 	if(b->state())
@@ -250,7 +250,7 @@ int was_caster_enabled;
 
 void showPinControl_(object i)
 {
-	werror("showPinControl_(%s)\n", (string)(i->title()));
+	werror("showPinControl_(%s)\n", (string)(i->title()->UTF8String()));
 	PinControlWindow->setDelegate_(this);
 //	if(!PinControlWindow->isVisible())
 		PinControlWindow->makeKeyAndOrderFront_(i);
