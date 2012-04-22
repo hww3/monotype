@@ -36,7 +36,7 @@ clean:
 
 Caster.app: ccstub ccapp ccapply_versions
 
-RibbonGenerator.app: framework fins webapp rgapply_versions
+RibbonGenerator.app: stub framework fins webapp rgapply_versions
 
 ccapply_versions:
 	pike tools/apply_versions.pike version.cfg ${CASTER_CONTROL}.app 
@@ -52,7 +52,7 @@ ccapp:
 		cp -Rf CasterApp/* ${CASTER_CONTROL}.app/Contents/
 
 stub: 
-	${PUBLIC_OBJECTIVEC}/mkapp ${RIBBON_GENERATOR}
+	if [ ! -d RibbonGenerator.app ]; then ${PUBLIC_OBJECTIVEC}/mkapp ${RIBBON_GENERATOR}; fi
 	cp -Rf "${SPARKLE_HOME}/Sparkle.framework" ${RIBBON_GENERATOR}.app/Contents/Frameworks
 
 framework: 

@@ -26,8 +26,10 @@ static void create(string filename)
 
 array get_current_line_contents()
 {
-	werror("line contents: %O\n", line_contents);
-	return (line_contents[current_line]) + ({});
+  array contents;
+  werror("line contents: %O=>%O\n", current_line, line_contents);
+  catch(contents = line_contents[current_line] + ({}));
+  return contents || ({});
 }
 
 void line_changed()
