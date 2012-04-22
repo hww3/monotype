@@ -1,6 +1,6 @@
 inherit "Plugin";
 
-int call_out_id;
+mixed call_out_id;
 
 void start()
 {
