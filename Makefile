@@ -1,5 +1,5 @@
-SPARKLE_HOME=/Users/hww3/Downloads/Sparkle 1/
-PUBLIC_OBJECTIVEC=/Users/hww3/devel/Public_ObjectiveC
+SPARKLE_HOME=${HOME}/Downloads/Sparkle 1/
+PUBLIC_OBJECTIVEC=${HOME}/devel/Public_ObjectiveC
 FINS_REPO="https://hg.welliver.org"
 RIBBON_GENERATOR=RibbonGenerator
 CASTER_CONTROL=Caster
@@ -34,7 +34,7 @@ clean:
 	rm -rf Fins_build
 	rm -rf ConfigFiles_build
 
-Caster.app: ccapp ccapply_versions
+Caster.app: ccstub ccapp ccapply_versions
 
 RibbonGenerator.app: framework fins webapp rgapply_versions
 
@@ -45,7 +45,7 @@ rgapply_versions:
 	pike tools/apply_versions.pike version.cfg ${RIBBON_GENERATOR}.app
 
 ccstub: 
-	${PUBLIC_OBJECTIVEC}/mkapp ${CASTER_CONTROL}
+	if [ ! -d Caster.app ]; then ${PUBLIC_OBJECTIVEC}/mkapp ${CASTER_CONTROL}; fi
 	cp -Rf "${SPARKLE_HOME}/Sparkle.framework" ${CASTER_CONTROL}.app/Contents/Frameworks
 
 ccapp: 
