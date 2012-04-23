@@ -1,5 +1,8 @@
 inherit "Plugin";
 
+// delay in microseconds (1000us = 1ms)
+#define DEBOUNCE_DELAY 25*1000
+
 object iow;
 object driver;
 
@@ -7,6 +10,7 @@ object driver;
 int cv;
 int state;
 int started = 0;
+int last_change = 0;
 
 // this should be the bit attached to the single input from the caster.
 // note that this value could vary depending on how you've wired your 
@@ -98,8 +102,10 @@ werror("callback: %O\n", nv);
   nv = nv & interesting_bits;
   if(nv != cv)
   {
-
-    value_changed(nv);
+    if((last_changed + DEBOUNCE_DELAY) < (last_changed = gethrtime()))
+    {
+      value_changed(nv);
+    }
     cv = nv;
   }
 }
