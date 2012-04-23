@@ -1,7 +1,7 @@
 inherit "Plugin";
 
 // delay in microseconds (1000us = 1ms)
-#define DEBOUNCE_DELAY 25*1000
+#define DEBOUNCE_DELAY 25000
 
 object iow;
 object driver;
@@ -10,7 +10,7 @@ object driver;
 int cv;
 int state;
 int started = 0;
-int last_change = 0;
+int last_changed = 0;
 
 // this should be the bit attached to the single input from the caster.
 // note that this value could vary depending on how you've wired your 
@@ -138,7 +138,7 @@ void doStart()
 	driver->setCycleStatus(1);
 	write("on: %O\n", started); 
 
-	if(driver->forced) return;
+	if(driver->forced) return 0;
 
 	if(started)
 	  start_code();
@@ -167,7 +167,7 @@ werror("***\n*** code: %O\n***\n", code_str);
 	  driver->doStop();
 	  driver->rewindRibbon();
 	  driver->setStatus("End of Ribbon.");
-	return;
+	return 0;
   }
 
   do_start_code(code_str);
