@@ -1,3 +1,7 @@
+20120505
+- Ribbon Generator: include Hyphenation engine again.
+- Caster Control: Add 25ms of debounce to cycle sensor.
+
 20120225
 - Ribbon Generator: fix for problem where in an alphabet change around a 
   word that would break a line causes an extra justifying space to be placed 
