@@ -1,7 +1,12 @@
 <h1>Stopbar Management</h1>
 Select a Wedge to edit:
+<p>
+<%#paginator "var":data->wedges, "store":"wedge_page", "size":"10"%>
+List size: <%#page_size_selector "paginator": data->wedge_page, "size":"10, 25, 50"%>
+<p/>
 <ul>
-<% foreach(data->wedges; int i; object wedge) { %>
+
+<% werror("wp: %O\n", data->wedge_page->page); foreach(data->wedge_page->page; int i; object wedge) { %>
 <%=wedge["dump"]%>
 
   <li> <%#action_link "action": "edit", "args": (string)wedge["name"]%><%=wedge["name"] %></a>
@@ -11,6 +16,23 @@ Select a Wedge to edit:
 <% } %>
 
 </ul>
+<p/>
+[ <%if (data->wedge_page_prevurl) { %>
+<a href="<%=data->wedge_page_prevurl%>">Previous</a>
+<% } else { %>
+Previous
+<% }%>
+]
+&nbsp;
+<%#page_selector "paginator": data->wedge_page, "window":"3"%> 
+&nbsp;
+[ <%if(data->wedge_page_nexturl) { %>
+<a href="<%=data->wedge_page_nexturl%>">Next</a>
+<%}else{%>
+Next
+<%}%>
+]
+
 <p>
 
 <form action="<%#action_url "action": "upload"%>" method="post" enctype="multipart/form-data">

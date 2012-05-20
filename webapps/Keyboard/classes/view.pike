@@ -1,5 +1,11 @@
 
 inherit Fins.FinsView;
+inherit Fins.Helpers.Macros.Pagination;
+
+static void create(object app)
+{
+  ::create(app);
+}
 
 program default_template = Fins.Template.ePike;
 

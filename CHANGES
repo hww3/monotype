@@ -1,3 +1,6 @@
+20120520
+- Ribbon Generator: MCA and Wedge lists are now paged for easier access.
+
 20120505
 - Ribbon Generator: include Hyphenation engine again.
 - Caster Control: Add 25ms of debounce to cycle sensor.

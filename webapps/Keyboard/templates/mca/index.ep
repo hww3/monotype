@@ -1,6 +1,11 @@
 Select a MCA to edit:
+<p>
+<%#paginator "var":data->mcas, "store":"mca_page", "size":"10"%>
+List size: <%#page_size_selector "paginator": data->mca_page, "size":"10, 25, 50"%>
+<p/>
+
 <ul>
-<% foreach(data->mcas; int i; object mca) { %>
+<% foreach(data->mca_page->page; int i; object mca) { %>
   <% if(mca["owner"] == data->owner || mca["is_public"]) { %>
   <li> <%#action_link "action": "edit", "args": (string)mca["id"]%><%=mca["name"] %></a> 
  [ <%#action_link "action" : "copy", "args": (string)mca["id"]%>Copy</a> 
@@ -17,6 +22,25 @@ Select a MCA to edit:
 <% } %>
 <% } %>
 </ul>
+
+<p/>
+[ <%if (data->mca_page_prevurl) { %>
+<a href="<%=data->mca_page_prevurl%>">Previous</a>
+<% } else { %>
+Previous
+<% }%>
+]
+&nbsp;
+<%#page_selector "paginator": data->mca_page, "window":"3"%> 
+&nbsp;
+[ <%if(data->mca_page_nexturl) { %>
+<a href="<%=data->mca_page_nexturl%>">Next</a>
+<%}else{%>
+Next
+<%}%>
+]
+
+
 <p>
 
 <form action="<%#action_url "action": "upload"%>" method="post" enctype="multipart/form-data">
