@@ -1,8 +1,18 @@
 <h1>Stopbar Management</h1>
 Select a Wedge to edit:
 <p>
+<table>
+<tr>
+<td>
 <%#paginator "var":data->wedges, "store":"wedge_page", "size":"10"%>
 List size: <%#page_size_selector "paginator": data->wedge_page, "size":"10, 25, 50"%>
+</td>
+<td>
+<%#page_filter "paginator": data->wedge_page, "field": "name"%>
+</td>
+</tr>
+<tr>
+<td colspan="2">
 <p/>
 <ul>
 
@@ -17,6 +27,10 @@ List size: <%#page_size_selector "paginator": data->wedge_page, "size":"10, 25, 
 
 </ul>
 <p/>
+</td>
+</tr>
+<tr>
+<td colspan="2">
 [ <%if (data->wedge_page_prevurl) { %>
 <a href="<%=data->wedge_page_prevurl%>">Previous</a>
 <% } else { %>
@@ -32,7 +46,9 @@ Previous
 Next
 <%}%>
 ]
-
+</td>
+</tr>
+</table>
 <p>
 
 <form action="<%#action_url "action": "upload"%>" method="post" enctype="multipart/form-data">

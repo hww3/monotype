@@ -58,7 +58,10 @@ mapping case_contents = ([
 public void index(Request id, Response response, Template.View view, mixed args)
 {
   array m = app->get_mcas();
-  view->add("owner", id->misc->session_variables->user);
+  object owner = id->misc->session_variables->user;
+  m = filter(m, lambda(object mca){ if(mca["owner"] ==  owner || mca["is_public"]) return true; else return false; });
+
+  view->add("owner", owner);
   view->add("mcas", m);
 }
 

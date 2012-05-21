@@ -1,10 +1,18 @@
 Select a MCA to edit:
 <p>
+<table>
+<tr>
+<td>
 <%#paginator "var":data->mcas, "store":"mca_page", "size":"10"%>
 List size: <%#page_size_selector "paginator": data->mca_page, "size":"10, 25, 50"%>
-<p/>
-
+<td>
+<%#page_filter "paginator": data->mca_page, "field": "name"%>
+</td>
+</tr>
+<tr>
+<td colspan="2">
 <ul>
+<%werror("page: %O\n", data->mca_page->page); %>
 <% foreach(data->mca_page->page; int i; object mca) { %>
   <% if(mca["owner"] == data->owner || mca["is_public"]) { %>
   <li> <%#action_link "action": "edit", "args": (string)mca["id"]%><%=mca["name"] %></a> 
@@ -24,6 +32,12 @@ List size: <%#page_size_selector "paginator": data->mca_page, "size":"10, 25, 50
 </ul>
 
 <p/>
+
+</td>
+</tr>
+<tr>
+<td colspan="2">
+
 [ <%if (data->mca_page_prevurl) { %>
 <a href="<%=data->mca_page_prevurl%>">Previous</a>
 <% } else { %>
@@ -40,6 +54,9 @@ Next
 <%}%>
 ]
 
+</td>
+</tr>
+</table>
 
 <p>
 
