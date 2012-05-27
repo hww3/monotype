@@ -254,7 +254,7 @@ response->set_data(sprintf("<pre>Request Debug: %O\n\n%O</pre>\n", id->cookies, 
 
 public void setMat(Request id, Response response, Template.View view, mixed args)
 {
-	werror("setting mat for " + id->variables->col + " " + id->variables->row + " with " + id->variables->matrix);
+	werror(string_to_utf8("setting mat for " + id->variables->col + " " + id->variables->row + " with " + id->variables->matrix));
  object mca = id->misc->session_variables->mca;
 werror("%O", mkmapping(indices(id), values(id)) );
   if(id->variables->matrix == "")
