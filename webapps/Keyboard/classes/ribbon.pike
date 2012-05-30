@@ -16,7 +16,7 @@ public void index(Request id, Response response, Template.View v, mixed ... args
 
 public void generate(Request id, Response response, Template.View v, mixed ... args)
 {
-   werror("matcases: %O\n", app->get_mcas());
+   //werror("matcases: %O\n", app->get_mcas());
     v->add("mcas", app->get_mcas());
     v->add("wedges", app->get_wedges());
     v->add("owner", id->misc->session_variables->user);
@@ -27,14 +27,14 @@ public void generate(Request id, Response response, Template.View v, mixed ... a
 public void get_wedge_for_mca(Request id, Response response, Template.View v, mixed args)
 {
 	string w;
-	werror("args: %O\n", args);
+	//werror("args: %O\n", args);
 	
 	object mca = app->load_matcase(args[0]);
 
     if(!mca) w = "000";
 
     else w = mca->wedge;
-	werror("wedge: " + w);
+	//werror("wedge: " + w);
 	response->set_data(w);
 }
 
@@ -43,7 +43,7 @@ public void do_generate(Request id, Response response, Template.View v, mixed ..
     // the job settings are stored in a mapping stored in the session object when we validate the file.
     // we can then retrieve them in the next step, here.
 	id->variables = id->misc->session_variables["job_" + id->variables->job_id];
-werror("job_id is %d\n", (int)id->variables->job_id);
+//werror("job_id is %d\n", (int)id->variables->job_id);
 	m_delete(id->misc->session_variables, "job_" + id->variables->job_id);
 
 	mapping settings = ([
@@ -88,7 +88,7 @@ werror("job_id is %d\n", (int)id->variables->job_id);
 public void do_validate(Request id, Response response, Template.View v, mixed ... args)
 {
 	
-	werror("%O\n", id->variables);
+	//werror("%O\n", id->variables);
 	int job_id = random(9999999);
 	id->misc->session_variables["job_" + job_id] = id->variables;
 	mapping settings = ([
