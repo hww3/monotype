@@ -71,7 +71,7 @@ public void do_generate(Request id, Response response, Template.View v, mixed ..
 		]);
 		
 		string data;
-		if(id->variables->input_type=="file") data = id->variables["input-file"];
+		if(id->variables->input_type=="file") data = utf8_to_string(id->variables["input-file"]);
 		else data = id->variables->input_text;
 		// = "Now is the time for all good men to come to the aid of their country. Mary had a little lamb, its fleece was white as snow. Everywhere that mary went, the lamb was sure to go.<qo>";
 	
@@ -120,13 +120,12 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
         if(settings->setwidth > 12.0)	
 	  max_red = 1;
 		
-		string data;
-		if(id->variables->input_type=="file") data = id->variables["input-file"];
-		else data = id->variables->input_text;
-		// = "Now is the time for all good men to come to the aid of their country. Mary had a little lamb, its fleece was white as snow. Everywhere that mary went, the lamb was sure to go.<qo>";
+	string data;
+	if(id->variables->input_type=="file") data = utf8_to_string(id->variables["input-file"]);
+	else data = id->variables->input_text;
+	// = "Now is the time for all good men to come to the aid of their country. Mary had a little lamb, its fleece was white as snow. Everywhere that mary went, the lamb was sure to go.<qo>";
 	
 	object g = Monotype.Generator(settings);
-
 	Error.Generic err = Error.mkerror(catch(g->parse(data)));
 	
 	object b = String.Buffer();
