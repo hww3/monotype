@@ -122,9 +122,11 @@ werror("No hyphentation engine present, functionality will be disabled.\n");
 #endif
 }
 
+//! @param input
+//!  a native pike widestring (not utf8 encoded, etc)
 void parse(string input)
 {
-  string s = utf8_to_string(input);
+  string s = input;
 
   object parser = Parser.HTML();
   mapping extra = ([]);
