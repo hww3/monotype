@@ -213,16 +213,16 @@ import Monotype;
        if(!mat && (modifier&MODIFIER_ITALICS) && config->allow_punctuation_substitution && (<".", ",", ":", ";", "'", "’", "‘", "!", "?", "-", "–">)[activator])
       {
 	    if(mat = m->elements[activator])
-		    errors += ({"Substituted activator " + string_to_utf8(activator) + " from roman alphabet."});
+		    errors += ({"Substituted activator " + (activator) + " from roman alphabet."});
 		else
-		    errors += ({"Unable to substitute activator [" + string_to_utf8(activator) + "] from roman alphabet."});
+		    errors += ({"Unable to substitute activator [" + (activator) + "] from roman alphabet."});
 		
       }
 
 	  if(!mat)
       { 
                 errors += ({("Requested activator [" + 
-			string_to_utf8(activator) + "] (" + sprintf("%q", code)+ "), code [" + string_to_utf8(code) + "] not in MCA.\n")}); 
+			(activator) + "] (" + sprintf("%q", code)+ "), code [" + (code) + "] not in MCA.\n")}); 
 		werror("invalid activator %O/%O\n", string_to_utf8(activator),code);
       }
 	  else

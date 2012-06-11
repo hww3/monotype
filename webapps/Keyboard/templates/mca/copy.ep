@@ -12,7 +12,7 @@ New Name: <input type="text" name="name"/>
 
   werror("%O\n", data->mca);
 
-  switch(data->mca->matcase_size)
+  switch(data->mca && data->mca->matcase_size)
   {
     case Monotype.MATCASE_15_15:
       a1 = "checked=\"true\"";
@@ -36,7 +36,7 @@ Default Wedge: <select name="wedge">
 <% 
   foreach(data->wedges; int i; object w) { 
     string sel = "";
-    if(data->mca->wedge == w["name"]) sel = "selected";
+    if(data->mca && data->mca->wedge == w["name"]) sel = "selected";
 %>
   <option <%=sel%>><%=w["name"] %></option>
 <% } %>
