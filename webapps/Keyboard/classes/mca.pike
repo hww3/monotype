@@ -178,7 +178,7 @@ werror("delete(%O)\n", mca);
 public void copy(Request id, Response response, Template.View view, mixed args)
 {
   Monotype.MatCaseLayout mca;
-  mca = app->load_matcase_by_id(args[0], id->misc->session_variables->user);
+  mca = app->load_matcase_by_id(args[0], /*id->misc->session_variables->user*/);
 
   view->add("mca", mca);
   view->add("wedges", app->get_wedges());
