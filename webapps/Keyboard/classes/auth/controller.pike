@@ -16,23 +16,23 @@ protected program __default_template = Fins.Template.Simple;
 //! which will be used to determine the url the application will return to
 //! following a successful authentication.
 
-//! method which is called to determine if a user should be authenticated.
+//! method which is called to determine if a user should be considered "authenticated".
 //! this method accepts the request object and should return 
 //! zero if the user was not successfully authenticated, or a value
 //! which will be placed in the current session as "user".
-function(Fins.Request,Fins.Response,Fins.Template.View:mixed) find_user = default_find_user;
+function(Fins.Request,Fins.Response,Fins.Template.View:mixed) validate_user = md5_validate_user;
 
 //! method which is called to locate a user's password.
 //! this method accepts the request object and should return either a
 //! user object with "email" and "password" fields, or a mapping with these
 //! two indices.
-function(Fins.Request,Fins.Response,Fins.Template.View:mixed) find_user_password = default_find_user_password;
+function(Fins.Request,Fins.Response,Fins.Template.View:mixed) find_user_password = md5_find_user_password;
 
 //! method which is called to reset a user's password.
 //! 
 //! @returns
 //!   0 upon failure, should also set response flash message describing the difficulty.
-function(Fins.Request,Fins.Response,Fins.Template.View,mixed,string:mixed) reset_password = default_reset_password;
+function(Fins.Request,Fins.Response,Fins.Template.View,mixed,string:mixed) reset_password = md5_reset_password;
 
 
 //! 
@@ -46,44 +46,110 @@ void start()
   default_action = app->controller;
 }
 
-//! default user authenticator
-static mixed default_find_user(Request id, Response response, Template.View t)
-{
-//array r = ({id->variables->username});
-
+//! default user authenticator, for data models where a user object represents 
+//! a user and the password is saved as a plain text string. 
+static mixed default_validate_user(Request id, Response response, Template.View t) 
+{ 
   mixed r = Fins.Model.find.users( ([ "username": id->variables->username,
-					  "is_active" : 1,
-                                      "password": id->variables->password 
+                                      "password": id->variables->password
                                     ]) );
 
   t->add("username", id->variables->username);
 
   if(r && sizeof(r)) return r[0];
   else return 0;
+}
+
+
+//! default user authenticator, for data models where a user object represents
+//! a user and the password field contains a MD5 crypt string.
+static mixed md5_validate_user(Request id, Response response, Template.View t)
+{
+  mixed r = Fins.Model.find.users( ([ "username": id->variables->username,
+                                    ]) );
+
+  if(r && (sizeof(r)== 1) && Crypto.verify_crypt_md5(id->variables->password, r[0]["password"]))
+  {
+    t->add("username", id->variables->username);
+    return r[0];
+  }
+
+  // failure!
+  return 0;
 }
 
 //! the name of the template to use for sending the password via email.
 string password_template_name = "auth/sendpassword";
 
 //! default password changer
+//!
+//! changes a user's password by setting the text of a field to the new value.
+//! 
+//! @note
+//!  this method receives a password which the user has typed twice (in order
+//!  to prevent typos. This method should perform other QA checks if necessary
+//!  (such as password complexity and aging tests).
 static mixed default_reset_password(Request id, Response response, Template.View t, mixed user, string newpassword)
 {
   user["password"] = newpassword;
   return 1;
 }
 
+//! MD5 based password changer
+//!
+//! changes a user's password by setting the password field to an MD5 hash.
+//! 
+//! @note
+//!  this method receives a password which the user has typed twice (in order
+//!  to prevent typos. This method should perform other QA checks if necessary
+//!  (such as password complexity and aging tests).
+//!
+//! @note
+//!  this method requires a field length longer than the maximum acceptable
+//!  password length. 
+static mixed md5_reset_password(Request id, Response response, Template.View t, mixed user, string newpassword)
+{
+  user["password"] = Crypto.make_crypt_md5(newpassword);
+  return 1;
+}
 
-//! default user authenticator
+//! default user password locator
+//! 
 static mixed default_find_user_password(Request id, Response response, Template.View t)
 {
 
-  mixed r = Fins.Model.find.users( ([ "username": id->variables->username, "is_active" : 1
+  mixed r = Fins.Model.find.users( ([ "username": id->variables->username
                                     ]) );
 
   t->add("username", id->variables->username);
 
   if(r && sizeof(r)) return r[0];
   else return 0;
+}
+
+//! MD5-crypt based user password locator
+//! 
+//! @note
+//!  this method will reset the password of the user, as the original password isn't available.
+static mixed md5_find_user_password(Request id, Response response, Template.View t)
+{
+
+  mixed r = Fins.Model.find.users( ([ "username": id->variables->username
+                                    ]) );
+
+  t->add("username", id->variables->username);
+
+  string newpass = Tools.String.generate_password(10);
+
+  r[0]["password"] = Crypto.make_crypt_md5(newpass);
+
+  if(r && sizeof(r)) return (["email": r[0]["email"], "password": newpass]);
+  else return 0;
+}
+
+static string generate_password()
+{
+  return "";
 }
 
 //! override this method to set the mail host for retrieved password emails.
@@ -113,11 +179,11 @@ public void login(Request id, Response response, Template.View t, mixed ... args
    switch(id->variables->action)
    {
       case "Cancel":
-         response->redirect_temp(id->variables->return_to || default_action);
+         response->redirect(id->variables->return_to || default_action);
          return;
          break;
       case "Login":
-        mixed r = find_user(id, response, t);
+        mixed r = validate_user(id, response, t);
         if(r)
         {
            // success!
@@ -129,7 +195,7 @@ public void login(Request id, Response response, Template.View t, mixed ... args
              id->variables->return_to = id->variables->return_to + "&" + time();
            else
              id->variables->return_to = id->variables->return_to + "?" + time();
-           response->redirect_temp(id->variables->return_to || default_action);
+           response->redirect(id->variables->return_to || default_action);
            return;
         }
         else
@@ -143,16 +209,14 @@ public void login(Request id, Response response, Template.View t, mixed ... args
 
 public void logout(Request id, Response response, Template.View t, mixed ... args)
 {
-  if(id->misc->session_variables->user)
+  if(id->misc->session_variables->userid)
   {
      id->misc->session_variables->logout = time();
      m_delete(id->misc->session_variables, "user");
-     response->flash("You have been successfully logged out.");
   }
-  else 
-    response->flash("Not logged in.");
 
-  response->redirect_temp(id->referrer||default_action);
+  response->flash("You have been successfully logged out.");
+  response->redirect(id->referrer||default_action);
 }
 
 public void changepassword(Request id, Response response, Template.View t, mixed ... args)
@@ -162,7 +226,7 @@ public void changepassword(Request id, Response response, Template.View t, mixed
   switch(id->variables->action)
   {
     case "Reset":
-        mixed r = find_user(id, response, t);
+        mixed r = validate_user(id, response, t);
         if(r)
         {
            // success!
@@ -170,7 +234,7 @@ public void changepassword(Request id, Response response, Template.View t, mixed
            {
               if(reset_password(id, response, t, r, id->variables->newpassword))
                response->flash("Password reset successfully.");
-               response->redirect_temp(login, ({}), (["return_to": id->variables->return_to]));
+               response->redirect(login, ({}), (["return_to": id->variables->return_to]));
            }
            else
            {
@@ -212,7 +276,7 @@ public void forgotpassword(Request id, Response response, Template.View t, mixed
                               mailmsg);
 
         response->flash("Your password has been located and will be sent to the email address on record for your account.\n");
-        response->redirect_temp(login);
+        response->redirect(login);
        }
   }
 }
