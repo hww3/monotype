@@ -1,4 +1,4 @@
-
+inherit Fins.RootController;
 inherit "mono_doccontroller";
 
 object mca;
@@ -10,6 +10,11 @@ object users;
 object prefs;
 
 object dojo;
+
+protected void create(object application)
+{
+  ::create(application);
+}
 
 void start()
 {
