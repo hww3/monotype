@@ -1,7 +1,7 @@
-inherit Fins.Model.DataModelContext;
+inherit Fins.Model.SqlDataModelContext;
 
 
-#if constant(Public.ObjectiveC.load_bundle)
+#if constant(Public.ObjectiveC) && constant(Public.ObjectiveC.load_bundle)
 
 import Public.ObjectiveC;
 
@@ -22,8 +22,8 @@ werror("**** " + (string)folder  + "\n");
 			combine_path((string)folder, "RibbonGeneratorData.sqlite3"), 0);
 	}
 
-	sql_url = "sqlite://" + combine_path((string)folder, "RibbonGeneratorData.sqlite3");
-	werror("**** " + sql_url);
+	url = "sqlite://" + combine_path((string)folder, "RibbonGeneratorData.sqlite3");
+	werror("**** " + url);
 
   run_upgrade();
 }
@@ -32,7 +32,7 @@ werror("**** " + (string)folder  + "\n");
 
 void run_upgrade()
 {
-  object s = Sql.Sql(sql_url);
+  object s = Sql.Sql(url);
   if(sizeof(s->list_tables("preferences"))) return;
 
   // ok, we need to create the preferences table.

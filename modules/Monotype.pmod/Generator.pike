@@ -742,7 +742,7 @@ Line make_new_line()
 {
 	Line l;
 	
-	l = Line(m, s, config);
+	l = Line(m, s, config, this);
 	l->line_number = ++numline;
 	linesonpage++;
 	l->line_on_page = linesonpage;
@@ -893,7 +893,6 @@ void break_page()
 // ensuring justification and world peace.
 string generate_ribbon()
 {  
-	int f,c;
 	werror("Spaces in matcase: [ %{%d %}]\n", indices(m->spaces));
     werror("*** writing %d lines to the ribbon\n", sizeof(lines));
     String.Buffer buf = String.Buffer();
@@ -905,122 +904,14 @@ string generate_ribbon()
 	buf+=sprintf("mould: %d\n", config->mould);
 	buf+=sprintf("linelength: %.2f\n", config->linelengthp);
 	if(config->unit_adding)
-  	  buf+=sprintf("unit_adding: %s units\n", (string)config->unit_adding);
+  	buf+=sprintf("unit_adding: %s units\n", (string)config->unit_adding);
 
 	buf+=sprintf("\n");
 	
 	foreach(reverse(lines);; object current_line)
-        {
-          // a little nomenclature here: c == coarse (0075) f == fine (0005), 
-          //   cc == current coarse setting, cf == current fine setting
-	  int cc, cf; // the current justification wedge settings
-	  f = current_line->little;
-	  c = current_line->big;
-	  cf = f;
-	  cc = c;
-	
-	  write("\n");
-          buf+=sprintf("%s %s %d\n", fine_code, coarse_code, f);
-          buf+=sprintf("%s %d\n", coarse_code, c);
-
-          foreach(reverse(current_line->elements);; object me)
-          {
-            if(me->is_real_js)
-            {
-              // if we've previously changed the justification wedges in order to
-              // correct a sort width, we need to put things back.
-	          if(cf != f || cc != c)
-	          {
-		werror("resetting justification wedges.\n");
-		        buf+=sprintf("%s %d\n", fine_code, f);
-		        buf+=sprintf("%s %d\n", coarse_code, c);
-			    cf = f;
-			    cc = c;
-	          }
-              buf+=sprintf("S %d %s [ ]\n", me->matrix->row_pos, me->matrix->col_pos);
-              werror("_");
-          }
-          else 
-	      {
-//			werror("ME: %O", mkmapping(indices(me), values(me)));
-            string row_pos = me->row_pos;
-            string col_pos = me->col_pos;
-
-	        int wedgewidth;
-	        if(me->row_pos == 16 && ! config->unit_shift)
-			{
-				throw(Error.Generic("Cannot use 16 row matcase without unit shift.\n"));
-			}
-			
-			// get the width of the requested row unless it's 16, which doesn't exist.
-			// in that case, get the width of row 15.
-	 		wedgewidth = s->get(me->row_pos!=16?me->row_pos:15);
-	
-	      //werror("want %d, wedge provides %d\n", mat->get_set_width(), wedgewidth);
-	      if(me->row_pos == 16 || (wedgewidth != me->get_set_width())) // we need to adjust the justification wedges
-	      {
-	        int nf, nc;
-	
-	// TODO: we need to check to make sure we don't try to open the mould too wide.
-	
-		werror("needs adjustment: have %d, need %d!\n", wedgewidth, me->get_set_width());
-	        // first, we should calculate what difference we need, in units of set.
-	        int needed_units = me->get_set_width() - wedgewidth;
-			 
-			// at this point, we'd select the appropriate mechanism for handling the difference
-			// presumably, we'd use the following techniques, were they available to us:
-			// 1. unit adding
-			if(config->unit_adding && config->unit_adding == needed_units)
-			{
-              buf+=sprintf("0075 ");
-			}
-
-			// 2. unit shift
-			else if(config->unit_shift && me->row_pos > 1 && (s->get(me->row_pos - 1) == me->get_set_width()))
-			{
-			  row_pos = (me->row_pos - 1);
-			  if(col_pos == "D") col_pos = "EF";
-			  col_pos = "D" + col_pos;
-			}
-			
-			// 3. unit adding + unit shift
-			else if(config->unit_adding && config->unit_shift && me->row_pos > 1 && (me->get_set_width() == (config->unit_adding + s->get(me->row_pos - 1))))
-			{
-			  row_pos = (me->row_pos - 1);
-			  if(col_pos == "D") col_pos = "EF";
-			  col_pos = "D" + col_pos;
-
-              buf+=sprintf("0075 ");			
-			}
-			// 4. underpinning
-
-			// 5. letterspacing via justification wedge (currently the only technique in use here) 
-	        // then, figure out what that adjustment is in terms of 0075 and 0005
-	        else
-	        {
-                [nc, nf] = current_line->calculate_wordspacing_code(needed_units);
-		        // if it's not what we have now, make the adjustment
-
- 		        if(cf != nf || cc != nc)
-		        {
-                  buf+=sprintf("%s %d\n", fine_code, nf);
-	              buf+=sprintf("%s %d\n", coarse_code, nc);
-                  cf = nf;
-		          cc = nc;
-	            }
-	         			
-	            buf+=sprintf("S ");
-	         }
-	    }
-        string c = me->character;
-  	    if(me->is_fs || me->is_js)
-	      c = " ";
-      
-      werror(string_to_utf8(c));
-	  buf+=sprintf("%s %s [%s]\n", (string)row_pos, (col_pos/"")*" ", string_to_utf8(c));
-  }
- }
-}  
+  {
+    buf += current_line->generate_line();
+  }  
 
   buf+=sprintf("%s %s 1\n", coarse_code, fine_code); // stop the pump, eject the line.
 
