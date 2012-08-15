@@ -11,6 +11,8 @@ constant dicts = (["en_US": "hyph_en_US.dic",
 		   "de_DE": "hyph_de_DE.dic",
 		   "de_CH": "hyph_de_CH.dic",
                    "fr_FR": "hyph_fr_FR.dic",
+                   "fr_FR": "hyph_es_ES.dic",
+                   "fr_FR": "hyph_it_IT.dic",
 
 		]);
 

@@ -199,6 +199,8 @@ Minimum Justifying Space Size (3/8 is default)
 <option value="de_DE">German
 <option value="de_CH">German (Switzerland)
 <option value="fr_FR">French
+<option value="it_IT">Italian
+<option value="es_ES">Spanish
 </select>
 <br>
 <input type="checkbox" name="unnatural_word_breaks" value="1"/> Allow hard (non-standard) breaks for hyphenation
