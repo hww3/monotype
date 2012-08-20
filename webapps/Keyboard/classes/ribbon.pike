@@ -84,6 +84,8 @@ public void do_generate(Request id, Response response, Template.View v, mixed ..
         id->variables->jobname + ".rib");	
     response->set_type("application/x-monotype-e-ribbon");
     response->set_charset("utf-8");
+    id->misc->session_variables->generator = -1;
+    id->misc->session_variables->generator = 0;
 }
 
 public void get_line(Request id, Response response, Template.View v, string line)
