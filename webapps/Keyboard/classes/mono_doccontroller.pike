@@ -1,7 +1,7 @@
 inherit Fins.DocController;
 
 
-void populate_template(Fins.Request request, Fins.Response response, Fins.Template.View lview, mixed args)
+void populate_template(Fins.Request request, Fins.Response response, Fins.Template.View lview, mixed... args)
 {
   
 //  werror("populate_Template: %O\n", request->misc);

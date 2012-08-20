@@ -1,6 +1,7 @@
 import Fins;
-
 inherit "mono_doccontroller";
+
+int __quiet = 1;
 
 void start()
 {
@@ -85,6 +86,11 @@ public void do_generate(Request id, Response response, Template.View v, mixed ..
     response->set_charset("utf-8");
 }
 
+public void get_line(Request id, Response response, Template.View v, string line)
+{
+  response->set_data("Codes for line " + ((int)line + 1) + ":<p>\n<pre style=\"font-size: 8pt;\">\n" + id->misc->session_variables->generator->lines[(int)(line)]->generate_line() + "</pre>\n");
+}
+
 public void do_validate(Request id, Response response, Template.View v, mixed ... args)
 {
 	
@@ -110,8 +116,8 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 // we don't need this to be shown in the "soft proof".
 //		"trip_at_end": (int)id->variables->trip_at_end,
 		"page_length": (int)id->variables->page_length,
-		"min_little": (int)(id->variables->min_just/"/")[1], 
-		"min_big": (int)(id->variables->min_just/"/")[0],
+		"min_little": (int)(id->variables->min_just||""/"/")[1], 
+		"min_big": (int)(id->variables->min_just||""/"/")[0],
 		"allow_lowercase_smallcaps": (int)id->variables->allow_lowercase_smallcaps,
 		"allow_punctuation_substitution": (int)id->variables->allow_punctuation_substitution
 		]);
@@ -127,7 +133,7 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 	
 	object g = Monotype.Generator(settings);
 	Error.Generic err = Error.mkerror(catch(g->parse(data)));
-	
+	id->misc->session_variables->generator = g;
 	object b = String.Buffer();
 
 	if(err)
@@ -151,7 +157,7 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 
 	b+="<div style=\"clear: left\">";
 	b+=("<div style=\"position:relative; float:left; width:35px\">Line</div><div style=\"position:relative; float:left; width:" 
-		+ units + "px\">&nbsp;</div><div>Just Code / Comments</div>");
+		+ units + "px\">&nbsp;</div><div></div><div>Just Code / Comments</div>");
 	b+=("</div>");
 
 //	foreach(g->lines + (err?({g->current_line}):({})); int i; mixed line)
@@ -161,7 +167,8 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 		int setonline;
 		int last_was_space = 0;
 		int last_set;
-		b+="<div style=\"clear: left\">";
+		b+="<span dojoType=\"dojox.widget.DynamicTooltip\" connectId=\"line_" + i + "\" href=\"" + action_url(get_line, ({(string)i}))+ "\" preventCache=\"true\">nevah seen!</span>";
+		b+="<div style=\"clear: left\" id=\"line_" + i + "\">";
 		b+=("<div style=\"position:relative; float:left; width:35px\">" + (i+1) 
 			+ "/"  + (sizeof(g->lines) - i)+ "</div>");
 		string tobeadded = "";

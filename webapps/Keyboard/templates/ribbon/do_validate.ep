@@ -1,3 +1,8 @@
+<script type="text/javascript">
+dojo.require("dijit.dijit");
+dojo.require("dojox.widget.DynamicTooltip");
+</script>
+
 <h1>Ribbon Validation</h1>
 <form action="<%#action_url "action": "do_generate" %>">
 <input type="hidden" name="job_id" value="<%$job_id%>">

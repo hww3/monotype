@@ -10,10 +10,9 @@ constant dicts = (["en_US": "hyph_en_US.dic",
 		   "nl_NL": "hyph_nl_NL.dic",
 		   "de_DE": "hyph_de_DE.dic",
 		   "de_CH": "hyph_de_CH.dic",
-                   "fr_FR": "hyph_fr_FR.dic",
-                   "fr_FR": "hyph_es_ES.dic",
-                   "fr_FR": "hyph_it_IT.dic",
-
+       "fr_FR": "hyph_fr_FR.dic",
+       "fr_FR": "hyph_es_ES.dic",
+       "fr_FR": "hyph_it_IT.dic",
 		]);
 
 object hyphenator;
@@ -28,7 +27,7 @@ int numline;
 int pagenumber;
 int linesonpage;
 
-array lines = ({});
+array(Line) lines = ({});
 
 array ligatures = ({});
 mapping ligature_replacements_from = ([]);
@@ -59,7 +58,6 @@ int line_mode = MODE_JUSTIFY;
 string last = "";
 array data_to_set = ({});
 
-
 /*
   Settings (partial):
     setwidth
@@ -74,7 +72,8 @@ void create(mapping settings)
 	werror("Monotype.Generator(%O)\n", settings);
   int lineunits = (int)(18 * (settings->pointsystem||12) * 
 			(1/settings->setwidth) * settings->linelengthp);
-werror ("line should be %d units.\n",lineunits);
+
+  werror ("line should be %d units.\n",lineunits);
   m = settings->matcase;
   s = settings->stopbar;
 
@@ -84,18 +83,18 @@ werror ("line should be %d units.\n",lineunits);
   // set up the code substitutions for unit adding
   if(config->unit_adding)
   {
-	fine_code = "N K J";
-	coarse_code = "N K";
+	  fine_code = "N K J";
+	  coarse_code = "N K";
   }
 
   foreach(m->get_ligatures();; object lig)
   {
-     ligatures += ({ ({lig->style||"R", lig->activator}) });	
+    ligatures += ({ ({lig->style||"R", lig->activator}) });	
   }
 
   foreach(ligatures;;array lig)
   {
-	werror("lig:%O\n", lig);
+  	werror("lig:%O\n", lig);
     if(!ligature_replacements_to[lig[0]])
       ligature_replacements_to[lig[0]] = ({});
     if(!ligature_replacements_from[lig[0]])
@@ -128,21 +127,18 @@ werror("No hyphentation engine present, functionality will be disabled.\n");
 //!  a native pike widestring (not utf8 encoded, etc)
 void parse(string input)
 {
-  string s = input;
-
   object parser = Parser.HTML();
   mapping extra = ([]);
   parser->_set_tag_callback(i_parse_tags);
   parser->_set_data_callback(i_parse_data);
   parser->set_extra(extra);
 
-
   // feed the data to the parser and have it do its thing.
-  parser->finish(s);
+  parser->finish(input);
 
   // put the footer at the end of the set text if we have one.
   if(config->page_length)
-	insert_footer();
+	  insert_footer();
 }
 
 // TODO: make this method re-entrant.
@@ -454,7 +450,7 @@ int in_even;
 int in_odd;
 
 // TODO: this is just aweful. we need to come up with something a little more robust.
-	mixed i_parse_tags(object parser, string data, mapping extra)
+mixed i_parse_tags(object parser, string data, mapping extra)
 {
     string lcdata = lower_case(data);
 
