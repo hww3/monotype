@@ -2,6 +2,8 @@ import Fins;
 
 inherit Fins.DocController;
 
+protected object __log = Tools.Logging.get_logger("auth.controller");
+
 protected program __default_template = Fins.Template.Simple;
 
 //! this is a sample authentication handler module which can be customized
@@ -187,7 +189,8 @@ public void login(Request id, Response response, Template.View t, mixed ... args
         if(r)
         {
            // success!
-           id->misc->session_variables->logout = 0;
+         __log->info("Logged in %O\n", r);
+          id->misc->session_variables->logout = 0;
            id->misc->session_variables["user"] = r;
            if(arrayp(id->variables->return_to))
              id->variables->return_to = id->variables->return_to[0];
@@ -209,8 +212,9 @@ public void login(Request id, Response response, Template.View t, mixed ... args
 
 public void logout(Request id, Response response, Template.View t, mixed ... args)
 {
-  if(id->misc->session_variables->userid)
+  if(id->misc->session_variables->user)
   {
+   //  __log->info("Logging out %O\n", id->misc->session_variables->user);
      id->misc->session_variables->logout = time();
      m_delete(id->misc->session_variables, "user");
   }

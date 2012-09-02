@@ -313,7 +313,7 @@ int(0..1) old_wedge_exists(string name)
 
 int admin_user_filter(Fins.Request id, Fins.Response response, mixed ... args)
 {
-   werror("user: %O\n", id->misc->session_variables->user);
+   werror("fuser: %O\n", id->misc->session_variables->user);
    if(is_desktop && !id->misc->session_variables->user)
    {
 	 object user = master()->resolv("Fins.Model.find.users_by_alt")("desktop");
@@ -331,7 +331,7 @@ int admin_user_filter(Fins.Request id, Fins.Response response, mixed ... args)
 
 int admin_only_user_filter(Fins.Request id, Fins.Response response, mixed ... args)
 {
-   werror("user: %O\n", id->misc->session_variables->user);
+   werror("fuser: %O\n", id->misc->session_variables->user);
    if(is_desktop && !id->misc->session_variables->user)
    {
 	 object user = master()->resolv("Fins.Model.find.users_by_alt")("desktop");
