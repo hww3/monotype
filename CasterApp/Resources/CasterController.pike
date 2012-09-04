@@ -19,7 +19,9 @@ object JumpToLineBox;
 object MainWindow;
 object PreferenceWindow;
 
+/* Preference controls */
 object CycleSensorTypeCheckbox;
+object DebounceSlider;
 
 object CurrentLine;
 object LineContentsLabel;
@@ -74,7 +76,9 @@ object c14;
 mapping jobinfo;
 
 int CycleSensorMode;
+int CycleSensorDebounce;
 
+object defaults;
 object app;
 int icc;
 array buttonstotouch = 
@@ -102,10 +106,11 @@ void initialize()
 
 void registerDefaultPreferences()
 {
-	object defaults = Cocoa.NSUserDefaults.standardUserDefaults();
+	defaults = Cocoa.NSUserDefaults.standardUserDefaults();
 	mapping defs = ([]);
 	
 	defs->cycleSensorIsPermanent = "YES";
+	defs->cycleSensorDebounce = "25"; // cycle sensor debounce in ms, range 0 - 55 ms
 	
 	defaults->registerDefaults_(defs);
 }
@@ -117,8 +122,13 @@ void setupPreferences()
 	bool = (defaults->boolForKey_("cycleSensorIsPermanent"));
 	CycleSensorTypeCheckbox->setState_(bool);
 	CycleSensorMode = bool;
-	
+
+	bool = (defaults->integerForKey_("cycleSensorDebounce"));
+	DebounceSlider->setIntegerValue_(bool);
+        Driver->CycleSensorDebounce = bool;		
+
 	werror("SET DEFAULT: %O\n", defaults->boolForKey_("cycleSensorIsPermanent"));
+	werror("SET DEFAULT: %O\n", defaults->integerForKey_("cycleSensorDebounce"));
 }
 
 void set_job_info()
@@ -152,12 +162,20 @@ void loadJob_(object a)
   app->mainMenu()->update();
 }
 
+void debounceChanged_(object slider)
+{
+  werror("debounceChanged_(%O)\n", slider);
+  int x = slider->intValue();
+  defaults->setInteger_forKey_(x, "cycleSensorDebounce");
+  Driver->CycleSensorDebounce = x;
+  werror("debounceChanged_(%O)\n", x);
+}
+
 void toggleCycleSensorType_(object checkbox)
 {
 	int state = checkbox->state();
 	
 	werror("state: %O\n", state);
-	object defaults = Cocoa.NSUserDefaults.standardUserDefaults();
 	werror("SET DEFAULT: %O\n", indices(defaults));
 
 	defaults->setBool_forKey_(state, "cycleSensorIsPermanent");

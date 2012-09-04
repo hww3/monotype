@@ -1,7 +1,6 @@
 inherit "Plugin";
 
 // delay in microseconds (1000us = 1ms)
-#define DEBOUNCE_DELAY 25000
 
 object iow;
 object driver;
@@ -102,7 +101,7 @@ werror("callback: %O\n", nv);
   nv = nv & interesting_bits;
   if(nv != cv)
   {
-    if((last_changed + DEBOUNCE_DELAY) < (last_changed = gethrtime()))
+    if((last_changed + (driver->CycleSensorDebounce * 10000)) < (last_changed = gethrtime()))
     {
       value_changed(nv);
     }
