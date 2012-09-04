@@ -147,16 +147,21 @@ void loadJob_(object a)
 {
   object openPanel = Cocoa.NSOpenPanel.openPanel();
 
+  openPanel->setAllowsMultipleSelection_(0);
+
   if(!openPanel->runModalForTypes_(({"rib"}))) return;
 
-  mixed files = openPanel->filenames();
-  if(sizeof(files))
-    foreach(files;;mixed file)
-    {
-	werror("fILE:%O\n",(string)( file->__objc_classname));
-      jobinfo = Driver->loadRibbon((string)file->UTF8String());
-      set_job_info();
-    }
+  mixed files = openPanel->URLs();
+  if(!files->count())
+    return;
+
+  object file = files->lastObject();
+  file = file->path();
+  werror("fILE:%O\n",(string)( file->__objc_classname));
+  werror("fILE:%O\n",(string)( file->UTF8String() ));
+  jobinfo = Driver->loadRibbon((string)file->UTF8String() );
+  set_job_info();
+
   CasterToggleButton->setEnabled_(1);
   JumpToLineItem->setEnabled_(1);
   app->mainMenu()->update();
