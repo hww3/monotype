@@ -39,10 +39,14 @@ Caster.app: ccstub ccapp ccapply_versions
 RibbonGenerator.app: stub framework fins webapp rgapply_versions
 
 ccapply_versions:
-	pike tools/apply_versions.pike version.cfg ${CASTER_CONTROL}.app 
+	pike tools/apply_versions.pike version.cfg ${CASTER_CONTROL}.app/Contents/Resources 
+	pike tools/apply_versions.pike version.cfg ${CASTER_CONTROL}.app/Contents/PkgInfo
+	pike tools/apply_versions.pike version.cfg ${CASTER_CONTROL}.app/Contents/Info.plist 
 
 rgapply_versions:
-	pike tools/apply_versions.pike version.cfg ${RIBBON_GENERATOR}.app
+	pike tools/apply_versions.pike version.cfg ${RIBBON_GENERATOR}.app/Contents/Resources
+	pike tools/apply_versions.pike version.cfg ${RIBBON_GENERATOR}.app/Contents/PkgInfo
+	pike tools/apply_versions.pike version.cfg ${RIBBON_GENERATOR}.app/Contents/Info.plist
 
 ccstub: 
 	if [ ! -d Caster.app ]; then ${PUBLIC_OBJECTIVEC}/mkapp ${CASTER_CONTROL}; fi

@@ -1,3 +1,9 @@
+20120902
+- Caster Control: Make debounce a preference setting, variable between 0ms 
+  and 55ms.
+- Caster Control: Fix release of Preference window on close, which caused 
+  the app to crash the second time the window was closed.
+
 20120819
 - Ribbon Generator: Show codes for a given line by hovering over line number
   when viewing soft proof.
