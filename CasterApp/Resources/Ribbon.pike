@@ -50,6 +50,7 @@ void parse_body()
 
 	foreach(file;int i;string l)
 	{
+          catch(l = String.trim_all_whites(l));
 		// we're looking for 0005+0075 followed by a 0075 code (end of line and reset).
         // 0005 followed by 0075 is used in double justification.
 		multiset c = (multiset)((l/" ")-({""}));
@@ -120,6 +121,7 @@ array low_get_next_code()
   {
 	string line = file->gets();
 //	werror("LINE: %O\n", line);
+    catch(line = String.trim_all_whites(line));
     if(!line)
   	  return 0;
   //  werror("code is %O\n", line);
@@ -137,6 +139,7 @@ array low_get_previous_code()
   catch
   {
 	string line = file->rgets();
+    catch(line = String.trim_all_whites(line));
 //	werror("LINE: %O\n", line);
     if(!line)
   	  return 0;

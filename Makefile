@@ -3,7 +3,7 @@ PUBLIC_OBJECTIVEC=${HOME}/devel/Public_ObjectiveC
 FINS_REPO="https://hg.welliver.org"
 RIBBON_GENERATOR=RibbonGenerator
 CASTER_CONTROL=Caster
-PRIVATE_KEY_DIR=/restore/Users/hww3/Dropbox/Development/Sparkle
+PRIVATE_KEY_DIR=/Users/hww3/Dropbox/Development/Sparkle
 
 # note: Public.ObjectiveC must be available and built
 #
