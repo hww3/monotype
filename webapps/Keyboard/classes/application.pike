@@ -97,36 +97,35 @@ werror("**** user: %O\n", user);
 	}
 }
 
-object load_matcase(string matcasename, object user)
+object load_matcase(string matcasename, object|void user)
 {
-	object mca_db;
-	if(user)
-		catch(mca_db = master()->resolv("Fins.Model.find.matcasearrangements")((["name": matcasename, "owner": user]))[0]);
-	else
-		catch(mca_db = master()->resolv("Fins.Model.find.matcasearrangements")((["id": (int)matcasename]))[0]);
+  object mca_db;
+  if(user)
+    catch(mca_db = master()->resolv("Fins.Model.find.matcasearrangements")((["name": matcasename, "owner": user]))[0]);
+  else
+    catch(mca_db = master()->resolv("Fins.Model.find.matcasearrangements")((["id": (int)matcasename]))[0]);
 	
-	if(mca_db)
-  	  return Monotype.load_matcase_string(mca_db["xml"]);
-	else return 0;
+  if(mca_db)
+    return Monotype.load_matcase_string(mca_db["xml"]);
+  else return 0;
 	
-//	return Monotype.load_matcase(combine_path(getcwd(), config["locations"]["matcases"], matcasename));
+//  return Monotype.load_matcase(combine_path(getcwd(), config["locations"]["matcases"], matcasename));
 }
 
 object load_matcase_by_id(string id, object user)
 {
-	object mca_db;
-	if(user)
-		catch(mca_db = master()->resolv("Fins.Model.find.matcasearrangements")((["id": (int)id, "owner": user]))[0]);
-	else
-		catch(mca_db = master()->resolv("Fins.Model.find.matcasearrangements")((["id": (int)id]))[0]);
+  object mca_db;
+  if(user)
+    catch(mca_db = master()->resolv("Fins.Model.find.matcasearrangements")((["id": (int)id, "owner": user]))[0]);
+  else
+    catch(mca_db = master()->resolv("Fins.Model.find.matcasearrangements")((["id": (int)id]))[0]);
 	
-	if(mca_db)
-  	  return Monotype.load_matcase_string(mca_db["xml"]);
-	else return 0;
+  if(mca_db)
+    return Monotype.load_matcase_string(mca_db["xml"]);
+  else return 0;
 	
-//	return Monotype.load_matcase(combine_path(getcwd(), config["locations"]["matcases"], matcasename));
+//  return Monotype.load_matcase(combine_path(getcwd(), config["locations"]["matcases"], matcasename));
 }
-
 
 object load_wedge(string wedgename)
 {

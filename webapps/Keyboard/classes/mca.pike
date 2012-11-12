@@ -2,12 +2,12 @@ import Fins;
 
 inherit "mono_doccontroller";
 
+int __quiet = 1;
+
 void start()
 {
   before_filter(app->admin_user_filter);
 }
-
-int __quiet = 1;
 
    array cols15 = ({ /* 15 elements */
                 "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
@@ -66,7 +66,7 @@ public void index(Request id, Response response, Template.View view, mixed args)
 }
 
 
-public void do_delete(Request id, Response response, Template.View view, mixed args)
+public void do_delete(Request id, Response response, Template.View view, mixed ... args)
 {
   object mca;
 
@@ -90,7 +90,7 @@ public void do_delete(Request id, Response response, Template.View view, mixed a
   }
 }
 
-public void unshare(Request id, Response response, Template.View view, mixed args)
+public void unshare(Request id, Response response, Template.View view, mixed ... args)
 {
   object mca;
 
@@ -120,7 +120,7 @@ werror("unshare(%O)\n", mca);
 
 
 
-public void share(Request id, Response response, Template.View view, mixed args)
+public void share(Request id, Response response, Template.View view, mixed ... args)
 {
   object mca;
 
@@ -149,7 +149,7 @@ werror("share(%O)\n", mca);
 }
 
 
-public void delete(Request id, Response response, Template.View view, mixed args)
+public void delete(Request id, Response response, Template.View view, mixed ... args)
 {
   object mca;
 
@@ -175,7 +175,7 @@ werror("delete(%O)\n", mca);
   }
 }
 
-public void copy(Request id, Response response, Template.View view, mixed args)
+public void copy(Request id, Response response, Template.View view, mixed ... args)
 {
   Monotype.MatCaseLayout mca;
   mca = app->load_matcase_by_id(args[0], /*id->misc->session_variables->user*/);
@@ -361,13 +361,13 @@ public void moveMat(Request id, Response response, Template.View view, mixed arg
 }
 
 
-public void edit(Request id, Response response, Template.View view, mixed args)
+public void edit(Request id, Response response, Template.View view, mixed ... args)
 {
   object mca;
 
   if(!sizeof(args))
   {
-	response->set_data("You must provide a mat case layout to edit.");
+    response->set_data("You must provide a mat case layout to edit.");
   }
 
   view->add("now", (string)time());
@@ -484,7 +484,7 @@ public void notInCase(Request id, Response response, Template.View view, mixed a
     response->set_type("application/json");
 }
 
-public void download(Request id, Response response, Template.View view, mixed args)
+public void download(Request id, Response response, Template.View view, mixed ... args)
 {
 	object mca;
 	
