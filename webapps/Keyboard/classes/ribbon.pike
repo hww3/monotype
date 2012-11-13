@@ -65,8 +65,8 @@ public void do_generate(Request id, Response response, Template.View v, mixed ..
 		"hyphenate_no_hyphen": (int)id->variables->hyphenate_no_hyphen,
 		"trip_at_end": (int)id->variables->trip_at_end,
 		"page_length": (int)id->variables->page_length,
-		"min_little": (int)(id->variables->min_just/"/")[1], 
-		"min_big": (int)(id->variables->min_just/"/")[1],
+		"min_little": (int)(((id->variables->min_just||"")/"/")[1]), 
+		"min_big": (int)(((id->variables->min_just||"")/"/")[0]),
 		"allow_lowercase_smallcaps": (int)id->variables->allow_lowercase_smallcaps,
 		"allow_punctuation_substitution": (int)id->variables->allow_punctuation_substitution
 		]);
@@ -118,8 +118,8 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 // we don't need this to be shown in the "soft proof".
 //		"trip_at_end": (int)id->variables->trip_at_end,
 		"page_length": (int)id->variables->page_length,
-		"min_little": (int)(id->variables->min_just||""/"/")[1], 
-		"min_big": (int)(id->variables->min_just||""/"/")[0],
+		"min_little": (int)(((id->variables->min_just||"")/"/")[1]), 
+		"min_big": (int)(((id->variables->min_just||"")/"/")[0]),
 		"allow_lowercase_smallcaps": (int)id->variables->allow_lowercase_smallcaps,
 		"allow_punctuation_substitution": (int)id->variables->allow_punctuation_substitution
 		]);

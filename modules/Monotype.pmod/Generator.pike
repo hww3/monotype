@@ -650,9 +650,8 @@ mixed i_parse_tags(object parser, string data, mapping extra)
     else if(Regexp.SimpleRegexp("<[sS][0-9]*>")->match(data))
 	{
 		process_setting_buffer();
-		low_quad_out((int)(data[2..sizeof(data)-2]));
-//		current_line->add("SPACE_" + data[2..sizeof(data)-2]);
-		if(current_line->is_overset())
+		int toadd = (int)(data[2..sizeof(data)-2]);
+		if(low_quad_out(toadd) != toadd)
 		{
 			current_line->errors += ({"Fixed space (%d unit) won't fit on line... dropping.\n"});
 		}
@@ -759,8 +758,18 @@ int create_modifier()
 // fill out the line according to the justification method (left/right/etc)
 void quad_out()
 {
+  werror("quad_out()\n");
   int left = current_line->lineunits - current_line->linelength;
-//  werror("* have %d units left on line.\n", left);
+  werror("* have %d units left on line.\n", left);
+
+  while(!current_line->can_add(left))
+  {
+    werror("onoe!\n");
+    left --;
+//    Tools.throw(Error.Generic, "unable to add %d units because it would cause the line to be overset.\n", left);
+  }
+
+  werror("* %d units can be added to give acceptably sized justifying spaces.\n", left);
 
   if(line_mode == MODE_LEFT || line_mode == MODE_JUSTIFY)
   {
@@ -780,73 +789,69 @@ void quad_out()
   }
 }
 
-void low_quad_out(int amount, int|void atbeginning)
+int low_quad_out(int amount, int|void atbeginning)
 {
-	  array toadd = ({});
-//werror("spaces in case: %O\n", m->spaces);
-//werror("requested to add %d, on line already: %d\n", amount, current_line->linelength);
-int ix;
-	toadd = Monotype.findspace()->simple_find_space(amount, m->spaces);
-//	werror("jzfindspaces: %O, %O\n", amount, toadd);
-	if(!toadd || !sizeof(toadd))
-          toadd = Monotype.IterativeSpaceFinder()->findspaces(amount, m->spaces);
-//	werror("iterativespaces: %O, %O\n", amount, toadd);
-	if(!toadd || !sizeof(toadd))
-  	  toadd = simple_find_space(amount, m->spaces);
-     // toadd = sort(toadd);
-//	werror("spaces: %O, %O\n", amount, toadd);
-	//  calculate_justification();
-//	  werror("to quad out %d, we need the following: %O\n", amount, toadd);  
-toadd = sort(toadd);
+  array toadd = ({});
+  int ix;
+  toadd = Monotype.findspace()->simple_find_space(amount, m->spaces);
+  if(!toadd || !sizeof(toadd))
+    toadd = Monotype.IterativeSpaceFinder()->findspaces(amount, m->spaces);
+  if(!toadd || !sizeof(toadd))
+    toadd = simple_find_space(amount, m->spaces);
+  toadd = sort(toadd);
 
-	  foreach(toadd;;int i)
-	  {
-ix+=i;
-//	werror("adding %d, at %d\n", i, ix);
-	    current_line->add("SPACE_" + i, 0, 0, atbeginning);	
-		if(current_line->is_overset())
-		{
-werror("overset. added %d, at %d\n", current_line->linelength, ix);
-			current_line->remove();ix-=i;
-			if(current_line->can_justify())
-				break;
-			else
-			{
-				werror("what's smaller than %d?\n", i);
-				array whatsleft = ({});
-				// generate an array of available spaces smaller than the one that didn't fit.
-				foreach(m->spaces; mixed u ;)
-				{
-				   if(u < i)
-						whatsleft += ({u});
-				}
-				whatsleft = reverse(sort(whatsleft));
+  foreach(toadd;int z;int i)
+  {
+    ix+=i;
+    current_line->add("SPACE_" + i, 0, 0, atbeginning);	
+	if(current_line->is_overset())
+	{
+      werror("overset. added %d, at %d\n", current_line->linelength, ix);
+      current_line->remove();ix-=i;
+      if(current_line->can_justify())
+        break;
+      else
+      {
+        werror("what's smaller than %d?\n", i);
+        array whatsleft = ({});
+        // generate an array of available spaces smaller than the one that didn't fit.
+        foreach(m->spaces; mixed u ;)
+        {
+          if(u < i)
+            whatsleft += ({u});
+        }
+        whatsleft = reverse(sort(whatsleft));
 				
-				// ok, the plan is to take each space, starting with the biggest and try to add as many
-				// of each as possible without going over.
-				foreach(whatsleft;;int toadd)
-				{   
-				  int cj;
+        // ok, the plan is to take each space, starting with the biggest and try to add as many
+        // of each as possible without going over.
+        foreach(whatsleft;;int toadd)
+        {
+          int cj;
 				
-					do
-					{
-ix+=toadd;
-			    		current_line->add("SPACE_" + toadd, 0, 0, atbeginning);	
-						cj = current_line->can_justify();
-					}
-					while(!cj && !current_line->is_overset());
+          do
+          {
+            ix+=toadd;
+            current_line->add("SPACE_" + toadd, 0, 0, atbeginning);	
+            cj = current_line->can_justify();
+          }
+          while(!cj && !current_line->is_overset());
 					
-					if(current_line->is_overset())
-{
-ix-=toadd;
-						current_line->remove();
-}
-				}
+          if(current_line->is_overset())
+          {
+			while(z)
+			{
+              current_line->remove();
+			  z--;
 			}
-		}
-	  }
+			return 0;
+          }
+        }
+      }
+    }
+  }
 
-werror("asked to add %d units of space; added %d.\n", amount, ix);
+  werror("asked to add %d units of space; added %d.\n", amount, ix);
+  return ix;
 }
 
 // this an inferior quad-out mechanism. we currently favor
@@ -927,13 +932,15 @@ void new_line(int|void q)
       new_line(1);           
       return;
   }
-  else */if(!current_line->linespaces && current_line->linelength != current_line->lineunits)
+  else */
+
+  if(!current_line->linespaces && current_line->linelength != current_line->lineunits)
   {
       throw(Error.Generic(sprintf("Off-length line without justifying spaces: need %d units to justify, line has %d units. Consider adding a justifying space to line - %s\n", 
 		current_line->lineunits, current_line->linelength, (string)current_line)));
   }
   else if(current_line->linespaces && !current_line->can_justify()) 
-throw(Error.Generic(sprintf("Unable to justify line; justification code would be: %d/%d, text on line is %s\n", current_line->big, current_line->little, (string)current_line)));
+    throw(Error.Generic(sprintf("Unable to justify line; justification code would be: %d/%d, text on line is %s\n", current_line->big, current_line->little, (string)current_line)));
 
 // if this is the first line and we've opted to make the first line long 
 //  (to kick the caster off,) add an extra space at the beginning.

@@ -84,41 +84,45 @@ import Monotype;
 	// remove a sort from the line; recalculate the justification
 	object remove()
 	{
+	  object r;
+	  if(!sizeof(elements))
+	    return 0;
+  	  r = elements[-1];
 	//	werror("calling remove()\n");
 //	   displayline = displayline[..sizeof(displayline)-2];
-	   if(elements[-1]->is_real_js)
+	   if(r->is_real_js)
 	   {
 		 linespaces--;
 	     linelength -= (min_space_units);
 	   }
 	   else
-	     linelength -= elements[-1]->get_set_width();
+	     linelength -= r->get_set_width();
 
-	   object r = elements[-1];
 	   elements = elements[0..sizeof(elements)-2];	
 
-	   calculate_justification();
+	   [big, little] = calculate_justification();
 
 	   return r;
 	}
-	void calculate_justification()
+	array calculate_justification(int|void mylinelength)
 	{
 	  float justspace;
 
-	  justspace = calc_justspace();
-	  units = justspace;
+	  justspace = calc_justspace(0, mylinelength);
+	  if(!mylinelength)
+ 	    units = justspace;
 //	werror("justspace: %f\n", justspace);
-	  [big, little] = low_calculate_justification(justspace);
+	  return low_calculate_justification(justspace);
 	}
 
-	float calc_justspace(int|void verbose)
+	float calc_justspace(int|void verbose, int|void mylinelength)
 	{
 	  float justspace = 0.00;
 
 	  if(linespaces)
 	  {
 		// algorithm from page 14
-	    justspace = ((float)(lineunits-linelength)/linespaces); // in units of set.
+	    justspace = ((float)((lineunits)-(mylinelength||linelength))/linespaces); // in units of set.
 	//	if(verbose)
 		//werror("%f = (%d - %d) / %d\n", justspace, lineunits, linelength, linespaces);
 	  }
@@ -128,23 +132,16 @@ import Monotype;
 
 	array low_calculate_justification(float justspace)
 	{
-
-//	  werror("units needed to justify: %f, minimum space units: %d\n", justspace, min_space_units);
+      int small,large;
 
 	  justspace = justspace + ((min_space_units)-(m->elements["JS"]->get_set_width()));
-//	  justspace = justspace + ((min_space_units)-m->elements["JS"]->get_set_width());
-//	werror("calculated justification increments: %f->%d\n", justspace, (int)round(justspace));
 	  justspace *= (setwidth * 1.537);	
-//		  werror("calculated justification increments: %f->%d\n", justspace, (int)round(justspace));
-
-//	  werror("calculated justification increments: %f->%d\n", justspace, (int)round(justspace));
 
 	  int w = ((int)round(justspace)) + 53; // 53 increments of the 0.0005 is equivalent to 3/8.
 
-          int small,large;
-          large = w/15;
-          small = w%15;
-          if(small == 0) large--,small=15;
+      large = w/15;
+      small = w%15;
+      if(small == 0) large--,small=15;
         
 	  return ({ large, small });
 	}
@@ -245,25 +242,37 @@ import Monotype;
 	  }
 
 	if(!stealth)
-	  calculate_justification();
+	  [big, little] = calculate_justification();
 //	  if(interactive)
 //	    werror("%s %d %s %s\n", displayline * "", lineunits-linelength, can_justify()?("* "+ big + " " + little):"", is_overset()?(" OVERSET "):"");
 
 	}
 
+  // can we add n units to the line and still meet the justification requirements?
+  int can_add(int units)
+  {
+	return !is_overset(linelength + units);
+  }
 
+  int is_overset(int|void mylinelength)
+  {
+    int mbig, mlittle;
+    [mbig, mlittle] = calculate_justification(mylinelength);
+    int overset = ((mylinelength||linelength) > lineunits) ;//|| (linespaces && ((mbig*15)+mlittle)<((min_big*15)+min_little) );
 
-	int is_overset()
-	{
-		calculate_justification();
-int overset = (linelength > lineunits) ;//|| (linespaces && ((big*15)+little)<((min_big*15)+min_little) );
-if(overset)
-{
- werror("overset: units in line: %d, lineunits: %d, linespaces: %d, big: %d, little: %d\n", linelength, lineunits, linespaces, big, little);
-}
- return overset;
-//werror("min_big: %d min_little: %d big: %d little: %d\n", min_big, min_little, big, little);
-	}
+    overset = overset || (linespaces && ((mbig*15)+mlittle)<((min_big*15)+min_little));
+    if(overset)
+    {
+      werror("overset: line length: %d, units in line: %d, linespaces: %d, just: %d/%d min: %d/%d\n", lineunits, linelength, linespaces, mbig, mlittle, min_big, min_little);
+    }
+
+    if(!mylinelength)
+    {
+      big = mbig, little = mlittle;
+    }
+
+    return overset;
+  }
 
 	int can_justify()
 	{
@@ -306,8 +315,8 @@ if(overset)
             else 
   	      {
   //			werror("ME: %O", mkmapping(indices(me), values(me)));
-              string row_pos = me->row_pos;
-              string col_pos = me->col_pos;
+            string row_pos = me->row_pos;
+            string col_pos = me->col_pos;
 
   	        int wedgewidth;
   	        if(me->row_pos == 16 && ! config->unit_shift)
@@ -317,34 +326,35 @@ if(overset)
 
   			// get the width of the requested row unless it's 16, which doesn't exist.
   			// in that case, get the width of row 15.
+	//		werror("need wedge width for row %d\n", me->row_pos!=16?me->row_pos:15);
   	 		wedgewidth = s->get(me->row_pos!=16?me->row_pos:15);
+			
+  	   //     werror("want %d, wedge provides %d\n", me->get_set_width(), wedgewidth);
+  	        if(me->row_pos == 16 || (wedgewidth != me->get_set_width())) // we need to adjust the justification wedges
+  	        {
+  	          int nf, nc;
 
-  	      //werror("want %d, wedge provides %d\n", mat->get_set_width(), wedgewidth);
-  	      if(me->row_pos == 16 || (wedgewidth != me->get_set_width())) // we need to adjust the justification wedges
-  	      {
-  	        int nf, nc;
+              // TODO: we need to check to make sure we don't try to open the mould too wide.
 
-  	// TODO: we need to check to make sure we don't try to open the mould too wide.
-
-  		werror("needs adjustment: have %d, need %d!\n", wedgewidth, me->get_set_width());
-  	        // first, we should calculate what difference we need, in units of set.
-  	        int needed_units = me->get_set_width() - wedgewidth;
-
-  			// at this point, we'd select the appropriate mechanism for handling the difference
-  			// presumably, we'd use the following techniques, were they available to us:
-  			// 1. unit adding
-  			if(config->unit_adding && config->unit_adding == needed_units)
-  			{
+              werror("needs adjustment: have %d, need %d!\n", wedgewidth, me->get_set_width());
+  	          // first, we should calculate what difference we need, in units of set.
+  	          int needed_units = me->get_set_width() - wedgewidth;
+ 
+              // at this point, we'd select the appropriate mechanism for handling the difference
+              // presumably, we'd use the following techniques, were they available to us:
+              // 1. unit adding
+  			  if(config->unit_adding && config->unit_adding == needed_units)
+  			  {
                 buf+=sprintf("0075 ");
-  			}
+  			  }
 
   			// 2. unit shift
-  			else if(config->unit_shift && me->row_pos > 1 && (s->get(me->row_pos - 1) == me->get_set_width()))
-  			{
-  			  row_pos = (me->row_pos - 1);
-  			  if(col_pos == "D") col_pos = "EF";
-  			  col_pos = "D" + col_pos;
-  			}
+  			  else if(config->unit_shift && me->row_pos > 1 && (s->get(me->row_pos - 1) == me->get_set_width()))
+  			  {
+  			    row_pos = (me->row_pos - 1);
+  			    if(col_pos == "D") col_pos = "EF";
+  			    col_pos = "D" + col_pos;
+  			  }
 
   			// 3. unit adding + unit shift
   			else if(config->unit_adding && config->unit_shift && me->row_pos > 1 && (me->get_set_width() == (config->unit_adding + s->get(me->row_pos - 1))))
