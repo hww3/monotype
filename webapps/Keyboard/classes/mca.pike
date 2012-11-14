@@ -360,7 +360,6 @@ public void moveMat(Request id, Response response, Template.View view, mixed arg
   response->set_data("OK");
 }
 
-
 public void edit(Request id, Response response, Template.View view, mixed ... args)
 {
   object mca;
@@ -369,6 +368,8 @@ public void edit(Request id, Response response, Template.View view, mixed ... ar
   {
     response->set_data("You must provide a mat case layout to edit.");
   }
+
+  werror("view: %O\n", view);
 
   view->add("now", (string)time());
 

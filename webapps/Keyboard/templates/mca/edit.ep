@@ -9,6 +9,7 @@
    dojo.require("dijit.InlineEditBox");
    dojo.require("dijit.form.Textarea");
    dojo.require("dijit.form.MatrixEditor");
+
    var isEditing = false;
    var canSave = <% if(data->is_owner) {
 %>
@@ -16,6 +17,40 @@ true
 <% } else { %>
 false
 <% } %>;
+  var haveWarnings;
+  var warningDialog = new dijit.TooltipDialog({
+            id: 'myTooltipDialog',
+            style: "width: 300px;",
+            content:
+
+			<% if( data && data->problems && sizeof(data->problems) ) { %>
+				'<%=sizeof(data->problems)%> problem(s):<br>'
+			<% foreach(data->problems; int i; array p) { %>
+			   +'<%=(((int)i)+1)%> <%=replace(p[2], "\n", "")%><br>'
+  			  <% } %>
+			<% } %>
+			,
+            onMouseLeave: function(){
+                dijit.popup.close(warningDialog);
+              }
+            });
+
+function enableWarnings()
+{
+	        dojo.connect(dojo.byId('warnings'), 'onmouseover', function(){
+				if(haveWarnings)
+	            	dijit.popup.open({
+		             	popup: warningDialog,
+	                	around: dojo.byId('warnings')
+	            		});
+	 		});
+}
+
+<% if( data && data->problems && sizeof(data->problems) ) { %>
+  haveWarnings = 1;	
+<% } %>
+  dojo.addOnLoad(enableWarnings);
+
 function dndDropComplete(s, n, c)
 {
   return;
@@ -306,15 +341,22 @@ dojo.xhrPost({ content: {description: value}, url: "/mca/saveDescription",
 </script>
 
 <h1>Layout: <b><%=data->mca->name%></b> &nbsp; Default Wedge: <b><%=data->mca->wedge%></b> &nbsp;</h1>
-
-<%#action_link "action": "cancel"%>
+<div id="warnings" style="float:right; margin:2px; padding:0px;">
+<% if( data && data->problems && sizeof(data->problems) ) { %>
+  <img style="padding:0px" src="<%#context_root%>static/images/warning.png"/>
+<% } else { %>
+  <img style="padding:0px" src="<%#context_root%>static/images/nowarning.png"/>
+<% } %>
+</div>
+<div>
+  <%#action_link "action": "cancel"%>
 <button href="<%#action_url "action": "cancel"%>">Cancel</button>
 </a>
- &nbsp;
-
+&nbsp;
 <%#action_link "action": "save", "args": data->now%>
-	<button class="SaveButton" href="<%#action_url "action": "save", "args": data->now%>" disabled="true">Save</button>
-</a> &nbsp;
+<button class="SaveButton" href="<%#action_url "action": "save", "args": data->now%>" disabled="true">Save</button>
+</a>
+</div>
 <p>
 <div dojoType="dijit.TitlePane" id="description" title="Description">
 <span dojoType="dijit.InlineEditBox" editor="dijit.form.Textarea"  title="Description">
@@ -438,20 +480,6 @@ line-height: 15.5px;
 	<p/>
 <%}	%>
 <p>
-<div style="clear: left;">
-
-<% if( data && data->problems && sizeof(data->problems) ) { %>
-<b>Problems:</b>
-<br>
-
-<% foreach(data->problems; int i; array p) { %>
- <%=(((int)i)+1)%> <%=p[2]%><br>
-<% } %>
-
-<% } else {%>
-<b>No problems identified.</b>
-<% } %>
-</div>
 <script type="text/javascript">
 var connected;
 function loadStyle(elements, style)
