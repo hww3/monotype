@@ -1,3 +1,14 @@
+20121115
+- Caster Control: re-enable "Jump to Line" functionality.
+- Ribbon Generator: confirm addition of Italian and Spanish hyphenation
+  dictionaries.
+- Caster Control: deal with windows line endings better.
+- Ribbon Generator: more complete solution to "minimum justification code",
+  which should be re-enabled now.
+
+20121112
+- Ribbon Generator: move MCA problems to a popup with icon.
+
 20120902
 - Caster Control: Make debounce a preference setting, variable between 0ms 
   and 55ms.
