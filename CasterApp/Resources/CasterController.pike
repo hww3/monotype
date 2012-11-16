@@ -313,9 +313,9 @@ void showJumpToLine_(object i)
 	
 	if(code) // we clicked OK
 	{
-		string line_to_jump_to = (string)JumpToLineBox->stringValue();
-		werror("destination line: %O\n", line_to_jump_to);
-		Driver->jump_to_line((int)line_to_jump_to);
+	  mixed line_to_jump_to = JumpToLineBox->intValue();
+	  werror("destination line: %O\n", line_to_jump_to);
+	  Driver->jump_to_line((int)line_to_jump_to);
 	}
 //	werror("\n\n\ncode: %O\n\n\n", code);
 /*

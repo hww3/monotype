@@ -27,7 +27,7 @@ static void create(string filename)
 array get_current_line_contents()
 {
   array contents;
-  werror("line contents: %O=>%O\n", current_line, line_contents);
+  //werror("line contents: %O=>%O\n", current_line, line_contents);
   catch(contents = line_contents[current_line] + ({}));
   return contents || ({});
 }
@@ -61,7 +61,7 @@ void parse_body()
 
 		if(c["0075"] && (last && last["0005"] && last["0075"])) 
 		{
-			werror("got new line. %O\n", line_codes); 
+			//werror("got new line. %O\n", line_codes); 
           codes->push(line_codes);
           line_codes = ({});
 		  total_lines++;
@@ -78,7 +78,7 @@ void parse_body()
 	
 	file->seek(pos);
 	line_contents = (array)codes;
-	werror("linecontents: %O\n", line_contents);
+	//werror("linecontents: %O\n", line_contents);
 }
 
 void parse_header()
