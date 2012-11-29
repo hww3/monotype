@@ -62,12 +62,43 @@ function enableDetails()
 
 }
 
+var micDialog;
+
+function enableMatsInCase()
+{
+	        dojo.connect(dojo.byId('matsincase'), 'onclick', function(){
+//				alert("foo");
+				if(!micDialog)
+				{
+					micDialog = new dojox.layout.FloatingPane(
+					{id: 'micDialog', title: '<b>Available Mats</b>', //dojo.byId('matsInCaseContainer'),
+						dockable: false,
+						style: "position:absolute;top:50px;left:50px;width:850px;height:100px;",
+						}, dojo.byId('matsInCaseContainer')
+						);
+
+								micDialog.close = function() {
+								if(!this.closable){ return; } 
+				//				 paneClosed();
+								 this.hide();
+								};
+
+								micDialog.startup();
+
+				}
+				
+				init();
+				micDialog.show();
+				
+	 		});
+}
 
 <% if( data && data->problems && sizeof(data->problems) ) { %>
   haveWarnings = 1;	
 <% } %>
   dojo.addOnLoad(enableWarnings);
   dojo.addOnLoad(enableDetails);
+  dojo.addOnLoad(enableMatsInCase);
 
 function dndDropComplete(s, n, c)
 {
@@ -98,7 +129,10 @@ dojo.byId("floatcontainer").innerHTML="<div id='float1'></div>";
 
 function floatMICDisplay()
 {
-  dojo.query("#popOutLink").style({ display:"none" }); 
+
+  micDisplayPane.show();
+return;
+//  dojo.query("#popOutLink").style({ display:"none" }); 
   var div = dojo.byId("matsInCaseContainer");
   if(div)
   {
@@ -370,6 +404,10 @@ dojo.xhrPost({ content: {description: value}, url: "/mca/saveDescription",
 <img style="padding:0px" src="<%#context_root%>static/images/details.png"/>
 </div>
 
+<div id="matsincase" style="float:right; margin:1px; padding:0px;; padding-right: 3px;">
+<img style="padding:0px" src="<%#context_root%>static/images/details.png"/>
+</div>
+
 <div>
   <%#action_link "action": "cancel"%>
 <button href="<%#action_url "action": "cancel"%>">Cancel</button>
@@ -381,31 +419,8 @@ dojo.xhrPost({ content: {description: value}, url: "/mca/saveDescription",
 </div>
 <p>
 
-<div id="floatcontainer"><span id="float1"></span></div>
-<div id="displayContainer">
-<div dojoType="dijit.TitlePane" id="matsInCaseDisplay" title="Available Mats">
-<div id="matsInCaseContainer">
-<div><div id="popOutLink">[<a href="#" onClick="floatMICDisplay();">Pop Out</a>]</div></div>
-<div id="matsInCaseNodeQ" dojoId="matsInCaseNodeQ" xdojoType="dojo.dnd.Source" accept="Q" style="position:relative; float:left" class="container"></div>
-<div style="clear: left;">
-<div style="position:relative; float:left">Roman: </div>
-<div id="matsInCaseNodeR" dojoId="matsInCaseNodeR" xdojoType="dojo.dnd.Source" accept="R" style="position:relative; float:left" class="container"></div>
-</div>
-<div style="clear: left;">
-<div style="position:relative; float:left">Italic: </div>
-<div id="matsInCaseNodeI" dojoId="matsInCaseNodeI" xdojoType="dojo.dnd.Source" accept="I" style="position:relative; float:left" class="container"></div>
-</div>
-<div style="clear: left;">
-<div style="position:relative; float:left">Bold: </div>
-<div id="matsInCaseNodeB" dojoId="matsInCaseNodeB" xdojoType="dojo.dnd.Source" accept="B" style="position:relative; float:left" class="container"></div>
-</div>
-<div style="clear: left;">
-<div style="position:relative; float:left">Small Caps: </div>
-<div id="matsInCaseNodeS" dojoId="matsInCaseNodeS" xdojoType="dojo.dnd.Source" accept="S" style="position:relative; float:left" class="container"></div>
-</div>
-</div>
-</div>
-</div>
+<!-- mats in case was here. -->
+
 <p>
 	<style>
 	div.cell {
@@ -525,7 +540,7 @@ function loadStyle(elements, style)
 	function init() {
   	  var wishlist, mic, connected;
 	  connected = 0;
-	  if(displayPaneSource == null) displayPaneSource = dijit.byId("matsInCaseDisplay").get('content');
+	  if(displayPaneSource == null) displayPaneSource = micDialog.get('content');
 
 	  dojo.xhrPost({handleAs: "json", url: "/mca/notInCase",
 						load: function(response, ioArgs){
@@ -539,7 +554,7 @@ function loadStyle(elements, style)
 
 
   };
-	dojo.addOnLoad(init);
+//	dojo.addOnLoad(init);
 </script>
 
 <div style="left:5px; clear:left">
@@ -550,7 +565,32 @@ function loadStyle(elements, style)
 	<button  class="SaveButton" href="<%#action_url "action": "save", "args": data->now%>" disabled="true">Save</button>
 </a> &nbsp;
 
-<div dojoType='dijit.TooltipDialog' id='detailsDialog' style:'width:300px'>
+
+<div id="matsInCaseContainer" style="display:none">
+<div style="margin:10px;">
+<div id="matsInCaseNodeQ" dojoId="matsInCaseNodeQ" xdojoType="dojo.dnd.Source" accept="Q" style="position:relative; float:left" class="container"></div>
+<div style="clear: left;">
+<div style="position:relative; float:left">Roman: </div>
+<div id="matsInCaseNodeR" dojoId="matsInCaseNodeR" xdojoType="dojo.dnd.Source" accept="R" style="position:relative; float:left" class="container"></div>
+</div>
+<div style="clear: left;">
+<div style="position:relative; float:left">Italic: </div>
+<div id="matsInCaseNodeI" dojoId="matsInCaseNodeI" xdojoType="dojo.dnd.Source" accept="I" style="position:relative; float:left" class="container"></div>
+</div>
+<div style="clear: left;">
+<div style="position:relative; float:left">Bold: </div>
+<div id="matsInCaseNodeB" dojoId="matsInCaseNodeB" xdojoType="dojo.dnd.Source" accept="B" style="position:relative; float:left" class="container"></div>
+</div>
+<div style="clear: left;">
+<div style="position:relative; float:left">Small Caps: </div>
+<div id="matsInCaseNodeS" dojoId="matsInCaseNodeS" xdojoType="dojo.dnd.Source" accept="S" style="position:relative; float:left" class="container"></div>
+</div>
+</div>
+
+
+
+
+<div dojoType='dijit.TooltipDialog' id='detailsDialog' style="display: none; width:300px">
 <b>MCA Description</b><p>
 
 <span dojoType='dijit.InlineEditBox' editor='dijit.form.Textarea'  title='Description'>
