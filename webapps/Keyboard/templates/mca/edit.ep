@@ -22,9 +22,9 @@ false
             id: 'myTooltipDialog',
             style: "width: 300px;",
             content:
-
+			    '<b>MCA Problems '
 			<% if( data && data->problems && sizeof(data->problems) ) { %>
-				'<%=sizeof(data->problems)%> problem(s):<br>'
+				+ '[<%=sizeof(data->problems)%>]</b><p/>'
 			<% foreach(data->problems; int i; array p) { %>
 			   +'<%=(((int)i)+1)%> <%=replace(p[2], "\n", "")%><br>'
   			  <% } %>
@@ -46,10 +46,28 @@ function enableWarnings()
 	 		});
 }
 
+function enableDetails()
+{
+	        dojo.connect(dojo.byId('details'), 'onmouseover', function(){
+	            	dijit.popup.open({
+		             	popup: dijit.byId('detailsDialog'),
+	                	around: dojo.byId('details')
+	            		});
+	 		});
+
+	        dojo.connect(dijit.byId('detailsDialog'), 'onMouseLeave', function(){
+				//	alert(dijit.byId('detailsDialog'));
+	            	dijit.popup.close(dijit.byId('detailsDialog'));
+	 		});
+
+}
+
+
 <% if( data && data->problems && sizeof(data->problems) ) { %>
   haveWarnings = 1;	
 <% } %>
   dojo.addOnLoad(enableWarnings);
+  dojo.addOnLoad(enableDetails);
 
 function dndDropComplete(s, n, c)
 {
@@ -348,6 +366,10 @@ dojo.xhrPost({ content: {description: value}, url: "/mca/saveDescription",
   <img style="padding:0px" src="<%#context_root%>static/images/nowarning.png"/>
 <% } %>
 </div>
+<div id="details" style="float:right; margin:1px; padding:0px;; padding-right: 3px;">
+<img style="padding:0px" src="<%#context_root%>static/images/details.png"/>
+</div>
+
 <div>
   <%#action_link "action": "cancel"%>
 <button href="<%#action_url "action": "cancel"%>">Cancel</button>
@@ -358,15 +380,6 @@ dojo.xhrPost({ content: {description: value}, url: "/mca/saveDescription",
 </a>
 </div>
 <p>
-<div dojoType="dijit.TitlePane" id="description" title="Description">
-<span dojoType="dijit.InlineEditBox" editor="dijit.form.Textarea"  title="Description">
-<script type="dojo/connect" event="onChange" args="value">
-                  console.log(this.id + " changed to value " + value);
-                                saveDescription(this.id, value);
-             </script>
-<%=data->description%>
-</span>
-</div>
 
 <div id="floatcontainer"><span id="float1"></span></div>
 <div id="displayContainer">
@@ -537,5 +550,17 @@ function loadStyle(elements, style)
 	<button  class="SaveButton" href="<%#action_url "action": "save", "args": data->now%>" disabled="true">Save</button>
 </a> &nbsp;
 
+<div dojoType='dijit.TooltipDialog' id='detailsDialog' style:'width:300px'>
+<b>MCA Description</b><p>
+
+<span dojoType='dijit.InlineEditBox' editor='dijit.form.Textarea'  title='Description'>
+<script type='dojo/connect' event='onChange' args='value'>
+                  console.log(this.id + ' changed to value ' + value);
+                                saveDescription(this.id, value);
+             </script>
+<%=data->description%></span>
+<p/>
+<i>Click the description to edit; click here to save.</i>
+</div>
 </div>
 </div>
