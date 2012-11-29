@@ -1,3 +1,7 @@
+20121128
+- Ribbon Generator: moved description box to a tooltip dialog, in order to
+   save screen real estate.
+
 20121115
 - Caster Control: re-enable "Jump to Line" functionality.
 - Ribbon Generator: confirm addition of Italian and Spanish hyphenation
