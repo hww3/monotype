@@ -10,14 +10,14 @@ void start()
 }
 
 
-public void index(Request id, Response response, Template.View view, mixed args)
+public void index(Request id, Response response, Template.View view, mixed ... args)
 {
   array m = app->get_wedges();
   view->add("wedges", m);
   view->add("owner", id->misc->session_variables->user);
 }
 
-public void new(Request id, Response response, Template.View view, mixed args)
+public void new(Request id, Response response, Template.View view, mixed ... args)
 {
   	
   if(id->variables->name)
@@ -38,7 +38,7 @@ public void new(Request id, Response response, Template.View view, mixed args)
   }
 }
 
-public void cancel(Request id, Response response, Template.View view, mixed args)
+public void cancel(Request id, Response response, Template.View view, mixed ... args)
 {
 	id->misc->session_variables->wedge = 0;
 	
@@ -46,7 +46,7 @@ public void cancel(Request id, Response response, Template.View view, mixed args
 	response->redirect(index);
 }
 
-public void save(Request id, Response response, Template.View view, mixed args)
+public void save(Request id, Response response, Template.View view, mixed ... args)
 {
 	foreach(glob("row*", indices(id->variables));;string q)
 	{
@@ -64,7 +64,7 @@ public void save(Request id, Response response, Template.View view, mixed args)
 	response->redirect(index);	
 }
 
-public void do_delete(Request id, Response response, Template.View view, mixed args)
+public void do_delete(Request id, Response response, Template.View view, mixed ... args)
 {
   object wedge;
 
@@ -88,7 +88,7 @@ public void do_delete(Request id, Response response, Template.View view, mixed a
   }
 }
 
-public void delete(Request id, Response response, Template.View view, mixed args)
+public void delete(Request id, Response response, Template.View view, mixed ... args)
 {
   object wedge;
 
@@ -109,7 +109,7 @@ public void delete(Request id, Response response, Template.View view, mixed args
 }
 
 
-public void edit(Request id, Response response, Template.View view, mixed args)
+public void edit(Request id, Response response, Template.View view, mixed ... args)
 {
   object wedge;
 
@@ -125,14 +125,13 @@ public void edit(Request id, Response response, Template.View view, mixed args)
   else
     view->add("is_owner", 0);
 
-  werror("args:%O, %O\n", getcwd(),combine_path(app->config["locations"]["wedges"], args[0]));
   wedge = app->load_wedge(args[0], id->misc->session_variables->user);
   werror("wedge: %O, %O\n", args[0], wedge);
   id->misc->session_variables->wedge = wedge;
   view->add("wedge", wedge);
 }
 
-public void download(Request id, Response response, Template.View view, mixed args)
+public void download(Request id, Response response, Template.View view, mixed ... args)
 {
 	object wedge;
 	
@@ -151,7 +150,7 @@ public void download(Request id, Response response, Template.View view, mixed ar
    
 }
 
-public void upload(Request id, Response response, Template.View view, mixed args)
+public void upload(Request id, Response response, Template.View view, mixed ... args)
 {
    object wedge;
 
