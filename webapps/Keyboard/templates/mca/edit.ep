@@ -21,10 +21,10 @@ false
   var warningDialog = new dijit.TooltipDialog({
             id: 'myTooltipDialog',
             style: "width: 300px;",
-            content:
-			    '<b>MCA Problems '
+            content: '' 
+
 			<% if( data && data->problems && sizeof(data->problems) ) { %>
-				+ '[<%=sizeof(data->problems)%>]</b><p/>'
+				 + '<%=sizeof(data->problems)%> problem(s):<br>'
 			<% foreach(data->problems; int i; array p) { %>
 			   +'<%=(((int)i)+1)%> <%=replace(p[2], "\n", "")%><br>'
   			  <% } %>
