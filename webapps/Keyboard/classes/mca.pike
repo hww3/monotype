@@ -149,6 +149,7 @@ werror("share(%O)\n", mca);
 }
 
 
+// TODO: this really should prompt for confirmation, rather than just doing the deed.
 public void delete(Request id, Response response, Template.View view, mixed ... args)
 {
   object mca;
