@@ -1,6 +1,6 @@
 #!/bin/sh
 
-FINS_HOME=$HOME/monotype/webapps/Keyboard
+FINS_HOME=/srv/delta-home/monotype/webapps/Keyboard
 export FINS_HOME
 while /bin/true ; 
 do
