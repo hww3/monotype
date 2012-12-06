@@ -418,10 +418,10 @@ dojo.declare(
 				encode: function(text)
 		                {
 		                  var textneu = text.replace(/%/,"%25");
+		                  textneu = textneu.replace(/\+/,"%2B");
 				  textneu = textneu.replace(/&/,"%26amp;");
 				  textneu = textneu.replace(/</,"%26lt;");
 				  textneu = textneu.replace(/>/,"%26gt;");
-				  textneu = textneu.replace(/"/,"%26quot;");
 				  return(textneu);
 		                },
 		
@@ -431,10 +431,10 @@ dojo.declare(
 			
 			"<table width=\"100%\">" + 
 			"<tr><td colspan='2'>Col: <b>${column}</b> Row: <b>${row}</b> Default Set: <b>${default_set_width}</b></td></tr>" + 
-			"<tr><td><input dojoType=\"dijit.form.RadioButton\" dojoAttachEvent='onClick:_onClickJustRadio' type=\"radio\" dojoAttachPoint='justradio' name=\"type${name}\" value=\"just\"></td><td width=\"90%\"> Justifying Space <td/></tr>\n" + 
-			"<tr><td><input dojoType=\"dijit.form.RadioButton\" dojoAttachEvent='onClick:_onClickSpaceRadio' type=\"radio\" dojoAttachPoint='spaceradio' name=\"type${name}\" value=\"space\"></td><td width=\"90%\"> Fixed Space <td/></tr>\n" + 
-			"<tr><td><input dojoType=\"dijit.form.RadioButton\" dojoAttachEvent='onClick:_onClickSortRadio' type=\"radio\" dojoAttachPoint='sortradio' name=\"type${name}\" value=\"sort\"></td><td width=\"90	%\"> Sort </td></tr>\n" + 
-			"<tr><td><input dojoType=\"dijit.form.RadioButton\" dojoAttachEvent='onClick:_onClickEmptyRadio' type=\"radio\" dojoAttachPoint='emptyradio' name=\"type${name}\" value=\"sort\"></td><td width=\"90	%\"> Empty </td></tr>\n" + 
+			"<tr><td><input dojoType=\"dijit.form.RadioButton\" dojoAttachEvent='onClick:_onClickJustRadio' type=\"radio\" dojoAttachPoint='justradio' name=\"type${name}\" value=\"just\" id=\"r1\"></td><td width=\"90%\"> <label style=\"margin: 0px\" for=\"r1\">Justifying Space</label><td/></tr>\n" + 
+			"<tr><td><input dojoType=\"dijit.form.RadioButton\" dojoAttachEvent='onClick:_onClickSpaceRadio' type=\"radio\" dojoAttachPoint='spaceradio' name=\"type${name}\" value=\"space\" id=\"r2\"></td><td width=\"90%\"> <label style=\"margin: 0px\" for=\"r2\">Fixed Space</label><td/></tr>\n" + 
+			"<tr><td><input dojoType=\"dijit.form.RadioButton\" dojoAttachEvent='onClick:_onClickSortRadio' type=\"radio\" dojoAttachPoint='sortradio' name=\"type${name}\" value=\"sort\" id=\"r3\"></td><td width=\"90	%\"> <label style=\"margin: 0px\" for=\"r3\">Sort</label></td></tr>\n" + 
+			"<tr><td><input dojoType=\"dijit.form.RadioButton\" dojoAttachEvent='onClick:_onClickEmptyRadio' type=\"radio\" dojoAttachPoint='emptyradio' name=\"type${name}\" value=\"sort\" id=\"r4\"></td><td width=\"90	%\"> <label style=\"margin: 0px\" for=\"r4\">Empty</label></td></tr>\n" + 
 
 			"<tr><td colspan=\"2\">" +
 			"<div style=\"display: none;\" dojoAttachPoint=\"sorteditordiv\">" +
