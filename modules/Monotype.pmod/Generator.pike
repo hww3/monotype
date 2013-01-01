@@ -52,6 +52,7 @@ string fine_code = "0005";
 string coarse_code = "0075";
 
 int space_adjust = 0;
+int indent_adjust = 0;
 
 int line_mode = MODE_JUSTIFY;
 
@@ -222,7 +223,7 @@ mixed i_parse_data(object parser, string data, mapping extra)
   //  process_setting_buffer();
 }
 
-void insert_header()
+void insert_header(int|void newpara)
 {
 	pagenumber++;
     linesonpage = 0;
@@ -230,7 +231,7 @@ void insert_header()
 	if(pagenumber%2) header_code = oheader_code;
 	else header_code = eheader_code;
 	
-	current_line = make_new_line();
+	make_new_line();
     current_line->line_on_page = linesonpage;
 	
 	if(!in_do_header && sizeof(header_code))
@@ -251,6 +252,7 @@ void insert_header()
 		data_to_set = _data_to_set;
 		in_do_header = 0;
 	}
+	make_new_line(newpara);
 }
 
 void insert_footer()
@@ -259,7 +261,7 @@ void insert_footer()
 	if(pagenumber%2) footer_code = ofooter_code;
 	else footer_code = efooter_code;
 	
-	current_line = make_new_line();
+	make_new_line();
 	
 	if(!in_do_footer && sizeof(footer_code))
 	{
@@ -286,8 +288,9 @@ int process_setting_buffer(int|void exact)
 	
 	if(!current_line)
 	{
+	  // if we get here, and there's no line present, it's the first line of the job, thus, by default, a new paragraph.
 //	  current_line = make_new_line();
-	  insert_header();
+	  insert_header(1);
 	}
 // werror("data_to_set: %O\n", data_to_set);
  
@@ -557,6 +560,7 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 		return 0;
     }
 	
+	
 	if(lcdata == "<i>")
 	{
 		process_setting_buffer();
@@ -611,22 +615,22 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 		process_setting_buffer();
 		line_mode = MODE_JUSTIFY;
 	}
-	if(lcdata == "<right>")
+	else if(lcdata == "<right>")
 	{
 		process_setting_buffer();
 		line_mode = MODE_RIGHT;
 	}
-	if(lcdata == "</right>")
+	else if(lcdata == "</right>")
 	{
 		process_setting_buffer();
 		line_mode = MODE_JUSTIFY;
 	}
-	if(lcdata == "<justify>")
+	else if(lcdata == "<justify>")
 	{
 		process_setting_buffer();
 		line_mode = MODE_JUSTIFY;
 	}
-	if(lcdata == "</justify>")
+	else if(lcdata == "</justify>")
 	{
 		process_setting_buffer();
 		line_mode = MODE_LEFT;
@@ -635,16 +639,12 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	{
 	  process_setting_buffer();
 		
-	  quad_out();
-	
-	  new_line();
+		new_paragraph(1);
     }
 	else if(lcdata == "<p>")
 	{
 	  process_setting_buffer();	
-	  if(!current_line->can_justify())
-        quad_out();
-	  new_line();
+	  new_paragraph();
     }
 	// insert fixed spaces
     else if(Regexp.SimpleRegexp("<[sS][0-9]*>")->match(data))
@@ -656,6 +656,19 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 			current_line->errors += ({"Fixed space (%d unit) won't fit on line... dropping.\n"});
 		}
 	}
+	// indent
+	else if(Regexp.SimpleRegexp("<indent[\\-0-9]*>")->match(lcdata))
+	{
+	  indent_adjust = (int)(data[7..sizeof(data)-2]);
+		process_setting_buffer();
+	}
+	// end letterspacing
+	else if(Regexp.SimpleRegexp("</indent[\\-0-9]*>")->match(lcdata))
+	{
+		indent_adjust = 0;
+		process_setting_buffer();
+	}
+
 	// letterspacing
 	else if(Regexp.SimpleRegexp("<[Ll][\\-0-9]*>")->match(data))
 	{
@@ -671,15 +684,10 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	// insert an activator
 	else if(Regexp.SimpleRegexp("<[Aa].*>")->match(data))
 	{
-                if(data[2..sizeof(data)-2] == "JS")
-                  data_to_set += ({ " " });
-                else
-   		  data_to_set+= ({(data[2..sizeof(data)-2])});
-/*		if(is_overset())
-		{
-			lineerrors+=({"Item (%d unit) won't fit on line... dropping.\n"});
-		}
-		*/
+    if(data[2..sizeof(data)-2] == "JS")
+      data_to_set += ({ " " });
+    else
+      data_to_set+= ({(data[2..sizeof(data)-2])});
 	}
 	else if(has_prefix(lcdata, "<setpagenumber "))
 	{
@@ -733,9 +741,45 @@ werror("splitting unnaturally.\n");
     return wp;
 }
 
-Line make_new_line()
+void new_paragraph(int|void quad)
 {
-	Line l;
+  if(!quad && current_line->can_justify()) /* do not quad out */ ; 
+  else
+    quad_out();
+  new_line(1);  
+}
+
+void make_new_line(int|void newpara)
+{
+  current_line = low_make_new_line();
+  
+  if(indent_adjust)
+	{
+  	int toadd = indent_adjust;
+  	if(newpara && toadd > 0)
+  	{
+  	  werror("indent %O.\n", indent_adjust);
+    	if(low_quad_out(toadd) != toadd)
+      {
+  	    current_line->errors += ({sprintf("Fixed space (%d unit) won't fit on line... dropping.\n", toadd)});
+      }	
+    }
+    else if(!newpara && toadd < 0)
+    {
+  	  werror("hanging indent %O.\n", indent_adjust);
+      toadd = abs(toadd);
+      
+    	if(low_quad_out(toadd) != toadd)
+      {
+  	    current_line->errors += ({sprintf("Fixed space (%d unit) won't fit on line... dropping.\n", toadd)});
+      }	      
+    }
+	}	
+}
+
+Line low_make_new_line()
+{
+	Line l;	
 	
 	l = Line(m, s, config, this);
 	l->line_number = ++numline;
@@ -879,10 +923,10 @@ array simple_find_space(int amount, mapping spaces)
  return toadd;
 }
 
-void break_page()
+void break_page(int|void newpara)
 {
 	insert_footer();		
-	insert_header();		
+	insert_header();
 }
 
 // actually generates the ribbon file from an array of lines of sorts.
@@ -920,19 +964,8 @@ string generate_ribbon()
 }
 
 // add the current line to the job, if it's justifyable.
-void new_line(int|void q)
+void new_line(int|void newpara)
 {
-	
-/*
-  if(!q && !current_line->linespaces && current_line->linelength != current_line->lineunits) 
-  {
-      current_line->remove();
-      current_line->add(" ", create_modifier(), space_adjust);
-      quad_out();
-      new_line(1);           
-      return;
-  }
-  else */
 
   if(!current_line->linespaces && current_line->linelength != current_line->lineunits)
   {
@@ -969,10 +1002,10 @@ void new_line(int|void q)
 
   if(config->page_length && !(linesonpage%config->page_length))
   {
-	break_page();
+  	break_page(newpara);
   }
   else
-    current_line = make_new_line();
+    make_new_line(newpara);
 
 
 }
