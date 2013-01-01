@@ -1,3 +1,7 @@
+20121231
+- Ribbon Generator and Caster Control: update to new version of Web and 
+   Cocoa frameworks.
+
 20121129
 - Ribbon Generator: moved mca errors and available sorts to icons, in order
    to save screen real estate.
