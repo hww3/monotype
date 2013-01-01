@@ -60,11 +60,14 @@ werror("**** " + (string)folder  + "\n");
 	}
 
    finserve = Fins.AdminTools.FinServe(({}));
+/*
    finserve->project = "Keyboard";
    finserve->config_name = "desktop";
    finserve->my_port = 5675;
+*/
+    finserve->no_virtual = 1;
    finserve->ready_callback = finserveStarted;
-   Thread.Thread(finserve->do_startup);
+   Thread.Thread(finserve->do_startup, ({"Keyboard"}), ({"desktop"}), 5675);
   if(!finserve->started())
   {
     Spinner->startAnimation_(this);
