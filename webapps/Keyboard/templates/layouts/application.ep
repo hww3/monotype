@@ -84,11 +84,11 @@
 <div class="footer">
 	
 		<p>	
-		    &copy; 2007-2012 H William Welliver III
+		    &copy; 2005-2013 H William Welliver III
 
             &nbsp;&nbsp;&nbsp;&nbsp;
 
-	    	<a href="http://hww3.riverweb.com/space/letterpress/monotype">compcat</a>
+	    	<a href="http://bill.welliver.org/space/letterpress/monotype">compcat</a>
 
 		    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		    <%#action_link "controller" : "/"%>Home</a>
