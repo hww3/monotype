@@ -1,6 +1,22 @@
 20121231
 - Ribbon Generator and Caster Control: update to new version of Web and 
    Cocoa frameworks.
+- Ribbon Generator: added support for indents, regular and hanging.
+
+  syntax:
+
+  <indentN> where N is a positive or negative integer indicating
+  the number of units to indent. Negative numbers trigger hanging
+  indentation.
+
+  Note: In order for the first line of text to honor indentation commands,
+  the indentation command should appear before any settable text (and thus
+  before the line is actually started, otherwise it will take effect on the 
+  next line.
+
+  Note: When pagebreaks are in play (ie, line length has been specified,) 
+  this will force a blank line between headers and the top of the next 
+  paragraph on the next page.
 
 20121129
 - Ribbon Generator: moved mca errors and available sorts to icons, in order
