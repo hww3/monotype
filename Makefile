@@ -50,7 +50,7 @@ rgapply_versions:
 
 ccstub: 
 	if [ ! -d Caster.app ]; then "${PUBLIC_OBJECTIVEC}/mkapp" "${CASTER_CONTROL}"; fi
-	cp -Rf "external_modules" "${RIBBON_GENERATOR}.app/Contents/Resources/modules"
+	cp -Rf "external_modules" "${CASTER_CONTROL}.app/Contents/Resources/modules"
 	cp -Rf "${SPARKLE_HOME}/Sparkle.framework" "${CASTER_CONTROL}.app/Contents/Frameworks"
 
 ccapp: 
