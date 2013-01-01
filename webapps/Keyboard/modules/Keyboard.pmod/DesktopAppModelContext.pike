@@ -5,11 +5,11 @@ inherit Fins.Model.SqlDataModelContext;
 
 import Public.ObjectiveC;
 
-void set_url(string url)
+void set_url(string _url)
 {
 	object fm = Cocoa.NSFileManager.defaultManager();
-	url = "~/Library/Application Support/Monotype Caster Control";
-	object folder = Cocoa.NSString.stringWithCString_(url)->stringByExpandingTildeInPath();
+	_url = "~/Library/Application Support/Monotype Caster Control";
+	object folder = Cocoa.NSString.stringWithCString_(_url)->stringByExpandingTildeInPath();
 werror("**** checking path...\n");
 werror("**** " + (string)folder  + "\n");
 	if(!fm->fileExistsAtPath_(folder))
@@ -22,9 +22,9 @@ werror("**** " + (string)folder  + "\n");
 			combine_path((string)folder, "RibbonGeneratorData.sqlite3"), 0);
 	}
 
-	url = "sqlite://" + combine_path((string)folder, "RibbonGeneratorData.sqlite3");
-	werror("**** " + url);
-
+	_url = "sqlite://" + combine_path((string)folder, "RibbonGeneratorData.sqlite3");
+	werror("**** " + _url);
+        ::set_url(_url);
   run_upgrade();
 }
 
