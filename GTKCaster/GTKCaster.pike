@@ -3,6 +3,7 @@ inherit "CasterControllerOutlets";
 object gx;
 object mainWindow;
 object AboutDialog;
+object File_Open_Menu;
 
 static void create(int argc, array argv)
 {
@@ -227,6 +228,7 @@ void setCycleIndicator(int(0..1) status)
     CasterToggleButton->set_label(({"Start", "Stop"})[state]);
 
     LoadJobButton->set_sensitive(!state);
+    File_Open_Menu->set_sensitive(!state);
     SkipForwardButton->set_sensitive(state);
     SkipBackwardButton->set_sensitive(state);
     SkipBeginButton->set_sensitive(state);
