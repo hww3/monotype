@@ -1,4 +1,3 @@
-import Public.ObjectiveC;
 
   constant all_codes = ({"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N",
                          "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14",
@@ -171,25 +170,24 @@ werror("disablePin(%O)\n", pin);
     return ribbon->current_pos;	
   }
 
-  // called by anyone except the UI when the processing should be stopped, such as end of ribbon.
-  void doStop()
+  void ribbon_line_changed(object ribbon)
   {
-	//return;
-	ui->CasterToggleButton->setState_(0);
-	ui->toggleCaster_(0);
+	array current_line = ribbon->get_current_line_contents();
+	setLineContents(current_line *"");
   }
 
-  void setStatus(string s)
+  static void create(object _ui, mapping config)
   {
-	werror("%O\n", ui->Status);
-	ui->Status->setStringValue_(s);
-	setLineStatus(ribbon?ribbon->current_line:"0");
-  }
+    ui = _ui;
+    mixed e = catch{
+      plugin = ((program)"Plugins.pmod/MonotypeInterface")(this, config);
+    };
 
-  void processedCode()
-  {
-    if(!inManualControl)
-	ui->Thermometer->setDoubleValue_(((float)ribbon->current_pos/jobinfo->code_count)*100);
+    if(e)
+    {
+      ui->alert("Interface not present", "No Monotype interface found, using simulator.");
+      plugin = ((program)"Plugins.pmod/Simulator")(this, config);
+    }
   }
 
   mapping loadRibbon(string filename)
@@ -202,46 +200,42 @@ werror("disablePin(%O)\n", pin);
      return jobinfo;
   }
 
+  //
+  //
+  // UI Specific code below.
+  //
+  //
+
+  // called by anyone except the UI when the processing should be stopped, such as end of ribbon.
+  void doStop()
+  {
+    ui->toggleCaster(0);
+  }
+
+  void setStatus(string s)
+  {
+    werror("%O\n", ui->Status);
+    ui->setStatus(s);
+    setLineStatus(ribbon?ribbon->current_line:"0");
+  }
+
+  void processedCode()
+  {
+    if(!inManualControl)
+      ui->updateThermometer(((float)ribbon->current_pos/jobinfo->code_count)*100);
+  }
+
   void setLineStatus(string s)
   {
-//	werror("%O\n", ui->Status);
-	ui->CurrentLine->setStringValue_(s + "/" + jobinfo->line_count);
+    ui->setLineStatus(s + "/" + jobinfo->line_count);
   }
 
   void setLineContents(string s)
   {
-//	werror("%O\n", ui->Status);
-	ui->LineContentsLabel->setStringValue_(reverse(s));
+    ui->setLineContents(reverse(s));
   }
 
   void setCycleStatus(int(0..1) status)
   {
-    ui->CycleIndicator->setIntValue_(status);
-  }
-
-  static void create(object _ui, mapping config)
-  {
-	mixed e = catch{
-  	  plugin = ((program)"Plugins.pmod/MonotypeInterface")(this, config);
-    };
-
-    if(e)
-    {
-/*	
-	  object a = Cocoa.NSAlert()->init();
-	  a->addButtonWithTitle_("OK");
-	  a->setMessageText_("No Monotype interface found, using Simulator.");
-	  a->runModal();
-*/
-  AppKit()->NSRunAlertPanel("Interface not present", "No Monotype interface found, using simulator.", "OK", "", "");
-	
-	  plugin = ((program)"Plugins.pmod/Simulator")(this, config);
-    }
-	ui = _ui;
-  }
-
-  void ribbon_line_changed(object ribbon)
-  {
-	array current_line = ribbon->get_current_line_contents();
-	setLineContents(current_line *"");
+    ui->setCycleIndicator(status);
   }
