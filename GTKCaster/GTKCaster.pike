@@ -4,6 +4,7 @@ object gx;
 object mainWindow;
 object AboutDialog;
 object File_Open_Menu;
+object View_JumpToLine_Menu;
 
 static void create(int argc, array argv)
 {
@@ -161,7 +162,7 @@ void LoadJobButton_clicked_cb(mixed ... args)
     jobinfo = Driver->loadRibbon(file);
     set_job_info();
     CasterToggleButton->set_sensitive(1);
-//  JumpToLineItem->setEnabled_(1);
+    JumpToLineItem->set_sensitive(1);
 //  app->mainMenu()->update();
 
   }

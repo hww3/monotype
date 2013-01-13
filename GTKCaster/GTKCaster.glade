@@ -106,9 +106,10 @@
                   <widget class="GtkMenu" id="menu4">
                     <property name="visible">True</property>
                     <child>
-                      <widget class="GtkImageMenuItem" id="imagemenuitem11">
+                      <widget class="GtkImageMenuItem" id="View_JumpToLine_Menu">
                         <property name="label">gtk-jump-to</property>
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <signal name="activate" handler="do_jump"/>
