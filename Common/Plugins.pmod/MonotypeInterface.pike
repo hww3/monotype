@@ -95,7 +95,7 @@ array pinmap = ({ /* 31 elements */
 void report_callback(mixed ... args)
 {
   int nv;
-
+werror("args: %O\n", args);
   sscanf(args[0], "%04c", nv);
 werror("callback: %O\n", nv);
   nv = nv & interesting_bits;
@@ -185,14 +185,16 @@ void end_code()
 {
   int code;
   code = interesting_bits;	
-  iow->write_interface(0, sprintf("%04c", code));
+  iow->write_interface0(sprintf("%04c", code));
+werror("wrote data1.\n");
 }
 
 void send_code_to_interface(array code_str)
 {
   int code = map_code_to_pins(code_str);
   werror("writing code %032b\n", code); 
-  iow->write_interface(0, sprintf("%04c", code));
+  iow->write_interface0(sprintf("%04c", code));
+werror("wrote data2.\n");
 }
 
 static void create(object driver, mapping config)
@@ -206,10 +208,11 @@ static void create(object driver, mapping config)
   iow->count_interfaces();
 
   // shut everything off initially.
-  iow->write_interface(0, sprintf("%04c", 0));
-  
-  iow->set_report_callback(report_callback, 0);
+  iow->write_interface0(sprintf("%04c", 0));
+  werror("wrote data.\n");
 
+  iow->set_report_callback(report_callback, 0);
+werror("done.\n");
 //  Public.ObjectiveC.add_backend_runloop();
 }
 

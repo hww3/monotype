@@ -186,6 +186,7 @@ werror("disablePin(%O)\n", pin);
     if(e)
     {
       ui->alert("Interface not present", "No Monotype interface found, using simulator.");
+      werror(master()->describe_backtrace(e));
       plugin = ((program)"Plugins.pmod/Simulator")(this, config);
     }
   }
