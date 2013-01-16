@@ -6,6 +6,9 @@ object AboutDialog;
 object File_Open_Menu;
 object View_JumpToLine_Menu;
 
+string pref_file = combine_path(getenv("HOME"), ".monotype_caster.preferences");
+mapping preferences = ([]);
+
 static void create(int argc, array argv)
 {
   GTK2.setup_gtk(argv);
@@ -45,13 +48,66 @@ int main(int argc, array argv)
 
 void register_preferences()
 {
+  load_preferences();
+  add_preference("cycleSensorDebounce", 0);
+  add_preference("cycleSensorIsPermanent", 0);
+  save_preferences();
 }
+
+void add_preference(string key, mixed value)
+{
+  if(!has_index(preferences, key)) preferences[key] = value;
+}
+
+void update_preference(string key, mixed value)
+{
+  preferences[key] = value;
+  save_preferences();
+}
+
+void load_preferences()
+{
+  werror("loading preferences from %O\n", pref_file);
+  if(file_stat(pref_file))
+  {
+    preferences = Standards.JSON.decode(Stdio.read_file(pref_file));
+  }
+}
+
+void save_preferences()
+{
+  werror("saving preferences to %O\n", pref_file);
+  Stdio.write_file(pref_file, Standards.JSON.encode(preferences));
+}
+
+void debounceChanged(object slider)
+{
+  int x = (int)slider->get_value();
+  update_preference("cycleSensorDebounce", x);
+  Driver->CycleSensorDebounce = x;
+  werror("debounceChanged(%O)\n", x);
+}
+
+void toggleCycleSensorType(object checkbox)
+{
+  int state = checkbox->get_active();
+
+  update_preference("cycleSensorIsPermanent", state);
+  CycleSensorMode = state;	
+}
+
 
 int do_manual_pin_control_close(object widget)
 {
   Driver->disableManualControl();
   CasterToggleButton->set_active(was_caster_enabled); 
   PinControlWindow->hide();
+  return 1;
+}
+
+int do_preference_close(object widget)
+{
+  PreferenceWindow->hide();
   return 1;
 }
 
@@ -95,6 +151,12 @@ void manual_check_toggled(object widget)
 }
 
 
+void preferences_activate_cb(object widget)
+{
+  PreferenceWindow->show_all();
+  PreferenceWindow->signal_connect("delete-event", do_preference_close);
+}
+
 void do_jump(mixed ... args)
 {
   JumpToLineBox->show_all();
@@ -123,24 +185,24 @@ void do_exit(mixed ... args)
 
 void allOff(object b)
 {
-        werror("allOff(%O)\n", b);
-        foreach(buttonstotouch;; string but)
-        {
-          if(this["c" + but])
-            this["c" + but]->set_active(0);
-        }
-        Driver->allOff();
+  werror("allOff(%O)\n", b);
+  foreach(buttonstotouch;; string but)
+  {
+    if(this["c" + but])
+      this["c" + but]->set_active(0);
+  }
+  Driver->allOff();
 }
 
 void allOn(object b)
 {
-        werror("allOn(%O)\n", b);
-        foreach(buttonstotouch;; string but)
-        {
-          if(this["c" + but])
-            this["c" + but]->set_active(1);
-        }
-        Driver->allOn();
+  werror("allOn(%O)\n", b);
+  foreach(buttonstotouch;; string but)
+  {
+    if(this["c" + but])
+      this["c" + but]->set_active(1);
+  }
+  Driver->allOn();
 }
 
 void AllOff_clicked_cb(object widget)
