@@ -647,9 +647,17 @@
                         <property name="visible">True</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <widget class="GtkLabel" id="A">
+                          <widget class="GtkEventBox" id="A">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">A</property>
+                            <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                            <signal name="button_press_event" handler="mpc_button_press_event_cb"/>
+                            <child>
+                              <widget class="GtkLabel" id="z2">
+                                <property name="visible">True</property>
+                                <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                                <property name="label" translatable="yes">A</property>
+                              </widget>
+                            </child>
                           </widget>
                           <packing>
                             <property name="position">0</property>
@@ -678,9 +686,17 @@
                         <property name="visible">True</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <widget class="GtkLabel" id="B">
+                          <widget class="GtkEventBox" id="B">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">B</property>
+                            <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                            <signal name="button_press_event" handler="mpc_button_press_event_cb"/>
+                            <child>
+                              <widget class="GtkLabel" id="z3">
+                                <property name="visible">True</property>
+                                <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                                <property name="label" translatable="yes">B</property>
+                              </widget>
+                            </child>
                           </widget>
                           <packing>
                             <property name="position">0</property>
@@ -709,9 +725,17 @@
                         <property name="visible">True</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <widget class="GtkLabel" id="C">
+                          <widget class="GtkEventBox" id="C">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">C</property>
+                            <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                            <signal name="button_press_event" handler="mpc_button_press_event_cb"/>
+                            <child>
+                              <widget class="GtkLabel" id="z4">
+                                <property name="visible">True</property>
+                                <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                                <property name="label" translatable="yes">C</property>
+                              </widget>
+                            </child>
                           </widget>
                           <packing>
                             <property name="position">0</property>
@@ -740,9 +764,17 @@
                         <property name="visible">True</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <widget class="GtkLabel" id="D">
+                          <widget class="GtkEventBox" id="D">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">D</property>
+                            <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                            <signal name="button_press_event" handler="mpc_button_press_event_cb"/>
+                            <child>
+                              <widget class="GtkLabel" id="z5">
+                                <property name="visible">True</property>
+                                <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                                <property name="label" translatable="yes">D</property>
+                              </widget>
+                            </child>
                           </widget>
                           <packing>
                             <property name="position">0</property>
@@ -771,9 +803,17 @@
                         <property name="visible">True</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <widget class="GtkLabel" id="E">
+                          <widget class="GtkEventBox" id="E">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">E</property>
+                            <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                            <signal name="button_press_event" handler="mpc_button_press_event_cb"/>
+                            <child>
+                              <widget class="GtkLabel" id="z6">
+                                <property name="visible">True</property>
+                                <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                                <property name="label" translatable="yes">E</property>
+                              </widget>
+                            </child>
                           </widget>
                           <packing>
                             <property name="position">0</property>
@@ -802,9 +842,17 @@
                         <property name="visible">True</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <widget class="GtkLabel" id="F">
+                          <widget class="GtkEventBox" id="F">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">F</property>
+                            <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                            <signal name="button_press_event" handler="mpc_button_press_event_cb"/>
+                            <child>
+                              <widget class="GtkLabel" id="z7">
+                                <property name="visible">True</property>
+                                <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                                <property name="label" translatable="yes">F</property>
+                              </widget>
+                            </child>
                           </widget>
                           <packing>
                             <property name="position">0</property>
@@ -833,9 +881,17 @@
                         <property name="visible">True</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <widget class="GtkLabel" id="G">
+                          <widget class="GtkEventBox" id="G">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">G</property>
+                            <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                            <signal name="button_press_event" handler="mpc_button_press_event_cb"/>
+                            <child>
+                              <widget class="GtkLabel" id="z8">
+                                <property name="visible">True</property>
+                                <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                                <property name="label" translatable="yes">G</property>
+                              </widget>
+                            </child>
                           </widget>
                           <packing>
                             <property name="position">0</property>
@@ -864,9 +920,17 @@
                         <property name="visible">True</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <widget class="GtkLabel" id="H">
+                          <widget class="GtkEventBox" id="H">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">H</property>
+                            <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                            <signal name="button_press_event" handler="mpc_button_press_event_cb"/>
+                            <child>
+                              <widget class="GtkLabel" id="z9">
+                                <property name="visible">True</property>
+                                <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                                <property name="label" translatable="yes">H</property>
+                              </widget>
+                            </child>
                           </widget>
                           <packing>
                             <property name="position">0</property>
@@ -895,9 +959,17 @@
                         <property name="visible">True</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <widget class="GtkLabel" id="I">
+                          <widget class="GtkEventBox" id="I">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">I</property>
+                            <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                            <signal name="button_press_event" handler="mpc_button_press_event_cb"/>
+                            <child>
+                              <widget class="GtkLabel" id="z10">
+                                <property name="visible">True</property>
+                                <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                                <property name="label" translatable="yes">I</property>
+                              </widget>
+                            </child>
                           </widget>
                           <packing>
                             <property name="position">0</property>
@@ -926,9 +998,17 @@
                         <property name="visible">True</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <widget class="GtkLabel" id="J">
+                          <widget class="GtkEventBox" id="J">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">J</property>
+                            <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                            <signal name="button_press_event" handler="mpc_button_press_event_cb"/>
+                            <child>
+                              <widget class="GtkLabel" id="z11">
+                                <property name="visible">True</property>
+                                <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                                <property name="label" translatable="yes">J</property>
+                              </widget>
+                            </child>
                           </widget>
                           <packing>
                             <property name="position">0</property>
@@ -957,9 +1037,17 @@
                         <property name="visible">True</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <widget class="GtkLabel" id="K">
+                          <widget class="GtkEventBox" id="K">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">K</property>
+                            <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                            <signal name="button_press_event" handler="mpc_button_press_event_cb"/>
+                            <child>
+                              <widget class="GtkLabel" id="z12">
+                                <property name="visible">True</property>
+                                <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                                <property name="label" translatable="yes">K</property>
+                              </widget>
+                            </child>
                           </widget>
                           <packing>
                             <property name="position">0</property>
@@ -988,9 +1076,17 @@
                         <property name="visible">True</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <widget class="GtkLabel" id="L">
+                          <widget class="GtkEventBox" id="L">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">L</property>
+                            <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                            <signal name="button_press_event" handler="mpc_button_press_event_cb"/>
+                            <child>
+                              <widget class="GtkLabel" id="z13">
+                                <property name="visible">True</property>
+                                <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                                <property name="label" translatable="yes">L</property>
+                              </widget>
+                            </child>
                           </widget>
                           <packing>
                             <property name="position">0</property>
@@ -1019,9 +1115,17 @@
                         <property name="visible">True</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <widget class="GtkLabel" id="M">
+                          <widget class="GtkEventBox" id="M">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">M</property>
+                            <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                            <signal name="button_press_event" handler="mpc_button_press_event_cb"/>
+                            <child>
+                              <widget class="GtkLabel" id="z14">
+                                <property name="visible">True</property>
+                                <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                                <property name="label" translatable="yes">M</property>
+                              </widget>
+                            </child>
                           </widget>
                           <packing>
                             <property name="position">0</property>
@@ -1050,9 +1154,18 @@
                         <property name="visible">True</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <widget class="GtkLabel" id="N">
+                          <widget class="GtkEventBox" id="N">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">N</property>
+                            <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                            <signal name="button_press_event" handler="mpc_button_press_event_cb"/>
+                            <child>
+                              <widget class="GtkLabel" id="z15">
+                                <property name="visible">True</property>
+                                <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                                <property name="label" translatable="yes">N</property>
+                                <signal name="button_press_event" handler="mpc_button_press_event_cb"/>
+                              </widget>
+                            </child>
                           </widget>
                           <packing>
                             <property name="position">0</property>
@@ -1099,9 +1212,17 @@
                         <property name="visible">True</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <widget class="GtkLabel" id="1">
+                          <widget class="GtkEventBox" id="1">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">1</property>
+                            <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                            <signal name="button_press_event" handler="mpc_button_press_event_cb"/>
+                            <child>
+                              <widget class="GtkLabel" id="z1">
+                                <property name="visible">True</property>
+                                <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                                <property name="label" translatable="yes">1</property>
+                              </widget>
+                            </child>
                           </widget>
                           <packing>
                             <property name="position">0</property>
@@ -1113,6 +1234,7 @@
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
                             <property name="draw_indicator">True</property>
+                            <signal name="toggled" handler="manual_check_toggled"/>
                           </widget>
                           <packing>
                             <property name="position">1</property>
@@ -1129,9 +1251,17 @@
                         <property name="visible">True</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <widget class="GtkLabel" id="2">
+                          <widget class="GtkEventBox" id="2">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">1</property>
+                            <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                            <signal name="button_press_event" handler="mpc_button_press_event_cb"/>
+                            <child>
+                              <widget class="GtkLabel" id="z19">
+                                <property name="visible">True</property>
+                                <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                                <property name="label" translatable="yes">2</property>
+                              </widget>
+                            </child>
                           </widget>
                           <packing>
                             <property name="position">0</property>
@@ -1143,6 +1273,7 @@
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
                             <property name="draw_indicator">True</property>
+                            <signal name="toggled" handler="manual_check_toggled"/>
                           </widget>
                           <packing>
                             <property name="position">1</property>
@@ -1159,9 +1290,17 @@
                         <property name="visible">True</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <widget class="GtkLabel" id="3">
+                          <widget class="GtkEventBox" id="3">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">1</property>
+                            <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                            <signal name="button_press_event" handler="mpc_button_press_event_cb"/>
+                            <child>
+                              <widget class="GtkLabel" id="z20">
+                                <property name="visible">True</property>
+                                <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                                <property name="label" translatable="yes">3</property>
+                              </widget>
+                            </child>
                           </widget>
                           <packing>
                             <property name="position">0</property>
@@ -1173,6 +1312,7 @@
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
                             <property name="draw_indicator">True</property>
+                            <signal name="toggled" handler="manual_check_toggled"/>
                           </widget>
                           <packing>
                             <property name="position">1</property>
@@ -1189,9 +1329,17 @@
                         <property name="visible">True</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <widget class="GtkLabel" id="4">
+                          <widget class="GtkEventBox" id="4">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">1</property>
+                            <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                            <signal name="button_press_event" handler="mpc_button_press_event_cb"/>
+                            <child>
+                              <widget class="GtkLabel" id="z21">
+                                <property name="visible">True</property>
+                                <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                                <property name="label" translatable="yes">4</property>
+                              </widget>
+                            </child>
                           </widget>
                           <packing>
                             <property name="position">0</property>
@@ -1203,6 +1351,7 @@
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
                             <property name="draw_indicator">True</property>
+                            <signal name="toggled" handler="manual_check_toggled"/>
                           </widget>
                           <packing>
                             <property name="position">1</property>
@@ -1219,9 +1368,17 @@
                         <property name="visible">True</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <widget class="GtkLabel" id="5">
+                          <widget class="GtkEventBox" id="5">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">1</property>
+                            <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                            <signal name="button_press_event" handler="mpc_button_press_event_cb"/>
+                            <child>
+                              <widget class="GtkLabel" id="z22">
+                                <property name="visible">True</property>
+                                <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                                <property name="label" translatable="yes">5</property>
+                              </widget>
+                            </child>
                           </widget>
                           <packing>
                             <property name="position">0</property>
@@ -1233,6 +1390,7 @@
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
                             <property name="draw_indicator">True</property>
+                            <signal name="toggled" handler="manual_check_toggled"/>
                           </widget>
                           <packing>
                             <property name="position">1</property>
@@ -1249,9 +1407,17 @@
                         <property name="visible">True</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <widget class="GtkLabel" id="6">
+                          <widget class="GtkEventBox" id="6">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">1</property>
+                            <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                            <signal name="button_press_event" handler="mpc_button_press_event_cb"/>
+                            <child>
+                              <widget class="GtkLabel" id="z23">
+                                <property name="visible">True</property>
+                                <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                                <property name="label" translatable="yes">6</property>
+                              </widget>
+                            </child>
                           </widget>
                           <packing>
                             <property name="position">0</property>
@@ -1263,6 +1429,7 @@
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
                             <property name="draw_indicator">True</property>
+                            <signal name="toggled" handler="manual_check_toggled"/>
                           </widget>
                           <packing>
                             <property name="position">1</property>
@@ -1279,9 +1446,17 @@
                         <property name="visible">True</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <widget class="GtkLabel" id="7">
+                          <widget class="GtkEventBox" id="7">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">1</property>
+                            <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                            <signal name="button_press_event" handler="mpc_button_press_event_cb"/>
+                            <child>
+                              <widget class="GtkLabel" id="z24">
+                                <property name="visible">True</property>
+                                <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                                <property name="label" translatable="yes">7</property>
+                              </widget>
+                            </child>
                           </widget>
                           <packing>
                             <property name="position">0</property>
@@ -1293,6 +1468,7 @@
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
                             <property name="draw_indicator">True</property>
+                            <signal name="toggled" handler="manual_check_toggled"/>
                           </widget>
                           <packing>
                             <property name="position">1</property>
@@ -1309,9 +1485,17 @@
                         <property name="visible">True</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <widget class="GtkLabel" id="8">
+                          <widget class="GtkEventBox" id="8">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">1</property>
+                            <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                            <signal name="button_press_event" handler="mpc_button_press_event_cb"/>
+                            <child>
+                              <widget class="GtkLabel" id="z25">
+                                <property name="visible">True</property>
+                                <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                                <property name="label" translatable="yes">8</property>
+                              </widget>
+                            </child>
                           </widget>
                           <packing>
                             <property name="position">0</property>
@@ -1323,6 +1507,7 @@
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
                             <property name="draw_indicator">True</property>
+                            <signal name="toggled" handler="manual_check_toggled"/>
                           </widget>
                           <packing>
                             <property name="position">1</property>
@@ -1339,20 +1524,29 @@
                         <property name="visible">True</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <widget class="GtkLabel" id="10">
+                          <widget class="GtkEventBox" id="9">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">1</property>
+                            <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                            <signal name="button_press_event" handler="mpc_button_press_event_cb"/>
+                            <child>
+                              <widget class="GtkLabel" id="z26">
+                                <property name="visible">True</property>
+                                <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                                <property name="label" translatable="yes">9</property>
+                              </widget>
+                            </child>
                           </widget>
                           <packing>
                             <property name="position">0</property>
                           </packing>
                         </child>
                         <child>
-                          <widget class="GtkCheckButton" id="c10">
+                          <widget class="GtkCheckButton" id="c9">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
                             <property name="draw_indicator">True</property>
+                            <signal name="toggled" handler="manual_check_toggled"/>
                           </widget>
                           <packing>
                             <property name="position">1</property>
@@ -1369,20 +1563,29 @@
                         <property name="visible">True</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <widget class="GtkLabel" id="9">
+                          <widget class="GtkEventBox" id="10">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">1</property>
+                            <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                            <signal name="button_press_event" handler="mpc_button_press_event_cb"/>
+                            <child>
+                              <widget class="GtkLabel" id="z27">
+                                <property name="visible">True</property>
+                                <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                                <property name="label" translatable="yes">10</property>
+                              </widget>
+                            </child>
                           </widget>
                           <packing>
                             <property name="position">0</property>
                           </packing>
                         </child>
                         <child>
-                          <widget class="GtkCheckButton" id="c9">
+                          <widget class="GtkCheckButton" id="c10">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
                             <property name="draw_indicator">True</property>
+                            <signal name="toggled" handler="manual_check_toggled"/>
                           </widget>
                           <packing>
                             <property name="position">1</property>
@@ -1399,9 +1602,17 @@
                         <property name="visible">True</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <widget class="GtkLabel" id="11">
+                          <widget class="GtkEventBox" id="11">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">1</property>
+                            <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                            <signal name="button_press_event" handler="mpc_button_press_event_cb"/>
+                            <child>
+                              <widget class="GtkLabel" id="z28">
+                                <property name="visible">True</property>
+                                <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                                <property name="label" translatable="yes">11</property>
+                              </widget>
+                            </child>
                           </widget>
                           <packing>
                             <property name="position">0</property>
@@ -1413,6 +1624,7 @@
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
                             <property name="draw_indicator">True</property>
+                            <signal name="toggled" handler="manual_check_toggled"/>
                           </widget>
                           <packing>
                             <property name="position">1</property>
@@ -1429,9 +1641,17 @@
                         <property name="visible">True</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <widget class="GtkLabel" id="12">
+                          <widget class="GtkEventBox" id="12">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">1</property>
+                            <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                            <signal name="button_press_event" handler="mpc_button_press_event_cb"/>
+                            <child>
+                              <widget class="GtkLabel" id="z29">
+                                <property name="visible">True</property>
+                                <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                                <property name="label" translatable="yes">12</property>
+                              </widget>
+                            </child>
                           </widget>
                           <packing>
                             <property name="position">0</property>
@@ -1443,6 +1663,7 @@
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
                             <property name="draw_indicator">True</property>
+                            <signal name="toggled" handler="manual_check_toggled"/>
                           </widget>
                           <packing>
                             <property name="position">1</property>
@@ -1459,9 +1680,17 @@
                         <property name="visible">True</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <widget class="GtkLabel" id="13">
+                          <widget class="GtkEventBox" id="13">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">1</property>
+                            <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                            <signal name="button_press_event" handler="mpc_button_press_event_cb"/>
+                            <child>
+                              <widget class="GtkLabel" id="z30">
+                                <property name="visible">True</property>
+                                <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                                <property name="label" translatable="yes">13</property>
+                              </widget>
+                            </child>
                           </widget>
                           <packing>
                             <property name="position">0</property>
@@ -1473,6 +1702,7 @@
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
                             <property name="draw_indicator">True</property>
+                            <signal name="toggled" handler="manual_check_toggled"/>
                           </widget>
                           <packing>
                             <property name="position">1</property>
@@ -1489,9 +1719,17 @@
                         <property name="visible">True</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <widget class="GtkLabel" id="14">
+                          <widget class="GtkEventBox" id="14">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">1</property>
+                            <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                            <signal name="button_press_event" handler="mpc_button_press_event_cb"/>
+                            <child>
+                              <widget class="GtkLabel" id="z31">
+                                <property name="visible">True</property>
+                                <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                                <property name="label" translatable="yes">14</property>
+                              </widget>
+                            </child>
                           </widget>
                           <packing>
                             <property name="position">0</property>
@@ -1503,6 +1741,7 @@
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
                             <property name="draw_indicator">True</property>
+                            <signal name="toggled" handler="manual_check_toggled"/>
                           </widget>
                           <packing>
                             <property name="position">1</property>
@@ -1547,9 +1786,17 @@
                         <property name="visible">True</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <widget class="GtkLabel" id="S">
+                          <widget class="GtkEventBox" id="S">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">S</property>
+                            <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                            <signal name="button_press_event" handler="mpc_button_press_event_cb"/>
+                            <child>
+                              <widget class="GtkLabel" id="z16">
+                                <property name="visible">True</property>
+                                <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                                <property name="label" translatable="yes">S</property>
+                              </widget>
+                            </child>
                           </widget>
                           <packing>
                             <property name="position">0</property>
@@ -1578,9 +1825,17 @@
                         <property name="visible">True</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <widget class="GtkLabel" id="007">
+                          <widget class="GtkEventBox" id="0075">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">0075</property>
+                            <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                            <signal name="button_press_event" handler="mpc_button_press_event_cb"/>
+                            <child>
+                              <widget class="GtkLabel" id="z17">
+                                <property name="visible">True</property>
+                                <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                                <property name="label" translatable="yes">0075</property>
+                              </widget>
+                            </child>
                           </widget>
                           <packing>
                             <property name="position">0</property>
@@ -1609,16 +1864,24 @@
                         <property name="visible">True</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <widget class="GtkLabel" id="0005">
+                          <widget class="GtkEventBox" id="0005">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">0005</property>
+                            <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                            <signal name="button_press_event" handler="mpc_button_press_event_cb"/>
+                            <child>
+                              <widget class="GtkLabel" id="z18">
+                                <property name="visible">True</property>
+                                <property name="events">GDK_BUTTON_PRESS_MASK | GDK_STRUCTURE_MASK</property>
+                                <property name="label" translatable="yes">0005</property>
+                              </widget>
+                            </child>
                           </widget>
                           <packing>
                             <property name="position">0</property>
                           </packing>
                         </child>
                         <child>
-                          <widget class="GtkCheckButton" id="c000">
+                          <widget class="GtkCheckButton" id="c0005">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
@@ -1665,6 +1928,7 @@
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
                     <property name="draw_indicator">True</property>
+                    <signal name="toggled" handler="IgnoreCycleButton_toggled_cb"/>
                   </widget>
                   <packing>
                     <property name="padding">5</property>
@@ -1686,6 +1950,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <signal name="clicked" handler="AllOn_clicked_cb"/>
                   </widget>
                   <packing>
                     <property name="padding">5</property>
@@ -1698,6 +1963,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <signal name="clicked" handler="AllOff_clicked_cb"/>
                   </widget>
                   <packing>
                     <property name="padding">5</property>

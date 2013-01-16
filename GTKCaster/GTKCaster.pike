@@ -64,8 +64,22 @@ void do_manual_pin_control(object widget)
   was_caster_enabled = CasterToggleButton->get_active();
   CasterToggleButton->set_active(0);
   Driver->enableManualControl();
-  //ignoreCycleClicked_(IgnoreCycleButton);
+  IgnoreCycleButton_toggled_cb(IgnoreCycleButton);
   allOff(widget);
+}
+
+void IgnoreCycleButton_toggled_cb(object widget)
+{
+  int icc = widget->get_active();
+  if(icc)
+  {
+    Driver->forceOn();
+  }
+  else
+  {
+    Driver->forceOff();
+  }
+
 }
 
 void manual_check_toggled(object widget)
@@ -118,6 +132,34 @@ void allOff(object b)
         Driver->allOff();
 }
 
+void allOn(object b)
+{
+        werror("allOn(%O)\n", b);
+        foreach(buttonstotouch;; string but)
+        {
+          if(this["c" + but])
+            this["c" + but]->set_active(1);
+        }
+        Driver->allOn();
+}
+
+void AllOff_clicked_cb(object widget)
+{
+  allOff(widget);
+}
+
+void AllOn_clicked_cb(object widget)
+{
+  allOn(widget);
+}
+
+void mpc_button_press_event_cb(object widget)
+{
+  string id = widget->get_name();
+  object w = this["c" + id];
+  w->set_active(!w->get_active());
+}
+
 void SkipBackwardButton_clicked_cb(object widget)
 {
   Driver->backwardLine();
@@ -136,7 +178,7 @@ void SkipBeginButton_clicked_cb(object widget)
 void CasterToggleButton_toggled_cb(object widget)
 {
   int state = widget->get_active();
-  werror("CasterTogglebutton_toggled_cb(%O, %O)\n", widget, state);
+//  werror("CasterTogglebutton_toggled_cb(%O, %O)\n", widget, state);
   toggleCaster(state);
 }
 

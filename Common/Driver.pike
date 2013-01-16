@@ -103,7 +103,7 @@ werror("disablePin(%O)\n", pin);
   {
     if(inManualControl) 
     {
-      werror("getNextCode(): manual code %s\n", manualCode*"");
+//      werror("getNextCode(): manual code %s\n", manualCode*"");
       return manualCode;
     }
     else if(ribbon)
