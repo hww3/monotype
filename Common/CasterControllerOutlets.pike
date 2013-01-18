@@ -6,10 +6,12 @@ object SkipBackwardButton;
 object SkipBeginButton;
 object CasterToggleButton;
 object LoadJobButton;
-object PinControlItem;
 object PinControlWindow;
 object JumpToLineWindow;
+
+object PinControlItem;
 object JumpToLineItem;
+object LoadJobItem;
 
 object JumpToLineBox;
 object MainWindow;

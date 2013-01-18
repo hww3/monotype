@@ -2,18 +2,26 @@
 import Public.ObjectiveC;
 
 inherit Cocoa.NSObject;
-inherit CasterControllerOutlets;
+inherit "CasterControllerOutlets";
+ 
+object app;
+object defaults;
+int icc;
+
+object pcmi;
+object jlmi;
 
 static void create()
 {
   ::create();
-	
+werror("****\n**** create\n****\n");	
    app = Cocoa.NSApplication.sharedApplication();
 }
 
 // among other things here, we set default preferences.
 void initialize()
 {
+//werror("this: %O\n", mkmapping(indices(this), values(this)));
 	registerDefaultPreferences();
 	setupPreferences();
 }
@@ -63,11 +71,11 @@ void loadJob_(object a)
 
   openPanel->setAllowsMultipleSelection_(0);
 
-  if(!openPanel->runModalForTypes_(({"rib"}))) return;
+  if(!openPanel->runModalForTypes_(({"rib"}))) return 0;
 
   mixed files = openPanel->URLs();
   if(!files->count())
-    return;
+    return 0;
 
   object file = files->lastObject();
   file = file->path();
@@ -109,6 +117,7 @@ void toggleCaster_(mixed ... args)
   int state = CasterToggleButton->state();
 werror("state: %O\n", state);
   LoadJobButton->setEnabled_(!state);
+  LoadJobItem->setEnabled_(!state);
   SkipForwardButton->setEnabled_(state);
   SkipBackwardButton->setEnabled_(state);
   SkipBeginButton->setEnabled_(state);
@@ -123,6 +132,7 @@ void stopCaster()
   {
 	  CasterToggleButton->setState_(!state);
 	  LoadJobButton->setEnabled_(state);
+	  LoadJobItem->setEnabled_(state);
 	  SkipForwardButton->setEnabled_(!state);
 	  SkipBackwardButton->setEnabled_(!state);
 	  SkipBeginButton->setEnabled_(!state);
@@ -181,9 +191,6 @@ void checkClicked_(object b)
   	  Driver->disablePin(b, pin);
 	
 }
-object pcmi;
-object jlmi;
-int was_caster_enabled;
 
 void showPinControl_(object i)
 {
