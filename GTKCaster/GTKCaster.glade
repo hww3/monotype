@@ -2180,7 +2180,7 @@ H William Welliver III</property>
               <widget class="GtkHBox" id="hbox16">
                 <property name="visible">True</property>
                 <child>
-                  <widget class="GtkHScale" id="hscale1">
+                  <widget class="GtkHScale" id="DebounceSlider">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="update_policy">delayed</property>

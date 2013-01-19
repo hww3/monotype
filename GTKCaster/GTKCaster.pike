@@ -20,8 +20,6 @@ static void create(int argc, array argv)
 
   ::create();  
 
-  register_preferences();
-
   // connect widgets with variables in this controller, based on widget name.
   foreach(gx->get_widget_prefix("");; object w)
   {
@@ -33,6 +31,8 @@ static void create(int argc, array argv)
       this[wn] = w;
     }
   }
+
+  register_preferences();
 
   // wire up signals based on functio names in this object.
   gx->signal_autoconnect(mkmapping(indices(this), values(this)), 0);
@@ -54,6 +54,8 @@ void register_preferences()
   add_preference("cycleSensorDebounce", 0);
   add_preference("cycleSensorIsPermanent", 0);
   save_preferences();
+  DebounceSlider->set_value(preferences->cycleSensorDebounce);
+  CycleSensorTypeCheckbox->set_active(preferences->cycleSensorIsPermanent);
 }
 
 void add_preference(string key, mixed value)
