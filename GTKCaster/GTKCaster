@@ -1,0 +1,3 @@
+#!/bin/sh
+cd `dirname $0`
+pike -M ../Common -P ../Common GTKCaster.pike
