@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Caster
+Comment=Monotype Caster Control
+Exec=/home/pi/monotype/GTKCaster/GTKCaster
+Icon=/home/pi/monotype/GTKCaster/Caster.ico
+Terminal=false
+MultipleArgs=false
+Type=Application
+Categories=Application
+StartupNotify=true
