@@ -18,7 +18,7 @@
 
 void jump_to_line(int line)
   {
-	werror("\n\n\njump_to_line: %O\n", line);
+//	werror("\n\n\njump_to_line: %O\n", line);
    	ribbon->rewind(-1);
 	setLineStatus(ribbon->current_line);
     processedCode();
@@ -26,12 +26,12 @@ void jump_to_line(int line)
 	
 	do
 	{
-		werror("\n\nskipping forward.\n");
+//		werror("\n\nskipping forward.\n");
 	    ribbon->skip_to_line_end();
 		ribbon->get_next_code();
 		setLineStatus(ribbon->current_line);
 		if(!ribbon->current_code) break;
-		werror("cl: %O\n", ribbon->current_line);
+	//	werror("cl: %O\n", ribbon->current_line);
 		processedCode();
 	} while (ribbon->current_line < line);
 	ribbon->return_code();
@@ -39,7 +39,7 @@ ribbon->current_line--;
   }
   void enableManualControl()
   {
-werror("**\n** manual control enabled.\n**\n");
+//werror("**\n** manual control enabled.\n**\n");
     allOff();
     wasStarted = plugin->started;	  
     inManualControl = 1;
@@ -48,7 +48,7 @@ werror("**\n** manual control enabled.\n**\n");
 
   void disableManualControl()
   {
-	werror("disableManualControl()\n");
+//	werror("disableManualControl()\n");
     allOff();
     if(!wasStarted)
       plugin->stop();
@@ -87,13 +87,13 @@ werror("**\n** manual control enabled.\n**\n");
     manualCode = __builtin.uniq_array(manualCode + ({pin}));
     if(forced)
        plugin->do_start_code(getNextCode());
-werror("enablePin(%O): manualCode is %s\n", pin, manualCode*"");
+//werror("enablePin(%O): manualCode is %s\n", pin, manualCode*"");
 
   }
 
   void disablePin(object control, string pin)
   {
-werror("disablePin(%O)\n", pin);
+//werror("disablePin(%O)\n", pin);
     manualCode -= ({pin});
     if(forced)
        plugin->do_start_code(getNextCode());

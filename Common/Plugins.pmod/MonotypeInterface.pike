@@ -95,9 +95,9 @@ array pinmap = ({ /* 31 elements */
 void report_callback(mixed ... args)
 {
   int nv;
-werror("args: %O\n", args);
+//werror("args: %O\n", args);
   sscanf(args[0], "%04c", nv);
-werror("callback: %O\n", nv);
+//werror("callback: %O\n", nv);
   nv = nv & interesting_bits;
   if(nv != cv)
   {
@@ -135,7 +135,7 @@ void doStart()
 {
 	state = 1;
 	driver->setCycleStatus(1);
-	write("on: %O\n", started); 
+//	write("on: %O\n", started); 
 
 	if(driver->forced) return 0;
 
@@ -149,7 +149,7 @@ void doEnd()
 {
 	state = 0;
 	driver->setCycleStatus(0);
-	write("off\n");
+	//write("off\n");
 	if(started)
   	  end_code();	
 }
@@ -158,7 +158,7 @@ void start_code()
 {
   array code_str = driver->getNextCode();
 
-werror("***\n*** code: %O\n***\n", code_str);
+//werror("***\n*** code: %O\n***\n", code_str);
 
   if(!code_str)
   {
@@ -186,15 +186,15 @@ void end_code()
   int code;
   code = interesting_bits;	
   iow->write_interface0(sprintf("%04c", code));
-werror("wrote data1.\n");
+//werror("wrote data1.\n");
 }
 
 void send_code_to_interface(array code_str)
 {
   int code = map_code_to_pins(code_str);
-  werror("writing code %032b\n", code); 
+  //werror("writing code %032b\n", code); 
   iow->write_interface0(sprintf("%04c", code));
-werror("wrote data2.\n");
+//werror("wrote data2.\n");
 }
 
 static void create(object driver, mapping config)
@@ -209,10 +209,10 @@ static void create(object driver, mapping config)
 
   // shut everything off initially.
   iow->write_interface0(sprintf("%04c", 0));
-  werror("wrote data.\n");
+  //werror("wrote data.\n");
 
   iow->set_report_callback(report_callback, 0);
-werror("done.\n");
+//werror("done.\n");
 //  Public.ObjectiveC.add_backend_runloop();
 }
 

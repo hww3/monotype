@@ -159,19 +159,19 @@ array get_next_code()
 	array code = low_get_next_code();
 	if(code)
 	{
-		werror("have code.\n");
+	//	werror("have code.\n");
   	  current_code = (multiset)code;
       current_pos++;
 	  if(current_code && current_code["0075"] && current_code["0005"])
 	  {
-		werror("have end of line\n");
+		// werror("have end of line\n");
 		current_line++;
 		line_changed();
 	  }
     }
     else 
     {
-	werror("no code.\n");
+	// werror("no code.\n");
       current_code = 0;
     }
 	return code;

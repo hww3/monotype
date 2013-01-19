@@ -6,6 +6,8 @@ object AboutDialog;
 object File_Open_Menu;
 object View_JumpToLine_Menu;
 
+int block_signal;
+
 string pref_file = combine_path(getenv("HOME"), ".monotype_caster.preferences");
 mapping preferences = ([]);
 
@@ -140,9 +142,10 @@ void IgnoreCycleButton_toggled_cb(object widget)
 
 void manual_check_toggled(object widget)
 {
+  if(block_signal) return;
   int state = widget->get_active();
   string pin = (string)widget->get_name()[1..];
-  werror("checkbox %O toggled %O\n", pin, state);
+  //werror("checkbox %O toggled %O\n", pin, state);
 
   if(state)
     Driver->enablePin(widget, pin);
@@ -161,7 +164,7 @@ void do_jump(mixed ... args)
 {
   JumpToLineBox->show_all();
   int rv = JumpToLineBox->run();
-werror("rv: %O\n", rv);
+//werror("rv: %O\n", rv);
   if(rv == 1)
   {
     int line_to_jump_to = (int)gx->get_widget("JumpLineNumber")->get_text();
@@ -185,23 +188,28 @@ void do_exit(mixed ... args)
 
 void allOff(object b)
 {
-  werror("allOff(%O)\n", b);
+  //werror("allOff(%O)\n", b);
+  block_signal = 1;
   foreach(buttonstotouch;; string but)
   {
     if(this["c" + but])
       this["c" + but]->set_active(0);
   }
+  block_signal = 0;
+
   Driver->allOff();
 }
 
 void allOn(object b)
 {
-  werror("allOn(%O)\n", b);
+  //werror("allOn(%O)\n", b);
+  block_signal = 1;
   foreach(buttonstotouch;; string but)
   {
     if(this["c" + but])
       this["c" + but]->set_active(1);
   }
+  block_signal = 0;
   Driver->allOn();
 }
 
