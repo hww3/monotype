@@ -274,7 +274,7 @@ public void forgotpassword(Request id, Response response, Template.View t, mixed
 
         string mailmsg = tp->render();
 
-        Protocols.SMTP.Client(get_mail_host())->simple_mail(r["email"],
+        Protocols.SMTP.Client(/*get_mail_host()*/)->simple_mail(r["email"],
                               "Your password",
                               get_return_address(),
                               mailmsg);
