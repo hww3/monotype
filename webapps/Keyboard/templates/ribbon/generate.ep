@@ -149,7 +149,7 @@ Width Adjustment Mechanisms<p>
 <option>3
 </select> Units
 <br/>
-<input type="checkbox" name="unitshift" value="1">Unit Shift <br/>
+<input type="checkbox" name="unit_shift" value="1">Unit Shift <br/>
 <input type="checkbox" name="justification" checked="1" value="1"> Justification Wedges 
 <p>
 Minimum Justifying Space Size (3/8 is default)

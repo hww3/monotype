@@ -50,7 +50,7 @@ public void do_generate(Request id, Response response, Template.View v, mixed ..
 	mapping settings = ([
 		"justification": (int)id->variables->justification,
 		"unit_adding": (int)id->variables->unitadding,
-		"unit_shift": (int)(id->variables->unitshift?id->variables->unitshift_units:0),
+		"unit_shift": (int)(id->variables->unit_shift),
 		"mould": (int)id->variables->points,
 		"pointsystem": (float)id->variables->pointsystem,
 		"setwidth": (float)id->variables->set,
@@ -102,7 +102,7 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 	mapping settings = ([
 		"justification": (int)id->variables->justification,
 		"unit_adding": (int)id->variables->unitadding,
-		"unit_shift": (int)(id->variables->unitshift?id->variables->unitshift_units:0),
+		"unit_shift": (int)(id->variables->unit_shift),
 		"mould": (int)id->variables->points,
 		"setwidth": (float)id->variables->set,
                 "pointsystem": (float)id->variables->pointsystem,

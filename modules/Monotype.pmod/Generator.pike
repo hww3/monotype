@@ -48,6 +48,7 @@ int isitalics = 0;
 int issmallcaps = 0;
 int isbold = 0;
 
+string d_code = "D";
 string fine_code = "0005";
 string coarse_code = "0075";
 
@@ -86,6 +87,11 @@ void create(mapping settings)
   {
 	  fine_code = "N K J";
 	  coarse_code = "N K";
+  }
+
+  if(config->unit_shift)
+  {
+      d_code = "E F";
   }
 
   foreach(m->get_ligatures();; object lig)
@@ -949,7 +955,10 @@ string generate_ribbon()
 	buf+=sprintf("mould: %d\n", config->mould);
 	buf+=sprintf("linelength: %.2f\n", config->linelengthp);
 	if(config->unit_adding)
-  	buf+=sprintf("unit_adding: %s units\n", (string)config->unit_adding);
+          buf+=sprintf("unit_adding: %s units\n", (string)config->unit_adding);
+
+	if(config->unit_shift)
+          buf+=sprintf("unit_shift: enabled\n")
 
 	buf+=sprintf("\n");
 	
