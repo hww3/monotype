@@ -390,6 +390,7 @@ import Monotype;
   	      c = " ";
 
         werror(string_to_utf8(c));
+        col_pos = replace(col_pos, "D", generator->d_code);
   	  buf+=sprintf("%s %s [%s]\n", (string)row_pos, (col_pos/"")*" ", string_to_utf8(c));
     }
    }
