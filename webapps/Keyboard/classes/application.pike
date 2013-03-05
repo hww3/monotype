@@ -259,7 +259,13 @@ object old_load_matcase(string matcasename)
 
 array get_mcas()
 {
-	return master()->resolv("Fins.Model.find.matcasearrangements_all")(master()->resolv("Fins.Model.SortCriteria")("name"));
+  array m, m2;
+  m = master()->resolv("Fins.Model.find.matcasearrangements_all")(master()->resolv("Fins.Model.SortCriteria")("name"));
+  m2 = allocate(sizeof(m));
+  foreach(m; int i; object mca)
+    m2[i] = lower_case(mca["name"]);
+  sort(m2, m);
+  return m;
 //	return map(glob("*.xml", get_dir(config["locations"]["matcases"]) || ({})), lambda(string s){return (s/".xml")[0];});
 }
 
