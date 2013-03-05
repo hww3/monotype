@@ -358,14 +358,14 @@ import Monotype;
   			    else if(config->unit_shift && me->row_pos > 1 && (s->get(me->row_pos - 1) == me->get_set_width()))
   			    {
   			      row_pos = (me->row_pos - 1);
-  			      col_pos = "D" + col_pos;
+  			      col_pos = "D " + col_pos;
   			    }
 
   			    // 3. unit adding + unit shift
   			    else if(config->unit_adding && config->unit_shift && me->row_pos > 1 && (me->get_set_width() == (config->unit_adding + s->get(me->row_pos - 1))))
   			    {
   			      row_pos = (me->row_pos - 1);
-  			      col_pos = "D" + col_pos;
+  			      col_pos = "D " + col_pos;
 
               buf+=sprintf("0075 ");			
   			    }
