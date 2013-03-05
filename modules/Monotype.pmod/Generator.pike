@@ -27,6 +27,8 @@ int numline;
 int pagenumber;
 int linesonpage;
 
+mapping spaces = ([]);
+
 array(Line) lines = ({});
 
 array ligatures = ({});
@@ -81,6 +83,22 @@ void create(mapping settings)
 
   config = settings;
   config->lineunits = lineunits;
+
+  foreach(m->spaces;;object mat)
+    spaces[s->get((mat->row_pos<16?mat->row_pos:15))] = mat;
+  
+  if(config->unit_shift)
+  {
+    foreach(m->spaces;;object mat)
+    {
+      object ns = mat->clone();
+      int new_width = s->get(mat->row_pos-1 || mat->row_pos);
+      ns->set_width = new_width;
+      spaces[new_width] = ns;
+    }
+  }
+  
+  werror("SPACES: %O\n", spaces);
   
   // set up the code substitutions for unit adding
   if(config->unit_adding)
@@ -843,17 +861,17 @@ int low_quad_out(int amount, int|void atbeginning)
 {
   array toadd = ({});
   int ix;
-  toadd = Monotype.findspace()->simple_find_space(amount, m->spaces);
+  toadd = Monotype.findspace()->simple_find_space(amount, spaces);
   if(!toadd || !sizeof(toadd))
-    toadd = Monotype.IterativeSpaceFinder()->findspaces(amount, m->spaces);
+    toadd = Monotype.IterativeSpaceFinder()->findspaces(amount, spaces);
   if(!toadd || !sizeof(toadd))
-    toadd = simple_find_space(amount, m->spaces);
+    toadd = simple_find_space(amount, spaces);
   toadd = sort(toadd);
 
   foreach(toadd;int z;int i)
   {
     ix+=i;
-    current_line->add("SPACE_" + i, 0, 0, atbeginning);	
+    current_line->add(spaces[i], 0, 0, atbeginning);	
 	if(current_line->is_overset())
 	{
       werror("overset. added %d, at %d\n", current_line->linelength, ix);
@@ -865,7 +883,7 @@ int low_quad_out(int amount, int|void atbeginning)
         werror("what's smaller than %d?\n", i);
         array whatsleft = ({});
         // generate an array of available spaces smaller than the one that didn't fit.
-        foreach(m->spaces; mixed u ;)
+        foreach(spaces; mixed u ;)
         {
           if(u < i)
             whatsleft += ({u});
@@ -881,7 +899,7 @@ int low_quad_out(int amount, int|void atbeginning)
           do
           {
             ix+=toadd;
-            current_line->add("SPACE_" + toadd, 0, 0, atbeginning);	
+            current_line->add(spaces[toadd], 0, 0, atbeginning);	
             cj = current_line->can_justify();
           }
           while(!cj && !current_line->is_overset());
@@ -958,7 +976,7 @@ string generate_ribbon()
           buf+=sprintf("unit_adding: %s units\n", (string)config->unit_adding);
 
 	if(config->unit_shift)
-          buf+=sprintf("unit_shift: enabled\n")
+          buf+=sprintf("unit_shift: enabled\n");
 
 	buf+=sprintf("\n");
 	
@@ -989,17 +1007,17 @@ void new_line(int|void newpara)
   if(config->trip_at_end && numline == 1)
   {
 	string activator = "";
-	array spaces = indices(m->spaces);
+	array aspaces = indices(spaces);
 	int spacesize;
-	spaces = sort(spaces);
+	aspaces = sort(aspaces);
 
-	if(sizeof(spaces))
-	  spacesize = spaces[-1];
+	if(sizeof(aspaces))
+	  spacesize = aspaces[-1];
 	if(spacesize)
 	{
 		// add at least 18 units of space to the line.
 		for(int i = spacesize; i <= 18; i+=spacesize)
-	 		current_line->add("SPACE_" + spacesize, 0, 0, 1, 1);
+	 		current_line->add(spaces[spacesize], 0, 0, 1, 1);
 	}
 	else
 	{

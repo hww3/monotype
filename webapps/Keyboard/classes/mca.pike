@@ -216,6 +216,18 @@ public void new(Request id, Response response, Template.View view, mixed args)
   {
     id->variables->name = String.trim_whites(id->variables->name);
 
+    if(!sizeof(id->variables->name))
+    {
+      response->flash("No MCA name specified.");
+      return;
+    }
+
+    if(!sizeof(id->variables->wedge))
+    {
+      response->flash("No stopbar specified.");
+      return;
+    }
+
     if(app->mca_exists(id->variables->name, id->misc->session_variables->user))
     {
       response->flash("MCA " + id->variables->name + " already exists.");

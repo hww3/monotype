@@ -160,89 +160,90 @@ import Monotype;
 
 
 	// add a sort to the current line
-	void add(string activator, int|void modifier, int|void adjust_space, int|void atbeginning, int|void stealth)
+	void add(string|object activator, int|void modifier, int|void adjust_space, int|void atbeginning, int|void stealth)
 	{
 	  object mat;
+	  string code;
 
 //werror("Line.add(%O, %O)\n", activator, modifier);
-	  // justifying space
-	  if(activator == " ")
-	  {
-		object js = m->elements["JS"];
-	    // houston, we have a problem!
-	    if(!js) error("No Justifying Space in MCA!\n");
-
-		if(atbeginning)
-		{
-//			displayline = ({" "}) + displayline;
-			elements = ({RealJS(js)}) + elements;
-		}
-		else
-		{
-//		    displayline += ({" " });
-		    elements += ({RealJS(js)});		
-		}
-	    linelength += (min_space_units);
-	    linespaces ++;
-		return;
-	  }
-/*
-	  else if(activator == "\n")
-	  {
-		new_line();
-	    return;
-	  }
-*/
-
- 	  if(modifier & MODIFIER_SMALLCAPS && config->allow_lowercase_smallcaps)
-          {
-		activator = upper_case(activator);
-	  }
-
-	  string code = activator;
-
-	  if(modifier&MODIFIER_ITALICS)
-	      code = "I|" + code;	 
-	  else if(modifier&MODIFIER_SMALLCAPS)
-	      code = "S|" + code;
-	  else if(modifier&MODIFIER_BOLD)
-	      code = "B|" + code;
-
-	  mat = m->elements[code];
-
-       if(!mat && (modifier&MODIFIER_ITALICS) && config->allow_punctuation_substitution && (<".", ",", ":", ";", "'", "’", "‘", "!", "?", "-", "–">)[activator])
+    if(objectp(activator))
+    {
+      mat = activator;
+    }
+    else
+    {
+      // justifying space
+  	  if(activator == " ")
       {
+  		  object js = m->elements["JS"];
+      	// houston, we have a problem!
+        if(!js) error("No Justifying Space in MCA!\n");
+
+      	if(atbeginning)
+      	{
+      //			displayline = ({" "}) + displayline;
+      		elements = ({RealJS(js)}) + elements;
+    		}
+    		else
+      	{
+      //		    displayline += ({" " });
+      	    elements += ({RealJS(js)});		
+    		}
+    	  linelength += (min_space_units);
+        linespaces ++;
+    		return;
+  	  }    
+  	  
+  	  if(modifier & MODIFIER_SMALLCAPS && config->allow_lowercase_smallcaps)
+      {
+  		  activator = upper_case(activator);
+  	  }
+
+  	  code = activator;
+
+  	  if(modifier&MODIFIER_ITALICS)
+  	      code = "I|" + code;	 
+  	  else if(modifier&MODIFIER_SMALLCAPS)
+  	      code = "S|" + code;
+  	  else if(modifier&MODIFIER_BOLD)
+  	      code = "B|" + code;
+
+  	  mat = m->elements[code];
+   	  
+    }    
+
+    if(!mat && (modifier&MODIFIER_ITALICS) && config->allow_punctuation_substitution && (<".", ",", ":", ";", "'", "’", "‘", "!", "?", "-", "–">)[activator])
+    {
 	    if(mat = m->elements[activator])
 		    errors += ({"Substituted activator " + (activator) + " from roman alphabet."});
-		else
+		  else
 		    errors += ({"Unable to substitute activator [" + (activator) + "] from roman alphabet."});
-		
-      }
+    }
 
 	  if(!mat)
-      { 
-                errors += ({("Requested activator [" + 
-			(activator) + "] (" + sprintf("%q", code)+ "), code [" + (code) + "] not in MCA.\n")}); 
-		werror("invalid activator %O/%O\n", string_to_utf8(activator),code);
-      }
+    { 
+      errors += ({("Requested activator [" + 
+		    (activator) + "] (" + sprintf("%q", code)+ "), code [" + (code) + "] not in MCA.\n")}); 
+		  werror("invalid activator %O/%O\n", string_to_utf8(activator),code);
+    }
 	  else
 	  {	
-		if(atbeginning)
-		{
+		  if(atbeginning)
+		  {
 //			displayline = ({activator}) + displayline;
-			elements = ({MatWrapper(mat, adjust_space)}) + elements;
-		}
-		else
-		{
+			  elements = ({MatWrapper(mat, adjust_space)}) + elements;
+		  }
+		  else
+		  {
 //		    displayline += ({ activator });
 		    elements += ({MatWrapper(mat, adjust_space)});		
-		}
-		if(!stealth)
+		  }
+		  if(!stealth)
  	    	  linelength+=(mat->get_set_width() + adjust_space);
 	  }
 
-	if(!stealth)
-	  [big, little] = calculate_justification();
+	  if(!stealth)
+	    [big, little] = calculate_justification();
 //	  if(interactive)
 //	    werror("%s %d %s %s\n", displayline * "", lineunits-linelength, can_justify()?("* "+ big + " " + little):"", is_overset()?(" OVERSET "):"");
 
@@ -295,105 +296,108 @@ import Monotype;
       buf+=sprintf("%s %s %d\n", generator->fine_code, generator->coarse_code, f);
       buf+=sprintf("%s %d\n", generator->coarse_code, c);
 
-            foreach(reverse(elements);; object me)
-            {
-              if(me->is_real_js)
-              {
-                // if we've previously changed the justification wedges in order to
-                // correct a sort width, we need to put things back.
-  	          if(cf != f || cc != c)
-  	          {
-  		werror("resetting justification wedges.\n");
-  		        buf+=sprintf("%s %d\n", generator->fine_code, f);
-  		        buf+=sprintf("%s %d\n", generator->coarse_code, c);
+      foreach(reverse(elements);; object me)
+      {
+        if(me->is_real_js)
+        {
+          // if we've previously changed the justification wedges in order to
+          // correct a sort width, we need to put things back.
+  	      if(cf != f || cc != c)
+  	      {
+  		      werror("resetting justification wedges.\n");
+  		      buf+=sprintf("%s %d\n", generator->fine_code, f);
+  		      buf+=sprintf("%s %d\n", generator->coarse_code, c);
   			    cf = f;
   			    cc = c;
-  	          }
-                buf+=sprintf("S %d %s [ ]\n", me->matrix->row_pos, me->matrix->col_pos);
-                werror("_");
-            }
-            else 
-  	      {
+  	      }
+          buf+=sprintf("S %d %s [ ]\n", me->matrix->row_pos, me->matrix->col_pos);
+          werror("_");
+        }
+        else 
+  	    {
   //			werror("ME: %O", mkmapping(indices(me), values(me)));
-            string row_pos = me->row_pos;
-            string col_pos = me->col_pos;
+          string row_pos = me->row_pos;
+          string col_pos = me->col_pos;
 
-  	        int wedgewidth;
-  	        if(me->row_pos == 16 && ! config->unit_shift)
-  			{
-  				throw(Error.Generic("Cannot use 16 row matcase without unit shift.\n"));
-  			}
+  	      int wedgewidth;
+  	      if(me->row_pos == 16 && ! config->unit_shift)
+  			  {
+  				  throw(Error.Generic("Cannot use 16 row matcase without unit shift.\n"));
+  			  }
+  			  
+  			  if(config->unit_shift)
+  			  {
+  			    col_pos = replace(col_pos, "D", "EF");
+  			  }
 
-  			// get the width of the requested row unless it's 16, which doesn't exist.
-  			// in that case, get the width of row 15.
+  			  // get the width of the requested row unless it's 16, which doesn't exist.
+  			  // in that case, get the width of row 15.
 	//		werror("need wedge width for row %d\n", me->row_pos!=16?me->row_pos:15);
-  	 		wedgewidth = s->get(me->row_pos!=16?me->row_pos:15);
+  	 		  wedgewidth = s->get(me->row_pos!=16?me->row_pos:15);
 			
   	   //     werror("want %d, wedge provides %d\n", me->get_set_width(), wedgewidth);
-  	        if(me->row_pos == 16 || (wedgewidth != me->get_set_width())) // we need to adjust the justification wedges
-  	        {
-  	          int nf, nc;
+  	      if(me->row_pos == 16 || (wedgewidth != me->get_set_width())) // we need to adjust the justification wedges
+  	      {
+  	        int nf, nc;
 
-              // TODO: we need to check to make sure we don't try to open the mould too wide.
+            // TODO: we need to check to make sure we don't try to open the mould too wide.
 
-              werror("needs adjustment: have %d, need %d!\n", wedgewidth, me->get_set_width());
-  	          // first, we should calculate what difference we need, in units of set.
-  	          int needed_units = me->get_set_width() - wedgewidth;
+            werror("needs adjustment: have %d, need %d!\n", wedgewidth, me->get_set_width());
+  	        // first, we should calculate what difference we need, in units of set.
+  	        int needed_units = me->get_set_width() - wedgewidth;
  
-              // at this point, we'd select the appropriate mechanism for handling the difference
-              // presumably, we'd use the following techniques, were they available to us:
-              // 1. unit adding
-  			  if(config->unit_adding && config->unit_adding == needed_units)
-  			  {
-                buf+=sprintf("0075 ");
-  			  }
+            // at this point, we'd select the appropriate mechanism for handling the difference
+            // presumably, we'd use the following techniques, were they available to us:
+            // 1. unit adding
+  			    if(config->unit_adding && config->unit_adding == needed_units)
+  			    {
+              buf+=sprintf("0075 ");
+  			    }
 
-  			// 2. unit shift
-  			  else if(config->unit_shift && me->row_pos > 1 && (s->get(me->row_pos - 1) == me->get_set_width()))
-  			  {
-  			    row_pos = (me->row_pos - 1);
-  			    if(col_pos == "D") col_pos = "EF";
-  			    col_pos = "D" + col_pos;
-  			  }
+  			    // 2. unit shift
+  			    else if(config->unit_shift && me->row_pos > 1 && (s->get(me->row_pos - 1) == me->get_set_width()))
+  			    {
+  			      row_pos = (me->row_pos - 1);
+  			      col_pos = "D" + col_pos;
+  			    }
 
-  			// 3. unit adding + unit shift
-  			else if(config->unit_adding && config->unit_shift && me->row_pos > 1 && (me->get_set_width() == (config->unit_adding + s->get(me->row_pos - 1))))
-  			{
-  			  row_pos = (me->row_pos - 1);
-  			  if(col_pos == "D") col_pos = "EF";
-  			  col_pos = "D" + col_pos;
+  			    // 3. unit adding + unit shift
+  			    else if(config->unit_adding && config->unit_shift && me->row_pos > 1 && (me->get_set_width() == (config->unit_adding + s->get(me->row_pos - 1))))
+  			    {
+  			      row_pos = (me->row_pos - 1);
+  			      col_pos = "D" + col_pos;
 
-                buf+=sprintf("0075 ");			
-  			}
+              buf+=sprintf("0075 ");			
+  			    }
   			// 4. underpinning
 
   			// 5. letterspacing via justification wedge (currently the only technique in use here) 
   	        // then, figure out what that adjustment is in terms of 0075 and 0005
   	        else
   	        {
-                  [nc, nf] = calculate_wordspacing_code(needed_units);
+              [nc, nf] = calculate_wordspacing_code(needed_units);
   		        // if it's not what we have now, make the adjustment
 
    		        if(cf != nf || cc != nc)
   		        {
-                    buf+=sprintf("%s %d\n", generator->fine_code, nf);
-  	              buf+=sprintf("%s %d\n", generator->coarse_code, nc);
-                    cf = nf;
+                buf+=sprintf("%s %d\n", generator->fine_code, nf);
+  	            buf+=sprintf("%s %d\n", generator->coarse_code, nc);
+                cf = nf;
   		          cc = nc;
-  	            }
+  	          }
 
-  	            buf+=sprintf("S ");
-  	         }
+  	          buf+=sprintf("S ");
+  	       }
   	    }
-          string c = me->character;
-    	    if(me->is_fs || me->is_js)
+        string c = me->character;
+    	  if(me->is_fs || me->is_js)
   	      c = " ";
 
         werror(string_to_utf8(c));
-  	  buf+=sprintf("%s %s [%s]\n", (string)row_pos, (col_pos/"")*" ", string_to_utf8(c));
+  	    buf+=sprintf("%s %s [%s]\n", (string)row_pos, (col_pos/"")*" ", string_to_utf8(c));
+      }
     }
-   }
-   return buf->get();
+    return buf->get();
   }
 	
 	class MatWrapper

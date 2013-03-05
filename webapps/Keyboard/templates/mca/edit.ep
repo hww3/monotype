@@ -445,8 +445,9 @@ line-height: 15.5px;
 </div>
 
 <%
+werror("DATA: %O\n", data->wedge->bars);
   foreach(data->rows; int k; int v){
-	int u = data->wedge->bars[v];
+	int u = data->wedge->bars[(v<16?v:v-1)];
 %>
 <div style="clear: left">
 	<!-- the first div is the row number with the unit width for that row from the default wedge -->

@@ -29,6 +29,16 @@ import Public.Parser.XML2;
   {
    if(n) load(n);
   }
+  
+  this_program clone()
+  {
+    object nm = this_program();
+    mapping m = (mapping)this;
+    foreach(m; string k; mixed v)
+      nm[k] = v;
+      
+    return nm;
+  }
 
   int load(Node n)
   {
