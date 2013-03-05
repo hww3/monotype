@@ -3,6 +3,8 @@
 - Ribbon Generator: sort mca list in case insensitive fashion.
 - Ribbon Generator: when using unit shift, fixed spaces are available for
    either width available for their mca position.
+- Ribbon Generator: update available sorts list to include real dipthongs 
+  and proper quotation marks.
 
 20121231
 - Ribbon Generator and Caster Control: update to new version of Web and 
