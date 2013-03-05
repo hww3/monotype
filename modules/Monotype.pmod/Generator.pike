@@ -958,7 +958,7 @@ string generate_ribbon()
           buf+=sprintf("unit_adding: %s units\n", (string)config->unit_adding);
 
 	if(config->unit_shift)
-          buf+=sprintf("unit_shift: enabled\n")
+          buf+=sprintf("unit_shift: enabled\n");
 
 	buf+=sprintf("\n");
 	
