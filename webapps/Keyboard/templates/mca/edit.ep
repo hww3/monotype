@@ -449,7 +449,7 @@ line-height: 15.5px;
        int rn;
         if(v==16) rn=v-1; else rn = v;
 	int u = data->wedge->bars[rn];
-%>
+		%>
 <div style="clear: left">
 	<!-- the first div is the row number with the unit width for that row from the default wedge -->
 <div class="cell"
