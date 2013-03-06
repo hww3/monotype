@@ -90,7 +90,7 @@ public void do_generate(Request id, Response response, Template.View v, mixed ..
 
 public void get_line(Request id, Response response, Template.View v, string line)
 {
-  response->set_data("<html>Codes for line " + ((int)line + 1) + ":<p>\n<pre style=\"font-family: courier, monospace; font-size: 8pt;\">\n" + replace(id->misc->session_variables->generator->lines[(int)(line)]->generate_line(), "\n", "\n") + "</pre></html>\n");
+  response->set_data("<html>Codes for line " + ((int)line + 1) + ":<p>\n<pre style=\"font-family: courier, monospace; font-size: 8pt;\">\n" + replace(id->misc->session_variables->generator->lines[(int)(line)]->generate_line(), "\n", "\n") + "</pre><p/> <p/></html>\n");
 }
 
 public void do_validate(Request id, Response response, Template.View v, mixed ... args)
