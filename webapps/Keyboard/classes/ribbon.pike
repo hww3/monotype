@@ -90,7 +90,7 @@ public void do_generate(Request id, Response response, Template.View v, mixed ..
 
 public void get_line(Request id, Response response, Template.View v, string line)
 {
-  response->set_data("Codes for line " + ((int)line + 1) + ":<p>\n<pre style=\"font-size: 8pt;\">\n" + id->misc->session_variables->generator->lines[(int)(line)]->generate_line() + "</pre>\n");
+  response->set_data("<html>Codes for line " + ((int)line + 1) + ":<p>\n<pre style=\"font-family: courier, monospace; font-size: 8pt;\">\n" + replace(id->misc->session_variables->generator->lines[(int)(line)]->generate_line(), "\n", "\n") + "</pre></html>\n");
 }
 
 public void do_validate(Request id, Response response, Template.View v, mixed ... args)
@@ -169,8 +169,8 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 		int setonline;
 		int last_was_space = 0;
 		int last_set;
-		b+="<span dojoType=\"dojox.widget.DynamicTooltip\" connectId=\"line_" + i + "\" href=\"" + action_url(get_line, ({(string)i}))+ "\" preventCache=\"true\">nevah seen!</span>";
-		b+="<div style=\"clear: left\" id=\"line_" + i + "\">";
+//		b+="<span dojoType=\"dojox.widget.DynamicTooltip\" connectId=\"line_" + i + "\" href=\"" + action_url(get_line, ({(string)i}))+ "\" preventCache=\"true\">nevah seen!</span>";
+		b+="<div style=\"clear: left\" id=\"line_" + i + "\" >";
 		b+=("<div style=\"position:relative; float:left; width:35px\">" + (i+1) 
 			+ "/"  + (sizeof(g->lines) - i)+ "</div>");
 		string tobeadded = "";
@@ -254,6 +254,8 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 			  tobeaddedwidth = 0;
 			}
 		b+=(" &nbsp; " /* +total_set + " " +(setonline) */ + " &lt;== " + line->big + " " + line->little /*+ " " + line->units*/ + "[" + line->line_on_page + "]");
+		b+=" [<a onClick=\"showCodes(" + i + ", '" + action_url(get_line, ({(string)i})) + "')\">Codes</a>]";
+    
 		if(line->errors && sizeof(line->errors))
 		  b+= (line->errors * ", ");
 		b+=("</div>\n");
