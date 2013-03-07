@@ -264,7 +264,7 @@ import Monotype;
     overset = overset || (linespaces && ((mbig*15)+mlittle)<((min_big*15)+min_little));
     if(overset)
     {
-      werror("overset: line length: %d, units in line: %d, linespaces: %d, just: %d/%d min: %d/%d\n", lineunits, linelength, linespaces, mbig, mlittle, min_big, min_little);
+      werror("overset: # %d => line length: %d, units in line: %d, to add: %d, linespaces: %d, just: %d/%d min: %d/%d\n", line_number, lineunits, linelength, mylinelength, linespaces, mbig, mlittle, min_big, min_little);
     }
 
     if(!mylinelength)
@@ -394,7 +394,7 @@ import Monotype;
   	      c = " ";
 
         werror(string_to_utf8(c));
-  	  buf+=sprintf("%s %s [%s]\n", (string)row_pos, (col_pos/"")*" ", string_to_utf8(c));
+  	  buf+=sprintf("%s %s [%s]\n", (string)row_pos, (col_pos/"")*" ", string_to_utf8(c),  me->get_set_width());
       }
     }
     return buf->get();
