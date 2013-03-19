@@ -1,3 +1,7 @@
+20130318
+- Ribbon Generator: added new application info page with information
+   useful for troubleshooting efforts.
+
 20130305
 - Ribbon Generator: make line code display on soft proof a dialog rather
    than a tooltip that scrolls off the screen.
