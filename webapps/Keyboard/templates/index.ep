@@ -6,4 +6,6 @@
 <%if(!data->is_desktop && data->user["is_admin"]){ %>
 <li><%#action_link "action": "users"%>User Management</a>
 <% } %>
+<p>
+<li><%#action_link "action": "info"%>Application Info</a>
 </ul>

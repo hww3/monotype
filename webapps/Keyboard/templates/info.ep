@@ -1,0 +1,27 @@
+<h1>About Ribbon Generator</h1>
+<p>
+
+<h2>System Information</h2>
+
+System Node: <b><%$node%></b>
+<p>
+OS Release: <b><%$rel%></b>
+<br>
+OS Type: <b><%$sys%></b>
+<br>
+OS Version: <b><%$ver%></b>
+<p>
+System Machine: <b><%$hw%></b>
+<br>
+System Processor: <b><%$arch%></b>
+<p>
+Interpreter Version: <b><%$pike%></b>
+<p>
+Hyphenation Support: <b>
+<%if(data->hyphenation) { %>
+  Enabled
+<%} else { %>
+  Disabled
+<% } %>
+</b>
+<p>
