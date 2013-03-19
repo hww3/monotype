@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle"  xmlns:dc="http://purl.org/dc/elements/1.1/">
+   <channel>
+      <title>Monotype Ribbon Generator Changelog</title>
+      <link>http://hww3.riverweb.com/dist/monotype/updates/RibbonGenerator/appcast.xml</link>
+      <description>Most recent changes with links to updates.</description>
+      <language>en</language>
+         <item>
+            <title>Version 1.0</title>
+		<sparkle:releaseNotesLink>
+http://hww3.riverweb.com/dist/monotype/updates/RibbonGenerator/1.0.html
+</sparkle:releaseNotesLink>
+            <pubDate>Wed 13 April 2011 23:00:11 -0400</pubDate>
+<enclosure 
+url="http://hww3.riverweb.com/dist/monotype/updates/RibbonGenerator/RibbonGenerator-1.0.zip" 
+sparkle:version="1.0.0" length="8600734" type="application/octet-stream" 
+sparkle:dsaSignature="MCwCFC8WPiFcdsou7kXQsacDCkxZdE4jAhRiS85DJvz4A5bPrUEVMn7aQrepFA==" 
+/>
+         </item>
+         <item>
+            <title>Version 1.1</title>
+                                                <sparkle:releaseNotesLink>
+http://hww3.riverweb.com/dist/monotype/updates/RibbonGenerator/1.1.html
+                                                </sparkle:releaseNotesLink>
+            <pubDate>Sat 25 Jun 2011 23:00:11 -0400</pubDate>
+            <enclosure
+url="http://hww3.riverweb.com/dist/monotype/updates/RibbonGenerator/RibbonGenerator-1.1.zip"
+sparkle:version="1.1" length="8936736" type="application/octet-stream"
+sparkle:dsaSignature="MC0CFQDUlLXuKBnUViPplppyn+7T9gJu9wIUURPT6zfwX7O65nEsbTzvmgsBru8="
+/>
+</item>
+         <item>
+            <title>Version 1.2</title>
+                                                <sparkle:releaseNotesLink>
+http://hww3.riverweb.com/dist/monotype/updates/RibbonGenerator/1.2.html
+                                                </sparkle:releaseNotesLink>
+            <pubDate>Sat 10 Mar 2012 16:15:00 -0400</pubDate>
+            <enclosure
+url="http://hww3.riverweb.com/dist/monotype/updates/RibbonGenerator/RibbonGenerator-1.2.zip"
+sparkle:version="1.2" length="19823279" type="application/octet-stream"
+sparkle:dsaSignature="MC0CFQDi5LzJ858bHpz/GS89vx++E5jRkgIUcdFL/2ducMKTQYCnkLSkHSj5Bg8="
+/>
+</item>
+<item>
+            <title>Version 1.2.1</title>
+                                                <sparkle:releaseNotesLink>
+http://hww3.riverweb.com/dist/monotype/updates/RibbonGenerator/1.2.1.html
+                                                </sparkle:releaseNotesLink>
+            <pubDate>Sun 11 Mar 2012 20:29:00 -0400</pubDate>
+            <enclosure
+url="http://hww3.riverweb.com/dist/monotype/updates/RibbonGenerator/RibbonGenerator-1.2.1.zip"
+sparkle:version="1.2.1" length="19924390" type="application/octet-stream"
+sparkle:dsaSignature="MC0CFQCsyQlqgVoq5R35IrzhAjiKtDVtmQIUN93JKP39nn7PeV2NmAxYoXFFlRk="
+/>
+</item>
+<item>
+<title>Version 1.2.2</title>
+<sparkle:releaseNotesLink>
+http://hww3.riverweb.com/dist/monotype/updates/RibbonGenerator/1.2.2.html
+</sparkle:releaseNotesLink>
+            <pubDate>Sun May 06 2012 11:17:00 -0400</pubDate>
+ <enclosure
+url="http://hww3.riverweb.com/dist/monotype/updates/RibbonGenerator/RibbonGenerator-1.2.2.zip"
+sparkle:version="1.2.2" length="19936148" type="application/octet-stream"
+sparkle:dsaSignature="MC0CFHozi/K1lNahF/msz/KkoojndocVAhUAvoNpbz2wqEtP0rpt3Umz7OwhfvE="
+/>
+</item>
+
+<item>
+<title>Version 1.4.0</title>
+<sparkle:releaseNotesLink>
+http://bill.welliver.org/dist/monotype/updates/RibbonGenerator/1.4.html
+</sparkle:releaseNotesLink>
+            <pubDate>Tue January 01 2013 17:20:00 -0500</pubDate>
+ <enclosure
+url="http://bill.welliver.org/dist/monotype/updates/RibbonGenerator/RibbonGenerator-1.4.zip"
+sparkle:version="1.4" length="21596472" type="application/octet-stream"
+sparkle:dsaSignature="MC0CFQCnrgRk2YhhCf2XKXQM+XkxUUH1zAIUJ3CH/dMnKexAAdzeq9jezzSgCBI="
+/>
+</item>
+
+<item>
+<title>Version 1.6.0</title>
+<sparkle:releaseNotesLink>
+http://bill.welliver.org/dist/monotype/updates/RibbonGenerator/1.6.html
+</sparkle:releaseNotesLink>
+            <pubDate>Mon March 18 2013 20:44:00 -0500</pubDate>
+ <enclosure
+url="http://bill.welliver.org/dist/monotype/updates/RibbonGenerator/RibbonGenerator-1.6.zip"
+sparkle:version="1.6" length="21089808" type="application/octet-stream"
+sparkle:dsaSignature="MC0CFQCBFi7b4JHNJSA4R8brypNvFihcLAIURKDkXapp6xHmOO+5xvMfLSRlatc="
+/>
+</item>
+   </channel>
+</rss>

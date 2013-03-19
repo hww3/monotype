@@ -37,6 +37,9 @@ clean:
 Caster.app: ccstub ccapp ccapply_versions
 
 RibbonGenerator.app: stub framework fins webapp rgapply_versions
+	-rm "${RIBBON_GENERATOR}.app/Contents/Resources/Keyboard/config/Keyboard.sqlite3"
+	-rm "${RIBBON_GENERATOR}.app/Contents/Resources/Keyboard/logs/debug.log"
+	-rm "${RIBBON_GENERATOR}.app/Contents/Resources/Keyboard/logs/access.log"
 
 ccapply_versions:
 	pike tools/apply_versions.pike version.cfg "${CASTER_CONTROL}.app/Contents/Resources"
