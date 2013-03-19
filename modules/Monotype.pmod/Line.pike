@@ -394,7 +394,7 @@ import Monotype;
   	      c = " ";
 
         werror(string_to_utf8(c));
-  	  buf+=sprintf("%s %s [%s]\n", (string)row_pos, (col_pos/"")*" ", string_to_utf8(c),  me->get_set_width());
+  	  buf+=sprintf("%s %s [%s]\n", (string)row_pos, (col_pos/"")*" ", string_to_utf8(c), /* me->get_set_width() */);
       }
     }
     return buf->get();
