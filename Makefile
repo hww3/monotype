@@ -55,7 +55,7 @@ ccstub:
 
 ccapp: 
 		cp -Rf CasterApp/* ${CASTER_CONTROL}.app/Contents/
-		cp -Rf Core/* ${CASTER_CONTROL}.app/Contents/Resources/
+		cp -Rf Common/* ${CASTER_CONTROL}.app/Contents/Resources/
 
 stub: 
 	if [ ! -d RibbonGenerator.app ]; then "${PUBLIC_OBJECTIVEC}/mkapp" "${RIBBON_GENERATOR}"; fi
