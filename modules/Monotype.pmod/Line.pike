@@ -44,6 +44,8 @@ import Monotype;
 	object m, s;
   mapping config;
 	
+	int max_ls_adjustment = 2;
+	
 	static mixed cast(string t)
 	{
 	   if(t!="string") throw(Error.Generic("invalid cast type " + t + ".\n"));
@@ -370,11 +372,22 @@ import Monotype;
               buf+=sprintf("0075 ");			
   			    }
   			// 4. underpinning
-
+          
   			// 5. letterspacing via justification wedge (currently the only technique in use here) 
   	        // then, figure out what that adjustment is in terms of 0075 and 0005
-				else
-  	        {
+				    else
+  	        {  	            
+  	          if(needed_units > max_ls_adjustment)
+  	          {
+  	            int unit_shift_diff = (me->get_set_width() - s->get(me->row_pos - 1) );
+  	            if(config->unit_shift && me->row_pos > 1 && unit_shift_diff <= max_ls_adjustment && abs(unit_shift_diff) <= max_reduction_units)
+  	            {
+  	              row_pos = (me->row_pos - 1);
+      			      col_pos = "D " + col_pos;
+      			      needed_units = me->get_set_width() - s->get(me->row_pos - 1);
+  	            }
+  	          }
+  	          
               [nc, nf] = calculate_wordspacing_code(needed_units);
   		        // if it's not what we have now, make the adjustment
 
