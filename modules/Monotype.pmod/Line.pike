@@ -15,8 +15,8 @@ import Monotype;
 	int little; 
 	int spaces; 
 
-        int line_number;
-		int line_on_page;
+  int line_number;
+	int line_on_page;
 		
 	int max_reduction_units;
 	int min_space_units;
@@ -42,7 +42,7 @@ import Monotype;
 	float setwidth;
 	
 	object m, s;
-        mapping config;
+  mapping config;
 	
 	static mixed cast(string t)
 	{
@@ -52,17 +52,17 @@ import Monotype;
 		
 		foreach(elements;;mixed e)
 		{
-                  if(e->character)
-  		    s += e->character;
-                  else
-                    s+= "_";
+      if(e->character)
+  	    s += e->character;
+      else
+        s+= "_";
 		}
 		return s;
 	}
 	
 	static void create(object _m, object _s, mapping _config, object _g)
 	{
-                config = _config;
+    config = _config;
 		m = _m;
 		s = _s;
 		generator = _g;
