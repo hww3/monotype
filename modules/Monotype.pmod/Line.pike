@@ -156,8 +156,10 @@ import Monotype;
 		int steps = (int)round((0.0007685 * setwidth * units) / 0.0005);
 		steps += 53; // 53 is 3/8 code.
 		// TODO: check to see if we are opening too wide for the mould.
-		
-		return ({steps/15, steps%15});
+		array x = ({steps/15, steps%15});
+		if(x[0] > 15 || x[0] < 1) throw(Error.Generic(sprintf("Bad Justification code %d/%d\n", x[0], x[1])));
+		if(x[1] > 15 || x[1] < 1) throw(Error.Generic(sprintf("Bad Justification code %d/%d\n", x[0], x[1])));
+		return x;
 	}
 
 
@@ -360,14 +362,14 @@ import Monotype;
   			    else if(config->unit_shift && me->row_pos > 1 && (s->get(me->row_pos - 1) == me->get_set_width()))
   			    {
   			      row_pos = (me->row_pos - 1);
-  			      col_pos = "D " + col_pos;
+  			      col_pos = "D" + col_pos;
   			    }
 
   			    // 3. unit adding + unit shift
   			    else if(config->unit_adding && config->unit_shift && me->row_pos > 1 && (me->get_set_width() == (config->unit_adding + s->get(me->row_pos - 1))))
   			    {
   			      row_pos = (me->row_pos - 1);
-  			      col_pos = "D " + col_pos;
+  			      col_pos = "D" + col_pos;
 
               buf+=sprintf("0075 ");			
   			    }
@@ -377,13 +379,16 @@ import Monotype;
   	        // then, figure out what that adjustment is in terms of 0075 and 0005
 				    else
   	        {  	            
-  	          if(needed_units > max_ls_adjustment)
+//werror("needed units: %d, max_ls_adjustment: %d\n", needed_units, max_ls_adjustment);
+  	          if(needed_units > max_ls_adjustment || abs(needed_units) > max_reduction_units)
   	          {
   	            int unit_shift_diff = (me->get_set_width() - s->get(me->row_pos - 1) );
+//werror("unit_shift_diff: %d\n", unit_shift_diff);
   	            if(config->unit_shift && me->row_pos > 1 && unit_shift_diff <= max_ls_adjustment && abs(unit_shift_diff) <= max_reduction_units)
   	            {
+//werror("yeah!\n");
   	              row_pos = (me->row_pos - 1);
-      			      col_pos = "D " + col_pos;
+      			      col_pos = "D" + col_pos;
       			      needed_units = me->get_set_width() - s->get(me->row_pos - 1);
   	            }
   	          }
@@ -407,7 +412,7 @@ import Monotype;
   	      c = " ";
 
         werror(string_to_utf8(c));
-  	  buf+=sprintf("%s %s [%s]\n", (string)row_pos, (col_pos/"")*" ", string_to_utf8(c), /* me->get_set_width() */);
+  	  buf+=sprintf("%s %s [%s]\n", (string)row_pos, ((col_pos/"")-({""}))*" ", string_to_utf8(c), /* me->get_set_width() */);
       }
     }
     return buf->get();
