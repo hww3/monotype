@@ -40,7 +40,6 @@ void registerDefaultPreferences()
 void setupPreferences()
 {
 	int bool;
-	object defaults = Cocoa.NSUserDefaults.standardUserDefaults();
 	bool = (defaults->boolForKey_("cycleSensorIsPermanent"));
 	CycleSensorTypeCheckbox->setState_(bool);
 	CycleSensorMode = bool;
