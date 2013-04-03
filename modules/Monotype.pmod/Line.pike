@@ -33,7 +33,7 @@ import Monotype;
 	int linespaces; 
 	
 	// the current number of units set on this line.
-	int linelength; 
+	float linelength; 
 	
 	// the total length of the line in units of set.
 	int lineunits; 
@@ -150,7 +150,7 @@ import Monotype;
 
 	// calculates the large (0.0075) and small (0.0005) justification settings
 	// required to add units to the current sort.
-	array calculate_wordspacing_code(int units)
+	array calculate_wordspacing_code(float units)
 	{
 		// algorithm from page 25
 		int steps = (int)round((0.0007685 * setwidth * units) / 0.0005);
@@ -164,7 +164,7 @@ import Monotype;
 
 
 	// add a sort to the current line
-	void add(string|object activator, int|void modifier, int|void adjust_space, int|void atbeginning, int|void stealth)
+	void add(string|object activator, int|void modifier, int|float|void adjust_space, int|void atbeginning, int|void stealth)
 	{
 	  object mat;
 	  string code;
@@ -254,12 +254,12 @@ import Monotype;
 	}
 
   // can we add n units to the line and still meet the justification requirements?
-  int can_add(int units)
+  int can_add(float units)
   {
 	return !is_overset(linelength + units);
   }
 
-  int is_overset(int|void mylinelength)
+  int is_overset(float|void mylinelength)
   {
     int mbig, mlittle;
     [mbig, mlittle] = calculate_justification(mylinelength);
@@ -268,7 +268,7 @@ import Monotype;
     overset = overset || (linespaces && ((mbig*15)+mlittle)<((min_big*15)+min_little));
     if(overset)
     {
-      werror("overset: # %d => line length: %d, units in line: %d, to add: %d, linespaces: %d, just: %d/%d min: %d/%d\n", line_number, lineunits, linelength, mylinelength, linespaces, mbig, mlittle, min_big, min_little);
+      werror("overset: # %d => line length: %d, units in line: %.1f, to add: %.1f, linespaces: %d, just: %d/%d min: %d/%d\n", line_number, lineunits, linelength, mylinelength, linespaces, mbig, mlittle, min_big, min_little);
     }
 
     if(!mylinelength)
@@ -340,15 +340,15 @@ import Monotype;
   	 		  wedgewidth = s->get(me->row_pos!=16?me->row_pos:15);
 			
   	   //     werror("want %d, wedge provides %d\n", me->get_set_width(), wedgewidth);
-  	      if(me->row_pos == 16 || (wedgewidth != me->get_set_width())) // we need to adjust the justification wedges
+  	      if(me->row_pos == 16 || ((float)wedgewidth != me->get_set_width())) // we need to adjust the justification wedges
   	      {
   	        int nf, nc;
 
             // TODO: we need to check to make sure we don't try to open the mould too wide.
 
-            werror("needs adjustment: have %d, need %d!\n", wedgewidth, me->get_set_width());
+            werror("needs adjustment: have %d, need %.1f!\n", wedgewidth, me->get_set_width());
   	        // first, we should calculate what difference we need, in units of set.
-  	        int needed_units = me->get_set_width() - wedgewidth;
+  	        float needed_units = me->get_set_width() - wedgewidth;
  
             // at this point, we'd select the appropriate mechanism for handling the difference
             // presumably, we'd use the following techniques, were they available to us:
@@ -420,10 +420,10 @@ import Monotype;
 	
 	class MatWrapper
 	{
-		int adjust_space;
+		int|float adjust_space;
 		object mat;
 		
-		static void create(object _mat, int _adjust_space)
+		static void create(object _mat, int|float _adjust_space)
 		{
 			mat = _mat;
 			adjust_space = _adjust_space;
@@ -436,9 +436,9 @@ import Monotype;
 			else return mat[a];
 		}
 		
-		int get_set_width()
+		float get_set_width()
 		{
-			return adjust_space + mat->get_set_width();
+			return (float)(adjust_space + mat->get_set_width());
 		}
 		
 		

@@ -234,7 +234,7 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 			   ch = "<font size=\"-1\">" + ch + "</font>";
 
 
-			if(e->mat && e->get_set_width() != e->mat->get_set_width())
+			if(e->mat && (float)e->get_set_width() != (float)e->mat->get_set_width())
 			  ch = "<span style=\"text-decoration: overline; color: blue\">" + ch + "</span>";
 			  
 			 if(sizeof(e->character) > 1) 

@@ -54,7 +54,7 @@ string d_code = "D";
 string fine_code = "0005";
 string coarse_code = "0075";
 
-int space_adjust = 0;
+float space_adjust = 0.0;
 int indent_adjust = 0;
 
 int line_mode = MODE_JUSTIFY;
@@ -675,7 +675,7 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	{
 		process_setting_buffer();
 		int toadd = (int)(data[2..sizeof(data)-2]);
-		if(low_quad_out(toadd) != toadd)
+		if(low_quad_out((float)toadd) != (float)toadd)
 		{
 			current_line->errors += ({"Fixed space (%d unit) won't fit on line... dropping.\n"});
 		}
@@ -694,16 +694,22 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	}
 
 	// letterspacing
-	else if(Regexp.SimpleRegexp("<[Ll][\\-0-9]*>")->match(data))
+	else if(Regexp.SimpleRegexp("<[Ll].*>")->match(data))
 	{
 		process_setting_buffer();
-		space_adjust = (int)(data[2..sizeof(data)-2]);
+		string sa = (data[2..sizeof(data)-2]);
+		int w, f;
+		sscanf(sa, "%d.%d", w, f);
+		werror("sa: %s, w: %d, f: %d\n", sa, w, f);
+		if(!(<0, 5>)[f])
+		  throw(Error.Generic("Invalid adjustment " + sa + ". Only whole and half unit adjustments allowed.\n"));
+		sscanf(sa, "%f", space_adjust);	
 	}
 	// end letterspacing
-	else if(Regexp.SimpleRegexp("</[Ll][\\-0-9]*>")->match(data))
+	else if(Regexp.SimpleRegexp("</[Ll].*>")->match(data))
 	{
 		process_setting_buffer();
-		space_adjust = 0;
+		space_adjust = 0.0;
 	}
 	// insert an activator
 	else if(Regexp.SimpleRegexp("<[Aa].*>")->match(data))
@@ -779,13 +785,13 @@ void make_new_line(int|void newpara)
   
   if(indent_adjust)
 	{
-  	int toadd = indent_adjust;
+  	float toadd = (float)indent_adjust;
   	if(newpara && toadd > 0)
   	{
   	  werror("indent %O.\n", indent_adjust);
     	if(low_quad_out(toadd) != toadd)
       {
-  	    current_line->errors += ({sprintf("Fixed space (%d unit) won't fit on line... dropping.\n", toadd)});
+  	    current_line->errors += ({sprintf("Fixed space (%.1f unit) won't fit on line... dropping.\n", toadd)});
       }	
     }
     else if(!newpara && toadd < 0)
@@ -795,7 +801,7 @@ void make_new_line(int|void newpara)
       
     	if(low_quad_out(toadd) != toadd)
       {
-  	    current_line->errors += ({sprintf("Fixed space (%d unit) won't fit on line... dropping.\n", toadd)});
+  	    current_line->errors += ({sprintf("Fixed space (%.1f unit) won't fit on line... dropping.\n", toadd)});
       }	      
     }
 	}	
@@ -827,8 +833,8 @@ int create_modifier()
 void quad_out()
 {
   werror("quad_out()\n");
-  int left = current_line->lineunits - current_line->linelength;
-  werror("* have %d units left on line.\n", left);
+  float left = current_line->lineunits - current_line->linelength;
+  werror("* have %.1f units left on line.\n", left);
 
   while(!current_line->can_add(left))
   {
@@ -837,7 +843,7 @@ void quad_out()
 //    Tools.throw(Error.Generic, "unable to add %d units because it would cause the line to be overset.\n", left);
   }
 
-  werror("* %d units can be added to give acceptably sized justifying spaces.\n", left);
+  werror("* %.1f units can be added to give acceptably sized justifying spaces.\n", left);
 
   if(line_mode == MODE_LEFT || line_mode == MODE_JUSTIFY)
   {
@@ -849,7 +855,7 @@ void quad_out()
   }
   else if(line_mode == MODE_CENTER)
   {
-     int l,r;
+     float l,r;
      l = left/2;
      r = (left/2) + (left %2);
 	 low_quad_out(r);
@@ -857,15 +863,15 @@ void quad_out()
   }
 }
 
-int low_quad_out(int amount, int|void atbeginning)
+int low_quad_out(float amount, int|void atbeginning)
 {
   array toadd = ({});
   int ix;
-  toadd = Monotype.findspace()->simple_find_space(amount, spaces);
+  toadd = Monotype.findspace()->simple_find_space((int)floor(amount), spaces);
   if(!toadd || !sizeof(toadd))
-    toadd = Monotype.IterativeSpaceFinder()->findspaces(amount, spaces);
+    toadd = Monotype.IterativeSpaceFinder()->findspaces((int)floor(amount), spaces);
   if(!toadd || !sizeof(toadd))
-    toadd = simple_find_space(amount, spaces);
+    toadd = simple_find_space((int)floor(amount), spaces);
   toadd = sort(toadd);
 
   foreach(toadd;int z;int i)
@@ -874,7 +880,7 @@ int low_quad_out(int amount, int|void atbeginning)
     current_line->add(spaces[i], 0, 0, atbeginning);	
 	if(current_line->is_overset())
 	{
-      werror("overset. added %d, at %d\n", current_line->linelength, ix);
+      werror("overset. added %.2f, at %d\n", current_line->linelength, ix);
       current_line->remove();ix-=i;
       if(current_line->can_justify())
         break;
@@ -918,7 +924,7 @@ int low_quad_out(int amount, int|void atbeginning)
     }
   }
 
-  werror("asked to add %d units of space; added %d.\n", amount, ix);
+  werror("asked to add %.1f units of space; added %d.\n", amount, ix);
   return ix;
 }
 
@@ -996,7 +1002,7 @@ void new_line(int|void newpara)
 
   if(!current_line->linespaces && current_line->linelength != current_line->lineunits)
   {
-      throw(Error.Generic(sprintf("Off-length line without justifying spaces: need %d units to justify, line has %d units. Consider adding a justifying space to line - %s\n", 
+      throw(Error.Generic(sprintf("Off-length line without justifying spaces: need %d units to justify, line has %.1f units. Consider adding a justifying space to line - %s\n", 
 		current_line->lineunits, current_line->linelength, (string)current_line)));
   }
   else if(current_line->linespaces && !current_line->can_justify()) 
