@@ -106,7 +106,7 @@ import Monotype;
 
 	   return r;
 	}
-	array calculate_justification(int|void mylinelength)
+	array calculate_justification(int|float|void mylinelength)
 	{
 	  float justspace;
 
@@ -117,7 +117,7 @@ import Monotype;
 	  return low_calculate_justification(justspace);
 	}
 
-	float calc_justspace(int|void verbose, int|void mylinelength)
+	float calc_justspace(int|void verbose, int|float|void mylinelength)
 	{
 	  float justspace = 0.00;
 
@@ -135,6 +135,8 @@ import Monotype;
 	array low_calculate_justification(float justspace)
 	{
       int small,large;
+
+werror("calculate justification: %f\n", justspace);
 
 	  justspace = justspace + ((min_space_units)-(m->elements["JS"]->get_set_width()));
 	  justspace *= (setwidth * 1.537);	
