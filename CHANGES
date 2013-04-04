@@ -1,3 +1,6 @@
+20130401
+- Caster: Fix a stack trace error when accessing the preferences page.
+
 20130318
 - Ribbon Generator: added new application info page with information
    useful for troubleshooting efforts.
