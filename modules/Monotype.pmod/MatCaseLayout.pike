@@ -94,8 +94,8 @@ void set(string column, int row, Matrix mat)
 
   if(mat->is_fs || mat->is_js)
   {
-    elements["SPACE_"+ mat->set_width] = mat;
-    spaces[mat->set_width] = mat;
+    elements["SPACE_"+ (int)mat->set_width] = mat;
+    spaces[(int)mat->set_width] = mat;
   }
 
   if(mat->is_js)

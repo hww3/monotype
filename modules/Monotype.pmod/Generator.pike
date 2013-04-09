@@ -865,6 +865,7 @@ void quad_out()
 
 int low_quad_out(float amount, int|void atbeginning)
 {
+  amount=(int)amount;
   array toadd = ({});
   int ix;
   toadd = Monotype.findspace()->simple_find_space((int)floor(amount), spaces);

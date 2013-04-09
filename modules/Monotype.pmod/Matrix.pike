@@ -6,7 +6,7 @@ import Public.Parser.XML2;
   string style;
   string character;
   string activator;
-  int set_width;
+  float set_width;
   int row_pos;
   string col_pos;
   int is_js;
@@ -54,7 +54,7 @@ import Public.Parser.XML2;
     if(a->weight && a->weight!="0") style = (strlen(a->weight)?a->weight:"R");
     if(a->character) character = a->character;
     if(a->activator) activator = a->activator;
-    if(a->set_width) set_width = (int)(a->set_width);
+    if(a->set_width) set_width = (float)(a->set_width);
     return 1;
   }
 
@@ -89,7 +89,7 @@ import Public.Parser.XML2;
 
   
 
-  int get_set_width()
+  float get_set_width()
   {
     return set_width;
   }
@@ -119,7 +119,7 @@ import Public.Parser.XML2;
     return series;
   }
 
-  void set_set_width(int w)
+  void set_set_width(float w)
   {
     set_width = w;
   }

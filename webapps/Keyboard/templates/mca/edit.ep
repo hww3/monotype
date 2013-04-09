@@ -466,7 +466,7 @@ line-height: 15.5px;
 			{ 
 			  ch = mat->character;
 
-			  if(u != (int)mat->set_width) 
+			  if((float)u != (float)mat->set_width) 
    			    st = "style=\"background: yellow\"";
 
 			  if(mat->is_js)
