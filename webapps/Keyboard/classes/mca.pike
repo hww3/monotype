@@ -267,6 +267,7 @@ response->set_data(sprintf("<pre>Request Debug: %O\n\n%O</pre>\n", id->cookies, 
 
 public void setMat(Request id, Response response, Template.View view, mixed args)
 {
+  mixed e = catch {
 	werror(string_to_utf8("setting mat for " + id->variables->col + " " + id->variables->row + " with " + id->variables->matrix));
  object mca = id->misc->session_variables->mca;
 werror("%O", mkmapping(indices(id), values(id)) );
@@ -297,8 +298,15 @@ werror("%O", mkmapping(indices(id), values(id)) );
     werror("n: %O", n);
     mca->set(id->variables->col, (int)id->variables->row, m);
   }
+  
+};
 
-werror("!!!\n!!!\n");
+if(e)
+{
+  response->set_data(e[0]);
+  log->exception("error occurred while setting a matrix.", e);
+}
+else
   response->set_data("");
 }
 

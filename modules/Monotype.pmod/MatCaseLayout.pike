@@ -223,10 +223,11 @@ int load(Node n)
 
     if(c->get_node_name() == "element")
     {
+      string col = c->get_attributes()["column"];
+      int row = (int)(c->get_attributes()["row"]);
       object m = select_xpath_nodes("matrix", c)[0];
-      set(c->get_attributes()["column"],
-          (int)(c->get_attributes()["row"]),  
-          Matrix(m));
+      set(col, row,  
+          Matrix(m, lambda(string x){ add_problem(col, row, x + " (" + col + row + ")");}));
     }
   }
 

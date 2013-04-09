@@ -4,6 +4,8 @@ TODO
 - ribbon generator: add alignment characters to first line
 - ribbon generator: show warning if mca has unusual space availability.
 - mca editor: allow available sorts display to be customized.
+- ribbon generator: when adding adjustment of fractional set, throw error if not whole or half unit.
+     (completed 08-apr-2013)
 - mca editor: allow drag and drop within mca.
      (completed 14-nov-2011)
 - keyboard app: allow users to log in and have private arrangements/wedges.
