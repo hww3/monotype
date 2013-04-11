@@ -3,7 +3,10 @@ TODO
 - ribbon generator: allow unit variations when quadding
 - ribbon generator: add alignment characters to first line
 - ribbon generator: show warning if mca has unusual space availability.
+- ribbon generator: allow combined space and sort for tight set lines.
+- ribbon generator: allow unit shift + adding + just space adjustments.
 - mca editor: allow available sorts display to be customized.
+     (completed 10-apr-2013)
 - ribbon generator: when adding adjustment of fractional set, throw error if not whole or half unit.
      (completed 08-apr-2013)
 - mca editor: allow drag and drop within mca.
