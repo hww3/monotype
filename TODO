@@ -1,5 +1,6 @@
 TODO
 
+- ribbon generator: allow saving of job settings
 - ribbon generator: allow unit variations when quadding
 - ribbon generator: add alignment characters to first line
 - ribbon generator: show warning if mca has unusual space availability.
