@@ -1,3 +1,4 @@
+#charset utf8
 
 inherit Fins.Application;
 
@@ -351,3 +352,68 @@ int admin_only_user_filter(Fins.Request id, Fins.Response response, mixed ... ar
 
    return 1;
 }
+
+object get_sys_pref(string pref, object user)
+{
+  Keyboard.Objects.Preference p;
+  mixed err = catch(p = Fins.DataSource["_default"]->find->preferences((["name": pref, "User": user])));
+  if((err = Error.mkerror(err)) && !err->_is_recordnotfound_error) throw(err);
+  if(sizeof(p))
+    return p[0];
+  else return 0;
+}
+
+//! @param defs
+//!  optional mapping containing keys to set on new object if it doesn't exist already.
+object new_string_pref(string pref, object user, string value, mapping|void defs)
+{
+  mixed p;
+  p = get_sys_pref(pref, user);
+  if(p) return p;
+  else 
+  { 
+     logger->info("Creating new preference object '" + pref  + "'.");
+     p = Keyboard.Objects.Preference();
+     p["name"] = pref;
+     p["type"] = Keyboard.STRING;
+     p["value"] = value;
+//     p["description"] = "";
+     p["User"] = user;
+     if(defs)
+     {
+       foreach(defs; string k; string v)
+         p[k] = v;
+     }
+     p->save();
+     return p;
+  }
+}
+
+array full_alphabet_elements = 
+  ({
+      "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", 
+      "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X",
+      "Y", "Z",
+      "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l",
+      "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x",
+      "y", "z",
+      "ff", "fi", "fl", "ffi", "ffl", "œ", "œ",
+      "1", "2", "3", "4", "5", "6", "7", "8", "9", "0",
+      ".", ",", ":", ";", "!", "?", "&", "-", "$", "‘", "’"
+  });
+
+  array small_caps_elements = 
+    ({
+        "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", 
+        "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X",
+        "Y", "Z"
+    });
+    
+  void populate_user_prefs(object user)
+  {
+    new_string_pref("full_sorts_palette_contents", user, 
+      full_alphabet_elements * " ");
+
+      new_string_pref("sc_sorts_palette_contents", user, 
+         small_caps_elements * " ");
+  }

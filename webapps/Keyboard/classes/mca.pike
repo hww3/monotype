@@ -34,25 +34,6 @@ array small_caps_elements =
       "Y", "Z"
   });
 
-array full_alphabet_elements = 
-  ({
-      "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", 
-      "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X",
-      "Y", "Z",
-      "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l",
-      "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x",
-      "y", "z",
-      "ff", "fi", "fl", "ffi", "ffl", "œ", "œ",
-      "1", "2", "3", "4", "5", "6", "7", "8", "9", "0",
-      ".", ",", ":", ";", "!", "?", "&", "-", "$", "‘", "’"
-  });
-
-mapping case_contents = ([
-							"R": full_alphabet_elements,
-			  				"S": small_caps_elements,
-							"B": full_alphabet_elements,
-                          	"I": full_alphabet_elements
-						]);
 
 
 public void index(Request id, Response response, Template.View view, mixed args)
@@ -441,9 +422,9 @@ else
   view->add("cols", c);
   view->add("problems", mca->problems);
   view->add("description", mca->description);
-  
+
   // generate "elements not in matcase" data
-  mapping not_in_matcase = copy_value(case_contents);
+  mapping not_in_matcase = get_case_contents(id);
  
   foreach(mca->elements; string act; object matrix)
   {
@@ -465,6 +446,19 @@ if(matrix->character == "0")
 
 }
 
+mapping get_case_contents(object id)
+{
+  array full_alphabet_elements = ((replace(id->misc->session_variables->user["Preferences"]["full_sorts_palette_contents"]["value"], ({"\t", "\r", "\n"}), ({" ", " ", " "})) / " ") - ({""}));
+  array small_caps_elements = ((replace(id->misc->session_variables->user["Preferences"]["sc_sorts_palette_contents"]["value"], ({"\t", "\r", "\n"}), ({" ", " ", " "})) / " ") - ({""}));
+  
+  mapping case_contents = ([
+  							"R": full_alphabet_elements,
+  			  				"S": small_caps_elements,
+  							"B": full_alphabet_elements,
+                            	"I": full_alphabet_elements
+  						]);
+  return case_contents;
+}
 public void saveDescription(Request id, Response response, Template.View view, mixed args)
 {
     werror("variables: %O\n", id->variables);
@@ -477,7 +471,7 @@ public void saveDescription(Request id, Response response, Template.View view, m
 public void notInCase(Request id, Response response, Template.View view, mixed args)
 {
     object mca = id->misc->session_variables->mca;
-    mapping not_in_matcase = copy_value(case_contents);
+    mapping not_in_matcase = get_case_contents(id);
 
     foreach(mca->elements; string act; object matrix)
     {

@@ -48,13 +48,12 @@
 			
 			<!-- tabs -->
 			<ul>
-	<li<% if(data->controller =="/")  %> id="current" <%  %>><%#action_link "controller":"/"%><span>Home</span></a></li>
-	<li<% if (data->controller == "/mca"){ %> id="current" <% } %>><%#action_link "controller":"/mca"%><span>MCAs</span></a></li>			 
-	<li<% if (data->controller == "/wedge"){ %> id="current" <% } %>><%#action_link "controller":"/wedge"%><span>Stopbars</span></a></li>			
-	<li<% if (data->controller == "/ribbon"){ %> id="current" <% } %>><%#action_link "controller":"/ribbon"%><span>Ribbons</span></a></li>			
-<!--
-	<li<% if (data->controller == "/prefs"){ %> id="current" <% } %>><%#action_link "controller":"/prefs"%><span>Preferences</span></a></li>			
--->			</ul>
+	            <li<% if(data->controller =="/")  %> id="current" <%  %>><%#action_link "controller":"/"%><span>Home</span></a></li>
+	            <li<% if (data->controller == "/mca"){ %> id="current" <% } %>><%#action_link "controller":"/mca"%><span>MCAs</span></a></li>			 
+	            <li<% if (data->controller == "/wedge"){ %> id="current" <% } %>><%#action_link "controller":"/wedge"%><span>Stopbars</span></a></li>			
+	            <li<% if (data->controller == "/ribbon"){ %> id="current" <% } %>><%#action_link "controller":"/ribbon"%><span>Ribbons</span></a></li>			
+	            <li<% if (data->controller == "/prefs"){ %> id="current" <% } %>><%#action_link "controller":"/prefs"%><span>Preferences</span></a></li>			
+    </ul>
 											
 		</div>
 		

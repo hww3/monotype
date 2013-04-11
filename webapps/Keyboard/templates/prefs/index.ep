@@ -1,12 +1,42 @@
 <h1>Preferences</h1>
+<!--
+<% if(0) { %>
 <p>
 <%#action_form "method":"post", "action":"save"%>
 Sorts Pallete Location: 
-<select name="sorts_palette_location">
-	<option <%if(data->sorts_palette_location["value"] == "top") %> selected="1" <% %>value="top">Top</option>
-	<option <%if(data->sorts_palette_location["value"] == "left") %> selected="1" <% %>value="left">Left</option>
+<input type="hidden" name="pref_name" value="sorts_palette_location"/>
+<select name="pref">
+	<option <%if(data->preferences->sorts_palette_location["value"] == "top") %> selected="1" <% %>value="top">Top</option>
+	<option <%if(data->preferences->sorts_palette_location["value"] == "left") %> selected="1" <% %>value="left">Left</option>
 </select>
-<p>
-	
+&nbsp;
 <input type="submit" name="submit" value="Save"/>
+</form>
+<% } %>
+-->
+
+<p>
+<%#action_form "method":"post", "action":"save"%>
+<b>Default MCA Sort List</b> (Full Alphabets): 
+<input type="hidden" name="pref_name" value="full_sorts_palette_contents"/>
+<textarea name="pref" rows="5" cols="60">
+<%=data->preferences["full_sorts_palette_contents"]["value"]%>
+</textarea>
+&nbsp;
+<input type="submit" name="submit" value="Save"/>
+<br/>
+</i>Note: Each sort should be separate from others by one or more spaces.</i>
+</form>
+
+<p>
+<%#action_form "method":"post", "action":"save"%>
+<b>Default MCA Sort List</b> (Small Caps): 
+<input type="hidden" name="pref_name" value="sc_sorts_palette_contents"/>
+<textarea name="pref" rows="5" cols="60">
+<%=data->preferences["sc_sorts_palette_contents"]["value"]%>
+</textarea>
+&nbsp;
+<input type="submit" name="submit" value="Save"/>
+<br/>
+<i>Note: Each sort should be separate from others by one or more spaces.</i>
 </form>
