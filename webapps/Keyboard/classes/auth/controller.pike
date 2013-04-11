@@ -190,6 +190,7 @@ public void login(Request id, Response response, Template.View t, mixed ... args
         if(r)
         {
            // success!
+           app->populate_user_prefs(r);
          __log->info("Logged in %O\n", r);
           id->misc->session_variables->logout = 0;
            id->misc->session_variables["user"] = r;
