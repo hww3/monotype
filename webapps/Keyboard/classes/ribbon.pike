@@ -180,7 +180,9 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 
 		foreach(line->elements;int col; mixed e)
 		{
-		  if(e->is_real_js)
+	//	  if(e->is_real_js && line->combined_space)
+	//	    continue;
+		 if(e->is_real_js)
 		  {
 			if(tobeadded != "")
 			{
@@ -189,8 +191,14 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 			  tobeaddedwidth = 0;
 			}
 			// need some better work on this.
-		    int w = e->matrix->get_set_width();
-		    w = (w-max_red + line->units);
+		    int w;
+		    if(!line->combined_space)
+		    {
+		      w = e->matrix->get_set_width();
+		      w = (w-max_red + line->units);
+		    }
+		    else
+		      w = line->units;
 		    setonline+=w;
 
  		// spill is used to even out the display lines, as we're not able to depict fractional units accurately on the screen.
@@ -198,7 +206,7 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 		if(spill > 1.0) { w+=1; spill -=1.0; }
 
 		total_set += (e->matrix->get_set_width()-max_red);
-		    b += ("<div style=\"position:relative; float:left; background:orange; width:" + (int)(w) + "px\"> &nbsp; </div>");
+		    b += ("<div style=\"position:relative; float:left; background:" + (!line->combined_space?"orange":"red") + "; width:" + (int)(w) + "px\"> &nbsp; </div>");
 			last_was_space = 1;
 		  }
 		  else if(e->is_fs || e->is_js)

@@ -17,6 +17,9 @@ import Monotype;
 
   int line_number;
 	int line_on_page;
+	
+	int combined_space;
+//	float calculated_justifying_space = 0.0;
 		
 	int max_reduction_units;
 	int min_space_units;
@@ -62,6 +65,12 @@ import Monotype;
 		return s;
 	}
 	
+	void re_set_line(object line)
+	{
+	  foreach(line->elements; int i; object e)
+	    add(e);
+	}
+	
 	static void create(object _m, object _s, mapping _config, object _g)
 	{
     config = _config;
@@ -80,7 +89,13 @@ import Monotype;
 			max_reduction_units = 2;
 		else
 			max_reduction_units = 1;
-		min_space_units = m->elements["JS"]->get_set_width() - max_reduction_units;
+	  if(config->combined_space)
+	  {
+      combined_space = 1;
+	    min_space_units = 0;
+    }
+    else
+		  min_space_units = m->elements["JS"]->get_set_width() - max_reduction_units;
 	}
 	
 	// remove a sort from the line; recalculate the justification
@@ -113,7 +128,7 @@ import Monotype;
 	  justspace = calc_justspace(0, mylinelength);
 	  if(!mylinelength)
  	    units = justspace;
-//	werror("justspace: %f\n", justspace);
+	werror("justspace: %f\n", justspace);
 	  return low_calculate_justification(justspace);
 	}
 
@@ -134,9 +149,15 @@ import Monotype;
 
 	array low_calculate_justification(float justspace)
 	{
-      int small,large;
-
 	  justspace = justspace + ((min_space_units)-(m->elements["JS"]->get_set_width()));
+	  
+	  return really_low_calculate_justification(justspace);
+	}
+	
+	array really_low_calculate_justification(float justspace)
+	{
+	  int small,large;
+    
 	  justspace *= (setwidth * 1.537);	
 
 	  int w = ((int)round(justspace)) + 53; // 53 increments of the 0.0005 is equivalent to 3/8.
@@ -150,13 +171,18 @@ import Monotype;
 
 	// calculates the large (0.0075) and small (0.0005) justification settings
 	// required to add units to the current sort.
-	array calculate_wordspacing_code(int units)
+	array calculate_wordspacing_code(float|int units)
 	{
 		// algorithm from page 25
 		int steps = (int)round((0.0007685 * setwidth * units) / 0.0005);
 		steps += 53; // 53 is 3/8 code.
 		// TODO: check to see if we are opening too wide for the mould.
 		array x = ({steps/15, steps%15});
+		if(x[1] == 0)
+		{
+		  x[0]--;
+		  x[1]=15;
+		}
 		if(x[0] > 15 || x[0] < 1) throw(Error.Generic(sprintf("Bad Justification code %d/%d\n", x[0], x[1])));
 		if(x[1] > 15 || x[1] < 1) throw(Error.Generic(sprintf("Bad Justification code %d/%d\n", x[0], x[1])));
 		return x;
@@ -213,7 +239,6 @@ import Monotype;
   	      code = "B|" + code;
 
   	  mat = m->elements[code];
-   	  
     }    
 
     if(!mat && (modifier&MODIFIER_ITALICS) && config->allow_punctuation_substitution && (<".", ",", ":", ";", "'", "’", "‘", "!", "?", "-", "–">)[activator])
@@ -232,18 +257,35 @@ import Monotype;
     }
 	  else
 	  {	
-		  if(atbeginning)
-		  {
-//			displayline = ({activator}) + displayline;
-			  elements = ({MatWrapper(mat, adjust_space)}) + elements;
-		  }
+//	    werror("mat: %O\n", mat);
+	    if(mat->_is_matwrapper)
+	    {
+	      elements += ({mat});
+	      if(!stealth)
+ 	    	  linelength+=(mat->get_set_width());
+      }
+      else if(mat->is_real_js)
+      {
+	      elements += ({mat});
+        linelength += (min_space_units);
+        linespaces ++;
+        return;
+      }
 		  else
-		  {
+		  { 
+		    if(atbeginning)
+		    {
+//		  	displayline = ({activator}) + displayline;
+			    elements = ({MatWrapper(mat, adjust_space)}) + elements;
+		    }
+		    else
+		    {
 //		    displayline += ({ activator });
-		    elements += ({MatWrapper(mat, adjust_space)});		
-		  }
-		  if(!stealth)
+		      elements += ({MatWrapper(mat, adjust_space)});		
+		    }
+		    if(!stealth)
  	    	  linelength+=(mat->get_set_width() + adjust_space);
+    	}
 	  }
 
 	  if(!stealth)
@@ -262,13 +304,22 @@ import Monotype;
   int is_overset(int|void mylinelength)
   {
     int mbig, mlittle;
-    [mbig, mlittle] = calculate_justification(mylinelength);
+    catch {
+    if(!combined_space)
+      [mbig, mlittle] = calculate_justification(mylinelength);
+    else
+    {
+      float cjs = calc_justspace(0, mylinelength|linelength);
+      [mbig, mlittle] = calculate_wordspacing_code(cjs);
+      //calculated_justifying_space = cjs;
+    }
+    };
     int overset = ((mylinelength||linelength) > lineunits) ;//|| (linespaces && ((mbig*15)+mlittle)<((min_big*15)+min_little) );
 
     overset = overset || (linespaces && ((mbig*15)+mlittle)<((min_big*15)+min_little));
     if(overset)
     {
-      werror("overset: # %d => line length: %d, units in line: %d, to add: %d, linespaces: %d, just: %d/%d min: %d/%d\n", line_number, lineunits, linelength, mylinelength, linespaces, mbig, mlittle, min_big, min_little);
+      werror("overset: # %d => %O line length: %d, units in line: %d, to add: %d, linespaces: %d, just: %d/%d min: %d/%d\n", line_number, overset, lineunits, linelength, mylinelength, linespaces, mbig, mlittle, min_big, min_little);
     }
 
     if(!mylinelength)
@@ -287,6 +338,7 @@ import Monotype;
 	
 	string generate_line()
 	{
+	  int last_space;
 	  String.Buffer buf = String.Buffer();
 	  // a little nomenclature here: c == coarse (0075) f == fine (0005), 
     //   cc == current coarse setting, cf == current fine setting
@@ -302,7 +354,27 @@ import Monotype;
 
       foreach(reverse(elements);; object me)
       {
-        if(me->is_real_js)
+        int this_combined_space = 0;
+        
+        if(last_space && combined_space)
+        {
+          if(cf != f || cc != c)
+  	      {
+  		      werror("resetting justification wedges.\n");
+  		      buf+=sprintf("%s %d\n", generator->fine_code, f);
+  		      buf+=sprintf("%s %d\n", generator->coarse_code, c);
+  			    cf = f;
+  			    cc = c;
+  	      }
+  	      this_combined_space = 1;
+          last_space = 0;
+        }
+        if(me->is_real_js && combined_space)
+        {
+          last_space = 1;
+          continue;
+        }
+        else if(me->is_real_js)
         {
           // if we've previously changed the justification wedges in order to
           // correct a sort width, we need to put things back.
@@ -393,7 +465,11 @@ import Monotype;
   	            }
   	          }
   	          
-              [nc, nf] = calculate_wordspacing_code(needed_units);
+  	          if(this_combined_space)
+  	          {
+  	            werror("needed units (w/combined space): %O\n", needed_units + calc_justspace(0, linelength));
+                [nc, nf] = calculate_wordspacing_code(needed_units + calc_justspace(0, linelength));
+              }
   		        // if it's not what we have now, make the adjustment
 
    		        if(cf != nf || cc != nc)
@@ -412,7 +488,7 @@ import Monotype;
   	      c = " ";
 
         werror(string_to_utf8(c));
-  	  buf+=sprintf("%s %s [%s]\n", (string)row_pos, ((col_pos/"")-({""}))*" ", string_to_utf8(c), /* me->get_set_width() */);
+  	  buf+=sprintf("%s %s %s [%s]\n", (string)row_pos, ((col_pos/"")-({""}))*" ", this_combined_space?"S":"", string_to_utf8(c), /* me->get_set_width() */);
       }
     }
     return buf->get();
@@ -420,6 +496,7 @@ import Monotype;
 	
 	class MatWrapper
 	{
+	  constant _is_matwrapper = 1;
 		int adjust_space;
 		object mat;
 		

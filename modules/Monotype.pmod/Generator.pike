@@ -331,7 +331,23 @@ int process_setting_buffer(int|void exact)
      	}
 //	werror("+ %O", data_to_set[i]);
 	   current_line->add(data_to_set[i], create_modifier(), space_adjust);
-	
+	   if(current_line->is_overset() && config->allow_combined_space)
+	   {
+	     // first, let's see if removing 1 unit from each justifying space will work.
+	     	object tl = Line(m, s, config + (["combined_space": 1]), this);
+	     	werror("re-setting line with 0 unit spaces.\n");
+	     	tl->re_set_line(current_line);
+	     	werror("how about a combined space?\n");
+	     	if(!tl->is_overset())
+	     	{
+	     	  werror("good to go!\n");
+	     	  tl->line_number = current_line->line_number;
+	     	  tl->line_on_page = current_line->line_on_page;
+	     	  current_line = tl;	   
+	     	  new_line();  	  
+	     	  continue;
+	     	}
+     }
 	   if(current_line->is_overset()) // back up to before the last space.
 	   {
 	    werror("word didn't fit, justification is %d/%d\n", current_line->big, current_line->little);
