@@ -1,5 +1,5 @@
 syntax: glob
-
+webapps/Keyboard/config/dev.cfg
 webapps/Keyboard/lib
 webapps/Keyboard/dojo
 webapps/Keyboard/logs
