@@ -16,4 +16,4 @@
   shift 1
 
   cd `dirname $0`/../..
-  exec pike $PIKE_ARGS -x fins $ARG0 Keyboard $*
+  exec pike $PIKE_ARGS -x fins $ARG0 -a Keyboard "$@"
