@@ -40,8 +40,6 @@ function setWedge(data, wedgeid)
   }
 }
 
-
-
 </script>
 <h1>Ribbon Generator</h1>
 <form action="<%#action_url "action": "do_validate" %>" method="post" enctype="multipart/form-data">
@@ -152,6 +150,8 @@ Width Adjustment Mechanisms<p>
 <input type="checkbox" name="unit_shift" value="1">Unit Shift <br/>
 <input type="checkbox" name="justification" checked="1" value="1"> Justification Wedges 
 <p>
+<input type="checkbox" name="enable_combined_space" value="1" checked="1"/> Enable Combined Word Spaces
+<br/>
 Minimum Justifying Space Size (3/8 is default)
 <select name="min_just">
 <option>1/1

@@ -128,7 +128,7 @@ import Monotype;
 	  justspace = calc_justspace(0, mylinelength);
 	  if(!mylinelength)
  	    units = justspace;
-	werror("justspace: %f\n", justspace);
+//	werror("justspace: %f\n", justspace);
 	  return low_calculate_justification(justspace);
 	}
 

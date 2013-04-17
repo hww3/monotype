@@ -309,6 +309,8 @@ void insert_footer()
 int process_setting_buffer(int|void exact)
 {
 	int lastjs = 0;
+	object tightline;
+	int tightpos;
 	
 	if(!current_line)
 	{
@@ -318,40 +320,57 @@ int process_setting_buffer(int|void exact)
 	}
 // werror("data_to_set: %O\n", data_to_set);
  
-  	  for(int i = 0; i<sizeof(data_to_set) ;i++)
-	  {
-	    if(data_to_set[i] == " ")
-        {
-          lastjs = i;
-	      if(current_line->elements && sizeof(current_line->elements) && current_line->elements[-1]->is_real_js) 
+  for(int i = 0; i<sizeof(data_to_set) ;i++)
+	{
+	  tightline = 0;
+	  tightpos = 0;
+	  if(data_to_set[i] == " ")
+    {
+      lastjs = i;
+	    if(current_line->elements && sizeof(current_line->elements) && current_line->elements[-1]->is_real_js) 
 		  {
-			werror("continue\n");
-	        continue;
+//			  werror("continue\n");
+	      continue;
 		  }
-     	}
-//	werror("+ %O", data_to_set[i]);
-	   current_line->add(data_to_set[i], create_modifier(), space_adjust);
-	   if(current_line->is_overset() && config->allow_combined_space)
+    }
+// 	werror("+ %O", data_to_set[i]);
+	  current_line->add(data_to_set[i], create_modifier(), space_adjust);
+
+     // if permitted, prepare a tight line for possible use later.
+	   if(current_line->is_overset() && config->enable_combined_space)
 	   {
+	     
 	     // first, let's see if removing 1 unit from each justifying space will work.
 	     	object tl = Line(m, s, config + (["combined_space": 1]), this);
-	     	werror("re-setting line with 0 unit spaces.\n");
+//	     	werror("re-setting line with 0 unit spaces.\n");
 	     	tl->re_set_line(current_line);
-	     	werror("how about a combined space?\n");
-	     	if(!tl->is_overset())
+	     	
+        int j = i;
+
+	     	if(lastjs != i) // we're not at the end of a word, here, folks.
+  	    {
+ 	        while(sizeof(data_to_set)>++j && data_to_set[j] != " ")
+ 	        {
+// 	          werror("finishing up word with " + data_to_set[j] + "\n");
+ 	         tl->add(data_to_set[j], create_modifier(), space_adjust);
+          }
+ 	      }
+ 	     
+//	     	werror("how about a combined space?\n");
+	     	if(!tl->is_overset()) // did the word fit using combined spaces?
 	     	{
-	     	  werror("good to go!\n");
+	     	  
+//	     	  werror("good to go!\n");
 	     	  tl->line_number = current_line->line_number;
 	     	  tl->line_on_page = current_line->line_on_page;
-	     	  current_line = tl;	   
-	     	  new_line();  	  
-	     	  continue;
+	     	  tightline = tl;	 
+	     	  tightpos = j;  
 	     	}
      }
 	   if(current_line->is_overset()) // back up to before the last space.
 	   {
 	    werror("word didn't fit, justification is %d/%d\n", current_line->big, current_line->little);
-object x;
+      object x;
 //		  for(int j = i; j >= lastjs; j--)
 // TODO: if the non-fitting word was made up of components from more than one alphabet (roman, italic, etc),
 // the word will be removed and placed back on the line using only one alphabet, namely the one containing the 
@@ -359,12 +378,12 @@ object x;
 // the line as part of the setting buffer. We should probably change the setting buffer to contain the alphabet
 // (and other settings) of the word, instead of relying on a global flag to contain this information. That way,
 // we can remove the whole word and hyphenate it while preserving changes in settings within the word.
-do
+      do
 		  {
-			x = current_line->remove();
-			 werror("removing a character: %O, %O \n", x?(x->activator?x->activator:"JS"):"", ((x && x->get_set_width)?x->get_set_width():0));
+			  x = current_line->remove();
+//			  werror("removing a character: %O, %O \n", x?(x->activator?x->activator:"JS"):"", ((x && x->get_set_width)?x->get_set_width():0));
 		  }
-while(x && x->activator);
+      while(x && x->activator);
 
 	    werror("removed word, justification is %d/%d\n", current_line->big, current_line->little);
 		  if(exact) return 1;
@@ -381,8 +400,8 @@ while(x && x->activator);
 		  // TODO: we probably want to attempt hyphenation when as soon as a word won't fit, not just when we can't justify using a whole word.
 		  // if we can't justify, having removed the last word, see if hyphenating will help, regardless if we hyphenated the last line.		
 //werror("left to set: %O\n", data_to_set[i..] * "");
-		werror("numline: %O, is_broken: %O, can_justify: %O\n", 
-                          numline,  1||lines[-1]->is_broken, current_line->can_justify());
+//		werror("numline: %O, is_broken: %O, can_justify: %O\n", 
+//                          numline,  1||lines[-1]->is_broken, current_line->can_justify());
 		int can_try_hyphenation = 0;
 		if(1 && numline && sizeof(lines) && (!lines[-1]->is_broken || !current_line->can_justify()))
 		  can_try_hyphenation = 1;
@@ -391,7 +410,7 @@ while(x && x->activator);
 
 		  if(can_try_hyphenation)
 				  {	
-			werror("trying to hyphenate, justification is %d.\n", current_line->can_justify());
+//			werror("trying to hyphenate, justification is %d.\n", current_line->can_justify());
 			int bs = search(data_to_set, " ", i+1);
 			if(bs!=-1)
 			{
@@ -400,7 +419,18 @@ while(x && x->activator);
 				array wp = hyphenate_word(word);
 				werror("word parts are %O\n", wp * ", ");
 				
-				if(sizeof(wp)>1)
+				if(sizeof(wp)<=1)
+				{
+			    if(!current_line->can_justify() && tightline) // if we can't fit the line by breaking, see if there's a tightly justified line that will work.
+  			  {
+  			    werror("can't justify with regular word spaces, but we can with combined spaces, so let's do that.\n");
+  			    current_line = tightline;
+  			    i = tightpos;
+  			    new_line();
+  			    continue;
+  			  }			  
+				}
+				else
 				{
 					array new_data_to_set = data_to_set;
 					int new_i = i;
@@ -426,37 +456,48 @@ while(x && x->activator);
 						}
 						else data_to_set = syl/"";
 						
-					werror("seeing if %O will fit...", syl);
+					  werror("seeing if %O will fit...", syl);
 					  int res = process_setting_buffer(1);
 					  if(!res)
 					  {
-						werror("yes!\n");
-						// it fit!
-						if(sizeof(wp)>=fp)
-						{	
-							string lsyl = replace(wp[fp+1..]*"", ligature_replacements_from[mod]||({}), ligature_replacements_to[mod]||({}));
-			  			//		    data_to_set = replace(syl/"", ligature_replacements_from[mod] || ({}), ligature_replacements_to[mod] || ({}));
-							if((wp[fp+1..]*"") != lsyl)
-							{
-								// we have a ligature in this word part. it must be applied.
-								data_to_set = break_ligatures(lsyl) + new_data_to_set[bs..];
-							}
-							else 
+						  werror("yes!\n");
+						  // it fit!
+						  if(sizeof(wp)>=fp)
+						  {	
+							  string lsyl = replace(wp[fp+1..]*"", ligature_replacements_from[mod]||({}), ligature_replacements_to[mod]||({}));
+			  			    //		    data_to_set = replace(syl/"", ligature_replacements_from[mod] || ({}), ligature_replacements_to[mod] || ({}));
+							  if((wp[fp+1..]*"") != lsyl)
+							  {
+								  // we have a ligature in this word part. it must be applied.
+								  data_to_set = break_ligatures(lsyl) + new_data_to_set[bs..];
+							  }
+							  else 
 						  		data_to_set = (wp[fp+1..] * "" / "") + new_data_to_set[bs..];
-						}
+						  }
 //						werror("data to set is %O\n", data_to_set * "");
-						i = -1;
-						current_line->is_broken = 1;
-						break;
+						  i = -1;
+						  current_line->is_broken = 1;
+						  break;
 					  }
 					
 					  else // take it all off the line and try again.
 					  {
-						werror("nope.\n");
+						  werror("nope.\n");
 					  }
 
 					  if(fp == 0 && !current_line->can_justify()) // we got to the last syllable and it won't fit. we must have a crazy syllable!
-						error(sprintf("unable to fit syllable %O on line. unable to justify.\n", wp[0]));
+						{
+						  if(tightline) // if we can't fit the line by breaking, see if there's a tightly justified line that will work.
+						  {
+						    werror("can't justify with regular word spaces, but we can with combined spaces, so let's do that.\n");
+						    current_line = tightline;
+						    i = tightpos;
+						    new_line();
+						    continue;
+						  }
+              else
+  						  error(sprintf("unable to fit syllable %O on line. unable to justify.\n", wp[0]));
+					  }
 					  else if(fp == 0)
 					  {
 							string lsyl = replace(word, ligature_replacements_from[mod]||({}), ligature_replacements_to[mod]||({}));
@@ -468,18 +509,17 @@ while(x && x->activator);
 							}
 							else data_to_set = ((word)/"") + new_data_to_set[bs..];
 
-						i = -1;
+						  i = -1;
 //						werror("data to set is %O\n", data_to_set * "");
 					  }
-                    }						
-
+          }						
 				}
 			}
-		  } 
-//		werror("newline, i is %d\n", lastjs);
-		  new_line();
-	   }
+		} 
+//	werror("newline, i is %d\n", lastjs);
+		new_line();
 	}
+}
 	
 	data_to_set = ({});
 	return 0;

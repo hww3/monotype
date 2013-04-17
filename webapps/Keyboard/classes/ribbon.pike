@@ -39,15 +39,9 @@ public void get_wedge_for_mca(Request id, Response response, Template.View v, mi
 	response->set_data(w);
 }
 
-public void do_generate(Request id, Response response, Template.View v, mixed ... args)
+public mapping extract_settings(Request id)
 {
-    // the job settings are stored in a mapping stored in the session object when we validate the file.
-    // we can then retrieve them in the next step, here.
-	id->variables = id->misc->session_variables["job_" + id->variables->job_id];
-//werror("job_id is %d\n", (int)id->variables->job_id);
-	m_delete(id->misc->session_variables, "job_" + id->variables->job_id);
-
-	mapping settings = ([
+  return ([
 		"justification": (int)id->variables->justification,
 		"unit_adding": (int)id->variables->unitadding,
 		"unit_shift": (int)(id->variables->unit_shift),
@@ -59,17 +53,29 @@ public void do_generate(Request id, Response response, Template.View v, mixed ..
 		"matcase": app->load_matcase_by_id(id->variables->mca),
 		"jobname": id->variables->jobname,
 		"dict_dir": combine_path(app->config->app_dir, "config"),
-        "lang": id->variables->lang,
-        "hyphenate": (int)id->variables->hyphenate,
+    "lang": id->variables->lang,
+    "hyphenate": (int)id->variables->hyphenate,
 		"unnatural_word_breaks": (int)id->variables->unnatural_word_breaks,
 		"hyphenate_no_hyphen": (int)id->variables->hyphenate_no_hyphen,
 		"trip_at_end": (int)id->variables->trip_at_end,
 		"page_length": (int)id->variables->page_length,
+		"enable_combined_space": (int)id->variables->enable_combined_space,
 		"min_little": (int)(((id->variables->min_just||"")/"/")[1]), 
 		"min_big": (int)(((id->variables->min_just||"")/"/")[0]),
 		"allow_lowercase_smallcaps": (int)id->variables->allow_lowercase_smallcaps,
 		"allow_punctuation_substitution": (int)id->variables->allow_punctuation_substitution
 		]);
+}
+
+public void do_generate(Request id, Response response, Template.View v, mixed ... args)
+{
+    // the job settings are stored in a mapping stored in the session object when we validate the file.
+    // we can then retrieve them in the next step, here.
+	id->variables = id->misc->session_variables["job_" + id->variables->job_id];
+//werror("job_id is %d\n", (int)id->variables->job_id);
+	m_delete(id->misc->session_variables, "job_" + id->variables->job_id);
+
+	mapping settings = extract_settings(id);
 		
 		string data;
 		if(id->variables->input_type=="file") data = /*utf8_to_string*/(id->variables["input-file"]);
@@ -99,31 +105,11 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 	//werror("%O\n", id->variables);
 	int job_id = random(9999999);
 	id->misc->session_variables["job_" + job_id] = id->variables;
-	mapping settings = ([
-		"justification": (int)id->variables->justification,
-		"unit_adding": (int)id->variables->unitadding,
-		"unit_shift": (int)(id->variables->unit_shift),
-		"mould": (int)id->variables->points,
-		"setwidth": (float)id->variables->set,
-                "pointsystem": (float)id->variables->pointsystem,
-		"linelengthp": (float)id->variables->linelength,
-		"stopbar": app->load_wedge(id->variables->wedge),
-		"matcase": app->load_matcase_by_id(id->variables->mca),
-		"jobname": id->variables->jobname,
-		"dict_dir": combine_path(app->config->app_dir, "config"),
-		"lang": id->variables->lang,
-		"hyphenate": (int)id->variables->hyphenate,
-		"unnatural_word_breaks": (int)id->variables->unnatural_word_breaks,
-		"hyphenate_no_hyphen": (int)id->variables->hyphenate_no_hyphen,
-// we don't need this to be shown in the "soft proof".
-//		"trip_at_end": (int)id->variables->trip_at_end,
-		"page_length": (int)id->variables->page_length,
-		"min_little": (int)(((id->variables->min_just||"")/"/")[1]), 
-		"min_big": (int)(((id->variables->min_just||"")/"/")[0]),
-		"allow_lowercase_smallcaps": (int)id->variables->allow_lowercase_smallcaps,
-		"allow_punctuation_substitution": (int)id->variables->allow_punctuation_substitution
-		]);
-
+	mapping settings = extract_settings(id);
+	
+	// we don't need this to be shown in the "soft proof".
+  m_delete(settings, "trip_at_end");
+  
 	int max_red = 2;
         if(settings->setwidth > 12.0)	
 	  max_red = 1;
@@ -198,7 +184,10 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 		      w = (w-max_red + line->units);
 		    }
 		    else
+		    {
 		      w = line->units;
+	//	      throw(Error.Generic("combined space " + w + "\n"));
+	      }
 		    setonline+=w;
 
  		// spill is used to even out the display lines, as we're not able to depict fractional units accurately on the screen.
