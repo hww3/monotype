@@ -17,11 +17,44 @@ public void index(Request id, Response response, Template.View v, mixed ... args
 
 public void generate(Request id, Response response, Template.View v, mixed ... args)
 {
-   //werror("matcases: %O\n", app->get_mcas());
-    v->add("mcas", app->get_mcas());
-    v->add("wedges", app->get_wedges());
-    v->add("owner", id->misc->session_variables->user);
+  object user = id->misc->session_variables->user;
   
+  if(id->variables->load_config)
+  {
+     mapping c;
+     object rc;
+     array rv = Fins.Model.find.ribbon_configs((["id": (int)id->variables->config, "User": user]));
+     if(sizeof(rv))
+       rc = rv[0];
+     if(!rc)
+       throw(Error.Generic("Unable to find ribbon config for user " + user["username"] + " with id=" + id->variables->config + ".\n"));
+     
+     c = decode_value(rc["definition"]);
+     
+     id->variables += c;
+  }
+
+  array mcac = app->get_mcas();
+  array mcas = ({});
+    
+  foreach(mcac;; object c)
+  {
+    if(c["owner"] == user || c["is_public"])
+      mcas += ({ ({ (string)c["id"], c["name"] }) });
+  }
+  
+  array wedgec = app->get_wedges();
+  array wedges = wedgec[*]["name"];
+   
+  werror("config: %O\n", id->variables);
+ // werror("wedges: %O\n", wedges);
+
+   //werror("matcases: %O\n", app->get_mcas());
+    v->add("mcas", mcas);
+    v->add("wedges", wedges);
+    v->add("owner", user);
+    v->add("configs", Fins.Model.find.ribbon_configs((["User": user])));
+    
 	return;
 }
 
@@ -101,6 +134,69 @@ public void get_line(Request id, Response response, Template.View v, string line
 
 public void do_validate(Request id, Response response, Template.View v, mixed ... args)
 {
+  object user = id->misc->session_variables->user;
+
+	if(id->variables->delete_config)
+	{
+	  object rc;
+    array rv = Fins.Model.find.ribbon_configs((["id": (int)id->variables->dconfig, "User": user]));
+    if(sizeof(rv))
+      rc = rv[0];
+    if(!rc)
+      throw(Error.Generic("Unable to find ribbon config for user " + user["username"] + " with id=" + id->variables->dconfig + ".\n"));
+	  
+	  string name = rc["name"];
+	  rc->delete();
+	  
+	  response->flash("msg", "Settings " + name + " deleted.");
+	  response->redirect_temp(generate);
+	  return;
+  }  
+  
+	if(id->variables->save_config)
+	{
+	  object rc;
+    array rv = Fins.Model.find.ribbon_configs((["name": id->variables->name, "User": user]));
+    if(sizeof(rv))
+      rc = rv[0];
+    if(rc)
+      throw(Error.Generic("Configuration for " + user["username"] + " with name=" + id->variables->name + " already exists.\n"));
+	  
+	  
+	  mapping s = copy_value(id->variables);
+	  m_delete(s, "input-file");
+    m_delete(s, "save_config");
+    m_delete(s, "load_config");
+    m_delete(s, "delete_config");
+    m_delete(s, "config");
+    m_delete(s, "dconfig");
+    m_delete(s, "name");
+    
+    werror("s: %O\n", s);
+    string se = encode_value(s);
+    
+    object settings = Keyboard.Objects.Ribbon_config();
+    settings["name"] = id->variables->name;
+    settings["definition"] = se;
+    settings["User"] = user;
+    settings->save();
+    
+	  response->flash("msg", "Settings saved as " + id->variables->name + ".");
+	  response->redirect_temp(generate, ({}), (["load_config": 1, "config": settings["id"] ]));
+	  return;
+	}
+	else if(id->variables->load_config)
+	{
+	  object rc;
+    array rv = Fins.Model.find.ribbon_configs((["id": (int)id->variables->config, "User": user]));
+    if(sizeof(rv))
+      rc = rv[0];
+    if(!rc)
+      throw(Error.Generic("Unable to find ribbon config for user " + user["username"] + " with id=" + id->variables->config + ".\n"));
+    
+	  response->flash("msg", "Settings loaded from " + rc["name"] + ".");	  
+	  response->redirect_temp(generate, ({}), (["load_config": 1, "config": rc["id"]]));
+	}
 	
 	//werror("%O\n", id->variables);
 	int job_id = random(9999999);
