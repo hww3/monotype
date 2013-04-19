@@ -156,12 +156,20 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 	if(id->variables->save_config)
 	{
 	  object rc;
-    array rv = Fins.Model.find.ribbon_configs((["name": id->variables->name, "User": user]));
-    if(sizeof(rv))
-      rc = rv[0];
-    if(rc)
-      throw(Error.Generic("Configuration for " + user["username"] + " with name=" + id->variables->name + " already exists.\n"));
 	  
+	  string name = String.trim_all_whites(id->variables->name || "");
+	  
+	  if(!name) 
+	  { 
+	    response->flash("msg", "No template name specified.");
+	    response->redirect_temp(generate);  
+	  }
+	  
+    array rv = Fins.Model.find.ribbon_configs((["name": name, "User": user]));
+    if(sizeof(rv))
+      rc = rv[0]; 
+    if(rc)
+      throw(Error.Generic("Configuration for " + user["username"] + " with name=" + name + " already exists.\n"));
 	  
 	  mapping s = copy_value(id->variables);
 	  m_delete(s, "input-file");
@@ -176,12 +184,12 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
     string se = encode_value(s);
     
     object settings = Keyboard.Objects.Ribbon_config();
-    settings["name"] = id->variables->name;
+    settings["name"] = name;
     settings["definition"] = se;
     settings["User"] = user;
     settings->save();
     
-	  response->flash("msg", "Settings saved as " + id->variables->name + ".");
+	  response->flash("msg", "Settings saved as " + name + ".");
 	  response->redirect_temp(generate, ({}), (["load_config": 1, "config": settings["id"] ]));
 	  return;
 	}
