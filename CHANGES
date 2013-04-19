@@ -1,5 +1,7 @@
-20130416
+20130417
+- Ribbon Generator: add job settings management.
 
+20130416
 - Ribbon Generator: add support for word-combined spacing, for use when
    justification just won't work any other way.
 
