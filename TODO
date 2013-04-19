@@ -1,10 +1,12 @@
 TODO
 
-- ribbon generator: allow saving of job settings
 - ribbon generator: allow unit variations when quadding
 - ribbon generator: add alignment characters to first line
 - ribbon generator: show warning if mca has unusual space availability.
+- ribbon generator: allow saving of job settings
+     (completed 17-apr-2013)
 - mca editor: allow available sorts display to be customized.
+     (completed 08-apr-2013)
 - mca editor: allow drag and drop within mca.
      (completed 14-nov-2011)
 - keyboard app: allow users to log in and have private arrangements/wedges.
@@ -14,11 +16,11 @@ TODO
 - ribbon generator: show sorts that have been adjusted for width during preview. 
      (completed 15-feb-2011)
 - ribbon generator: add extra units to last line (trigger caster stop) 
-    (completed 16-aug-2010)
+     (completed 16-aug-2010)
 - caster controller: add "force valves on" button to manual pin control 
-    (completed 20-apr-2010)
+     (completed 20-apr-2010)
 - ribbon generator: display set text up to point of error when problem occurs. 
-    (completed 4-may-2010)
+     (completed 4-may-2010)
 - ribbon generator: automatically add justifying space when quadding out and no js is present. 
-	(attempted but generates undesirable results)
+     (attempted but generates undesirable results)
 
