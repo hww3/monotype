@@ -83,7 +83,9 @@ void save_wedge(Monotype.Stopbar wedge, object user, int|void is_public)
 */
 werror("**** user: %O\n", user);
 	object wedge_db;
-	catch(wedge_db = master()->resolv("Fins.Model.find.stopbars")((["name": wedge->name, "owner": user]))[0]);
+	array ret;
+	catch(ret = master()->resolv("Fins.Model.find.stopbars")((["name": wedge->name, "owner": user])));
+        if(sizeof(ret)) wedge_db = ret[0];
 	
 	// note: need to handle owner and is_public fields properly.
 	if(!wedge_db)
