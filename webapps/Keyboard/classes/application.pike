@@ -41,10 +41,12 @@ object save_matcase(Monotype.MatCaseLayout mca, object user, int|void is_public)
 	if(!mca) throw(Error.Generic("No MCA provided.\n"));
 	
 	object node = mca->dump();
-	
+	array ret;
 	object mca_db;
-	catch(mca_db = master()->resolv("Fins.Model.find.matcasearrangements")((["name": mca->name, "owner": user]))[0]);
-	
+	mixed e = catch(ret = master()->resolv("Fins.Model.find.matcasearrangements")((["name": mca->name, "owner": user])));
+	if(e)
+  	werror("error getting mca: %O\n", e);
+        if(sizeof(ret)) mca_db = ret[0];
 	// note: need to handle owner and is_public fields properly.
 	if(!mca_db)
 	{
@@ -58,7 +60,8 @@ object save_matcase(Monotype.MatCaseLayout mca, object user, int|void is_public)
 	}
 	else
 	{
-		werror("saving existing mca " + mca->name + "\n");
+		werror("saving existing mca %O " + mca->name + "\n", mca_db);
+werror("indices: %O\n", indices(mca_db));
 		mca_db->set_atomic((["is_public": is_public, "xml": Public.Parser.XML2.render_xml(node)]));
 	}
 /*
