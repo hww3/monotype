@@ -2,6 +2,8 @@
 
 inherit Fins.Model.DataObject;
 
+string table_name="preferences";
+
 void post_define()
 {
 // Add any post configuration logic here

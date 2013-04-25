@@ -2,6 +2,8 @@
 
 inherit Fins.Model.DataObject;
 
+string table_name = "matcasearrangements";
+
 void post_define(object context)
 {
 // Add any post configuration logic here

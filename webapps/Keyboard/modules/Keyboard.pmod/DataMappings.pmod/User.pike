@@ -2,6 +2,8 @@
 
 inherit Fins.Model.DataObject;
 
+string table_name="users";
+
 void post_define(object context)
 {
 // Add any post configuration logic here
