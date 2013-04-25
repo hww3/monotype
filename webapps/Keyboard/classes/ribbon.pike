@@ -32,6 +32,7 @@ public void generate(Request id, Response response, Template.View v, mixed ... a
      c = decode_value(rc["definition"]);
      
      id->variables += c;
+     v->add("load_config", 1);
   }
 
   array mcac = app->get_mcas();
