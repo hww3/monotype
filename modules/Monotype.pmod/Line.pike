@@ -360,7 +360,7 @@ import Monotype;
         {
           if(cf != f || cc != c)
   	      {
-  		      werror("resetting justification wedges.\n");
+  		      werror("resetting justification wedges: %O %O.\n", f, c);
   		      buf+=sprintf("%s %d\n", generator->fine_code, f);
   		      buf+=sprintf("%s %d\n", generator->coarse_code, c);
   			    cf = f;
@@ -380,7 +380,7 @@ import Monotype;
           // correct a sort width, we need to put things back.
   	      if(cf != f || cc != c)
   	      {
-  		      werror("resetting justification wedges.\n");
+  		      werror("resetting justification wedges: %O %O.\n", f, c);
   		      buf+=sprintf("%s %d\n", generator->fine_code, f);
   		      buf+=sprintf("%s %d\n", generator->coarse_code, c);
   			    cf = f;
@@ -465,15 +465,22 @@ import Monotype;
   	            }
   	          }
   	          
-  	          if(this_combined_space)
+  	          mixed err = catch([nc, nf] = calculate_wordspacing_code(needed_units));
+  	          
+  	          if(err && this_combined_space)
   	          {
   	            werror("needed units (w/combined space): %O\n", needed_units + calc_justspace(0, linelength));
                 [nc, nf] = calculate_wordspacing_code(needed_units + calc_justspace(0, linelength));
+              }
+              else if(err)
+              {
+                throw(err);
               }
   		        // if it's not what we have now, make the adjustment
 
    		        if(cf != nf || cc != nc)
   		        {
+  		          werror("returning from %O %O to %O %O\n", cf, cc, nf, nc);
                 buf+=sprintf("%s %d\n", generator->fine_code, nf);
   	            buf+=sprintf("%s %d\n", generator->coarse_code, nc);
                 cf = nf;
