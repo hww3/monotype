@@ -10,5 +10,4 @@
   fi
 
   cd `dirname $0`/../..
-  exec /usr/local/pike/7.9.5/bin/pike $PIKE_ARGS -x fins start -a Keyboard $*
-$*
+  exec pike $PIKE_ARGS -x fins start -a Keyboard $*

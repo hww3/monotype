@@ -315,13 +315,13 @@ function saveMat(wgt)
 //alert("saveMat");
   isEditing = false;
   dojo.xhrPost({ widget: wgt, content: {matrix: wgt.getValue()}, url: "/mca/setMat?col=" + wgt.column + "&row=" + wgt.row + "&xmatrix=" + wgt.getValue(),
-					load: function(response, ioArgs){wgt.setNewVal();} 
+					load: function(response, ioArgs){if(response != ''){ alert(response); return;}; wgt.setNewVal(); wgt.finished(); if(canSave)
+                	   dojo.forEach(dojo.query(".SaveButton"), function(e){ e.disabled = false} );
+                	else
+                	   dojo.forEach(dojo.query(".SaveButton"), function(e){ e.disabled = true} );
+                	} 
 	});
 	
-	if(canSave)
-	   dojo.forEach(dojo.query(".SaveButton"), function(e){ e.disabled = false} );
-	else
-	   dojo.forEach(dojo.query(".SaveButton"), function(e){ e.disabled = true} );
 	
 }
 
@@ -466,7 +466,7 @@ line-height: 15.5px;
 			{ 
 			  ch = mat->character;
 
-			  if(u != (int)mat->set_width) 
+			  if((float)u != (float)mat->set_width) 
    			    st = "style=\"background: yellow\"";
 
 			  if(mat->is_js)

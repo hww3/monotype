@@ -244,6 +244,14 @@ dojo.declare(
     			  this._setIsSort();
     		},
     
+    
+    finished: function()
+    {
+			  dijit.popup.close(this.popup); 
+      //			alewr();
+			  this.popup.destroyRecursive(true);
+		  
+    },
 		
 		_onDoCancel: function()
 		{
@@ -255,10 +263,7 @@ dojo.declare(
 		
 		_onDoSave: function()
 		{
-			this.onSave(this);
-			dijit.popup.close(this.popup); 
-      //			alewr();
-			this.popup.destroyRecursive(true);
+			var ret = this.onSave(this);
 		},
 		
 				_onClickSpaceRadio: function()

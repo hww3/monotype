@@ -94,8 +94,8 @@ void set(string column, int row, Matrix mat)
 
   if(mat->is_fs || mat->is_js)
   {
-    elements["SPACE_"+ mat->set_width] = mat;
-    spaces[mat->set_width] = mat;
+    elements["SPACE_"+ (int)mat->set_width] = mat;
+    spaces[(int)mat->set_width] = mat;
   }
 
   if(mat->is_js)
@@ -223,10 +223,11 @@ int load(Node n)
 
     if(c->get_node_name() == "element")
     {
+      string col = c->get_attributes()["column"];
+      int row = (int)(c->get_attributes()["row"]);
       object m = select_xpath_nodes("matrix", c)[0];
-      set(c->get_attributes()["column"],
-          (int)(c->get_attributes()["row"]),  
-          Matrix(m));
+      set(col, row,  
+          Matrix(m, lambda(string x){ add_problem(col, row, x + " (" + col + row + ")");}));
     }
   }
 

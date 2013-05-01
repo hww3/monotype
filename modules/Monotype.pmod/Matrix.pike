@@ -6,11 +6,13 @@ import Public.Parser.XML2;
   string style;
   string character;
   string activator;
-  int set_width;
+  float set_width;
   int row_pos;
   string col_pos;
   int is_js;
   int is_fs;
+  
+  function report_problem;
 
   static mixed cast(string to)
   {
@@ -25,9 +27,12 @@ import Public.Parser.XML2;
     else throw(Error.Generic("Casting Matrix to " + to + " not supported."));
   }
 
-  static void create(void|Node n)
+  static void create(void|Node n, void|function report)
   {
-   if(n) load(n);
+    report_problem = report;
+    if(n) 
+      load(n);
+    report_problem = 0;
   }
   
   this_program clone()
@@ -40,7 +45,7 @@ import Public.Parser.XML2;
     return nm;
   }
 
-  int load(Node n)
+  int load(Node n, void|function report)
   {
     if(n->get_node_name() != "matrix")
       error("invalid matrix data.\n");
@@ -54,7 +59,7 @@ import Public.Parser.XML2;
     if(a->weight && a->weight!="0") style = (strlen(a->weight)?a->weight:"R");
     if(a->character) character = a->character;
     if(a->activator) activator = a->activator;
-    if(a->set_width) set_width = (int)(a->set_width);
+    if(a->set_width) set_set_width((float)(a->set_width), 1);
     return 1;
   }
 
@@ -89,7 +94,7 @@ import Public.Parser.XML2;
 
   
 
-  int get_set_width()
+  float get_set_width()
   {
     return set_width;
   }
@@ -119,9 +124,21 @@ import Public.Parser.XML2;
     return series;
   }
 
-  void set_set_width(int w)
+  void set_set_width(float width, int|void liberal)
   {
-    set_width = w;
+    int w, f;
+    string sa;
+    
+		sscanf((string)width, "%d.%d", w, f);
+	//	werror("sa: %s, w: %d, f: %d\n", sa, w, f);
+		if(!(<0, 5>)[f])
+		{
+		  if(liberal && report_problem)
+        report_problem("Invalid adjustment " + width + ". Only whole and half unit adjustments allowed.\n");
+		  else
+		    throw(Error.Generic("Invalid adjustment " + width + ". Only whole and half unit adjustments allowed.\n"));
+    }		
+    set_width = width;
   }
 
   void set_activator(string a)
