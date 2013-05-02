@@ -1,9 +1,15 @@
+20130501
+- Ribbon Generator: schema upgrade runs automatically during startup.
+- Ribbon Generator: ensure default preferences are created during login.
+
 20130417
 - Ribbon Generator: add job settings management.
 
 20130416
 - Ribbon Generator: add support for word-combined spacing, for use when
    justification just won't work any other way.
+- Dependencies: New hyphenation engine should permit hyphenation of wide
+   (ie, non-ASCII) characters.
 
 20130410
 - Ribbon Generator: added Preferences tab.
