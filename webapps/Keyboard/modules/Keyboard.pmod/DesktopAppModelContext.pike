@@ -25,6 +25,11 @@ werror("**** " + (string)folder  + "\n");
 	_url = "sqlite://" + combine_path((string)folder, "RibbonGeneratorData.sqlite3");
 	werror("**** " + _url);
         ::set_url(_url);
+}
+
+void initialize()
+{
+  ::initialize();
   run_upgrade();
 }
 
@@ -32,18 +37,33 @@ werror("**** " + (string)folder  + "\n");
 
 void run_upgrade()
 {
-  object s = Sql.Sql(url);
-  if(sizeof(s->list_tables("preferences"))) return;
+  int dir = Fins.Util.MigrationTask.UP;
 
-  // ok, we need to create the preferences table.
-  werror("creating preferences table.\n");
-  s->query(
-#"CREATE TABLE preferences (
-  id integer primary key,
-  user_id integer not null,
-  name char(64) NOT NULL default '',
-  type integer NOT NULL default 0,
-  value char(64) NOT NULL default ''
-)"
-);
+  object migrator = Fins.Util.Migrator(app);
+
+  array migrations = migrator->get_migrations(dir);
+
+  if(sizeof(run_migrations))
+  {
+    foreach(run_migrations;; string m)
+    {
+       foreach(migrations; int x; object mc)
+        if(mc->name != m)
+          migrations[x] = 0;
+    }
+  }
+
+  migrations -= ({0});
+
+  if(dir == Fins.Util.MigrationTask.UP)
+    migrator->announce("Applying migrations: ");
+  else
+  migrator->announce("Reverting migrations: ");
+  migrator->write_func("%{" + (" "*3) + "- %s\n%}", migrations->name);
+
+
+  foreach(migrations;; object m)
+  {
+    m->run(dir);
+  }
 }
