@@ -27,16 +27,11 @@ werror("**** " + (string)folder  + "\n");
         ::set_url(_url);
 }
 
-void initialize()
-{
-  ::initialize();
-  run_upgrade();
-}
-
 #endif
 
 void run_upgrade()
 {
+  array run_migrations = ({});
   int dir = Fins.Util.MigrationTask.UP;
 
   object migrator = Fins.Util.Migrator(app);

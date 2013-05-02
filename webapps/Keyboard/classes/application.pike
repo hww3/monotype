@@ -329,6 +329,7 @@ int admin_user_filter(Fins.Request id, Fins.Response response, mixed ... args)
    {
 	 object user = master()->resolv("Fins.Model.find.users_by_alt")("desktop");
 	 id->misc->session_variables->user = user;
+         populate_user_prefs(user);
    }
    else if(!id->misc->session_variables->user)
    {
@@ -347,6 +348,7 @@ int admin_only_user_filter(Fins.Request id, Fins.Response response, mixed ... ar
    {
 	 object user = master()->resolv("Fins.Model.find.users_by_alt")("desktop");
 	 id->misc->session_variables->user = user;
+         populate_user_prefs(user);
    }
    else if(!id->misc->session_variables->user || !id->misc->session_variables->user["is_admin"])
    {
@@ -363,6 +365,7 @@ object get_sys_pref(string pref, object user)
   Keyboard.Objects.Preference p;
   mixed err = catch(p = Fins.DataSource["_default"]->find->preferences((["name": pref, "User": user])));
   if((err = Error.mkerror(err)) && !err->_is_recordnotfound_error) throw(err);
+werror("prefs for %s %O: %O\n", pref, user, p);
   if(sizeof(p))
     return p[0];
   else return 0;
@@ -419,6 +422,6 @@ array full_alphabet_elements =
     new_string_pref("full_sorts_palette_contents", user, 
       full_alphabet_elements * " ");
 
-      new_string_pref("sc_sorts_palette_contents", user, 
+    new_string_pref("sc_sorts_palette_contents", user, 
          small_caps_elements * " ");
   }
