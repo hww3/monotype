@@ -92,9 +92,9 @@ void create(mapping settings)
     foreach(m->spaces;;object mat)
     {
       object ns = mat->clone();
-      int new_width = s->get(mat->row_pos-1 || mat->row_pos);
+      float new_width = (float)s->get(mat->row_pos-1 || mat->row_pos);
       ns->set_width = new_width;
-      spaces[new_width] = ns;
+      spaces[(int)new_width] = ns;
     }
   }
   
@@ -731,9 +731,10 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	{
 		process_setting_buffer();
 		int toadd = (int)(data[2..sizeof(data)-2]);
-		if(low_quad_out((float)toadd) != (float)toadd)
+                float added = (float)low_quad_out((float)toadd);
+		if((float)added != (float)toadd)
 		{
-			current_line->errors += ({"Fixed space (%d unit) won't fit on line... dropping.\n"});
+			current_line->errors += ({sprintf("Fixed space (want %f units, got %f) won't fit on line... dropping.\n", (float)toadd, added)});
 		}
 	}
 	// indent
