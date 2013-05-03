@@ -7,6 +7,7 @@ object Spinner;
 Cocoa.NSButton LaunchBrowser;
 Cocoa.NSTextField StartupLabel;
 Cocoa.NSButton ViewLog;
+Cocoa.NSButton BackupData;
 
 void create()
 {
@@ -14,6 +15,34 @@ void create()
 }
 
 //spinner->startAnimation_(this);
+
+void doBackupData_(Cocoa.NSObject obj)
+{
+  object savePanel = Cocoa.NSSavePanel.savePanel();
+
+  savePanel->setNameFieldStringValue_("RibbonGeneratorData " + Calendar.now()->format_ymd() + ".sqlite3");
+  savePanel->setTitle_("Backup Ribbon Generator Data");
+ 
+  if(!savePanel->runModal()) return 0;
+
+
+  mixed files = savePanel->URL();
+
+  object file = files->path();
+  werror("fILE:%O\n",(string)( file->__objc_classname));
+  werror("fILE:%O\n",(string)( file->UTF8String() ));
+
+  werror("app: %O\n", values(finserve->apps)[0]->get_application()->do_generic_method(copy_db, utf8_to_string(file->UTF8String())));
+
+//  Stdio.cp(finserve, utf8_to_string(file->UTF8String()));
+}
+
+void copy_db(string dest)
+{
+  string src = master()->resolv("Fins.DataSource._default")->path;
+  werror("Copying database from %O to %O\n", src, dest);
+  Stdio.cp(src, dest);
+}
 
 void doViewLog_(Cocoa.NSObject obj)
 {

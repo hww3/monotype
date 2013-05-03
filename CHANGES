@@ -1,3 +1,6 @@
+20130502
+- Ribbon Generator: add database backup button.
+
 20130501
 - Ribbon Generator: schema upgrade runs automatically during startup.
 - Ribbon Generator: ensure default preferences are created during login.

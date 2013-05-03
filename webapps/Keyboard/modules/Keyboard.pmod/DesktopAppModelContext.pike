@@ -1,5 +1,6 @@
 inherit Fins.Model.SqlDataModelContext;
 
+string path;
 
 #if constant(Public.ObjectiveC) && constant(Public.ObjectiveC.load_bundle)
 
@@ -21,8 +22,8 @@ werror("**** " + (string)folder  + "\n");
 		fm->copyPath_toPath_handler_(combine_path(getcwd(), "Keyboard/config/Keyboard_desktop.sqlite3"), 
 			combine_path((string)folder, "RibbonGeneratorData.sqlite3"), 0);
 	}
-
-	_url = "sqlite://" + combine_path((string)folder, "RibbonGeneratorData.sqlite3");
+	path = combine_path((string)folder, "RibbonGeneratorData.sqlite3");
+	_url = "sqlite://" + path;
 	werror("**** " + _url);
         ::set_url(_url);
 }
