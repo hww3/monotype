@@ -95,6 +95,8 @@ void set(string column, int row, Matrix mat)
   if(mat->is_fs || mat->is_js)
   {
     elements["SPACE_"+ (int)mat->set_width] = mat;
+    if(spaces[(int)mat->set_width])
+      add_problem(column, row, sprintf("Redundant space in row %d.", row));
     spaces[(int)mat->set_width] = mat;
   }
 
@@ -230,6 +232,13 @@ int load(Node n)
           Matrix(m, lambda(string x){ add_problem(col, row, x + " (" + col + row + ")");}));
     }
   }
+
+  if(!justifying_space)
+    add_problem(0, 0, "Matcase does not contain a Justifying Space.");
+  if(!sizeof(spaces))
+    add_problem(0, 0, "Matcase contains no fixed spaces.");
+  else if(sizeof(spaces) < 4)
+    add_problem(0, 0, sprintf("Matcase contains low number (%d) of fixed spaces.", sizeof(spaces)));
 
   return 1;
 }

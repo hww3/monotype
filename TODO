@@ -2,8 +2,9 @@ TODO
 
 - ribbon generator: allow unit variations when quadding
 - ribbon generator: add alignment characters to first line
-- ribbon generator: show warning if mca has unusual space availability.
 - ribbon generator: allow unit shift + adding + just space adjustments.
+- ribbon generator: show warning if mca has unusual space availability.
+     (completed 08-may-2013)
 - ribbon generator: allow saving of job settings
      (completed 17-apr-2013)
 - ribbon generator: allow combined space and sort for tight set lines.
