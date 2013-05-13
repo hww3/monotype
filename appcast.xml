@@ -1,0 +1,12 @@
+<item>       
+<title>Version $VERSION</title>
+<sparkle:releaseNotesLink>
+http://bill.welliver.org/dist/monotype/updates/$APP/$VERSION.html
+</sparkle:releaseNotesLink>
+            <pubDate>$DATE</pubDate>
+ <enclosure
+url="http://bill.welliver.org/dist/monotype/updates/$APP/$APP-$VERSION.zip"
+sparkle:version="$VERSION" length="$SIZE" type="application/octet-stream"
+sparkle:dsaSignature="$HASH"
+/>
+</item>

@@ -23,7 +23,19 @@ hash: zip
 	@/bin/echo -n "Ribbon Generator Hash: "
 	@ruby "${SPARKLE_HOME}/Extras/Signing Tools/sign_update.rb" ${RIBBON_GENERATOR}-`pike tools/get_value.pike version.cfg ribbonGeneratorVersion`.zip ${PRIVATE_KEY_DIR}/dsa_priv.pem
 	@ls -l ${RIBBON_GENERATOR}-`pike tools/get_value.pike version.cfg ribbonGeneratorVersion`.zip
-
+	@HASH=`ruby "${SPARKLE_HOME}/Extras/Signing Tools/sign_update.rb" ${RIBBON_GENERATOR}-\`pike tools/get_value.pike version.cfg ribbonGeneratorVersion\`.zip ${PRIVATE_KEY_DIR}/dsa_priv.pem` \
+        DATE=`date` \
+	VERSION=`pike tools/get_value.pike version.cfg ribbonGeneratorVersion` \
+	SIZE=`ls -l ${RIBBON_GENERATOR}-\`pike tools/get_value.pike version.cfg ribbonGeneratorVersion\`.zip | cut -d ' ' -f8` \
+	APP="RibbonGenerator" \
+	pike tools/appcast.pike appcast.xml;
+	@HASH=`ruby "${SPARKLE_HOME}/Extras/Signing Tools/sign_update.rb" ${CASTER_CONTROL}-\`pike tools/get_value.pike version.cfg casterControlVersion\`.zip ${PRIVATE_KEY_DIR}/dsa_priv.pem` \
+        DATE=`date` \
+	VERSION=`pike tools/get_value.pike version.cfg casterControlVersion` \
+	SIZE=`ls -l ${CASTER_CONTROL}-\`pike tools/get_value.pike version.cfg casterControlVersion\`.zip | cut -d ' ' -f8` \
+	APP="Caster" \
+	pike tools/appcast.pike appcast.xml; \
+	
 zip: all
 	zip -ry ${CASTER_CONTROL}-`pike tools/get_value.pike version.cfg casterControlVersion`.zip ${CASTER_CONTROL}.app
 	zip -ry ${RIBBON_GENERATOR}-`pike tools/get_value.pike version.cfg ribbonGeneratorVersion`.zip ${RIBBON_GENERATOR}.app
