@@ -88,7 +88,7 @@ werror("**** " + (string)folder  + "\n");
 		fm->createDirectoryAtPath_attributes_(folder, ([]));
 	}
 
-   finserve = Fins.AdminTools.FinServe(({}));
+   finserve = master()->resolv("Fins.AdminTools.FinServe")(({}));
 /*
    finserve->project = "Keyboard";
    finserve->config_name = "desktop";
