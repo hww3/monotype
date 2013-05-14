@@ -114,5 +114,6 @@ void finserveStarted(object app)
 {
 Spinner->stopAnimation_(this);
 LaunchBrowser->setEnabled_(1);
+BackupData->setEnabled_(1);
     StartupLabel->setStringValue_("Running");
 }
