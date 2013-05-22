@@ -929,7 +929,8 @@ int low_quad_out(float amount, int|void atbeginning)
     toadd = Monotype.IterativeSpaceFinder()->findspaces((int)floor(amount), spaces);
   if(!toadd || !sizeof(toadd))
     toadd = simple_find_space((int)floor(amount), spaces);
-  toadd = sort(toadd);
+
+  toadd = reverse(toadd);
 
   foreach(toadd;int z;int i)
   {
