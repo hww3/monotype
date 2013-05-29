@@ -249,7 +249,7 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
         else if(g->current_line) units = g->current_line->units;
 
 	b+="<div style=\"clear: left\">";
-	b+=("<div style=\"position:relative; float:left; width:35px\">Line</div><div style=\"position:relative; float:left; width:" 
+	b+=("<div style=\"position:relative; float:left; width:50px\">Line</div><div style=\"position:relative; float:left; width:" 
 		+ units + "px\">&nbsp;</div><div></div><div>Just Code / Comments</div>");
 	b+=("</div>");
 
@@ -262,7 +262,7 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 		int last_set;
 //		b+="<span dojoType=\"dojox.widget.DynamicTooltip\" connectId=\"line_" + i + "\" href=\"" + action_url(get_line, ({(string)i}))+ "\" preventCache=\"true\">nevah seen!</span>";
 		b+="<div style=\"clear: left\" id=\"line_" + i + "\" >";
-		b+=("<div style=\"position:relative; float:left; width:35px\">" + (i+1) 
+		b+=("<div style=\"position:relative; float:left; width:50px\">" + (i+1) 
 			+ "/"  + (sizeof(g->lines) - i)+ "</div>");
 		string tobeadded = "";
 		int tobeaddedwidth = 0;
