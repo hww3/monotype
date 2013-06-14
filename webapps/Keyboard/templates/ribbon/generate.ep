@@ -1,4 +1,22 @@
 <script type="text/javascript">
+dojo.require("dijit.dijit");
+dojo.require("dojox.widget.DialogSimple");
+
+var myDialog;
+
+
+function showDialog(title, url)
+{
+  if(!myDialog)
+    myDialog = new dojox.widget.DialogSimple({
+              title: "Programmatic Dialog Creation",
+
+          });
+
+  myDialog.set('title', title);
+  myDialog.set('href', url);
+  myDialog.show();
+}
 
 function getWedge(e)
 {
@@ -113,12 +131,16 @@ Minimum Justifying Space Size (3/8 is default)
 <p>
 <%#input "type": "checkbox", "name": "trip_at_end", "checked":"1", "data_supplied": data->load_config, "value":"1"%> Trip caster when complete 
 <p>
+
+<a onclick="showDialog('Formatting Codes', '/static/syntax.html');">Show Formatting Codes</a>
+<p>
 <input type="radio" name="input_type" value="file" checked="1" 
 onclick="enableFile();"> Input 
 File: <input type="file" name="input-file" id="input_file">
 <br/>
 <input type="radio" name="input_type" value="text" 
-onclick="enableText();"> Text Input: <%#textarea "name":"input_text", "rows":"5", "cols":"80", "id":"input_text", "disabled": "true"%>
+onclick="enableText();"> 
+Text Input: <%#textarea "name":"input_text", "rows":"5", "cols":"80", "id":"input_text", "disabled": "true"%>
 <p>
 <input type="submit" value="Preview Ribbon"/>
 </form>
