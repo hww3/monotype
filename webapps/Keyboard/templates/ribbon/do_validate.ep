@@ -16,7 +16,20 @@ dojo.require("dijit.dijit");
 dojo.require("dojox.widget.DialogSimple");
 
 var myDialog;
-        
+
+function showDialog(title, url)
+{
+  if(!myDialog)
+    myDialog = new dojox.widget.DialogSimple({
+              title: "Programmatic Dialog Creation",
+
+          });
+
+  myDialog.set('title', title);
+  myDialog.set('href', url);
+//  myDialog.set('style', 'width: 500px');
+  myDialog.show();
+}        
 
 function showCodes(line, url)
 {
@@ -28,6 +41,7 @@ function showCodes(line, url)
 
   myDialog.set('title', 'Display Caster Codes for Line ' + (line +1));
   myDialog.set('href', url);          
+//  myDialog.set('style', 'width: 300px');
   myDialog.show();
 }
 </script>
@@ -36,6 +50,7 @@ function showCodes(line, url)
 <form action="<%#action_url "action": "do_generate" %>">
 <input type="hidden" name="job_id" value="<%$job_id%>">
 <button type="submit">Generate Ribbon</button>
+<button type="button" onclick="showDialog('Soft Proof Legend', '/static/prooflegend.html'); return 0;">Show Soft Proof Legend</button>
 </form>
 <p>
 <%$result%>
