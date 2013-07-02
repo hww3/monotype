@@ -331,7 +331,7 @@ public void replaceMat(Request id, Response response, Template.View view, mixed 
   matrix->set_character(mat->character);
   matrix->set_activator(mat->character);
   matrix->set_style(mat->style);
-  matrix->set_set_width(sw);
+  matrix->set_set_width((float)sw);
 
   mca->set(col, row, matrix);
   response->set_data("");
@@ -356,7 +356,7 @@ public void moveMat(Request id, Response response, Template.View view, mixed arg
   wedge = app->load_wedge(mca->wedge);
   int sw = wedge->get(row);
   
-  matrix->set_set_width(sw);
+  matrix->set_set_width((float)sw);
 
   mca->set(col, row, matrix);
   response->set_data("OK");
