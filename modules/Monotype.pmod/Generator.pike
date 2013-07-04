@@ -333,7 +333,7 @@ int process_setting_buffer(int|void exact)
 	      continue;
 		  }
     }
-// 	werror("+ %O", data_to_set[i]);
+ 	werror("+ %O => %O", data_to_set[i], data_to_set);
 	  current_line->add(data_to_set[i], create_modifier(), space_adjust);
 
      // if permitted, prepare a tight line for possible use later.
@@ -381,7 +381,7 @@ int process_setting_buffer(int|void exact)
       do
 		  {
 			  x = current_line->remove();
-//			  werror("removing a character: %O, %O \n", x?(x->activator?x->activator:"JS"):"", ((x && x->get_set_width)?x->get_set_width():0));
+			  werror("removing a character: %O, %O \n", x?(x->activator?x->activator:"JS"):"", ((x && x->get_set_width)?x->get_set_width():0));
 		  }
       while(x && x->activator);
 
@@ -1058,7 +1058,7 @@ string generate_ribbon()
 void new_line(int|void newpara)
 {
 
-  if(!current_line->linespaces && current_line->linelength != current_line->lineunits)
+  if(!current_line->linespaces && (float)current_line->linelength != (float)current_line->lineunits)
   {
       throw(Error.Generic(sprintf("Off-length line without justifying spaces: need %d units to justify, line has %.1f units. Consider adding a justifying space to line - %s\n", 
 		current_line->lineunits, current_line->linelength, (string)current_line)));

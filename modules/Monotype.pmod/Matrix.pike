@@ -171,3 +171,13 @@ import Public.Parser.XML2;
     row_pos = row;
     col_pos = col; 
   }
+
+  mixed _sprintf(mixed x)
+  {
+    if(is_fs)
+      return "Matrix(FixedSpace)";
+    else if(is_js)
+      return "Matrix(JustifyingSpace)";
+    else
+      return "Matrix(" + style + "/" + activator + ")";
+  }

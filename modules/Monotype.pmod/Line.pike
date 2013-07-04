@@ -537,4 +537,8 @@ werror("calculate justification: %f\n", justspace);
 			if(m) return m;
 			else return mat[a];
 		}
+		mixed _sprintf(mixed x)
+		{
+		  return "MatWrapper(" + sprintf("%O", mat) + ")";
+		}
 	}
