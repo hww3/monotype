@@ -194,56 +194,31 @@ werror("calculate justification: %f\n", justspace);
 
 
 	// add a sort to the current line
-	void add(string|object activator, int|void modifier, int|float|void adjust_space, int|void atbeginning, int|void stealth)
+	void add(object activator, int|void atbeginning, int|void stealth)
 	{
 	  object mat;
 	  string code;
 
 //werror("Line.add(%O, %O)\n", activator, modifier);
-    if(objectp(activator))
-    {
-      mat = activator;
-    }
-    else
-    {
-      // justifying space
-  	  if(activator == " ")
-      {
-  		  object js = m->elements["JS"];
-      	// houston, we have a problem!
-        if(!js) error("No Justifying Space in MCA!\n");
+// justifying space
+if(activator == JustifyingSpace)
+{
+	if(atbeginning)
+	{
+		elements = ({activator}) + elements;
+	}
+	else
+	{
+	  elements += ({activator});		
+	}
+  linelength += (min_space_units);
+  linespaces ++;
+	return;
+}
 
-      	if(atbeginning)
-      	{
-      //			displayline = ({" "}) + displayline;
-      		elements = ({RealJS(js)}) + elements;
-    		}
-    		else
-      	{
-      //		    displayline += ({" " });
-      	    elements += ({RealJS(js)});		
-    		}
-    	  linelength += (min_space_units);
-        linespaces ++;
-    		return;
-  	  }    
-  	  
-  	  if(modifier & MODIFIER_SMALLCAPS && config->allow_lowercase_smallcaps)
-      {
-  		  activator = upper_case(activator);
-  	  }
 
-  	  code = activator;
-
-  	  if(modifier&MODIFIER_ITALICS)
-  	      code = "I|" + code;	 
-  	  else if(modifier&MODIFIER_SMALLCAPS)
-  	      code = "S|" + code;
-  	  else if(modifier&MODIFIER_BOLD)
-  	      code = "B|" + code;
-
-  	  mat = m->elements[code];
-    }    
+// *** WIP NOTE: need to move some of this to StyledSort()->get_mat() and then call same here.
+    mat = activator;
 
     if(!mat && (modifier&MODIFIER_ITALICS) && config->allow_punctuation_substitution && (<".", ",", ":", ";", "'", "’", "‘", "!", "?", "-", "–">)[activator])
     {

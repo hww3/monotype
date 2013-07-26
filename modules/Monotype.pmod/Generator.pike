@@ -27,6 +27,8 @@ int numline;
 int pagenumber;
 int linesonpage;
 
+object JustifyingSpace;
+
 mapping spaces = ([]);
 
 array(Line) lines = ({});
@@ -77,15 +79,56 @@ void create(mapping settings)
   int lineunits = (int)(18 * (settings->pointsystem||12) * 
 			(1/settings->setwidth) * settings->linelengthp);
 
-  werror ("line should be %d units.\n",lineunits);
+  werror ("line should be %d units.\n", lineunits);
   m = settings->matcase;
   s = settings->stopbar;
 
   config = settings;
   config->lineunits = lineunits;
 
+  load_spaces(m);
+  load_ligatures(m);
+  
+  // set up the code substitutions for unit adding
+  if(config->unit_adding)
+  {
+	  fine_code = "N K J";
+	  coarse_code = "N K";
+  }
+
+  if(config->unit_shift)
+  {
+      d_code = "E F";
+  }  
+    
+  object js = m->elements["JS"];
+	// houston, we have a problem!
+  if(!js) error("No Justifying Space in MCA!\n");
+
+  JustifyingSpace = RealJS(js);
+
+  load_hyphenator();
+}
+
+void load_hyphenator()
+{
+  #if constant(Public.Tools.Language.Hyphenate.Hyphenate)
+    string lang = "en";
+    if(config->lang) lang = config->lang;
+    if(config->hyphenate)
+    {
+      werror("loading hyphenator " + dicts[lang] + "\n");
+      hyphenator = Public.Tools.Language.Hyphenate.Hyphenate(combine_path(config->dict_dir, dicts[lang]));
+    }
+  #else
+  werror("No hyphentation engine present, functionality will be disabled.\n");
+  #endif
+}
+
+void load_spaces(object m)
+{
   foreach(m->spaces;;object mat)
-    spaces[s->get((mat->row_pos<16?mat->row_pos:15))] = mat;
+    spaces[s->get((mat->row_pos<16?mat->row_pos:15))] = mat;  
   
   if(config->unit_shift)
   {
@@ -99,53 +142,43 @@ void create(mapping settings)
   }
   
   werror("SPACES: %O\n", spaces);
+}
+
+void load_ligatures(object m)
+{
+    foreach(m->get_ligatures();; object lig)
+    {
+      ligatures += ({ ({lig->style||"R", lig->activator}) });	
+    }
+
+    foreach(ligatures;;array lig)
+    {
+    	werror("lig:%O\n", lig);
+      if(!ligature_replacements_to[lig[0]])
+        ligature_replacements_to[lig[0]] = ({});
+      if(!ligature_replacements_from[lig[0]])
+        ligature_replacements_from[lig[0]] = ({});
+      ligature_replacements_from[lig[0]] += ({ lig[1], "<A" + lig[1] + ">" });
+      ligature_replacements_to[lig[0]] += (({ "<A" + lig[1] + ">" }) * 2 ); 
+    }
+  /*
+    ligature_replacements_from = ligatures + map(ligatures, lambda(array a){return "<A" + a[1] + ">";});
+    ligature_replacements_to = map(ligatures, lambda(string a){return "<A" + a + ">";}) * 2;
+  */
+
+  werror("ligs from:%O\n", ligature_replacements_from);
+  werror("ligs to:%O\n", ligature_replacements_to);
+}
+
+array prepare_data(array data, StyledSort template)
+{
+  array out = allocate(sizeof(data));
+  foreach(data; int i; mixed d)
+  {
+    out[i] = create_styled_sort(d, space_adjust, template);
+  }
   
-  // set up the code substitutions for unit adding
-  if(config->unit_adding)
-  {
-	  fine_code = "N K J";
-	  coarse_code = "N K";
-  }
-
-  if(config->unit_shift)
-  {
-      d_code = "E F";
-  }
-
-  foreach(m->get_ligatures();; object lig)
-  {
-    ligatures += ({ ({lig->style||"R", lig->activator}) });	
-  }
-
-  foreach(ligatures;;array lig)
-  {
-  	werror("lig:%O\n", lig);
-    if(!ligature_replacements_to[lig[0]])
-      ligature_replacements_to[lig[0]] = ({});
-    if(!ligature_replacements_from[lig[0]])
-      ligature_replacements_from[lig[0]] = ({});
-    ligature_replacements_from[lig[0]] += ({ lig[1], "<A" + lig[1] + ">" });
-    ligature_replacements_to[lig[0]] += (({ "<A" + lig[1] + ">" }) * 2 ); 
-  }
-/*
-  ligature_replacements_from = ligatures + map(ligatures, lambda(array a){return "<A" + a[1] + ">";});
-  ligature_replacements_to = map(ligatures, lambda(string a){return "<A" + a + ">";}) * 2;
-*/
-
-werror("ligs from:%O\n", ligature_replacements_from);
-werror("ligs to:%O\n", ligature_replacements_to);
-
-#if constant(Public.Tools.Language.Hyphenate.Hyphenate)
-  string lang = "en";
-  if(config->lang) lang = config->lang;
-  if(config->hyphenate)
-  {
-    werror("loading hyphenator " + dicts[lang] + "\n");
-    hyphenator = Public.Tools.Language.Hyphenate.Hyphenate(combine_path(config->dict_dir, dicts[lang]));
-  }
-#else
-werror("No hyphentation engine present, functionality will be disabled.\n");
-#endif
+  return out;
 }
 
 //! @param input
@@ -233,7 +266,7 @@ mixed i_parse_data(object parser, string data, mapping extra)
   //    data = ((data / " ") - ({""})) * " ";
 //werror("Ligatures: %O, %O", ligatures, map(ligatures, lambda(string a){return "<A" + a + ">";}));
 
-      data_to_set += data/"";
+      data_to_set += prepare_data(data);
     }
 
 // note that we don't automatically process the buffer when we receive data, as there may be specifically added ligatures
@@ -324,7 +357,7 @@ int process_setting_buffer(int|void exact)
 	{
 	  tightline = 0;
 	  tightpos = 0;
-	  if(data_to_set[i] == " ")
+	  if(data_to_set[i] == JustifyingSpace)
     {
       lastjs = i;
 	    if(current_line->elements && sizeof(current_line->elements) && current_line->elements[-1]->is_real_js) 
@@ -334,7 +367,7 @@ int process_setting_buffer(int|void exact)
 		  }
     }
  	werror("+ %O => %O", data_to_set[i], data_to_set);
-	  current_line->add(data_to_set[i], create_modifier(), space_adjust);
+	  current_line->add(data_to_set[i]);
 
      // if permitted, prepare a tight line for possible use later.
 	   if(current_line->is_overset() && config->enable_combined_space)
@@ -349,10 +382,10 @@ int process_setting_buffer(int|void exact)
 
 	     	if(lastjs != i) // we're not at the end of a word, here, folks.
   	    {
- 	        while(sizeof(data_to_set)>++j && data_to_set[j] != " ")
+ 	        while(sizeof(data_to_set)>++j && data_to_set[j] != JustifyingSpace)
  	        {
 // 	          werror("finishing up word with " + data_to_set[j] + "\n");
- 	         tl->add(data_to_set[j], create_modifier(), space_adjust);
+ 	         tl->add(data_to_set[i]);
           }
  	      }
  	     
@@ -381,15 +414,15 @@ int process_setting_buffer(int|void exact)
       do
 		  {
 			  x = current_line->remove();
-			  werror("removing a character: %O, %O \n", x?(x->activator?x->activator:"JS"):"", ((x && x->get_set_width)?x->get_set_width():0));
+			  werror("removing a character: %O\n", x);
 		  }
-      while(x && x->activator);
+      while(x && x!= JustifyingSpace);
 
 	    werror("removed word, justification is %d/%d\n", current_line->big, current_line->little);
 		  if(exact) return 1;
 		  if(line_mode)
 		  {
-			quad_out();
+		    quad_out();
 		  }
 
 		  i = lastjs||-1; // if we backed up to the beginning of the setting buffer, that is, there isn't
@@ -409,12 +442,13 @@ int process_setting_buffer(int|void exact)
 		  can_try_hyphenation = 1; 
 
 		  if(can_try_hyphenation)
-				  {	
+			{	
 //			werror("trying to hyphenate, justification is %d.\n", current_line->can_justify());
-			int bs = search(data_to_set, " ", i+1);
+			int bs = search(data_to_set, JustifyingSpace, i+1);
 			if(bs!=-1)
 			{
-				string word = data_to_set[i+1..(bs-1)]*"";
+			  array wordsorts = data_to_set[i+1..(bs-1)];
+				string word = (wordsorts->character)*"";
 				werror("attempting to hyphenate word %O from %O to %O\n", word, i, bs);
 				array wp = hyphenate_word(word);
 				werror("word parts are %O\n", wp * ", ");
@@ -430,49 +464,86 @@ int process_setting_buffer(int|void exact)
   			    continue;
   			  }			  
 				}
-				else
+				else // there are syllables  in this word.
 				{
 					array new_data_to_set = data_to_set;
 					int new_i = i;
 					int new_lastjs = lastjs;
 					int fp;
 
-					string mod = "R";
-				    if(isitalics) mod = "I";
-				    else if (issmallcaps) mod = "S";
-				    else if (isbold) mod = "B";
-					
-					// TODO: we need to reapply ligatures
+					// for each word part, attempt to add the word, starting with the maximum parts.
 					for(fp = sizeof(wp)-2; fp >=0; fp--)
 					{
-					    
-						string syl = (" "+(wp[0..fp] * "") + ((config->unnatural_word_breaks && config->hyphenate_no_hyphen)?"":"-"));
-						string lsyl = replace(syl, ligature_replacements_from[mod]||({}), ligature_replacements_to[mod]||({}));
-  			//		    data_to_set = replace(syl/"", ligature_replacements_from[mod] || ({}), ligature_replacements_to[mod] || ({}));
-						if(syl != lsyl)
-						{
-							// we have a ligature in this word part. it must be applied.
-							data_to_set = break_ligatures(lsyl);
-						}
-						else data_to_set = syl/"";
-						
+					  // first, we need to get the sorts that make up this syllable. it's possible that the syllable
+					  // contains ligatures, so we might not be able to fully 
+					  string portion = (wp[0..fp] * "");
+					  string carry = "";
+					  int currentsort = 0;
+					  array sortsinsyllable = ({});
+					  int simple_break;
+					  object brokenlig;
+					  string syl;
+					  
+					  foreach(portion/""; int x; string act)
+					  {
+					    carry += act;
+					    if(wordsorts[currentsort]->character == carry)
+					    {
+					      sortsinsyllable += ({wordsorts[currentsort]});
+  					    currentsort++;
+					    }
+					  }
+					  
+					  if(((sortsinsyllable->character * "") == portion)
+					  {
+					    // we have the whole shebang. no need to mess with re-ligaturing.
+					    data_to_set += ({JustifyingSpace});
+					    data_to_set += sortsinsyllable;
+					    simple_break = 1;
+					  }
+					  else
+					  {
+					    // we don't have the whole portion. most likely, the end of the portion breaks a ligature.
+					    // so, we look at the sort in wordsorts after the last in the sortsinsyllable.
+					    data_to_set += ({JustifyingSpace});
+					    data_to_set += sortsinsyllable;
+
+					    brokenlig = wordsorts[sizeof(sortsinsyllable)];
+					  
+						  syl = (portion[sizeof(sortsinsyllable->character * "")..]);
+						  string lsyl = replace(syl, ligature_replacements_from[mod]||({}), ligature_replacements_to[mod]||({}));
+
+						  if(syl != lsyl)
+						  {
+							  // we have a ligature in this word part. it must be applied.
+							  data_to_set = prepare_data(break_ligatures(lsyl), brokenlig);
+						  }
+						  else data_to_set = prepare_data(syl/"", brokenlig);
+					  }
+
+            // add a hyphen in the style of the last sort added.
+						if(!(config->unnatural_word_breaks && config->hyphenate_no_hyphen))
+						data_to_set += prepare_data("-", data_to_set[-1]);
+				    
 					  werror("seeing if %O will fit...", syl);
 					  int res = process_setting_buffer(1);
 					  if(!res)
 					  {
 						  werror("yes!\n");
-						  // it fit!
+						  // it fit! now we must put the rest of the word in the setting buffer.
 						  if(sizeof(wp)>=fp)
 						  {	
-							  string lsyl = replace(wp[fp+1..]*"", ligature_replacements_from[mod]||({}), ligature_replacements_to[mod]||({}));
-			  			    //		    data_to_set = replace(syl/"", ligature_replacements_from[mod] || ({}), ligature_replacements_to[mod] || ({}));
-							  if((wp[fp+1..]*"") != lsyl)
-							  {
-								  // we have a ligature in this word part. it must be applied.
-								  data_to_set = break_ligatures(lsyl) + new_data_to_set[bs..];
-							  }
-							  else 
-						  		data_to_set = (wp[fp+1..] * "" / "") + new_data_to_set[bs..];
+						    if(simple_break)
+						      data_to_set = wordsorts[sizeof(sortsinsyllable)..];
+						    else
+						    {
+						      // it gets more complex here, as we have to put the second half of the broken ligature in first.
+						      data_to_set = prepare_data(brokenlig->character[sizeof(syl)..], brokenlig) + wordsorts[sizeof(sortsinsyllable)+1 ..];
+						      
+						      // TODO
+						      // there is a chance that we may have to rescan for ligatures if the trailing portion of the broken ligature
+						      // combines with the first sort(s) of the next word part to form a ligature itself.
+						    }						    
 						  }
 //						werror("data to set is %O\n", data_to_set * "");
 						  i = -1;
@@ -505,9 +576,9 @@ int process_setting_buffer(int|void exact)
 							if(word != lsyl)
 							{
 								// we have a ligature in this word part. it must be applied.
-								data_to_set = break_ligatures(lsyl) + new_data_to_set[bs..];
+								data_to_set = prepare_data(break_ligatures(lsyl), new_data_to_set[bs]) + new_data_to_set[bs..];
 							}
-							else data_to_set = ((word)/"") + new_data_to_set[bs..];
+							else data_to_set = prepare_data((word)/""), new_data_to_set[bs])  + new_data_to_set[bs..];
 
 						  i = -1;
 //						werror("data to set is %O\n", data_to_set * "");
@@ -516,7 +587,6 @@ int process_setting_buffer(int|void exact)
 				}
 			}
 		} 
-//	werror("newline, i is %d\n", lastjs);
 		new_line();
 	}
 }
@@ -537,90 +607,68 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 {
     string lcdata = lower_case(data);
 
-	if(lcdata == "<footer>")
-	{
-		in_even = 1;
-		in_odd = 1;
-		in_footer = 1;
-		return 0;
-	}
+  switch(lcdata)
+  {
+    case "<footer>":
+		  in_even = 1;
+		  in_odd = 1;
+		  in_footer = 1;
+		  return 0;
+    
+    case "</footer>":
+      in_footer = 0;
+		  return 0;
 
-	if(lcdata == "</footer>")
-	{
-		in_footer = 0;
-		return 0;
-	}
+    case "<header>":
+      in_even = 1;
+      in_odd = 1;
+      in_header = 1;
+      return 0;
 
-	if(lcdata == "<header>")
-	{
-		in_even = 1;
-		in_odd = 1;
-		in_header = 1;
-		return 0;
-	}
+    case "</header>":
+		  in_header = 0;
+		  return 0;
+      
+    case "<ofooter>":
+      in_even = 0;
+      in_odd = 1;
+      in_footer = 1;
+	    return 0;
 
-	if(lcdata == "</header>")
-	{
-		in_header = 0;
-		return 0;
-	}
+    case "</ofooter>":
+		  in_footer = 0;
+		  return 0;
+    
+    case "<oheader>":
+		  in_even = 0;
+		  in_odd = 1;
+		  in_header = 1;
+		  return 0;
 
-	if(lcdata == "<ofooter>")
-	{
-		in_even = 0;
-		in_odd = 1;
-		in_footer = 1;
-		return 0;
-	}
+    case "</oheader>":
+      in_header = 0;
+      return 0;
 
-	if(lcdata == "</ofooter>")
-	{
-		in_footer = 0;
-		return 0;
-	}
+    case "<efooter>":
+		  in_even = 1;
+      in_odd = 0;
+      in_footer = 1;
+      return 0;
 
-	if(lcdata == "<oheader>")
-	{
-		in_even = 0;
-		in_odd = 1;
-		in_header = 1;
-		return 0;
-	}
+    case "</efooter>":
+		  in_footer = 0;
+		  return 0;
 
-	if(lcdata == "</oheader>")
-	{
-		in_header = 0;
-		return 0;
-	}
+    case "<eheader>":
+		  in_even = 1;
+		  in_odd = 0;
+		  in_header = 1;
+		  return 0;
 
-	if(lcdata == "<efooter>")
-	{
-		in_even = 1;
-		in_odd = 0;
-		in_footer = 1;
-		return 0;
-	}
-
-	if(lcdata == "</efooter>")
-	{
-		in_footer = 0;
-		return 0;
-	}
-
-	if(lcdata == "<eheader>")
-	{
-		in_even = 1;
-		in_odd = 0;
-		in_header = 1;
-		return 0;
-	}
-
-	if(lcdata == "</eheader>")
-	{
-		in_header = 0;
-		return 0;
-	}
-
+    case "</eheader>":
+      in_header = 0;
+      return 0;
+  }
 
     if(in_footer)
     {
@@ -639,7 +687,6 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 		  oheader_code += data;
 		return 0;
     }
-	
 	
 	if(lcdata == "<i>")
 	{
@@ -772,9 +819,9 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	else if(Regexp.SimpleRegexp("<[Aa].*>")->match(data))
 	{
     if(data[2..sizeof(data)-2] == "JS")
-      data_to_set += ({ " " });
+      data_to_set += ({ JustifyingSpace });
     else
-      data_to_set+= ({(data[2..sizeof(data)-2])});
+      data_to_set+= ({(create_styled_sort(data[2..sizeof(data)-2], space_adjust))});
 	}
 	else if(has_prefix(lcdata, "<setpagenumber "))
 	{
@@ -788,21 +835,20 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	}
 	else if(lcdata == "<pagenumber>")
 	{
-	   		  data_to_set += ((string)pagenumber)/"";
+	   		  data_to_set += prepare_data((string)pagenumber)/"");
 	}
 	else if(lcdata == "<romanpagenumber>")
 	{
-	   		  data_to_set += (String.int2roman(pagenumber))/"";
+	   		  data_to_set += prepare_data((String.int2roman(pagenumber))/"");
 	}
 	else if(lcdata == "<lowercaseromanpagenumber>")
 	{
-	   		  data_to_set += lower_case(String.int2roman(pagenumber))/"";
+	   		  data_to_set += prepare_data(lower_case(String.int2roman(pagenumber))/"");
 	}
     else if(lcdata == "<pagebreak>")
 	{
 	   		 break_page();
-	}
-	
+	}	
 }
 
 // TODO: hyphenation seems to barf on wide characters.
@@ -875,17 +921,14 @@ Line low_make_new_line()
 	return l;
 }
 
-int create_modifier()
+object create_styled_sort(string sort, float adjust, StyledSort template)
 {
-	int modifier;
-	
-	if(isitalics) modifier|=MODIFIER_ITALICS;
-	if(isbold) modifier|=MODIFIER_BOLD;
-	if(issmallcaps) modifier|=MODIFIER_SMALLCAPS;
-
-  return modifier;
-
+  if(template)
+    return template->clone(sort);
+  else
+    return StyledSort(sort, isitalics, isbold, issmallcaps, adjust);
 }
+
 // fill out the line according to the justification method (left/right/etc)
 void quad_out()
 {
@@ -1097,6 +1140,4 @@ void new_line(int|void newpara)
   }
   else
     make_new_line(newpara);
-
-
 }
