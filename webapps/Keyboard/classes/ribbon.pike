@@ -269,7 +269,7 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 		int total_set; 
 		float spill =0.00;
 
-		foreach(line->elements;int col; mixed e)
+		foreach(line->render_line();int col; mixed e)
 		{
 	//	  if(e->is_real_js && line->combined_space)
 	//	    continue;

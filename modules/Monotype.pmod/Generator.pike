@@ -170,12 +170,15 @@ void load_ligatures(object m)
   werror("ligs to:%O\n", ligature_replacements_to);
 }
 
-array prepare_data(array data, StyledSort template)
+array prepare_data(array data, void|StyledSort template)
 {
   array out = allocate(sizeof(data));
   foreach(data; int i; mixed d)
   {
-    out[i] = create_styled_sort(d, space_adjust, template);
+    if(d == " ")
+      out[i] = JustifyingSpace;
+    else
+      out[i] = create_styled_sort(d, space_adjust, template);
   }
   
   return out;
@@ -266,7 +269,7 @@ mixed i_parse_data(object parser, string data, mapping extra)
   //    data = ((data / " ") - ({""})) * " ";
 //werror("Ligatures: %O, %O", ligatures, map(ligatures, lambda(string a){return "<A" + a + ">";}));
 
-      data_to_set += prepare_data(data);
+      data_to_set += prepare_data(data/"");
     }
 
 // note that we don't automatically process the buffer when we receive data, as there may be specifically added ligatures
@@ -357,8 +360,9 @@ int process_setting_buffer(int|void exact)
 	{
 	  tightline = 0;
 	  tightpos = 0;
-	  if(data_to_set[i] == JustifyingSpace)
+	  if(data_to_set[i]->is_real_js)
     {
+      werror("adding space.\n");
       lastjs = i;
 	    if(current_line->elements && sizeof(current_line->elements) && current_line->elements[-1]->is_real_js) 
 		  {
@@ -366,7 +370,7 @@ int process_setting_buffer(int|void exact)
 	      continue;
 		  }
     }
- 	werror("+ %O => %O", data_to_set[i], data_to_set);
+// 	werror("+ %O => %O", data_to_set[i], data_to_set);
 	  current_line->add(data_to_set[i]);
 
      // if permitted, prepare a tight line for possible use later.
@@ -464,7 +468,7 @@ int process_setting_buffer(int|void exact)
   			    continue;
   			  }			  
 				}
-				else // there are syllables  in this word.
+				else // there are syllables in this word.
 				{
 					array new_data_to_set = data_to_set;
 					int new_i = i;
@@ -494,7 +498,7 @@ int process_setting_buffer(int|void exact)
 					    }
 					  }
 					  
-					  if(((sortsinsyllable->character * "") == portion)
+					  if((sortsinsyllable->character * "") == portion)
 					  {
 					    // we have the whole shebang. no need to mess with re-ligaturing.
 					    data_to_set += ({JustifyingSpace});
@@ -511,7 +515,7 @@ int process_setting_buffer(int|void exact)
 					    brokenlig = wordsorts[sizeof(sortsinsyllable)];
 					  
 						  syl = (portion[sizeof(sortsinsyllable->character * "")..]);
-						  string lsyl = replace(syl, ligature_replacements_from[mod]||({}), ligature_replacements_to[mod]||({}));
+						  string lsyl = replace(syl, ligature_replacements_from[sortsinsyllable[-1]->get_modifier()]||({}), ligature_replacements_to[sortsinsyllable[-1]->get_modifier()]||({}));
 
 						  if(syl != lsyl)
 						  {
@@ -523,7 +527,7 @@ int process_setting_buffer(int|void exact)
 
             // add a hyphen in the style of the last sort added.
 						if(!(config->unnatural_word_breaks && config->hyphenate_no_hyphen))
-						data_to_set += prepare_data("-", data_to_set[-1]);
+						data_to_set += prepare_data(({"-"}), data_to_set[-1]);
 				    
 					  werror("seeing if %O will fit...", syl);
 					  int res = process_setting_buffer(1);
@@ -545,7 +549,6 @@ int process_setting_buffer(int|void exact)
 						      // combines with the first sort(s) of the next word part to form a ligature itself.
 						    }						    
 						  }
-//						werror("data to set is %O\n", data_to_set * "");
 						  i = -1;
 						  current_line->is_broken = 1;
 						  break;
@@ -571,17 +574,16 @@ int process_setting_buffer(int|void exact)
 					  }
 					  else if(fp == 0)
 					  {
-							string lsyl = replace(word, ligature_replacements_from[mod]||({}), ligature_replacements_to[mod]||({}));
+							string lsyl = replace(word, ligature_replacements_from[sortsinsyllable[-1]->get_modifier()]||({}), ligature_replacements_to[sortsinsyllable[-1]->get_modifier()]||({}));
 			  			//		    data_to_set = replace(syl/"", ligature_replacements_from[mod] || ({}), ligature_replacements_to[mod] || ({}));
 							if(word != lsyl)
 							{
 								// we have a ligature in this word part. it must be applied.
 								data_to_set = prepare_data(break_ligatures(lsyl), new_data_to_set[bs]) + new_data_to_set[bs..];
 							}
-							else data_to_set = prepare_data((word)/""), new_data_to_set[bs])  + new_data_to_set[bs..];
+							else data_to_set = prepare_data((word/""), new_data_to_set[bs])  + new_data_to_set[bs..];
 
 						  i = -1;
-//						werror("data to set is %O\n", data_to_set * "");
 					  }
           }						
 				}
@@ -835,7 +837,7 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	}
 	else if(lcdata == "<pagenumber>")
 	{
-	   		  data_to_set += prepare_data((string)pagenumber)/"");
+	   		  data_to_set += prepare_data(((string)pagenumber)/"");
 	}
 	else if(lcdata == "<romanpagenumber>")
 	{
@@ -921,7 +923,7 @@ Line low_make_new_line()
 	return l;
 }
 
-object create_styled_sort(string sort, float adjust, StyledSort template)
+object create_styled_sort(string sort, float adjust, void|StyledSort template)
 {
   if(template)
     return template->clone(sort);
@@ -978,7 +980,7 @@ int low_quad_out(float amount, int|void atbeginning)
   foreach(toadd;int z;int i)
   {
     ix+=i;
-    current_line->add(spaces[i], 0, 0, atbeginning);	
+    current_line->add(Sort(spaces[i]), 0, atbeginning);	
 	if(current_line->is_overset())
 	{
       werror("overset. added %.2f, at %d\n", current_line->linelength, ix);
@@ -1006,7 +1008,7 @@ int low_quad_out(float amount, int|void atbeginning)
           do
           {
             ix+=toadd;
-            current_line->add(spaces[toadd], 0, 0, atbeginning);	
+            current_line->add(Sort(spaces[toadd]), atbeginning, 0);	
             cj = current_line->can_justify();
           }
           while(!cj && !current_line->is_overset());
@@ -1124,7 +1126,7 @@ void new_line(int|void newpara)
 	{
 		// add at least 18 units of space to the line.
 		for(int i = spacesize; i <= 18; i+=spacesize)
-	 		current_line->add(spaces[spacesize], 0, 0, 1, 1);
+	 		current_line->add(Sort(spaces[spacesize]), 1, 1);
 	}
 	else
 	{

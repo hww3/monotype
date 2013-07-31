@@ -113,7 +113,7 @@ import Monotype;
 	     linelength -= (min_space_units);
 	   }
 	   else
-	     linelength -= r->get_set_width();
+	     linelength -= r->get_set_width(m, config);
 
 	   elements = elements[0..sizeof(elements)-2];	
 
@@ -194,84 +194,44 @@ werror("calculate justification: %f\n", justspace);
 
 
 	// add a sort to the current line
-	void add(object activator, int|void atbeginning, int|void stealth)
+	void add(Sort|RealJS activator, int|void atbeginning, int|void stealth)
 	{
 	  object mat;
 	  string code;
 
 //werror("Line.add(%O, %O)\n", activator, modifier);
 // justifying space
-if(activator == JustifyingSpace)
-{
-	if(atbeginning)
-	{
-		elements = ({activator}) + elements;
-	}
-	else
-	{
-	  elements += ({activator});		
-	}
-  linelength += (min_space_units);
-  linespaces ++;
-	return;
-}
-
-
-// *** WIP NOTE: need to move some of this to StyledSort()->get_mat() and then call same here.
-    mat = activator;
-
-    if(!mat && (modifier&MODIFIER_ITALICS) && config->allow_punctuation_substitution && (<".", ",", ":", ";", "'", "’", "‘", "!", "?", "-", "–">)[activator])
+    if(activator->is_real_js)
     {
-	    if(mat = m->elements[activator])
-		    errors += ({"Substituted activator " + (activator) + " from roman alphabet."});
-		  else
-		    errors += ({"Unable to substitute activator [" + (activator) + "] from roman alphabet."});
-    }
-
-	  if(!mat)
-    { 
-      errors += ({("Requested activator [" + 
-		    (activator) + "] (" + sprintf("%q", code)+ "), code [" + (code) + "] not in MCA.\n")}); 
-		  werror("invalid activator %O/%O\n", string_to_utf8(activator),code);
-    }
-	  else
-	  {	
-//	    werror("mat: %O\n", mat);
-	    if(mat->_is_matwrapper)
+	    if(atbeginning)
 	    {
-	      elements += ({mat});
-	      if(!stealth)
- 	    	  linelength+=(mat->get_set_width());
-      }
-      else if(mat->is_real_js)
-      {
-	      elements += ({mat});
-        linelength += (min_space_units);
-        linespaces ++;
-        return;
-      }
-		  else
-		  { 
-		    if(atbeginning)
-		    {
-//		  	displayline = ({activator}) + displayline;
-			    elements = ({MatWrapper(mat, adjust_space)}) + elements;
-		    }
-		    else
-		    {
-//		    displayline += ({ activator });
-		      elements += ({MatWrapper(mat, adjust_space)});		
-		    }
-		    if(!stealth)
- 	    	  linelength+=(mat->get_set_width() + adjust_space);
-    	}
-	  }
+		    elements = ({activator}) + elements;
+	    }
+	    else
+	    {
+	      elements += ({activator});		
+	    }
+      linelength += (min_space_units);
+      linespaces ++;
+	    return;
+    }
+    else if(mat = activator->get_mat(m, config, errors))
+	  {
+	    if(!stealth)
+ 	  	  linelength+=(mat->get_set_width() + activator->space_adjust);
+ 	  	 
+  		if(atbeginning)
+  	  {
+  		  elements = ({activator}) + elements;
+  		}
+  	  else
+  	  {
+  		  elements += ({activator});		
+  	  }    
+    }
 
 	  if(!stealth)
 	    [big, little] = calculate_justification();
-//	  if(interactive)
-//	    werror("%s %d %s %s\n", displayline * "", lineunits-linelength, can_justify()?("* "+ big + " " + little):"", is_overset()?(" OVERSET "):"");
-
 	}
 
   // can we add n units to the line and still meet the justification requirements?
@@ -315,6 +275,35 @@ if(activator == JustifyingSpace)
 	  	return(linespaces && ((big <= 15) && (big > 0))  && ((little <= 15) && (little > 0)));
 	}
 	
+	array render_line()
+	{
+	  errors = ({});
+	  int i;
+	  array x = allocate(sizeof(elements));
+	  foreach(elements;;mixed e)
+	  {
+	    mixed matrix;
+	    if(e->is_real_js)
+	    {
+	      x[i] = e;
+	      i++;
+	    }
+	    else if(matrix = e->get_mat(m, config, errors))
+	    {
+	      x[i] = MatWrapper(matrix, e->space_adjust);
+  	    i++;
+	    }
+	    else
+	    {
+	      werror("skipping %O\n", e);
+	    }
+	  }
+	  
+	  if(i)
+  	  return x[0 .. i-1];
+  	else return ({});
+	}
+	
 	string generate_line()
 	{
 	  int last_space;
@@ -331,7 +320,7 @@ if(activator == JustifyingSpace)
       buf+=sprintf("%s %s %d\n", generator->fine_code, generator->coarse_code, f);
       buf+=sprintf("%s %d\n", generator->coarse_code, c);
 
-      foreach(reverse(elements);; object me)
+      foreach(reverse(render_line());; object me)
       {
         int this_combined_space = 0;
         
