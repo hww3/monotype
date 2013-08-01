@@ -80,14 +80,14 @@ void create(mapping settings)
 			(1/settings->setwidth) * settings->linelengthp);
 
   werror ("line should be %d units.\n", lineunits);
-  m = settings->matcase;
-  s = settings->stopbar;
 
   config = settings;
   config->lineunits = lineunits;
 
-  load_spaces(m);
-  load_ligatures(m);
+  if(settings->matcase)
+    set_matcase(settings->matcase);
+  if(settings->stopbar)
+    set_stopbar(settings->stopbar);
   
   // set up the code substitutions for unit adding
   if(config->unit_adding)
@@ -101,16 +101,32 @@ void create(mapping settings)
       d_code = "E F";
   }  
     
-  object js = m->elements["JS"];
-	// houston, we have a problem!
-  if(!js) error("No Justifying Space in MCA!\n");
-
-  JustifyingSpace = RealJS(js);
-
   load_hyphenator();
 }
 
-void load_hyphenator()
+void set_matcase(Monotype.MatCaseLayout mca)
+{
+  m = mca;
+  
+  load_ligatures(m);
+
+  object js = m->elements["JS"];
+	// houston, we have a problem!
+  if(!js) error("No Justifying Space in MCA!\n");
+  if(s)
+    load_spaces(m);
+
+  JustifyingSpace = RealJS(js);
+}
+
+void set_stopbar(Monotype.Stopbar stopbar)
+{
+  s = stopbar;
+  if(m)
+    load_spaces(m);
+}
+
+protected void load_hyphenator()
 {
   #if constant(Public.Tools.Language.Hyphenate.Hyphenate)
     string lang = "en";
@@ -125,7 +141,7 @@ void load_hyphenator()
   #endif
 }
 
-void load_spaces(object m)
+protected void load_spaces(object m)
 {
   foreach(m->spaces;;object mat)
     spaces[s->get((mat->row_pos<16?mat->row_pos:15))] = mat;  
@@ -144,7 +160,7 @@ void load_spaces(object m)
   werror("SPACES: %O\n", spaces);
 }
 
-void load_ligatures(object m)
+protected void load_ligatures(object m)
 {
     foreach(m->get_ligatures();; object lig)
     {
@@ -153,7 +169,7 @@ void load_ligatures(object m)
 
     foreach(ligatures;;array lig)
     {
-    	werror("lig:%O\n", lig);
+//    	werror("lig:%O\n", lig);
       if(!ligature_replacements_to[lig[0]])
         ligature_replacements_to[lig[0]] = ({});
       if(!ligature_replacements_from[lig[0]])
@@ -166,11 +182,11 @@ void load_ligatures(object m)
     ligature_replacements_to = map(ligatures, lambda(string a){return "<A" + a + ">";}) * 2;
   */
 
-  werror("ligs from:%O\n", ligature_replacements_from);
-  werror("ligs to:%O\n", ligature_replacements_to);
+//  werror("ligs from:%O\n", ligature_replacements_from);
+//  werror("ligs to:%O\n", ligature_replacements_to);
 }
 
-array prepare_data(array data, void|StyledSort template)
+protected array prepare_data(array data, void|StyledSort template)
 {
   array out = allocate(sizeof(data));
   foreach(data; int i; mixed d)
@@ -297,7 +313,7 @@ void insert_header(int|void newpara)
 	if(!in_do_header && sizeof(header_code))
 	{
 		in_do_header = 1;
-		current_line->errors += ({"* New Page Begins -"});
+		current_line->errors->append("* New Page Begins -");
 		werror("parsing header: %O\n", header_code);
 		array _data_to_set = data_to_set;
 		data_to_set = ({});
@@ -780,10 +796,10 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	{
 		process_setting_buffer();
 		int toadd = (int)(data[2..sizeof(data)-2]);
-                float added = (float)low_quad_out((float)toadd);
+    float added = (float)low_quad_out((float)toadd);
 		if((float)added != (float)toadd)
 		{
-			current_line->errors += ({sprintf("Fixed space (want %f units, got %f) won't fit on line... dropping.\n", (float)toadd, added)});
+			current_line->errors->append(sprintf("Fixed space (want %f units, got %f) won't fit on line... dropping.\n", (float)toadd, added));
 		}
 	}
 	// indent
@@ -832,7 +848,7 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 		if(matches)
 		  pagenumber = (pn-1); // we always increment before going into header, so account for that here.
 		else
-			current_line->errors += ({"Failed to set page number, unable to extract desired number.\n"});
+			current_line->errors->append("Failed to set page number, unable to extract desired number.\n");
 			
 	}
 	else if(lcdata == "<pagenumber>")
@@ -896,7 +912,7 @@ void make_new_line(int|void newpara)
   	  werror("indent %O.\n", indent_adjust);
     	if(low_quad_out(toadd) != toadd)
       {
-  	    current_line->errors += ({sprintf("Fixed space (%.1f unit) won't fit on line... dropping.\n", toadd)});
+  	    current_line->errors->append(sprintf("Fixed space (%.1f unit) won't fit on line... dropping.\n", toadd));
       }	
     }
     else if(!newpara && toadd < 0)
@@ -906,7 +922,7 @@ void make_new_line(int|void newpara)
       
     	if(low_quad_out(toadd) != toadd)
       {
-  	    current_line->errors += ({sprintf("Fixed space (%.1f unit) won't fit on line... dropping.\n", toadd)});
+  	    current_line->errors->append(sprintf("Fixed space (%.1f unit) won't fit on line... dropping.\n", toadd));
       }	      
     }
 	}	

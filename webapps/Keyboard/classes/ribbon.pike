@@ -110,7 +110,7 @@ public void do_generate(Request id, Response response, Template.View v, mixed ..
 	m_delete(id->misc->session_variables, "job_" + id->variables->job_id);
 
 	mapping settings = extract_settings(id);
-		
+	werror("%O\n", settings);	
 		string data;
 		if(id->variables->input_type=="file") data = /*utf8_to_string*/(id->variables["input-file"]);
 		else data = id->variables->input_text;

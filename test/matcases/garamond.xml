@@ -1,0 +1,200 @@
+<?xml version="1.0"?>
+<matcase name="648 EFG American Garamond" description="American Garamond (Chestnut Press) 2" size="0" wedge="S5">
+  <element row="12" column="M"><matrix weight="R" character="V" set_width="13.0" activator="V"/></element>
+  <element row="8" column="M"><matrix weight="S" character="R" set_width="10.0" activator="R"/></element>
+  <element row="4" column="M"><matrix weight="S" character="L" set_width="8.0" activator="L"/></element>
+  <element row="13" column="M"><matrix weight="R" character="X" set_width="14.0" activator="X"/></element>
+  <element row="9" column="M"><matrix weight="S" character="Y" set_width="10.0" activator="Y"/></element>
+  <element row="5" column="M"><matrix weight="R" character="3" set_width="9.0" activator="3"/></element>
+  <element row="1" column="M"><matrix weight="I" character="s" set_width="5.0" activator="s"/></element>
+  <element row="14" column="M"><matrix weight="R" character="Q" set_width="15.0" activator="Q"/></element>
+  <element row="10" column="M"><matrix weight="S" character="O" set_width="11.0" activator="O"/></element>
+  <element row="6" column="M"><matrix weight="R" character="4" set_width="9.0" activator="4"/></element>
+  <element row="2" column="M"><matrix weight="I" character=":" set_width="6.0" activator=":"/></element>
+  <element row="7" column="M"><matrix weight="S" character="E" set_width="9.0" activator="E"/></element>
+  <element row="3" column="M"><matrix weight="I" character="!" set_width="7.0" activator="!"/></element>
+  <element row="12" column="J"><matrix weight="R" character="A" set_width="13.0" activator="A"/></element>
+  <element row="8" column="J"><matrix weight="R" character="n" set_width="10.0" activator="n"/></element>
+  <element row="4" column="J"><matrix weight="R" character="c" set_width="8.0" activator="c"/></element>
+  <element row="9" column="J"><matrix weight="R" character="d" set_width="10.0" activator="d"/></element>
+  <element row="5" column="J"><matrix series="" weight="R" character="9" set_width="9.0" activator="9"/></element>
+  <element row="1" column="J"><matrix weight="R" character="l" set_width="5.0" activator="l"/></element>
+  <element row="14" column="J"><matrix weight="R" character="H" set_width="15.0" activator="H"/></element>
+  <element row="10" column="J"><matrix weight="S" character="G" set_width="11.0" activator="G"/></element>
+  <element row="6" column="J"><matrix weight="R" character="$" set_width="9.0" activator="$"/></element>
+  <element row="2" column="J"><matrix weight="R" character="r" set_width="6.0" activator="r"/></element>
+  <element row="15" column="J"><matrix weight="R" character="M" set_width="18.0" activator="M"/></element>
+  <element row="11" column="J"><matrix weight="R" character="T" set_width="12.0" activator="T"/></element>
+  <element row="7" column="J"><matrix weight="R" character="v" set_width="9.0" activator="v"/></element>
+  <element row="3" column="J"><matrix weight="R" character="?" set_width="7.0" activator="?"/></element>
+  <element row="12" column="H"><matrix weight="I" character="w" set_width="13.0" activator="w"/></element>
+  <element row="8" column="H"><matrix weight="R" character="p" set_width="10.0" activator="p"/></element>
+  <element row="4" column="H"><matrix weight="R" character="a" set_width="8.0" activator="a"/></element>
+  <element row="13" column="H"><matrix weight="I" character="A" set_width="14.0" activator="A"/></element>
+  <element row="9" column="H"><matrix weight="R" character="b" set_width="10.0" activator="b"/></element>
+  <element row="5" column="H"><matrix weight="I" character="0" set_width="9.0" activator="0"/></element>
+  <element row="1" column="H"><matrix weight="R" character="," set_width="5.0" activator=","/></element>
+  <element row="14" column="H"><matrix weight="R" character="N" set_width="15.0" activator="N"/></element>
+  <element row="10" column="H"><matrix weight="R" character="ff" set_width="11.0" activator="ff"/></element>
+  <element row="6" column="H"><matrix weight="I" character="$" set_width="9.0" activator="$"/></element>
+  <element row="2" column="H"><matrix weight="R" character="t" set_width="6.0" activator="t"/></element>
+  <element row="11" column="H"><matrix weight="R" character="B" set_width="12.0" activator="B"/></element>
+  <element row="7" column="H"><matrix weight="I" character="d" set_width="9.0" activator="d"/></element>
+  <element row="3" column="H"><matrix weight="R" character="J" set_width="7.0" activator="J"/></element>
+  <element row="12" column="C"><matrix series="" weight="I" character="ffl" set_width="13.0" activator="ffl"/></element>
+  <element row="8" column="C"><matrix series="" weight="I" character="is" set_width="10.0" activator="is"/></element>
+  <element row="4" column="C"><matrix weight="I" character="p" set_width="8.0" activator="p"/></element>
+  <element row="5" column="C"><matrix weight="I" character="9" set_width="9.0" activator="9"/></element>
+  <element row="1" column="C"><matrix weight="I" character="l" set_width="5.0" activator="l"/></element>
+  <element row="10" column="C"><matrix weight="I" character="R" set_width="11.0" activator="R"/></element>
+  <element row="2" column="C"><matrix weight="I" character="e" set_width="6.0" activator="e"/></element>
+  <element row="15" column="C"><matrix series="" weight="I" character="as" set_width="18.0" activator="as"/></element>
+  <element row="11" column="C"><matrix series="" weight="I" character="sp" set_width="12.0" activator="sp"/></element>
+  <element row="7" column="C"><matrix weight="I" character="fl" set_width="9.0" activator="fl"/></element>
+  <element row="3" column="C"><matrix weight="I" character="J" set_width="7.0" activator="J"/></element>
+  <element row="8" column="K"><matrix weight="S" character="C" set_width="10.0" activator="C"/></element>
+  <element row="1" column="K"><matrix series="" weight="R" character="i" set_width="5.0" activator="i"/></element>
+  <element row="9" column="K"><matrix weight="R" character="g" set_width="10.0" activator="g"/></element>
+  <element row="10" column="K"><matrix weight="S" character="H" set_width="11.0" activator="H"/></element>
+  <element row="2" column="K"><matrix weight="I" character="f" set_width="6.0" activator="f"/></element>
+  <element row="11" column="K"><matrix weight="R" character="Z" set_width="12.0" activator="Z"/></element>
+  <element row="3" column="K"><matrix weight="I" character="r" set_width="7.0" activator="r"/></element>
+  <element row="12" column="K"><matrix weight="R" character="R" set_width="13.0" activator="R"/></element>
+  <element row="4" column="K"><matrix weight="R" character="e" set_width="8.0" activator="e"/></element>
+  <element row="13" column="K"><matrix weight="R" character="Y" set_width="14.0" activator="Y"/></element>
+  <element row="5" column="K"><matrix weight="R" character="7" set_width="9.0" activator="7"/></element>
+  <element row="14" column="K"><matrix weight="R" character="G" set_width="15.0" activator="G"/></element>
+  <element row="6" column="K"><matrix weight="R" character="8" set_width="9.0" activator="8"/></element>
+  <element row="15" column="K"><matrix weight="R" character="W" set_width="18.0" activator="W"/></element>
+  <element row="7" column="K"><matrix weight="R" character="y" set_width="9.0" activator="y"/></element>
+  <element row="12" column="D"><matrix series="" weight="I" character="ffi" set_width="13.0" activator="ffi"/></element>
+  <element row="8" column="D"><matrix weight="I" character="F" set_width="10.0" activator="F"/></element>
+  <element row="4" column="D"><matrix weight="I" character="q" set_width="8.0" activator="q"/></element>
+  <element row="13" column="D"><matrix weight="I" character="V" set_width="14.0" activator="V"/></element>
+  <element row="9" column="D"><matrix weight="R" character="fi" set_width="10.0" activator="fi"/></element>
+  <element row="5" column="D"><matrix weight="I" character="7" set_width="9.0" activator="7"/></element>
+  <element row="1" column="D"><matrix weight="I" character="t" set_width="5.0" activator="t"/></element>
+  <element row="14" column="D"><matrix series="" weight="R" character="ffl" set_width="15.0" activator="ffl"/></element>
+  <element row="10" column="D"><matrix weight="I" character="E" set_width="11.0" activator="E"/></element>
+  <element row="6" column="D"><matrix weight="I" character="8" set_width="9.0" activator="8"/></element>
+  <element row="2" column="D"><matrix weight="R" character="!" set_width="6.0" activator="!"/></element>
+  <element row="11" column="D"><matrix weight="I" character="B" set_width="12.0" activator="B"/></element>
+  <element row="7" column="D"><matrix weight="I" character="k" set_width="9.0" activator="k"/></element>
+  <element row="3" column="D"><matrix weight="I" character="o" set_width="7.0" activator="o"/></element>
+  <element row="12" column="O"><matrix series="" weight="R" character="&amp;" set_width="13.0" activator="&amp;"/></element>
+  <element row="8" column="O"><matrix weight="S" character="Z" set_width="10.0" activator="Z"/></element>
+  <element row="4" column="O"><matrix weight="S" character="P" set_width="8.0" activator="P"/></element>
+  <element row="9" column="O"><matrix series="" weight="S" character="&amp;" set_width="10.0" activator="&amp;"/></element>
+  <element row="5" column="O"><matrix weight="R" character="0" set_width="9.0" activator="0"/></element>
+  <element row="1" column="O"><matrix weight="S" character="J" set_width="5.0" activator="J"/></element>
+  <element row="10" column="O"><matrix series="" weight="S" character="Q" set_width="11.0" activator="Q"/></element>
+  <element row="6" column="O"><matrix set_width="9.0" space="fixed"/></element>
+  <element row="2" column="O"><matrix set_width="6.0" space="justifying"/></element>
+  <element row="15" column="O"><matrix set_width="18.0" space="fixed"/></element>
+  <element row="7" column="O"><matrix series="" weight="R" character="*" set_width="9.0" activator="*"/></element>
+  <element row="3" column="O"><matrix set_width="7.0" space="fixed"/></element>
+  <element row="8" column="G"><matrix weight="R" character="o" set_width="10.0" activator="o"/></element>
+  <element row="9" column="G"><matrix weight="R" character="k" set_width="10.0" activator="k"/></element>
+  <element row="1" column="G"><matrix weight="R" character="." set_width="5.0" activator="."/></element>
+  <element row="10" column="G"><matrix weight="R" character="P" set_width="11.0" activator="P"/></element>
+  <element row="2" column="G"><matrix weight="R" character="-" set_width="6.0" activator="-"/></element>
+  <element row="11" column="G"><matrix weight="I" character="O" set_width="12.0" activator="O"/></element>
+  <element row="3" column="G"><matrix weight="R" character="I" set_width="7.0" activator="I"/></element>
+  <element row="12" column="G"><matrix weight="I" character="m" set_width="13.0" activator="m"/></element>
+  <element row="4" column="G"><matrix weight="I" character="b" set_width="8.0" activator="b"/></element>
+  <element row="13" column="G"><matrix weight="I" character="D" set_width="14.0" activator="D"/></element>
+  <element row="5" column="G"><matrix weight="I" character="1" set_width="9.0" activator="1"/></element>
+  <element row="14" column="G"><matrix weight="R" character="D" set_width="15.0" activator="D"/></element>
+  <element row="6" column="G"><matrix weight="I" character="2" set_width="9.0" activator="2"/></element>
+  <element row="15" column="G"><matrix weight="I" character="M" set_width="18.0" activator="M"/></element>
+  <element row="7" column="G"><matrix weight="I" character="a" set_width="9.0" activator="a"/></element>
+  <element row="12" column="B"><matrix series="" weight="I" character="gy" set_width="13.0" activator="gy"/></element>
+  <element row="8" column="B"><matrix series="" weight="I" character="st" set_width="10.0" activator="st"/></element>
+  <element row="4" column="B"><matrix weight="I" character="v" set_width="8.0" activator="v"/></element>
+  <element row="9" column="B"><matrix weight="R" character="F" set_width="10.0" activator="F"/></element>
+  <element row="5" column="B"><matrix weight="R" character="S" set_width="9.0" activator="S"/></element>
+  <element row="1" column="B"><matrix weight="I" character="i" set_width="5.0" activator="i"/></element>
+  <element row="14" column="B"><matrix weight="I" character="N" set_width="15.0" activator="N"/></element>
+  <element row="10" column="B"><matrix weight="I" character="P" set_width="11.0" activator="P"/></element>
+  <element row="6" column="B"><matrix series="" weight="I" character="ll" set_width="9.0" activator="ll"/></element>
+  <element row="2" column="B"><matrix weight="I" character="c" set_width="6.0" activator="c"/></element>
+  <element row="15" column="B"><matrix series="" weight="I" character="us" set_width="18.0" activator="us"/></element>
+  <element row="11" column="B"><matrix weight="I" character="T" set_width="12.0" activator="T"/></element>
+  <element row="7" column="B"><matrix weight="I" character="fi" set_width="9.0" activator="fi"/></element>
+  <element row="3" column="B"><matrix weight="I" character="I" set_width="7.0" activator="I"/></element>
+  <element row="4" column="A"><matrix series="" weight="I" character="z" set_width="8.0" activator="z"/></element>
+  <element row="9" column="A"><matrix series="" weight="R" character="L" set_width="10.0" activator="L"/></element>
+  <element row="1" column="A"><matrix weight="I" character="j" set_width="5.0" activator="j"/></element>
+  <element row="14" column="A"><matrix weight="I" character="X" set_width="15.0" activator="X"/></element>
+  <element row="10" column="A"><matrix weight="I" character="Z" set_width="11.0" activator="Z"/></element>
+  <element row="6" column="A"><matrix series="" weight="I" character="tt" set_width="9.0" activator="tt"/></element>
+  <element row="11" column="A"><matrix weight="I" character="Q" set_width="12.0" activator="Q"/></element>
+  <element row="7" column="A"><matrix weight="I" character="x" set_width="9.0" activator="x"/></element>
+  <element row="3" column="A"><matrix weight="I" character="?" set_width="7.0" activator="?"/></element>
+  <element row="12" column="N"><matrix weight="S" character="M" set_width="13.0" activator="M"/></element>
+  <element row="8" column="N"><matrix weight="S" character="X" set_width="10.0" activator="X"/></element>
+  <element row="9" column="N"><matrix weight="S" character="V" set_width="10.0" activator="V"/></element>
+  <element row="5" column="N"><matrix weight="R" character="1" set_width="9.0" activator="1"/></element>
+  <element row="1" column="N"><matrix weight="S" character="I" set_width="5.0" activator="I"/></element>
+  <element row="14" column="N"><matrix weight="S" character="W" set_width="15.0" activator="W"/></element>
+  <element row="10" column="N"><matrix series="" weight="S" character="K" set_width="11.0" activator="K"/></element>
+  <element row="6" column="N"><matrix weight="R" character="2" set_width="9.0" activator="2"/></element>
+  <element row="2" column="N"><matrix weight="I" character=";" set_width="6.0" activator=";"/></element>
+  <element row="15" column="N"><matrix series="" weight="R" character="&#x2013;" set_width="18.0" activator="&#x2013;"/></element>
+  <element row="11" column="N"><matrix weight="S" character="N" set_width="12.0" activator="N"/></element>
+  <element row="7" column="N"><matrix weight="S" character="B" set_width="9.0" activator="B"/></element>
+  <element row="3" column="N"><matrix weight="S" character="S" set_width="7.0" activator="S"/></element>
+  <element row="12" column="I"><matrix weight="R" character="w" set_width="13.0" activator="w"/></element>
+  <element row="8" column="I"><matrix weight="R" character="u" set_width="10.0" activator="u"/></element>
+  <element row="4" column="I"><matrix weight="R" character="z" set_width="8.0" activator="z"/></element>
+  <element row="9" column="I"><matrix weight="R" character="h" set_width="10.0" activator="h"/></element>
+  <element row="1" column="I"><matrix set_width="5.0" space="fixed"/></element>
+  <element row="14" column="I"><matrix weight="R" character="K" set_width="15.0" activator="K"/></element>
+  <element row="10" column="I"><matrix weight="S" character="D" set_width="11.0" activator="D"/></element>
+  <element row="6" column="I"><matrix series="" weight="R" character="-" set_width="9.0" activator="-"/></element>
+  <element row="2" column="I"><matrix weight="R" character="f" set_width="6.0" activator="f"/></element>
+  <element row="11" column="I"><matrix weight="R" character="C" set_width="12.0" activator="C"/></element>
+  <element row="7" column="I"><matrix weight="I" character="h" set_width="9.0" activator="h"/></element>
+  <element row="3" column="I"><matrix weight="R" character="s" set_width="7.0" activator="s"/></element>
+  <element row="12" column="E"><matrix weight="I" character="U" set_width="13.0" activator="U"/></element>
+  <element row="8" column="E"><matrix weight="I" character="ff" set_width="10.0" activator="ff"/></element>
+  <element row="4" column="E"><matrix weight="I" character="S" set_width="8.0" activator="S"/></element>
+  <element row="13" column="E"><matrix weight="I" character="Y" set_width="14.0" activator="Y"/></element>
+  <element row="9" column="E"><matrix weight="R" character="fl" set_width="10.0" activator="fl"/></element>
+  <element row="5" column="E"><matrix weight="I" character="5" set_width="9.0" activator="5"/></element>
+  <element row="1" column="E"><matrix series="" weight="R" character="&#x2018;" set_width="5.0" activator="&#x2018;"/></element>
+  <element row="14" column="E"><matrix series="" weight="R" character="ffi" set_width="15.0" activator="ffi"/></element>
+  <element row="10" column="E"><matrix weight="I" character="C" set_width="11.0" activator="C"/></element>
+  <element row="6" column="E"><matrix weight="I" character="6" set_width="9.0" activator="6"/></element>
+  <element row="2" column="E"><matrix weight="R" character=":" set_width="6.0" activator=":"/></element>
+  <element row="11" column="E"><matrix weight="I" character="L" set_width="12.0" activator="L"/></element>
+  <element row="7" column="E"><matrix weight="I" character="n" set_width="9.0" activator="n"/></element>
+  <element row="3" column="E"><matrix series="" weight="R" character=")" set_width="7.0" activator=")"/></element>
+  <element row="12" column="L"><matrix series="" weight="R" character="ct" set_width="13.0" activator="ct"/></element>
+  <element row="8" column="L"><matrix weight="S" character="A" set_width="10.0" activator="A"/></element>
+  <element row="4" column="L"><matrix weight="S" character="F" set_width="8.0" activator="F"/></element>
+  <element row="13" column="L"><matrix weight="R" character="U" set_width="14.0" activator="U"/></element>
+  <element row="9" column="L"><matrix weight="S" character="T" set_width="10.0" activator="T"/></element>
+  <element row="5" column="L"><matrix weight="R" character="5" set_width="9.0" activator="5"/></element>
+  <element row="1" column="L"><matrix weight="R" character="j" set_width="5.0" activator="j"/></element>
+  <element row="14" column="L"><matrix weight="R" character="m" set_width="15.0" activator="m"/></element>
+  <element row="10" column="L"><matrix weight="S" character="U" set_width="11.0" activator="U"/></element>
+  <element row="6" column="L"><matrix weight="R" character="6" set_width="9.0" activator="6"/></element>
+  <element row="11" column="L"><matrix series="" weight="R" character="st" set_width="12.0" activator="st"/></element>
+  <element row="7" column="L"><matrix weight="R" character="x" set_width="9.0" activator="x"/></element>
+  <element row="3" column="L"><matrix weight="I" character="y" set_width="7.0" activator="y"/></element>
+  <element row="12" column="F"><matrix weight="I" character="G" set_width="13.0" activator="G"/></element>
+  <element row="4" column="F"><matrix weight="I" character="g" set_width="8.0" activator="g"/></element>
+  <element row="13" column="F"><matrix weight="I" character="H" set_width="14.0" activator="H"/></element>
+  <element row="9" column="F"><matrix weight="R" character="q" set_width="10.0" activator="q"/></element>
+  <element row="5" column="F"><matrix weight="I" character="3" set_width="9.0" activator="3"/></element>
+  <element row="1" column="F"><matrix series="" weight="R" character="&#x2019;" set_width="5.0" activator="&#x2019;"/></element>
+  <element row="14" column="F"><matrix weight="R" character="O" set_width="15.0" activator="O"/></element>
+  <element row="10" column="F"><matrix weight="R" character="E" set_width="11.0" activator="E"/></element>
+  <element row="6" column="F"><matrix weight="I" character="4" set_width="9.0" activator="4"/></element>
+  <element row="2" column="F"><matrix weight="R" character=";" set_width="6.0" activator=";"/></element>
+  <element row="15" column="F"><matrix weight="I" character="W" set_width="18.0" activator="W"/></element>
+  <element row="11" column="F"><matrix weight="I" character="K" set_width="12.0" activator="K"/></element>
+  <element row="7" column="F"><matrix weight="I" character="u" set_width="9.0" activator="u"/></element>
+  <element row="3" column="F"><matrix series="" weight="R" character="(" set_width="7.0" activator="("/></element>
+</matcase>

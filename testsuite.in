@@ -1,0 +1,120 @@
+
+test_true(objectp(Monotype));
+test_true(programp(Monotype.Generator));
+
+test_true(objectp(Monotype.load_stopbar(combine_path(getcwd(), "test/wedges", "s5"))));
+test_true(objectp(Monotype.load_matcase(combine_path(getcwd(), "test/matcases", "garamond"))))
+
+test_do(add_constant("dictdir", combine_path(getcwd(), "test/dicts")));
+test_do(add_constant("test_mca", Monotype.load_matcase(combine_path(getcwd(), "test/matcases", "garamond"))));
+test_do(add_constant("test_stopbar", Monotype.load_stopbar(combine_path(getcwd(), "test/wedges", "s5"))));
+
+test_do(add_constant("settings", ([
+     "allow_lowercase_smallcaps": 0,
+     "allow_punctuation_substitution": 0,
+     "enable_combined_space": 1,
+     "hyphenate": 1,
+     "hyphenate_no_hyphen": 0,
+     "jobname": "",
+     "justification": 1,
+     "lang": "en_US",
+     "linelengthp": 10.0,
+     "min_big": 3,
+     "min_little": 8,
+     "mould": 12,
+     "page_length": 42,
+     "pointsystem": 12.0,
+     "setwidth": 12.0,
+     "unit_adding": 0,
+     "unit_shift": 0,
+     "unnatural_word_breaks": 0,
+     "dict_dir": dictdir,
+     "matcase": test_mca,
+     "stopbar": test_stopbar,
+   ])))
+   
+test_any([[
+  // <qo> should give appropriately sized spaces.
+  object g = Monotype.Generator(settings);
+  g->parse("Mary had a little lamb<qo>\n");
+  g->generate_ribbon();
+
+  return ((g->lines[0]->little == 8) && (g->lines[0]->big == 3) && !sizeof(g->lines[0]->errors));
+]], 1);
+
+test_any([[
+  // <qo> should give appropriately sized spaces.
+
+  object g = Monotype.Generator(settings  + (["min_big": 2, "min_little": 5]));
+  g->parse("Mary had a little lamb<qo>\n");
+
+  return ((g->lines[0]->little == 5) && (g->lines[0]->big == 2) && !sizeof(g->lines[0]->errors));
+]], 1);
+
+test_any([[
+  // <qo> should always work.
+  object g = Monotype.Generator(settings + (["linelengthp": 30.0]));
+  g->parse("Mary had a little lamb<qo>\n");
+
+  return ((g->lines[0]->little == 8) && (g->lines[0]->big == 3) && !sizeof(g->lines[0]->errors));
+]], 1);
+
+test_any([[
+  // <p> with no justifying space should yield a minimum justification code.
+  object g = Monotype.Generator(settings + (["linelengthp": 30.0]));
+  g->parse("Mary<p>\n");
+
+  return ((g->lines[0]->little == 1) && (g->lines[0]->big == 1) && !sizeof(g->lines[0]->errors));
+]], 1);
+
+test_any([[
+  // <p> with at least one space should yield the minimum allowable code per settings.
+  object g = Monotype.Generator(settings + (["linelengthp": 30.0]));
+  g->parse("Mary had<p>\n");
+
+  return ((g->lines[0]->little == 8) && (g->lines[0]->big == 3) && !sizeof(g->lines[0]->errors));
+]], 1);
+
+test_any([[
+  // <p> behaves differently from <qo> when within justifying range
+  // note the return code of this test.
+  object g = Monotype.Generator(settings);
+  g->parse("Mary had a little lamb<p>\n");
+
+  return ((g->lines[0]->little == 8) && (g->lines[0]->big == 3) && !sizeof(g->lines[0]->errors));
+]], 0);
+
+
+test_any([[
+  // we can make spaces of any size we want.
+  object g = Monotype.Generator(settings);
+  g->parse("<S32><p>\n");
+  return sizeof(g->lines[0]->errors);
+ ]], 0);
+
+test_any([[
+  // we can make spaces of any size we want, if it's possible given the spaces.
+  object g = Monotype.Generator(settings);
+  g->parse("<S2><p>\n");
+  return sizeof(g->lines[0]->errors);
+]], 1);
+
+test_any([[
+  // we should be able to use utf8.
+  object g = Monotype.Generator(settings);
+  g->parse(utf8_to_string("A’e<p>\n"));
+  g->generate_ribbon();
+  return sizeof(g->lines[0]->errors);
+]], 0);
+
+test_any([[
+  // we should get a complaint when a non-available sort is used.
+  object g = Monotype.Generator(settings);
+  g->parse(utf8_to_string("Açe<p>\n"));
+  g->generate_ribbon();
+  return sizeof(g->lines[0]->errors);
+]], 1);
+
+
+
+

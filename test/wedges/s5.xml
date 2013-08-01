@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<stopbar name="S5">
+  <bar row="11">12</bar>
+  <bar row="12">13</bar>
+  <bar row="1">5</bar>
+  <bar row="13">14</bar>
+  <bar row="2">6</bar>
+  <bar row="14">15</bar>
+  <bar row="3">7</bar>
+  <bar row="15">18</bar>
+  <bar row="4">8</bar>
+  <bar row="5">9</bar>
+  <bar row="6">9</bar>
+  <bar row="7">9</bar>
+  <bar row="8">10</bar>
+  <bar row="9">10</bar>
+  <bar row="10">11</bar>
+</stopbar>

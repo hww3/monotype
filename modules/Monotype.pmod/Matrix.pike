@@ -127,7 +127,6 @@ import Public.Parser.XML2;
   void set_set_width(float width, int|void liberal)
   {
     int w, f;
-    string sa;
     
 		sscanf((string)width, "%d.%d", w, f);
 	//	werror("sa: %s, w: %d, f: %d\n", sa, w, f);

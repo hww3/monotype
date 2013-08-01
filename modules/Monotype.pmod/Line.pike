@@ -9,7 +9,7 @@ import Monotype;
   object generator;
   
 	array elements = ({}); 
-	array errors = ({});
+	object errors = ADT.List();
 
 	int big;
 	int little; 
@@ -149,9 +149,7 @@ import Monotype;
 
 	array low_calculate_justification(float justspace)
 	{
-      int small,large;
-
-werror("calculate justification: %f\n", justspace);
+//werror("calculate justification: %f\n", justspace);
 
 	  justspace = justspace + ((min_space_units)-(m->elements["JS"]->get_set_width()));
 	  
@@ -197,7 +195,6 @@ werror("calculate justification: %f\n", justspace);
 	void add(Sort|RealJS activator, int|void atbeginning, int|void stealth)
 	{
 	  object mat;
-	  string code;
 
 //werror("Line.add(%O, %O)\n", activator, modifier);
 // justifying space
@@ -277,7 +274,7 @@ werror("calculate justification: %f\n", justspace);
 	
 	array render_line()
 	{
-	  errors = ({});
+	//  errors = ADT.List();
 	  int i;
 	  array x = allocate(sizeof(elements));
 	  foreach(elements;;mixed e)
