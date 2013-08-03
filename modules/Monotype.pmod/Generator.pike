@@ -378,7 +378,7 @@ int process_setting_buffer(int|void exact)
 	  tightpos = 0;
 	  if(data_to_set[i]->is_real_js)
     {
-      werror("adding space.\n");
+//      werror("adding space.\n");
       lastjs = i;
 	    if(current_line->elements && sizeof(current_line->elements) && current_line->elements[-1]->is_real_js) 
 		  {
@@ -434,7 +434,7 @@ int process_setting_buffer(int|void exact)
       do
 		  {
 			  x = current_line->remove();
-			  werror("removing a character: %O\n", x);
+//			  werror("removing a character: %O\n", x);
 		  }
       while(x && x!= JustifyingSpace);
 
@@ -983,6 +983,8 @@ void quad_out()
 
 int low_quad_out(float amount, int|void atbeginning)
 {
+//  werror("low_quad_out(%f, %d)\n", amount, atbeginning);
+  
   array toadd = ({});
   int ix;
   toadd = Monotype.findspace()->simple_find_space((int)floor(amount), spaces);
@@ -996,7 +998,9 @@ int low_quad_out(float amount, int|void atbeginning)
   foreach(toadd;int z;int i)
   {
     ix+=i;
-    current_line->add(Sort(spaces[i]), 0, atbeginning);	
+//    werror("adding(%O, %d)\n", i, atbeginning);
+    
+    current_line->add(Sort(spaces[i]), atbeginning, 0);	
 	if(current_line->is_overset())
 	{
       werror("overset. added %.2f, at %d\n", current_line->linelength, ix);
@@ -1118,14 +1122,13 @@ string generate_ribbon()
 // add the current line to the job, if it's justifyable.
 void new_line(int|void newpara)
 {
-
   if(!current_line->linespaces && (float)current_line->linelength != (float)current_line->lineunits)
   {
       throw(Error.Generic(sprintf("Off-length line without justifying spaces: need %d units to justify, line has %.1f units. Consider adding a justifying space to line - %s\n", 
 		current_line->lineunits, current_line->linelength, (string)current_line)));
   }
   else if(current_line->linespaces && !current_line->can_justify()) 
-    throw(Error.Generic(sprintf("Unable to justify line; justification code would be: %d/%d, text on line is %s\n", current_line->big, current_line->little, (string)current_line)));
+    throw(Error.Generic(sprintf("Unable to justify line; %f length with %f units, %d spaces, justification code would be: %d/%d, text on line is %s\n", (float)current_line->linelength, (float)current_line->lineunits, current_line->linespaces, current_line->big, current_line->little, (string)current_line)));
 
 // if this is the first line and we've opted to make the first line long 
 //  (to kick the caster off,) add an extra space at the beginning.

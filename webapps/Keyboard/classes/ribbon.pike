@@ -224,10 +224,15 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 	else data = (id->variables->input_text);
 	// = "Now is the time for all good men to come to the aid of their country. Mary had a little lamb, its fleece was white as snow. Everywhere that mary went, the lamb was sure to go.<qo>";
 	
-	object g = Monotype.Generator(settings);
-	Error.Generic err = Error.mkerror(catch(g->parse(data)));
-	id->misc->session_variables->generator = g;
-	object b = String.Buffer();
+	object g, b;
+  Error.Generic err;
+  
+  mixed parse_time = gauge {
+  	g = Monotype.Generator(settings);
+	  err = Error.mkerror(catch(g->parse(data)));
+	  id->misc->session_variables->generator = g;
+	  b = String.Buffer();
+  };
 
 	if(err)
 	{
@@ -243,6 +248,7 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 
 		Tools.Logging.Log.exception("An error occurred.", err);
 	}
+	werror("parse_time: %O\n", parse_time);
 
 	int units;
         if(g->lines && sizeof(g->lines)) units = g->lines[-1]->units;
@@ -254,6 +260,7 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 	b+=("</div>");
 
 //	foreach(g->lines + (err?({g->current_line}):({})); int i; mixed line)
+  mixed render_time = gauge {
 	foreach(g->lines; int i; mixed line)
 	{
 		int mod;
@@ -359,9 +366,11 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 		b+=" [<a onClick=\"showCodes(" + i + ", '" + action_url(get_line, ({(string)i})) + "')\">Codes</a>]";
     
 		if(line->errors && sizeof(line->errors))
-		  b+= (line->errors * ", ");
+		  b+= ((array)line->errors * ", ");
 		b+=("</div>\n");
 	}
+};
+werror("render_time: %O\n", render_time);
 
     v->add("job_id", job_id);
     v->add("result", b);

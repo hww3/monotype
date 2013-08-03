@@ -57,8 +57,12 @@ import Monotype;
 		
 		foreach(elements;;mixed e)
 		{
-      if(e->character)
-  	    s += e->character;
+		  object mat;
+		  if(e->get_mat)
+  		  mat = e->get_mat(m, config, ADT.List());
+		  
+      if(mat && mat->character)
+  	    s += mat->character;
       else
         s+= "_";
 		}
@@ -196,7 +200,7 @@ import Monotype;
 	{
 	  object mat;
 
-//werror("Line.add(%O, %O)\n", activator, modifier);
+//werror("Line.add(%O, %O)\n", activator, atbeginning);
 // justifying space
     if(activator->is_real_js)
     {
