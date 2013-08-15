@@ -1194,6 +1194,8 @@ string generate_ribbon()
 	buf+=sprintf("set: %.2f\n", config->setwidth);
 	buf+=sprintf("wedge: %s\n", config->stopbar->name);
 	buf+=sprintf("mould: %d\n", config->mould);
+	buf+=sprintf("generated: %s\n", Calendar.now()->format_smtp());
+	buf+=sprintf("version: %s\n", Monotype.version);
 	buf+=sprintf("linelength: %.2f\n", config->linelengthp);
 	if(config->unit_adding)
           buf+=sprintf("unit_adding: %s units\n", (string)config->unit_adding);
