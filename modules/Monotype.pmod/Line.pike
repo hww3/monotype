@@ -104,6 +104,13 @@ import Monotype;
 		  min_space_units = m->elements["JS"]->get_set_width() - max_reduction_units;
 	}
 	
+	int hyphenation_disabled()
+	{
+	  if(!sizeof(elements)) // can't hyphenate an empty line...
+	    return 1;
+	  else return elements[-1]->hyphenation_disabled;
+	}
+	
 	// remove a sort from the line; recalculate the justification
 	object remove()
 	{

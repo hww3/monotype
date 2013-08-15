@@ -1,4 +1,5 @@
 20130814
+- Ribbon Generator: added <nohyphenation></nohyphenation>.
 - Ribbon Generator: generator remembers styles applied to individual
    sorts during hyphenation.
 - Ribbon Generator: add ability to use custom hyphenation 

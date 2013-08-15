@@ -52,6 +52,7 @@ int modifier = 0;
 int isitalics = 0;
 int issmallcaps = 0;
 int isbold = 0;
+int canHyphenate = 1;
 
 string d_code = "D";
 string fine_code = "0005";
@@ -440,6 +441,15 @@ int process_setting_buffer(int|void exact)
 	    werror("word didn't fit, justification is %d/%d\n", current_line->big, current_line->little);
       object x;
 
+		  int can_try_hyphenation = 0;
+		  if(!current_line->hyphenation_disabled())
+		  {
+  		  if(numline && sizeof(lines) && (!lines[-1]->is_broken || !current_line->can_justify()))
+	  	    can_try_hyphenation = 1;
+		    else if(config->unnatural_word_breaks)
+		      can_try_hyphenation = 1; 
+      }
+
       do
 		  {
 			  x = current_line->remove();
@@ -466,13 +476,7 @@ int process_setting_buffer(int|void exact)
 			// once we start the next iteration of this loop.
 
 		  // if we can't justify, having removed the last word, see if hyphenating will help, regardless if we hyphenated the last line.		
-
-		  int can_try_hyphenation = 0;
-		  if(numline && sizeof(lines) && (!lines[-1]->is_broken || !current_line->can_justify()))
-		    can_try_hyphenation = 1;
-		  else if(config->unnatural_word_breaks)
-		    can_try_hyphenation = 1; 
-
+      
 		  if(can_try_hyphenation)
 			{	
 			  int prehyphenated;
@@ -569,8 +573,12 @@ int process_setting_buffer(int|void exact)
 	  				    // syl is the part of the syllable containing a hanging ligature.
   					    syl = (portion[sizeof(sortsinsyllable->character * "")..]);
   					    //werror("syl: %O\n", syl);
+  					    string modifier = "R";
   					    
-		  				  string lsyl = replace(syl, ligature_replacements_from[sortsinsyllable[-1]->get_modifier()]||({}), ligature_replacements_to[sortsinsyllable[-1]->get_modifier()]||({}));
+  					    if(sizeof(sortsinsyllable))
+  					       modifier = sortsinsyllable[-1]->get_modifier();
+  					       
+		  				  string lsyl = replace(syl, ligature_replacements_from[modifier]||({}), ligature_replacements_to[modifier]||({}));
  
 	  					  if(syl != lsyl)
   						  {
@@ -804,6 +812,18 @@ mixed i_parse_tags(object parser, string data, mapping extra)
       issmallcaps --;
       if(issmallcaps < 0) issmallcaps = 0;
     }
+
+  if(lcdata == "<nohyphenation>")
+  {
+    werror("disABLING HYPHENATION\n");
+    canHyphenate = 0;  
+  }
+
+  if(lcdata == "</nohyphenation>")
+  {
+    canHyphenate = 1;  
+  }
+  
 	if(lcdata == "<left>")
 	{
 		process_setting_buffer();
@@ -1018,7 +1038,7 @@ object create_styled_sort(string sort, float adjust, void|StyledSort template)
   if(template)
     return template->clone(sort);
   else
-    return StyledSort(sort, m, config, isitalics, isbold, issmallcaps, adjust);
+    return StyledSort(sort, m, config, isitalics, isbold, issmallcaps, adjust, !canHyphenate);
 }
 
 // fill out the line according to the justification method (left/right/etc)
