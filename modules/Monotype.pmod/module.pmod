@@ -6,6 +6,8 @@ constant MODIFIER_ITALICS = 1;
 constant MODIFIER_BOLD = 2;
 constant MODIFIER_SMALLCAPS = 4;
 
+constant version = "$Id$";
+
 //!
 object load_matcase(string ml)
 {
