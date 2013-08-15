@@ -99,6 +99,7 @@ void debounceChanged_(object slider)
 
 void toggleCycleSensorType_(object checkbox)
 {
+  
 	int state = checkbox->state();
 	
 	werror("state: %O\n", state);

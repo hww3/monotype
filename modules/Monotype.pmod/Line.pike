@@ -26,6 +26,8 @@ import Monotype;
 	int min_little;
 	int min_big;	
 
+  int non_spaces;
+  
 	// set to true if the line has been broken using hyphenation.
 	int is_broken;
 	
@@ -59,7 +61,7 @@ import Monotype;
 		{
 		  object mat;
 		  if(e->get_mat)
-  		  mat = e->get_mat(m, config, ADT.List());
+  		  mat = e->get_mat(ADT.List());
 		  
       if(mat && mat->character)
   	    s += mat->character;
@@ -117,7 +119,7 @@ import Monotype;
 	     linelength -= (min_space_units);
 	   }
 	   else
-	     linelength -= r->get_set_width(m, config);
+	     linelength -= r->get_set_width();
 
 	   elements = elements[0..sizeof(elements)-2];	
 
@@ -216,7 +218,7 @@ import Monotype;
       linespaces ++;
 	    return;
     }
-    else if(mat = activator->get_mat(m, config, errors))
+    else if(mat = activator->get_mat(errors))
 	  {
 	    if(!stealth)
  	  	  linelength+=(mat->get_set_width() + activator->space_adjust);
@@ -289,7 +291,7 @@ import Monotype;
 	      x[i] = e;
 	      i++;
 	    }
-	    else if(matrix = e->get_mat(m, config, errors))
+	    else if(matrix = e->get_mat(errors))
 	    {
 	      x[i] = MatWrapper(matrix, e->space_adjust);
   	    i++;

@@ -424,4 +424,8 @@ array full_alphabet_elements =
 
     new_string_pref("sc_sorts_palette_contents", user, 
          small_caps_elements * " ");
+         
+    new_string_pref("hyphenation_rules", user, 
+         "");
+    
   }

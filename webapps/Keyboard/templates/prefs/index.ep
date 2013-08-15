@@ -40,3 +40,16 @@ Sorts Pallete Location:
 <br/>
 <i>Note: Each sort should be separate from others by one or more spaces.</i>
 </form>
+
+<p>
+<%#action_form "method":"post", "action":"save"%>
+<b>Custom hyphenation</b>: 
+<input type="hidden" name="pref_name" value="hyphenation_rules"/>
+<textarea name="pref" rows="5" cols="60">
+<%=data->preferences["hyphenation_rules"]["value"]%>
+</textarea>
+&nbsp;
+<input type="submit" name="submit" value="Save"/>
+<br/>
+</i>Note: Each line should contain a rule for one word, with hyphens indicating the approriate hyphenation locations.</i><p>
+</form>

@@ -117,6 +117,7 @@ public void do_generate(Request id, Response response, Template.View v, mixed ..
 		// = "Now is the time for all good men to come to the aid of their country. Mary had a little lamb, its fleece was white as snow. Everywhere that mary went, the lamb was sure to go.<qo>";
 	
 	object g = Monotype.Generator(settings);
+	g->set_hyphenation_rules(id->misc->session_variables->user["Preferences"]["hyphenation_rules"]["value"]);
 	g->parse(data);
 
     response->set_data(g->generate_ribbon());
@@ -205,6 +206,7 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
     
 	  response->flash("msg", "Settings loaded from " + rc["name"] + ".");	  
 	  response->redirect_temp(generate, ({}), (["load_config": 1, "config": rc["id"]]));
+	  return;
 	}
 	
 	//werror("%O\n", id->variables);
@@ -229,6 +231,7 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
   
   mixed parse_time = gauge {
   	g = Monotype.Generator(settings);
+  	g->set_hyphenation_rules(id->misc->session_variables->user["Preferences"]["hyphenation_rules"]["value"]);
 	  err = Error.mkerror(catch(g->parse(data)));
 	  id->misc->session_variables->generator = g;
 	  b = String.Buffer();

@@ -1,3 +1,9 @@
+20130814
+- Ribbon Generator: generator remembers styles applied to individual
+   sorts during hyphenation.
+- Ribbon Generator: add ability to use custom hyphenation 
+   rules (a new preference).
+
 20130701
 - Ribbon Generator: add more set widths.
 

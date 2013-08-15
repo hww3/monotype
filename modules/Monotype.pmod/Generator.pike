@@ -16,6 +16,7 @@ constant dicts = (["en_US": "hyph_en_US.dic",
 		]);
 
 object hyphenator;
+mapping hyphenation_rules = ([]);
 
 Line current_line;
 
@@ -124,6 +125,21 @@ void set_stopbar(Monotype.Stopbar stopbar)
   s = stopbar;
   if(m)
     load_spaces(m);
+}
+
+void set_hyphenation_rules(string rules)
+{
+  hyphenation_rules = ([]);
+  foreach(rules/"\n";;string rule)
+  {
+    rule = String.trim_all_whites(rule);
+    if(!strlen(rule))
+      continue;
+    rule = lower_case(rule);
+    hyphenation_rules[rule - "-"] = rule;
+  }
+  
+  werror("hyphenation rules: %O\n", hyphenation_rules);
 }
 
 protected void load_hyphenator()
@@ -362,15 +378,13 @@ int process_setting_buffer(int|void exact)
 {
 	int lastjs = 0;
 	object tightline;
+	object phline;
 	int tightpos;
-	
 	if(!current_line)
 	{
 	  // if we get here, and there's no line present, it's the first line of the job, thus, by default, a new paragraph.
-//	  current_line = make_new_line();
 	  insert_header(1);
 	}
-// werror("data_to_set: %O\n", data_to_set);
  
   for(int i = 0; i<sizeof(data_to_set) ;i++)
 	{
@@ -378,236 +392,285 @@ int process_setting_buffer(int|void exact)
 	  tightpos = 0;
 	  if(data_to_set[i]->is_real_js)
     {
-//      werror("adding space.\n");
       lastjs = i;
-	    if(current_line->elements && sizeof(current_line->elements) && current_line->elements[-1]->is_real_js) 
+      // we don't want to allow duplicated justifying spaces, nor justifying spaces first on the line.
+	    if(current_line->elements && (sizeof(current_line->elements) && current_line->elements[-1]->is_real_js) || !current_line->non_spaces || !sizeof(current_line->elements)) 
 		  {
-//			  werror("continue\n");
 	      continue;
 		  }
     }
-// 	werror("+ %O => %O", data_to_set[i], data_to_set);
+    else
+      current_line->non_spaces++;
+      
 	  current_line->add(data_to_set[i]);
 
-     // if permitted, prepare a tight line for possible use later.
-	   if(current_line->is_overset() && config->enable_combined_space)
-	   {
-	     
-	     // first, let's see if removing 1 unit from each justifying space will work.
-	     	object tl = Line(m, s, config + (["combined_space": 1]), this);
-//	     	werror("re-setting line with 0 unit spaces.\n");
-	     	tl->re_set_line(current_line);
+    // if permitted, prepare a tight line for possible use later.
+	  if(current_line->is_overset() && config->enable_combined_space)
+	  {   
+      // first, let's see if removing 1 unit from each justifying space will work.
+     	object tl = Line(m, s, config + (["combined_space": 1]), this);
+	   	tl->re_set_line(current_line);
 	     	
-        int j = i;
+      int j = i;
 
-	     	if(lastjs != i) // we're not at the end of a word, here, folks.
-  	    {
- 	        while(sizeof(data_to_set)>++j && data_to_set[j] != JustifyingSpace)
- 	        {
-// 	          werror("finishing up word with " + data_to_set[j] + "\n");
- 	         tl->add(data_to_set[i]);
-          }
- 	      }
+	   	if(lastjs != i) // we're not at the end of a word, here, folks.
+      {
+ 	      while(sizeof(data_to_set)>++j && data_to_set[j] != JustifyingSpace)
+ 	      {
+          tl->add(data_to_set[i]);
+        } 
+      }
  	     
-//	     	werror("how about a combined space?\n");
-	     	if(!tl->is_overset()) // did the word fit using combined spaces?
-	     	{
-	     	  
-//	     	  werror("good to go!\n");
-	     	  tl->line_number = current_line->line_number;
-	     	  tl->line_on_page = current_line->line_on_page;
-	     	  tightline = tl;	 
-	     	  tightpos = j;  
-	     	}
-     }
-	   if(current_line->is_overset()) // back up to before the last space.
-	   {
+	   	if(!tl->is_overset()) // did the word fit using combined spaces?
+    	{
+    	  werror("tight line fit!\n");
+     	  tl->line_number = current_line->line_number;
+     	  tl->line_on_page = current_line->line_on_page;
+    	  tightline = tl;	 
+    	  tightpos = j;  
+	     }
+	     else
+	     {
+	       werror("tight line didn't fit.\n");
+	     }
+    }
+     
+	  if(current_line->is_overset()) // back up to before the last space.
+	  {
 	    werror("word didn't fit, justification is %d/%d\n", current_line->big, current_line->little);
       object x;
-//		  for(int j = i; j >= lastjs; j--)
-// TODO: if the non-fitting word was made up of components from more than one alphabet (roman, italic, etc),
-// the word will be removed and placed back on the line using only one alphabet, namely the one containing the 
-// last part of the word that fits. That's because we don't associate the alphabet with the text to be placed on
-// the line as part of the setting buffer. We should probably change the setting buffer to contain the alphabet
-// (and other settings) of the word, instead of relying on a global flag to contain this information. That way,
-// we can remove the whole word and hyphenate it while preserving changes in settings within the word.
+
       do
 		  {
 			  x = current_line->remove();
-//			  werror("removing a character: %O\n", x);
 		  }
       while(x && x!= JustifyingSpace);
 
 	    werror("removed word, justification is %d/%d\n", current_line->big, current_line->little);
 		  if(exact) return 1;
+
+      // prepare a clone of the line, so that we can jump back easily.
+
+	    phline = Line(m, s, config, this);
+	   	phline->re_set_line(current_line);
+     	
 		  if(line_mode)
 		  {
 		    quad_out();
 		  }
 
-		  i = lastjs||-1; // if we backed up to the beginning of the setting buffer, that is, there isn't
-							// a justifying space in it, we need to back up one more so that we're starting
-							// back at the beginning of the buffer, rather than at the js, which we'd skip
-							// once we start the next iteration of this loop.
+		  i = lastjs||-1; 
+		  // if we backed up to the beginning of the setting buffer, that is, there isn't
+			// a justifying space in it, we need to back up one more so that we're starting
+			// back at the beginning of the buffer, rather than at the js, which we'd skip
+			// once we start the next iteration of this loop.
 
-		  // TODO: we probably want to attempt hyphenation when as soon as a word won't fit, not just when we can't justify using a whole word.
 		  // if we can't justify, having removed the last word, see if hyphenating will help, regardless if we hyphenated the last line.		
-//werror("left to set: %O\n", data_to_set[i..] * "");
-//		werror("numline: %O, is_broken: %O, can_justify: %O\n", 
-//                          numline,  1||lines[-1]->is_broken, current_line->can_justify());
-		int can_try_hyphenation = 0;
-		if(1 && numline && sizeof(lines) && (!lines[-1]->is_broken || !current_line->can_justify()))
-		  can_try_hyphenation = 1;
-		else if(config->unnatural_word_breaks)
-		  can_try_hyphenation = 1; 
+
+		  int can_try_hyphenation = 0;
+		  if(numline && sizeof(lines) && (!lines[-1]->is_broken || !current_line->can_justify()))
+		    can_try_hyphenation = 1;
+		  else if(config->unnatural_word_breaks)
+		    can_try_hyphenation = 1; 
 
 		  if(can_try_hyphenation)
 			{	
-//			werror("trying to hyphenate, justification is %d.\n", current_line->can_justify());
-			int bs = search(data_to_set, JustifyingSpace, i+1);
-			if(bs!=-1)
-			{
-			  array wordsorts = data_to_set[i+1..(bs-1)];
-				string word = (wordsorts->character)*"";
-				werror("attempting to hyphenate word %O from %O to %O\n", word, i, bs);
-				array wp = hyphenate_word(word);
-				werror("word parts are %O\n", wp * ", ");
-				
-				if(sizeof(wp)<=1)
-				{
-			    if(!current_line->can_justify() && tightline) // if we can't fit the line by breaking, see if there's a tightly justified line that will work.
-  			  {
-  			    werror("can't justify with regular word spaces, but we can with combined spaces, so let's do that.\n");
-  			    current_line = tightline;
-  			    i = tightpos;
-  			    new_line();
-  			    continue;
-  			  }			  
-				}
-				else // there are syllables in this word.
-				{
-					array new_data_to_set = data_to_set;
-					int new_i = i;
-					int new_lastjs = lastjs;
-					int fp;
+			  int prehyphenated;
+      	
+			  int bs = search(data_to_set, JustifyingSpace, i+1);
+			  if(bs!=-1)
+			  {
+			    array wordsorts = data_to_set[i+1..(bs-1)];
+				  string word = (wordsorts->character)*"";
+				  werror("attempting to hyphenate word %O from %O to %O\n", word, i, bs);
 
-					// for each word part, attempt to add the word, starting with the maximum parts.
-					for(fp = sizeof(wp)-2; fp >=0; fp--)
-					{
-					  // first, we need to get the sorts that make up this syllable. it's possible that the syllable
-					  // contains ligatures, so we might not be able to fully 
-					  string portion = (wp[0..fp] * "");
-					  string carry = "";
-					  int currentsort = 0;
-					  array sortsinsyllable = ({});
-					  int simple_break;
-					  object brokenlig;
-					  string syl;
-					  
-					  foreach(portion/""; int x; string act)
+				  array word_parts;
+				  if(search(word, "-") != -1)
+				  {
+				    word_parts = word / "-";
+				    prehyphenated = 1;
+				  }
+				  else
+				  {
+  				  word_parts = hyphenate_word(word);				    
+				  }
+				  werror("word parts are %O\n", word_parts * ", ");
+
+				  // if there are no hyphenation options, we're stuck.
+				  if(sizeof(word_parts)<=1)
+				  {
+			      if(!current_line->can_justify() && tightline) // if we can't fit the line by breaking, see if there's a tightly justified line that will work.
+  			    {
+  			      werror("can't justify with regular word spaces, but we can with combined spaces, so let's do that.\n");
+  			      current_line = tightline;
+  			      i = tightpos;
+  			      new_line();
+  			      continue;
+  			    }			  
+				  }
+
+				  else // there are syllables in this word.
+				  {
+					  array new_data_to_set = data_to_set;
+					  int new_i = i;
+					  int new_lastjs = lastjs;
+					  int final_portion; // the last segment of the word being hyphenated
+
+            
+					  // for each word part, attempt to add the word, starting with the maximum parts.
+					  for(final_portion = sizeof(word_parts)-2; final_portion >=0; final_portion--)
 					  {
-					    carry += act;
-					    if(wordsorts[currentsort]->character == carry)
+					    // first, we need to get the sorts that make up this syllable. it's possible that the syllable
+					    // contains ligatures, so we might not be able to fully 
+					    string portion = (word_parts[0..final_portion] * "");
+					    string carry = "";
+					    int currentsort = 0;
+					    array sortsinsyllable = ({});
+			  		  int simple_break;
+				  	  object brokenlig;
+					    string syl;
+					  
+					    werror("portion: %O\n", portion);
+					  
+  					  foreach(portion/""; int x; string act)
+	  				  {
+		  			    carry += word[x..x];
+		  			    werror("carry: %O, sort: %O\n", carry, wordsorts[currentsort]->character);
+			  		    if(wordsorts[currentsort]->character == carry)
+				  	    {
+					        sortsinsyllable += ({wordsorts[currentsort]});
+					        carry = "";
+  					      currentsort++;
+					      }
+  					  }
+					  
+					    werror("sortsinsyllable: %O\n", sortsinsyllable);
+					    werror("sortsinsyllable: %O\n", sortsinsyllable->character);
+
+					    if(lower_case(sortsinsyllable->character * "") == portion)
 					    {
-					      sortsinsyllable += ({wordsorts[currentsort]});
-  					    currentsort++;
+					      // we have the whole shebang. no need to mess with re-ligaturing.
+					      data_to_set = ({JustifyingSpace});
+					      data_to_set += sortsinsyllable;
+					      simple_break = 1;
 					    }
-					  }
-					  
-					  if((sortsinsyllable->character * "") == portion)
-					  {
-					    // we have the whole shebang. no need to mess with re-ligaturing.
-					    data_to_set += ({JustifyingSpace});
-					    data_to_set += sortsinsyllable;
-					    simple_break = 1;
-					  }
-					  else
-					  {
-					    // we don't have the whole portion. most likely, the end of the portion breaks a ligature.
-					    // so, we look at the sort in wordsorts after the last in the sortsinsyllable.
-					    data_to_set += ({JustifyingSpace});
-					    data_to_set += sortsinsyllable;
+					    else
+					    {
+					      werror("sorts in syllable = %O, portion = %O\n", sortsinsyllable->character, portion);
+					      // we don't have the whole portion. most likely, the end of the portion breaks a ligature.
+					      // so, we look at the sort in wordsorts after the last in the sortsinsyllable.
+					      data_to_set += ({JustifyingSpace});
+					      data_to_set += sortsinsyllable;
 
-					    brokenlig = wordsorts[sizeof(sortsinsyllable)];
-					  
-						  syl = (portion[sizeof(sortsinsyllable->character * "")..]);
-						  string lsyl = replace(syl, ligature_replacements_from[sortsinsyllable[-1]->get_modifier()]||({}), ligature_replacements_to[sortsinsyllable[-1]->get_modifier()]||({}));
+  					    brokenlig = wordsorts[sizeof(sortsinsyllable)];
+	  				  
+	  				    werror("broken ligature: %O\n", brokenlig);
+	  				    
+	  				    // syl is the part of the syllable containing a hanging ligature.
+  					    syl = (portion[sizeof(sortsinsyllable->character * "")..]);
+  					    
+		  				  string lsyl = replace(syl, ligature_replacements_from[sortsinsyllable[-1]->get_modifier()]||({}), ligature_replacements_to[sortsinsyllable[-1]->get_modifier()]||({}));
+ 
+	  					  if(syl != lsyl)
+  						  {
+		  					  // we have a ligature in this word part. it must be applied.
+			  				  data_to_set = prepare_data(break_ligatures(lsyl), brokenlig);
+				  		  }
+					  	  else data_to_set = prepare_data((" " + syl)/"", brokenlig);
+					    }
 
-						  if(syl != lsyl)
-						  {
-							  // we have a ligature in this word part. it must be applied.
-							  data_to_set = prepare_data(break_ligatures(lsyl), brokenlig);
-						  }
-						  else data_to_set = prepare_data(syl/"", brokenlig);
-					  }
-
-            // add a hyphen in the style of the last sort added.
-						if(!(config->unnatural_word_breaks && config->hyphenate_no_hyphen))
-						data_to_set += prepare_data(({"-"}), data_to_set[-1]);
-				    
-					  werror("seeing if %O will fit...", syl);
-					  int res = process_setting_buffer(1);
-					  if(!res)
-					  {
-						  werror("yes!\n");
-						  // it fit! now we must put the rest of the word in the setting buffer.
-						  if(sizeof(wp)>=fp)
-						  {	
-						    if(simple_break)
-						      data_to_set = wordsorts[sizeof(sortsinsyllable)..];
-						    else
-						    {
-						      // it gets more complex here, as we have to put the second half of the broken ligature in first.
-						      data_to_set = prepare_data(brokenlig->character[sizeof(syl)..], brokenlig) + wordsorts[sizeof(sortsinsyllable)+1 ..];
+              // add a hyphen in the style of the last sort added.
+	  					if(!(config->unnatural_word_breaks && config->hyphenate_no_hyphen))
+	  					{
+	  					  object template;
+	  					  int i = -1;
+	  					  do
+	  					  {
+	  					    template = current_line->elements[i];
+	  					    werror("template: %O\n", template);
+	  					    i--;
+	  					  } while(template->is_real_js);
+	  					  
+		  				  data_to_set += prepare_data(({"-"}), template);
+	  				  }
+			 	    
+			  		  werror("seeing if %O will fit... %O", portion, data_to_set);
+				  	  int res = process_setting_buffer(1);
+					    if(!res)
+					    {
+						    werror("yes!\n");
+						    // it fit! now we must put the rest of the word in the setting buffer.
+						    if(sizeof(word_parts)>=final_portion)
+						    {	
+						      if(simple_break)
+						      {
+						       // werror("simple.\n");  
+    						    if(prehyphenated)
+      						    data_to_set += wordsorts[sizeof(sortsinsyllable) + final_portion+1..];
+                    else
+  						        data_to_set = wordsorts[sizeof(sortsinsyllable)..];
+						        
+						      }
+						      else
+						      {
+						        // it gets more complex here, as we have to put the second half of the broken ligature in first.
+						        data_to_set = prepare_data((brokenlig->character[sizeof(syl)..])/"", brokenlig) + wordsorts[sizeof(sortsinsyllable)+1 ..];
 						      
-						      // TODO
-						      // there is a chance that we may have to rescan for ligatures if the trailing portion of the broken ligature
-						      // combines with the first sort(s) of the next word part to form a ligature itself.
-						    }						    
-						  }
-						  i = -1;
-						  current_line->is_broken = 1;
-						  break;
-					  }
+						        // TODO
+						        // there is a chance that we may have to rescan for ligatures if the trailing portion of the broken ligature
+						        // combines with the first sort(s) of the next word part to form a ligature itself.
+						      }						    
+						    }
+						    
+						    data_to_set += prepare_data(({" "}));
+  					    data_to_set += new_data_to_set[bs+1..];
+						    i = -1;
+						    current_line->is_broken = 1;
+						    break;
+					    }
 					
-					  else // take it all off the line and try again.
-					  {
-						  werror("nope.\n");
-					  }
+					    else // take it all off the line and try again.
+					    {
+						    werror("nope.\n");
+					    }
 
-					  if(fp == 0 && !current_line->can_justify()) // we got to the last syllable and it won't fit. we must have a crazy syllable!
-						{
-						  if(tightline) // if we can't fit the line by breaking, see if there's a tightly justified line that will work.
-						  {
-						    werror("can't justify with regular word spaces, but we can with combined spaces, so let's do that.\n");
-						    current_line = tightline;
-						    i = tightpos;
-						    new_line();
-						    continue;
-						  }
-              else
-  						  error(sprintf("unable to fit syllable %O on line. unable to justify.\n", wp[0]));
-					  }
-					  else if(fp == 0)
-					  {
-							string lsyl = replace(word, ligature_replacements_from[sortsinsyllable[-1]->get_modifier()]||({}), ligature_replacements_to[sortsinsyllable[-1]->get_modifier()]||({}));
-			  			//		    data_to_set = replace(syl/"", ligature_replacements_from[mod] || ({}), ligature_replacements_to[mod] || ({}));
-							if(word != lsyl)
-							{
-								// we have a ligature in this word part. it must be applied.
-								data_to_set = prepare_data(break_ligatures(lsyl), new_data_to_set[bs]) + new_data_to_set[bs..];
-							}
-							else data_to_set = prepare_data((word/""), new_data_to_set[bs])  + new_data_to_set[bs..];
+  					  if(final_portion == 0 && !current_line->can_justify()) // we got to the last syllable and it won't fit. we must have a crazy syllable!
+	  					{
+		  				  if(tightline) // if we can't fit the line by breaking, see if there's a tightly justified line that will work.
+			  			  {
+				  		    werror("can't justify with regular word spaces, but we can with combined spaces, so let's do that.\n");
+					  	    current_line = tightline;
+						      i = tightpos;
+						      new_line();
+						      continue;
+						    }
+                else
+  						    error(sprintf("unable to fit syllable %O on line. unable to justify.\n", word_parts[0]));
+					    }
+					    else if(final_portion == 0)
+					    {
+					      werror("sadness.\n");
+					      array toadd = ({});
+					      if(sizeof(new_data_to_set) > (bs+1))
+					        toadd = new_data_to_set[bs+1..];
 
-						  i = -1;
-					  }
-          }						
-				}
-			}
-		} 
-		new_line();
-	}
-}
+							  string lsyl = replace(word, ligature_replacements_from[sortsinsyllable[-1]->get_modifier()]||({}), ligature_replacements_to[sortsinsyllable[-1]->get_modifier()]||({}));
+							  if(word != lsyl)
+							  {
+								  // we have a ligature in this word part. it must be applied.
+								  data_to_set = prepare_data((({" "}) + break_ligatures(lsyl)) + ({" "}), wordsorts[-1]) + toadd;
+							  }
+  							else data_to_set = prepare_data(((" " + word)/"") + ({" "}), wordsorts[-1])  + toadd;
+ 
+  						  i = -1;
+	  				  }
+            }						
+			  	}
+			  }
+		  } 
+		  new_line();
+	  }
+  }
 	
 	data_to_set = ({});
 	return 0;
@@ -708,35 +771,35 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	
 	if(lcdata == "<i>")
 	{
-		process_setting_buffer();
+//		process_setting_buffer();
 		isitalics ++;
 	}
 	if(lcdata == "</i>")
 	{
-		process_setting_buffer();
+//		process_setting_buffer();
 		isitalics --;
 		if(isitalics < 0) isitalics = 0;
 	}
 	if(lcdata == "<b>")
 	{
 	//	process_setting_buffer();
-		process_setting_buffer();
+	//	process_setting_buffer();
 		isbold ++;
 	}
 	if(lcdata == "</b>")
 	{
-		process_setting_buffer();
+//		process_setting_buffer();
 		isbold --;
 		if(isbold < 0) isbold = 0;
 	}
     if(lcdata == "<sc>")
     {
-	   process_setting_buffer();
+//	   process_setting_buffer();
        issmallcaps ++;
     }
     if(lcdata == "</sc>")
     {
-	  process_setting_buffer();
+//	  process_setting_buffer();
       issmallcaps --;
       if(issmallcaps < 0) issmallcaps = 0;
     }
@@ -796,7 +859,7 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	{
 		process_setting_buffer();
 		int toadd = (int)(data[2..sizeof(data)-2]);
-    float added = (float)low_quad_out((float)toadd);
+    float added = low_quad_out((float)toadd);
 		if((float)added != (float)toadd)
 		{
 			current_line->errors->append(sprintf("Fixed space (want %f units, got %f) won't fit on line... dropping.\n", (float)toadd, added));
@@ -818,7 +881,7 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	// letterspacing
 	else if(Regexp.SimpleRegexp("<[Ll].*>")->match(data))
 	{
-		process_setting_buffer();
+//		process_setting_buffer();
 		string sa = (data[2..sizeof(data)-2]);
 		int w, f;
 		sscanf(sa, "%d.%d", w, f);
@@ -830,7 +893,7 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	// end letterspacing
 	else if(Regexp.SimpleRegexp("</[Ll].*>")->match(data))
 	{
-		process_setting_buffer();
+//		process_setting_buffer();
 		space_adjust = 0.0;
 	}
 	// insert an activator
@@ -872,6 +935,16 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 // TODO: hyphenation seems to barf on wide characters.
 array hyphenate_word(string word)
 {
+  // defer to custom hyphenations, first.
+  if(hyphenation_rules)
+  {
+    object regex = Regexp.PCRE.Widestring("\\w");
+    string nword = lower_case(word);
+    nword = filter(nword, lambda(int c){return regex->match(String.int2char(c));}); 
+    if(hyphenation_rules[nword])
+      return hyphenation_rules[nword]/"-";
+   }
+     
 #if constant(Public.Tools.Language.Hyphenate)
   if(hyphenator)
   {
@@ -880,16 +953,16 @@ werror("hyphenator present\n");
   }
 #endif /* have Public.Tools.Language.Hyphenate */
 	
-    array wp = word/"-";
+    array word_parts = word/"-";
 werror("config->unnatural_word_breaks: %O\n", config->unnatural_word_breaks)	;
 
-    if(!(sizeof(wp) > 1) && config->unnatural_word_breaks)
+    if(!(sizeof(word_parts) > 1) && config->unnatural_word_breaks)
     {
 werror("splitting unnaturally.\n");
-	wp = word/"";
+	word_parts = word/"";
     }
 	
-    return wp;
+    return word_parts;
 }
 
 void new_paragraph(int|void quad)
@@ -944,7 +1017,7 @@ object create_styled_sort(string sort, float adjust, void|StyledSort template)
   if(template)
     return template->clone(sort);
   else
-    return StyledSort(sort, isitalics, isbold, issmallcaps, adjust);
+    return StyledSort(sort, m, config, isitalics, isbold, issmallcaps, adjust);
 }
 
 // fill out the line according to the justification method (left/right/etc)
@@ -981,7 +1054,7 @@ void quad_out()
   }
 }
 
-int low_quad_out(float amount, int|void atbeginning)
+float low_quad_out(float amount, int|void atbeginning)
 {
 //  werror("low_quad_out(%f, %d)\n", amount, atbeginning);
   
@@ -1048,7 +1121,7 @@ int low_quad_out(float amount, int|void atbeginning)
   }
 
   werror("asked to add %.1f units of space; added %d.\n", amount, ix);
-  return ix;
+  return (float)ix;
 }
 
 // this an inferior quad-out mechanism. we currently favor
