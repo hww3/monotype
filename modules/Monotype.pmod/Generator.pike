@@ -559,24 +559,25 @@ int process_setting_buffer(int|void exact)
 					      werror("sorts in syllable = %O, portion = %O\n", sortsinsyllable->character, portion);
 					      // we don't have the whole portion. most likely, the end of the portion breaks a ligature.
 					      // so, we look at the sort in wordsorts after the last in the sortsinsyllable.
-					      data_to_set += ({JustifyingSpace});
+					      data_to_set = ({JustifyingSpace});
 					      data_to_set += sortsinsyllable;
 
   					    brokenlig = wordsorts[sizeof(sortsinsyllable)];
 	  				  
-	  				    werror("broken ligature: %O\n", brokenlig);
+	  				    werror("broken ligature: %O\n", brokenlig->character);
 	  				    
 	  				    // syl is the part of the syllable containing a hanging ligature.
   					    syl = (portion[sizeof(sortsinsyllable->character * "")..]);
+  					    //werror("syl: %O\n", syl);
   					    
 		  				  string lsyl = replace(syl, ligature_replacements_from[sortsinsyllable[-1]->get_modifier()]||({}), ligature_replacements_to[sortsinsyllable[-1]->get_modifier()]||({}));
  
 	  					  if(syl != lsyl)
   						  {
 		  					  // we have a ligature in this word part. it must be applied.
-			  				  data_to_set = prepare_data(break_ligatures(lsyl), brokenlig);
+			  				  data_to_set += prepare_data(break_ligatures(lsyl), brokenlig);
 				  		  }
-					  	  else data_to_set = prepare_data((" " + syl)/"", brokenlig);
+					  	  else data_to_set +=  prepare_data(syl/"", brokenlig);
 					    }
 
               // add a hyphen in the style of the last sort added.
