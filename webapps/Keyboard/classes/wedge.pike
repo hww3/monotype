@@ -15,6 +15,8 @@ public void index(Request id, Response response, Template.View view, mixed ... a
   array m = app->get_wedges();
   view->add("wedges", m);
   view->add("owner", id->misc->session_variables->user);
+  if(app->is_desktop)
+    view->add("desktop", 1);
 }
 
 public void new(Request id, Response response, Template.View view, mixed ... args)
@@ -73,7 +75,7 @@ public void do_delete(Request id, Response response, Template.View view, mixed .
 	response->set_data("You must provide a wedge to delete.");
   }
 
-  wedge = app->load_wedge(args[0], id->misc->session_variables->user);
+  wedge = app->load_wedge_dbobj(args[0]);
 
   if(!wedge)
   {
@@ -82,8 +84,9 @@ public void do_delete(Request id, Response response, Template.View view, mixed .
   }
   else
   {
-    response->flash("Wedge " + args[0] + " successfully deleted.");
-    app->delete_wedge(args[0], id->misc->session_variables->user);
+    werror("wedge: %O\n", wedge);
+    response->flash("Wedge " + wedge["name"] + " successfully deleted.");
+    app->delete_wedge(wedge["id"]);
     response->redirect(index);
   }
 }

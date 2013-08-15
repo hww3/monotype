@@ -155,13 +155,19 @@ object old_load_wedge(string wedgename)
 	return Monotype.load_stopbar(combine_path(getcwd(), config["locations"]["wedges"], wedgename));	
 }
 
-int delete_wedge(string id, object user)
+int delete_wedge(int id, object|void user)
 {
+  werror("deleting wedge id %O\n", id);
 	object wedge_db;
-	catch(wedge_db = master()->resolv("Fins.Model.find.stopbars")((["id": id, "owner": user]))[0]);
-	if(wedge_db)
-		return wedge_db->delete();
-	else return 0;
+	if(user)
+  	catch(wedge_db = master()->resolv("Fins.Model.find.stopbars")((["id": id, "owner": user]))[0]);
+  else
+  	wedge_db = master()->resolv("Fins.Model.find.stopbars_by_id")(id);
+	if(!wedge_db)
+	  throw(Error.Generic("foo!\n"));
+	  
+	  werror("wedge: %O\n", wedge_db);
+	return wedge_db->delete(1);
 //	werror("deleting " + combine_path(getcwd(), config["locations"]["wedges"], wedgename+ ".xml") + "\n");
 //	return rm(combine_path(getcwd(), config["locations"]["wedges"], wedgename+ ".xml"));	
 }
@@ -231,7 +237,7 @@ object load_wedge_dbobj(string wedgename, object user)
 	else
 		
 */
-	catch(wedge_db = master()->resolv("Fins.Model.find.wedges")((["name": wedgename]))[0]);
+	catch(wedge_db = master()->resolv("Fins.Model.find.stopbars")((["name": wedgename]))[0]);
 	
 	werror("**** %O\n", wedge_db);
 	if(wedge_db)
@@ -245,9 +251,9 @@ object load_wedge_dbobj_by_id(string id, object user)
 {
 	object wedge_db;
 	if(user)
-		catch(wedge_db = master()->resolv("Fins.Model.find.wedges")((["id": (int)id, "owner": user]))[0]);
+		catch(wedge_db = master()->resolv("Fins.Model.find.stopbars")((["id": (int)id, "owner": user]))[0]);
 	else
-		catch(wedge_db = master()->resolv("Fins.Model.find.wedges")((["id": (int)id]))[0]);
+		catch(wedge_db = master()->resolv("Fins.Model.find.stopbars")((["id": (int)id]))[0]);
 	
 	werror("**** %O\n", wedge_db);
 	if(wedge_db)

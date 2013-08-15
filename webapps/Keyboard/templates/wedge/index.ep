@@ -22,7 +22,7 @@ List size: <%#page_size_selector "paginator": data->wedge_page, "size":"10, 25, 
   <li> <%#action_link "action": "edit", "args": (string)wedge["name"]%><%=wedge["name"] %></a>
  [ 
   <%#action_link "action" : "download", "args": (string)wedge["name"]%>Download</a>
-   <!-- | <%#action_link "action": "delete", "args": (string)wedge["name"]%>Delete</a> --> ]
+   <%if (data->desktop || data->owner["is_admin"]) { %> | <%#action_link "action": "delete", "args": (string)wedge["name"]%>Delete</a> <% } %> ]
 <% } %>
 
 </ul>

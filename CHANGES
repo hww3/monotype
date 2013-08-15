@@ -1,4 +1,5 @@
 20130814
+- Stopbar Editor: added delete option for standalone tool.
 - Ribbon Generator: added <nohyphenation></nohyphenation>.
 - Ribbon Generator: generator remembers styles applied to individual
    sorts during hyphenation.
