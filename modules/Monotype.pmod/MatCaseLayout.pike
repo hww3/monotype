@@ -193,6 +193,20 @@ array get_ligatures()
 	return ligatures;
 }
 
+array get_punctuation()
+{
+  object r = Regexp.PCRE.Widestring("\\pP");
+  array punctuation = ({});
+
+	foreach(elements;; object mat)
+	{
+  	if(mat->character && r->match(mat->character))  
+  		 punctuation += ({mat});
+  }
+
+	return punctuation;
+}
+
 int load(Node n)
 {
   if(n->get_node_name() != "matcase")
