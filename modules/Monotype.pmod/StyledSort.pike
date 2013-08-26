@@ -32,7 +32,7 @@ object(this_program) clone(string sort)
   object s = this_program(sort, mca, config,0,0,0,0.0,1);
   s->space_adjust = space_adjust;
   s->modifier = modifier;
-  s->character = character;
+//  s->character = character;
   s->hyphenation_disabled = hyphenation_disabled;
   return s;  
 }
