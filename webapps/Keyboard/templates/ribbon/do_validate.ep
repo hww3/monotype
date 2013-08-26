@@ -50,6 +50,7 @@ function showCodes(line, url)
 <form action="<%#action_url "action": "do_generate" %>">
 <input type="hidden" name="job_id" value="<%$job_id%>">
 <button type="submit">Generate Ribbon</button>
+<button type="button" onclick="history.back()">Go Back</button>
 <button type="button" onclick="showDialog('Soft Proof Legend', '/static/prooflegend.html'); return 0;">Show Soft Proof Legend</button>
 </form>
 <p>
