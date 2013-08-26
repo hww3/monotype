@@ -96,6 +96,7 @@ public mapping extract_settings(Request id)
 		"enable_combined_space": (int)id->variables->enable_combined_space,
 		"min_little": (int)(((id->variables->min_just||"")/"/")[1]), 
 		"min_big": (int)(((id->variables->min_just||"")/"/")[0]),
+		"hanging_punctuation": (int)id->variables->hanging_punctuation,
 		"allow_lowercase_smallcaps": (int)id->variables->allow_lowercase_smallcaps,
 		"allow_punctuation_substitution": (int)id->variables->allow_punctuation_substitution
 		]);
