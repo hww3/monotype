@@ -125,6 +125,8 @@ Minimum Justifying Space Size (3/8 is default)
 <%#input "type": "checkbox", "name": "unnatural_word_breaks", "value":"1"%> Allow hard (non-standard) breaks for hyphenation
 <%#input "type": "checkbox", "name": "hyphenate_no_hyphen", "value":"1"%> Do not include hyphen in hyphenated words
 <p>
+<%#input "type": "checkbox", "name": "hanging_punctuation", "value":"1"%> Hanging Punctuation
+<p>
 <%#input "type": "checkbox", "name": "allow_punctuation_substitution", "value":"1"%> Subsitute roman punctuation when not found in italic alphabet
 <p>
 <%#input "type": "checkbox", "name": "allow_lowercase_smallcaps", "value":"1"%> Treat lower case in small-caps passages as upper-case
@@ -134,13 +136,19 @@ Minimum Justifying Space Size (3/8 is default)
 
 <a onclick="showDialog('Formatting Codes', '/static/syntax.html');">Show Formatting Codes</a>
 <p>
-<input type="radio" name="input_type" value="file" checked="1" 
-onclick="enableFile();"> Input 
+<%#input "type": "radio", "name": "input_type", "id": "file_input", "value": "file", "checked": "1", "onclick": "enableFile();"%> Input 
 File: <input type="file" name="input-file" id="input_file">
 <br/>
-<input type="radio" name="input_type" value="text" 
-onclick="enableText();"> 
+<%#input "type": "radio", "name": "input_type", "value": "text", "onclick": "enableText();"%>
 Text Input: <%#textarea "name":"input_text", "rows":"5", "cols":"80", "id":"input_text", "disabled": "true"%>
+<script type="text/javascript">
+var elem = dojo.byId("file_input");
+//alert(elem);
+if(elem.checked)
+  enableFile();
+else
+  enableText();
+</script>
 <p>
 <input type="submit" value="Preview Ribbon"/>
 </form>
