@@ -12,7 +12,7 @@ import Monotype;
 	object errors = ADT.List();
 
 	int big;
-	int little; 
+	int little;
 	int spaces; 
 
   int finalized;
@@ -28,6 +28,9 @@ import Monotype;
 	int min_little;
 	int min_big;	
 
+  // determines whether a line ends with a galley trip justification code.
+  int double_justification = 0;
+  
   int non_spaces;
   
 	// set to true if the line has been broken using hyphenation.
@@ -163,7 +166,6 @@ import Monotype;
 	  return justspace;
 	}
 
-
 //
 //
 //  TODO
@@ -175,7 +177,6 @@ import Monotype;
 //  TODO
 //
 //
-	
 	float get_line_length(float|int|void mylinelength)
 	{
 	  float ll = (float)(mylinelength||linelength);
@@ -353,7 +354,11 @@ import Monotype;
   	  cc = c;
 
   	  write("\n");
-      buf+=sprintf("%s %s %d\n", generator->fine_code, generator->coarse_code, f);
+  	  if(double_justification)
+        buf+=sprintf("%s %d\n", generator->fine_code, f);
+  	  else
+        buf+=sprintf("%s %s %d\n", generator->fine_code, generator->coarse_code, f);
+
       buf+=sprintf("%s %d\n", generator->coarse_code, c);
 
       foreach(reverse(render_line());; object me)
