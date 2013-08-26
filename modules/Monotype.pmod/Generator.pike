@@ -62,7 +62,7 @@ float space_adjust = 0.0;
 int indent_adjust = 0;
 
 int line_mode = MODE_JUSTIFY;
-
+float hanging_punctuation_width = 0.0;
 string last = "";
 array data_to_set = ({});
 
@@ -104,6 +104,21 @@ void create(mapping settings)
   }  
     
   load_hyphenator();
+  
+  if(config->hanging_punctuation)
+  {
+    if(catch(hanging_punctuation_width = sort(m->get_punctuation()->get_set_width())[0]))
+    {
+      werror("Unable to calculate hanging punctuation units.\n");
+    }
+    else
+    {
+      werror("Hanging punctuation will add %f units to the line length.\n", hanging_punctuation_width*2);
+      lineunits += (int)(hanging_punctuation_width * 2);
+      config->hanging_punctuation_width = hanging_punctuation_width;
+    }
+  }
+  
 }
 
 void set_matcase(Monotype.MatCaseLayout mca)
@@ -381,6 +396,7 @@ int process_setting_buffer(int|void exact)
 	object tightline;
 	object phline;
 	int tightpos;
+	
 	if(!current_line)
 	{
 	  // if we get here, and there's no line present, it's the first line of the job, thus, by default, a new paragraph.
@@ -389,8 +405,12 @@ int process_setting_buffer(int|void exact)
  
   for(int i = 0; i<sizeof(data_to_set) ;i++)
 	{
+  	int additback;
+  	object hpspace;
+
 	  tightline = 0;
 	  tightpos = 0;
+	  
 	  if(data_to_set[i]->is_real_js)
     {
       lastjs = i;
@@ -401,8 +421,33 @@ int process_setting_buffer(int|void exact)
 		  }
     }
     else
+    {
+      // we do this last, so that it's always the last item on the line and thus first to be removed
+    	// if the first real sort on the line is a punctuation mark.
+      if(hanging_punctuation_width != 0.0)
+      {
+        float res;
+       // werror("character: %O\n", data_to_set[i]->character);
+        
+        // warning! bad form follows in favor of clearer logic.
+        if(!(sizeof(current_line->elements) || current_line->non_spaces)) 
+        {
+          if(!m->is_punctuation(data_to_set[i]->character))
+          {
+            // we add the front and back widths up front, and then move them around later, if necessary.
+            res = low_quad_out(hanging_punctuation_width);
+            if(res != hanging_punctuation_width)
+            {
+              throw("unable to add " + hanging_punctuation_width + " units of space to hanging punctuation.\n");
+            }
+          }          
+        }
+      }
+            
       current_line->non_spaces++;
-      
+    } 
+    
+    
 	  current_line->add(data_to_set[i]);
 
     // if permitted, prepare a tight line for possible use later.
@@ -460,9 +505,8 @@ int process_setting_buffer(int|void exact)
 		  if(exact) return 1;
 
       // prepare a clone of the line, so that we can jump back easily.
-
-	    phline = Line(m, s, config, this);
-	   	phline->re_set_line(current_line);
+//	    phline = Line(m, s, config, this);
+//	   	phline->re_set_line(current_line);
      	
 		  if(line_mode)
 		  {
@@ -519,7 +563,6 @@ int process_setting_buffer(int|void exact)
 					  int new_i = i;
 					  int new_lastjs = lastjs;
 					  int final_portion; // the last segment of the word being hyphenated
-
             
 					  // for each word part, attempt to add the word, starting with the maximum parts.
 					  for(final_portion = sizeof(word_parts)-2; final_portion >=0; final_portion--)
@@ -554,6 +597,7 @@ int process_setting_buffer(int|void exact)
 					    if(lower_case(sortsinsyllable->character * "") == portion)
 					    {
 					      // we have the whole shebang. no need to mess with re-ligaturing.
+					      werror("simple break.\n");
 					      data_to_set = ({JustifyingSpace});
 					      data_to_set += sortsinsyllable;
 					      simple_break = 1;
@@ -603,7 +647,7 @@ int process_setting_buffer(int|void exact)
 		  				  data_to_set += prepare_data(({"-"}), template);
 	  				  }
 			 	    
-			  		  werror("seeing if %O will fit... %O", portion, data_to_set);
+			  		  werror("seeing if %O will fit... %O = %O", portion, data_to_set, data_to_set->character);
 				  	  int res = process_setting_buffer(1);
 					    if(!res)
 					    {
@@ -613,16 +657,15 @@ int process_setting_buffer(int|void exact)
 						    {	
 						      if(simple_break)
 						      {
-						       // werror("simple.\n");  
     						    if(prehyphenated)
-      						    data_to_set += wordsorts[sizeof(sortsinsyllable) + final_portion+1..];
+      						    data_to_set += wordsorts[sizeof(sortsinsyllable)+1 + final_portion+1..];
                     else
   						        data_to_set = wordsorts[sizeof(sortsinsyllable)..];
 						        
 						      }
 						      else
 						      {
-						        // it gets more complex here, as we have to put the second half of the broken ligature in first.
+						        // it gets more complex here, as we have to put the second half of the broken ligature in first.						          
 						        data_to_set = prepare_data((brokenlig->character[sizeof(syl)..])/"", brokenlig) + wordsorts[sizeof(sortsinsyllable)+1 ..];
 						      
 						        // TODO
@@ -633,7 +676,13 @@ int process_setting_buffer(int|void exact)
 						    
 						    data_to_set += prepare_data(({" "}));
   					    data_to_set += new_data_to_set[bs+1..];
-						    i = -1;
+  					    if(prehyphenated)
+  					    {
+  					      data_to_set = data_to_set[1..];
+  					      werror("data: %O\n", data_to_set->character);
+					      }
+	
+					      i = -1;
 						    current_line->is_broken = 1;
 						    break;
 					    }
@@ -663,7 +712,7 @@ int process_setting_buffer(int|void exact)
 					      if(sizeof(new_data_to_set) > (bs+1))
 					        toadd = new_data_to_set[bs+1..];
 
-							  string lsyl = replace(word, ligature_replacements_from[sortsinsyllable[-1]->get_modifier()]||({}), ligature_replacements_to[sortsinsyllable[-1]->get_modifier()]||({}));
+							  string lsyl = replace(word, ligature_replacements_from[wordsorts[-1]->get_modifier()]||({}), ligature_replacements_to[wordsorts[-1]->get_modifier()]||({}));
 							  if(word != lsyl)
 							  {
 								  // we have a ligature in this word part. it must be applied.
@@ -953,7 +1002,6 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	}	
 }
 
-// TODO: hyphenation seems to barf on wide characters.
 array hyphenate_word(string word)
 {
   // defer to custom hyphenations, first.
@@ -996,6 +1044,27 @@ void new_paragraph(int|void quad)
 
 void make_new_line(int|void newpara)
 {
+  if(current_line)
+    current_line->finalized = 1; // might have to move this further back.
+  
+  werror("*** make_new_line()\n");
+  if(hanging_punctuation_width != 0.0 && current_line && sizeof(current_line->elements))
+  {
+    string c = current_line->elements[-1]->character;
+    if(!c || !m->is_punctuation(c))
+    {
+      werror("  adding buffer.\n");
+      low_quad_out(hanging_punctuation_width);
+    }
+    else
+    {
+      werror(" NOT adding buffer.\n");
+    }
+  }
+  else
+  {
+    werror(" OTHER not adding buffer.\n");
+  }
   current_line = low_make_new_line();
   
   if(indent_adjust)
@@ -1045,6 +1114,7 @@ object create_styled_sort(string sort, float adjust, void|StyledSort template)
 void quad_out()
 {
   werror("quad_out()\n");
+  current_line->finalized = 1;
   float left = current_line->lineunits - current_line->linelength;
   werror("* have %.1f units left on line.\n", left);
 
@@ -1230,24 +1300,23 @@ void new_line(int|void newpara)
 //  (to kick the caster off,) add an extra space at the beginning.
   if(config->trip_at_end && numline == 1)
   {
-	string activator = "";
-	array aspaces = indices(spaces);
-	int spacesize;
-	aspaces = sort(aspaces);
+ 	  string activator = "";
+	  array aspaces = indices(spaces);
+	  int spacesize;
+	  aspaces = sort(aspaces);
 
-	if(sizeof(aspaces))
-	  spacesize = aspaces[-1];
-	if(spacesize)
-	{
-		// add at least 18 units of space to the line.
-		for(int i = spacesize; i <= 18; i+=spacesize)
-	 		current_line->add(Sort(spaces[spacesize]), 1, 1);
-	}
-	else
-	{
-		throw(Error.Generic("No spaces in matcase, unable to produce a caster-trip line.\n"));
-	}
-		
+	  if(sizeof(aspaces))
+	    spacesize = aspaces[-1];
+	  if(spacesize)
+	  {
+		  // add at least 18 units of space to the line.
+		  for(int i = spacesize; i <= 18; i+=spacesize)
+	 		  current_line->add(Sort(spaces[spacesize]), 1, 1);
+	  }
+	  else
+	  {
+		  throw(Error.Generic("No spaces in matcase, unable to produce a caster-trip line.\n"));
+	  }		
   }
   lines += ({current_line});
 

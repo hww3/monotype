@@ -8,6 +8,8 @@ string wedge;
 mapping spaces = ([]);
 object justifying_space;
 
+object punct_regex;
+
 int maxrow = 15;
 multiset validcolumns = (<"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", 
         "L", "M", "N", "O">);
@@ -193,14 +195,24 @@ array get_ligatures()
 	return ligatures;
 }
 
+
+int is_punctuation(string character)
+{
+  if(!punct_regex) 
+    punct_regex = Regexp.PCRE.Widestring("\\pP");
+  if(character)
+    return punct_regex->match(character);  
+  else return 0;
+}
+
 array get_punctuation()
 {
-  object r = Regexp.PCRE.Widestring("\\pP");
   array punctuation = ({});
 
 	foreach(elements;; object mat)
 	{
-  	if(mat->character && r->match(mat->character))  
+  	if(mat->character && is_punctuation(mat->character))
+  	
   		 punctuation += ({mat});
   }
 

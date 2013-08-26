@@ -15,6 +15,8 @@ import Monotype;
 	int little; 
 	int spaces; 
 
+  int finalized;
+  
   int line_number;
 	int line_on_page;
 	
@@ -152,12 +154,36 @@ import Monotype;
 	  if(linespaces)
 	  {
 		// algorithm from page 14
-	    justspace = ((float)((lineunits)-(mylinelength||linelength))/linespaces); // in units of set.
+		justspace = (((float)(lineunits)-get_line_length(mylinelength))/linespaces); // in units of set.
+	  //  justspace = ((float)(lineunits-get_line_length(mylinelength))/linespaces); // in units of set.
 	//	if(verbose)
-		//werror("%f = (%d - %d) / %d\n", justspace, lineunits, linelength, linespaces);
+	//	werror("%f = (%O - %O) / %d\n", justspace, lineunits, linelength, linespaces);
 	  }
 
 	  return justspace;
+	}
+
+
+//
+//
+//  TODO
+//  TODO
+//  TODO  We need to figure out a way to get this ajustment to be applied _only_ when checking for oversetness, 
+//  TODO  rather than for when we're actually calculating justification codes.
+//  TODO
+//  TODO  Perhaps we've solved this by using the 'finalized' attribute?
+//  TODO
+//
+//
+	
+	float get_line_length(float|int|void mylinelength)
+	{
+	  float ll = (float)(mylinelength||linelength);
+	  if(config->hanging_punctuation && config->hanging_punctuation_width && sizeof(elements) && m->is_punctuation(elements[-1]->character))
+	    return ll;
+	  else if(finalized)
+	    return ll;
+	  else return ll +  config->hanging_punctuation_width; // this is okay if we're not doing hanging punctuation, as the value would be 0.
 	}
 
 	array low_calculate_justification(float justspace)
@@ -254,16 +280,16 @@ import Monotype;
   {
     int mbig, mlittle;
     catch {
-    if(!combined_space)
-      [mbig, mlittle] = calculate_justification(mylinelength);
-    else
-    {
-      float cjs = calc_justspace(0, mylinelength|linelength);
-      [mbig, mlittle] = calculate_wordspacing_code(cjs);
-      //calculated_justifying_space = cjs;
-    }
+      if(!combined_space)
+        [mbig, mlittle] = calculate_justification(mylinelength);
+      else
+      {
+        float cjs = calc_justspace(0, mylinelength);
+        [mbig, mlittle] = calculate_wordspacing_code(cjs);
+        //calculated_justifying_space = cjs;
+      }
     };
-    int overset = ((mylinelength||linelength) > lineunits) ;//|| (linespaces && ((mbig*15)+mlittle)<((min_big*15)+min_little) );
+    int overset = get_line_length(mylinelength) > lineunits ;//|| (linespaces && ((mbig*15)+mlittle)<((min_big*15)+min_little) );
 
     overset = overset || (linespaces && ((mbig*15)+mlittle)<((min_big*15)+min_little));
     if(overset)
