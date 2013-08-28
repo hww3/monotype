@@ -97,6 +97,7 @@ public mapping extract_settings(Request id)
 		"min_little": (int)(((id->variables->min_just||"")/"/")[1]), 
 		"min_big": (int)(((id->variables->min_just||"")/"/")[0]),
 		"hanging_punctuation": (int)id->variables->hanging_punctuation,
+		"pad_margins": (int)id->variables->pad_margins,
 		"allow_lowercase_smallcaps": (int)id->variables->allow_lowercase_smallcaps,
 		"allow_punctuation_substitution": (int)id->variables->allow_punctuation_substitution
 		]);

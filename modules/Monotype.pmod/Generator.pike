@@ -60,6 +60,8 @@ string coarse_code = "0075";
 
 float space_adjust = 0.0;
 int indent_adjust = 0;
+int pad_units = 0; // units to add at beginning and end of line for safety in carrying
+int allow_tight_lines = 0;
 
 int line_mode = MODE_JUSTIFY;
 float hanging_punctuation_width = 0.0;
@@ -80,9 +82,7 @@ void create(mapping settings)
 	werror("Monotype.Generator(%O)\n", settings);
   int lineunits = (int)(18 * (settings->pointsystem||12) * 
 			(1/settings->setwidth) * settings->linelengthp);
-
-  werror ("line should be %d units.\n", lineunits);
-
+  
   config = settings;
   config->lineunits = lineunits;
 
@@ -90,6 +90,14 @@ void create(mapping settings)
     set_matcase(settings->matcase);
   if(settings->stopbar)
     set_stopbar(settings->stopbar);
+  
+    werror ("line should be %d units.\n", lineunits);
+
+  if(config->pad_margins)
+  {
+    pad_units = sort(indices(spaces))[-1];
+    werror ("%d units will be used as padding at each end.\n", pad_units);
+  }
   
   // set up the code substitutions for unit adding
   if(config->unit_adding)
@@ -113,8 +121,8 @@ void create(mapping settings)
     }
     else
     {
-      werror("Hanging punctuation will add %f units to the line length.\n", hanging_punctuation_width*2);
-      lineunits += (int)(hanging_punctuation_width * 2);
+      werror("Hanging punctuation will subtract %f units the length of text but not the overall line.\n", hanging_punctuation_width*2);
+//      lineunits += (int)(hanging_punctuation_width * 2);
       config->hanging_punctuation_width = hanging_punctuation_width;
     }
   }
@@ -452,9 +460,9 @@ int process_setting_buffer(int|void exact)
 
     // if permitted, prepare a tight line for possible use later.
 	  if(current_line->is_overset() && config->enable_combined_space)
-	  {   
+	  { 
       // first, let's see if removing 1 unit from each justifying space will work.
-     	object tl = Line(m, s, config + (["combined_space": 1]), this);
+     	object tl = Line(m, s, config + (["combined_space": 1, "lineunits": pad_units?(config->lineunits-(pad_units*2)):config->lineunits]), this);
 	   	tl->re_set_line(current_line);
 	     	
       int j = i;
@@ -473,7 +481,15 @@ int process_setting_buffer(int|void exact)
      	  tl->line_number = current_line->line_number;
      	  tl->line_on_page = current_line->line_on_page;
     	  tightline = tl;	 
-    	  tightpos = j;  
+    	  tightpos = j;
+    	  if(allow_tight_lines)
+    	  {
+    	    current_line = tl;
+    	    i = tightpos;
+		      new_line();
+		      continue;
+    	  } 
+    	   
 	     }
 	     else
 	     {
@@ -862,6 +878,18 @@ mixed i_parse_tags(object parser, string data, mapping extra)
       if(issmallcaps < 0) issmallcaps = 0;
     }
 
+    if(lcdata == "<allowtightlines>")
+    {
+      werror("ENABLING TIGHT LINES\n");
+      allow_tight_lines = 1;  
+    }
+
+    if(lcdata == "</allowtightlines>")
+    {
+      werror("DISABLING TIGHT LINES\n");
+      allow_tight_lines = 0;  
+    }
+
   if(lcdata == "<nohyphenation>")
   {
     werror("disABLING HYPHENATION\n");
@@ -1065,6 +1093,15 @@ void make_new_line(int|void newpara)
   {
     werror(" OTHER not adding buffer.\n");
   }
+  
+  if(current_line && pad_units)
+  {
+    werror("current_line: %O\n", current_line);
+    current_line->lineunits = current_line->lineunits + (pad_units*2);
+    low_quad_out((float)pad_units);
+    low_quad_out((float)pad_units, 1);
+  }
+  
   current_line = low_make_new_line();
   
   if(indent_adjust)
@@ -1095,7 +1132,7 @@ Line low_make_new_line()
 {
 	Line l;	
 	
-	l = Line(m, s, config, this);
+	l = Line(m, s, config + (["lineunits": pad_units?(config->lineunits-(pad_units*2)):config->lineunits]), this);
 	l->line_number = ++numline;
 	linesonpage++;
 	l->line_on_page = linesonpage;

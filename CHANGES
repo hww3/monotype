@@ -1,6 +1,21 @@
+20130826
+- Ribbon Generator: ensure at least one justifying space
+   is present on a line when quadding out, in order to 
+   ensure that the line can be completely quadded.
+- Ribbon Generator: add 'Pad Margins' option that places
+   a single quad at each end of a line, in order to ease
+   transport of the finished type. Note that this reduces
+   the length of type set on the line by the same amount.
+- Added a new command: <allowtightlines></allowtightlines>
+   that enables the use of combined space lines in lieu 
+   of hyphenating a given line(s).
+
 20130825
 - Ribbon Generator: added "Go Back" button to Soft Proof
-- Ribbon Generator: add hanging punctuation option.
+- Ribbon Generator: add hanging punctuation option. Note
+   that this reduces the length of type set on the line by
+   the amount of the hanging punctuation (usually the width
+   of the smallest punctuation mark.)
 
 20130814
 - Stopbar Editor: added delete option for standalone tool.
