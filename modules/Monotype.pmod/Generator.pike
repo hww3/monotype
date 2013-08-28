@@ -1118,9 +1118,37 @@ void quad_out()
   float left = current_line->lineunits - current_line->linelength;
   werror("* have %.1f units left on line.\n", left);
 
+  // we should add a justifying space to a line that has none so that we can be sure
+  // that the line will justify properly.
+  if(!current_line->linespaces)
+  {
+    if(line_mode == MODE_CENTER)
+    {
+      if(left >= (current_line->min_space_units*2))
+      {
+        current_line->add(JustifyingSpace, 0);
+        current_line->add(JustifyingSpace, 1);
+      }
+    }
+    else
+    {
+      if(left >= current_line->min_space_units)
+      {
+        if(line_mode == MODE_RIGHT)
+          current_line->add(JustifyingSpace, 1);
+        else
+          current_line->add(JustifyingSpace, 0);
+      }
+    }
+  }
+  {
+    if(left >= current_line->min_space_units && !current_line->linespaces)
+      current_line->add(JustifyingSpace);    
+  }
+
   while(!current_line->can_add(left))
   {
-    werror("onoe!\n");
+//    werror("onoe!\n");
     left --;
 //    Tools.throw(Error.Generic, "unable to add %d units because it would cause the line to be overset.\n", left);
   }
@@ -1129,7 +1157,7 @@ void quad_out()
 
   if(line_mode == MODE_LEFT || line_mode == MODE_JUSTIFY)
   {
-	low_quad_out(left);
+ 	  low_quad_out(left);
   }
   else if(line_mode == MODE_RIGHT)
   {
