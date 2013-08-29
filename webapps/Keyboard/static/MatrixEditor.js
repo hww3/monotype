@@ -446,14 +446,14 @@ dojo.declare(
 
 			"<table>" +
 			"<tr><td>Sort: </td><td>" +
-			"<input style=\"width:40px\" maxLength=\"5\" required=\"true\" dojoType=\"dijit.form.ValidationTextBox\" dojoAttachPoint='charbox,focusNode' name=\"char${name}\"\n\tdojoAttachEvent='onChange:setChar'\n\tautocomplete=\"off\" type=\"string\"\n\t/>" + 
+			"<input style=\"width:45px\" maxLength=\"5\" required=\"true\" dojoType=\"dijit.form.ValidationTextBox\" dojoAttachPoint='charbox,focusNode' name=\"char${name}\"\n\tdojoAttachEvent='onChange:setChar'\n\tautocomplete=\"off\" type=\"string\"\n\t/>" + 
 			" <select style=\"width:120px\" dojoType=\"dijit.form.FilteringSelect\" hasDownArrow=\"true\" autoComplete=\"false\" dojoAttachEvent='onChange:setStyle' dojoAttachPoint='stylebox'>"+
 			"<option value='Roman'>Roman</option><option value='Underline'>Underline</option><option value='Italic'>Italic</option><option value='Bold'>Bold</option><option value='SmallCap'>SmallCap</option></select>" +
 			"</td></tr><tr><td>" + 
 			"Activator Key: </td><td>" +
-			"<input style=\"width:40px\" maxLength=\"5\" required=\"true\" dojoType=\"dijit.form.ValidationTextBox\" dojoAttachPoint='actbox,focusNode' name=\"act${name}\"\n\tdojoAttachEvent='onChange:setAct'\n\tautocomplete=\"off\" type=\"${type}\"\n\t/>" + 
+			"<input style=\"width:45px\" maxLength=\"6\" required=\"true\" dojoType=\"dijit.form.ValidationTextBox\" dojoAttachPoint='actbox,focusNode' name=\"act${name}\"\n\tdojoAttachEvent='onChange:setAct'\n\tautocomplete=\"off\" type=\"${type}\"\n\t/>" + 
 			"</td></tr><tr><td>Unit Width: </td><td>" +
-			"<input style=\"width:40px\" maxLength=\"5\" required=\"true\" dojoType=\"dijit.form.NumberTextBox\" dojoAttachPoint='setbox' constraints=\"{min: 3, max: 21}\" name=\"set${name}\"\n\tdojoAttachEvent='onChange:setSet'\n\tautocomplete=\"off\" type=\"${type}\"\n\t/>" + 
+			"<input style=\"width:45px\" maxLength=\"5\" required=\"true\" dojoType=\"dijit.form.NumberTextBox\" dojoAttachPoint='setbox' constraints=\"{min: 3, max: 21}\" name=\"set${name}\"\n\tdojoAttachEvent='onChange:setSet'\n\tautocomplete=\"off\" type=\"${type}\"\n\t/>" + 
 			"</td></tr></table>" +	
 
 			"</div>\n" +
