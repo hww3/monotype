@@ -11,6 +11,7 @@ import Public.Parser.XML2;
   string col_pos;
   int is_js;
   int is_fs;
+  int is_hs;
   
   function report_problem;
 

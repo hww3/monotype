@@ -31,6 +31,7 @@ int linesonpage;
 object JustifyingSpace;
 
 mapping spaces = ([]);
+mapping highspaces = ([]);
 
 array(Line) lines = ({});
 
@@ -185,6 +186,11 @@ protected void load_spaces(object m)
 {
   foreach(m->spaces;;object mat)
     spaces[s->get((mat->row_pos<16?mat->row_pos:15))] = mat;  
+  
+  foreach(m->get_highspaces(s);;object matrix)
+  {
+    highspaces[matrix->set_width] = matrix;
+  }
   
   if(config->unit_shift)
   {

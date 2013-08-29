@@ -340,14 +340,17 @@ import Monotype;
   	  return x[0 .. i-1];
   	else return ({});
 	}
+
+  int cc, cf, c, f; // the current justification wedge settings
+  int last_space;
+
 	
 	string generate_line()
 	{
-	  int last_space;
 	  String.Buffer buf = String.Buffer();
+	  last_space = 0;
 	  // a little nomenclature here: c == coarse (0075) f == fine (0005), 
     //   cc == current coarse setting, cf == current fine setting
-  	  int cc, cf, c, f; // the current justification wedge settings
   	  f = little;
   	  c = big;
   	  cf = f;
@@ -355,160 +358,193 @@ import Monotype;
 
   	  write("\n");
   	  if(double_justification)
-        buf+=sprintf("%s %d\n", generator->fine_code, f);
+        buf->add(sprintf("%s %d\n", generator->fine_code, f));
   	  else
-        buf+=sprintf("%s %s %d\n", generator->fine_code, generator->coarse_code, f);
+        buf->add(sprintf("%s %s %d\n", generator->fine_code, generator->coarse_code, f));
 
-      buf+=sprintf("%s %d\n", generator->coarse_code, c);
+      buf->add(sprintf("%s %d\n", generator->coarse_code, c));
 
       foreach(reverse(render_line());; object me)
       {
-        int this_combined_space = 0;
-        
-        if(last_space && combined_space)
-        {
-          if(cf != f || cc != c)
-  	      {
-  		      werror("resetting justification wedges: %O %O.\n", f, c);
-  		      buf+=sprintf("%s %d\n", generator->fine_code, f);
-  		      buf+=sprintf("%s %d\n", generator->coarse_code, c);
-  			    cf = f;
-  			    cc = c;
-  	      }
-  	      this_combined_space = 1;
-          last_space = 0;
-        }
-        if(me->is_real_js && combined_space)
-        {
-          last_space = 1;
-          continue;
-        }
-        else if(me->is_real_js)
-        {
-          // if we've previously changed the justification wedges in order to
-          // correct a sort width, we need to put things back.
-  	      if(cf != f || cc != c)
-  	      {
-  		      werror("resetting justification wedges: %O %O.\n", f, c);
-  		      buf+=sprintf("%s %d\n", generator->fine_code, f);
-  		      buf+=sprintf("%s %d\n", generator->coarse_code, c);
-  			    cf = f;
-  			    cc = c;
-  	      }
-          buf+=sprintf("S %d %s [ ]\n", me->matrix->row_pos, me->matrix->col_pos);
-          werror("_");
-        }
-        else 
-  	    {
-  //			werror("ME: %O", mkmapping(indices(me), values(me)));
-          string row_pos = me->row_pos;
-          string col_pos = me->col_pos;
+        mixed e;
+        if(e = catch(
+        add_code(me, buf))) werror("Error %O!\n", e);
+      }
+    return buf->get();
+  }
+	
+	void add_code(object me, object buf, int|void raw)
+	{
+	      int this_combined_space = 0;
+	      string row_pos = me->row_pos;
+        string col_pos = me->col_pos;
+        string ch = me->character;
 
-  	      int wedgewidth;
-  	      if(me->row_pos == 16 && ! config->unit_shift)
-  			  {
-  				  throw(Error.Generic("Cannot use 16 row matcase without unit shift.\n"));
-  			  }
-  			  
-  			  if(config->unit_shift)
+    	  if(me->is_fs || me->is_js)
+          ch = " ";
+          werror("add_code(%O, %O)\n", me, raw);
+
+        if(!raw)
+        {
+          
+            if(last_space && combined_space)
+            {
+              if(cf != f || cc != c)
+      	      {
+      		      werror("resetting justification wedges: %O %O.\n", f, c);
+      		      buf->add(sprintf("%s %d\n", generator->fine_code, f));
+      		      buf->add(sprintf("%s %d\n", generator->coarse_code, c));
+      			    cf = f;
+      			    cc = c;
+      	      }
+      	      this_combined_space = 1;
+              last_space = 0;
+            }
+            if(me->is_real_js && combined_space)
+            {
+              last_space = 1;
+              return;
+            }
+            else if(me->is_real_js)
+            {
+              // if we've previously changed the justification wedges in order to
+              // correct a sort width, we need to put things back.
+      	      if(cf != f || cc != c)
+      	      {
+      		      werror("resetting justification wedges: %O %O.\n", f, c);
+      		      buf->add(sprintf("%s %d\n", generator->fine_code, f));
+      		      buf->add(sprintf("%s %d\n", generator->coarse_code, c));
+      			    cf = f;
+      			    cc = c;
+      	      }
+              buf->add(sprintf("S %d %s [ ]\n", me->matrix->row_pos, me->matrix->col_pos));
+              werror("_");
+              return;
+            }
+            else 
+      	    {
+     // 	      werror("not a space(%O, %O)\n", me, raw);
+              
+      	      int wedgewidth;
+      	      if(me->row_pos == 16 && ! config->unit_shift)
+      			  {
+      				  throw(Error.Generic("Cannot use 16 row matcase without unit shift.\n"));
+      			  }
+
+      			  if(config->unit_shift)
+      			  {
+      			    col_pos = replace(col_pos, "D", "EF");
+      			  }
+
+      			  // get the width of the requested row unless it's 16, which doesn't exist.
+      			  // in that case, get the width of row 15.
+    	//		werror("need wedge width for row %d\n", me->row_pos!=16?me->row_pos:15);
+      	 		  wedgewidth = s->get(me->row_pos!=16?me->row_pos:15);
+
+      	        werror("want %f, wedge provides %f\n", me->get_set_width(), (float)wedgewidth);
+      	      if(me->row_pos == 16 || ((float)wedgewidth != me->get_set_width())) // we need to adjust the justification wedges
+      	      {
+      	        int nf, nc;
+
+                // TODO: we need to check to make sure we don't try to open the mould too wide.
+
+                werror("needs adjustment: have %d, need %.1f!\n", wedgewidth, me->get_set_width());
+      	        // first, we should calculate what difference we need, in units of set.
+      	        float needed_units = me->get_set_width() - wedgewidth;
+
+                // at this point, we'd select the appropriate mechanism for handling the difference
+                // presumably, we'd use the following techniques, were they available to us:
+
+                // 4. underpinning
+                object highspace;
+                
+                werror("need: %O %O\n", (int)needed_units, generator->highspaces);
+          			if(needed_units > 0.0 && (highspace = generator->highspaces[(int)needed_units]))
+          			{
+          			  werror("underpin!\n");
+          			  add_code(highspace, buf, 1);
+          			  add_code(me, buf, 1);
+          			  return;
+          			}
+
+                // 1. unit adding
+      			    if(config->unit_adding && config->unit_adding == needed_units)
+      			    {
+                  buf->add(sprintf("0075 "));
+      			    }
+
+      			    // 2. unit shift
+      			    else if(config->unit_shift && me->row_pos > 1 && (s->get(me->row_pos - 1) == me->get_set_width()))
+      			    {
+      			      row_pos = (me->row_pos - 1);
+      			      col_pos = "D" + col_pos;
+      			    }
+
+      			    // 3. unit adding + unit shift
+      			    else if(config->unit_adding && config->unit_shift && me->row_pos > 1 && (me->get_set_width() == (config->unit_adding + s->get(me->row_pos - 1))))
+      			    {
+      			      row_pos = (me->row_pos - 1);
+      			      col_pos = "D" + col_pos;
+
+                  buf->add(sprintf("0075 "));
+                
+      			    }
+
+      			// 5. letterspacing via justification wedge (currently the only technique in use here) 
+      	        // then, figure out what that adjustment is in terms of 0075 and 0005
+    				    else
+      	        {  	            
+    //werror("needed units: %d, max_ls_adjustment: %d\n", needed_units, max_ls_adjustment);
+      	          if(needed_units > max_ls_adjustment || abs(needed_units) > max_reduction_units)
+      	          {
+      	            int unit_shift_diff = (me->get_set_width() - s->get(me->row_pos - 1) );
+    //werror("unit_shift_diff: %d\n", unit_shift_diff);
+      	            if(config->unit_shift && me->row_pos > 1 && unit_shift_diff <= max_ls_adjustment && abs(unit_shift_diff) <= max_reduction_units)
+      	            {
+    //werror("yeah!\n");
+      	              row_pos = (me->row_pos - 1);
+          			      col_pos = "D" + col_pos;
+          			      needed_units = me->get_set_width() - s->get(me->row_pos - 1);
+      	            }
+      	          }
+
+      	          mixed err = catch([nc, nf] = calculate_wordspacing_code(needed_units));
+
+      	          if(err && this_combined_space)
+      	          {
+      	            werror("needed units (w/combined space): %O\n", needed_units + calc_justspace(0, linelength));
+                    [nc, nf] = calculate_wordspacing_code(needed_units + calc_justspace(0, linelength));
+                  }
+                  else if(err)
+                  {
+                    throw(err);
+                  }
+      		        // if it's not what we have now, make the adjustment
+
+       		        if(cf != nf || cc != nc)
+      		        {
+      		          werror("returning from %O %O to %O %O\n", cf, cc, nf, nc);
+                    buf->add(sprintf("%s %d\n", generator->fine_code, nf));
+      	            buf->add(sprintf("%s %d\n", generator->coarse_code, nc));
+                    cf = nf;
+      		          cc = nc;
+      	          }
+
+      	          buf+=sprintf("S ");
+      	       }
+      	    }
+          }
+          
+            werror(string_to_utf8(ch||""));
+            
+    			}
+    			if(raw && config->unit_shift)
   			  {
   			    col_pos = replace(col_pos, "D", "EF");
   			  }
-
-  			  // get the width of the requested row unless it's 16, which doesn't exist.
-  			  // in that case, get the width of row 15.
-	//		werror("need wedge width for row %d\n", me->row_pos!=16?me->row_pos:15);
-  	 		  wedgewidth = s->get(me->row_pos!=16?me->row_pos:15);
-			
-  	   //     werror("want %d, wedge provides %d\n", me->get_set_width(), wedgewidth);
-  	      if(me->row_pos == 16 || ((float)wedgewidth != me->get_set_width())) // we need to adjust the justification wedges
-  	      {
-  	        int nf, nc;
-
-            // TODO: we need to check to make sure we don't try to open the mould too wide.
-
-            werror("needs adjustment: have %d, need %.1f!\n", wedgewidth, me->get_set_width());
-  	        // first, we should calculate what difference we need, in units of set.
-  	        float needed_units = me->get_set_width() - wedgewidth;
- 
-            // at this point, we'd select the appropriate mechanism for handling the difference
-            // presumably, we'd use the following techniques, were they available to us:
-            // 1. unit adding
-  			    if(config->unit_adding && config->unit_adding == needed_units)
-  			    {
-              buf+=sprintf("0075 ");
-  			    }
-
-  			    // 2. unit shift
-  			    else if(config->unit_shift && me->row_pos > 1 && (s->get(me->row_pos - 1) == me->get_set_width()))
-  			    {
-  			      row_pos = (me->row_pos - 1);
-  			      col_pos = "D" + col_pos;
-  			    }
-
-  			    // 3. unit adding + unit shift
-  			    else if(config->unit_adding && config->unit_shift && me->row_pos > 1 && (me->get_set_width() == (config->unit_adding + s->get(me->row_pos - 1))))
-  			    {
-  			      row_pos = (me->row_pos - 1);
-  			      col_pos = "D" + col_pos;
-
-              buf+=sprintf("0075 ");			
-  			    }
-  			// 4. underpinning
-          
-  			// 5. letterspacing via justification wedge (currently the only technique in use here) 
-  	        // then, figure out what that adjustment is in terms of 0075 and 0005
-				    else
-  	        {  	            
-//werror("needed units: %d, max_ls_adjustment: %d\n", needed_units, max_ls_adjustment);
-  	          if(needed_units > max_ls_adjustment || abs(needed_units) > max_reduction_units)
-  	          {
-  	            int unit_shift_diff = (me->get_set_width() - s->get(me->row_pos - 1) );
-//werror("unit_shift_diff: %d\n", unit_shift_diff);
-  	            if(config->unit_shift && me->row_pos > 1 && unit_shift_diff <= max_ls_adjustment && abs(unit_shift_diff) <= max_reduction_units)
-  	            {
-//werror("yeah!\n");
-  	              row_pos = (me->row_pos - 1);
-      			      col_pos = "D" + col_pos;
-      			      needed_units = me->get_set_width() - s->get(me->row_pos - 1);
-  	            }
-  	          }
-  	          
-  	          mixed err = catch([nc, nf] = calculate_wordspacing_code(needed_units));
-  	          
-  	          if(err && this_combined_space)
-  	          {
-  	            werror("needed units (w/combined space): %O\n", needed_units + calc_justspace(0, linelength));
-                [nc, nf] = calculate_wordspacing_code(needed_units + calc_justspace(0, linelength));
-              }
-              else if(err)
-              {
-                throw(err);
-              }
-  		        // if it's not what we have now, make the adjustment
-
-   		        if(cf != nf || cc != nc)
-  		        {
-  		          werror("returning from %O %O to %O %O\n", cf, cc, nf, nc);
-                buf+=sprintf("%s %d\n", generator->fine_code, nf);
-  	            buf+=sprintf("%s %d\n", generator->coarse_code, nc);
-                cf = nf;
-  		          cc = nc;
-  	          }
-
-  	          buf+=sprintf("S ");
-  	       }
-  	    }
-        string c = me->character;
-    	  if(me->is_fs || me->is_js)
-  	      c = " ";
-
-        werror(string_to_utf8(c));
-  	  buf+=sprintf("%s %s %s [%s]\n", (string)row_pos, ((col_pos/"")-({""}))*" ", this_combined_space?"S":"", string_to_utf8(c), /* me->get_set_width() */);
-      }
-    }
-    return buf->get();
-  }
+      	  buf->add(sprintf("%s %s %s [%s]\n", (string)row_pos, ((col_pos/"")-({""}))*" ", this_combined_space?"S":"", string_to_utf8(ch||""), /* me->get_set_width() */));
+   
+	}
 	
 	class MatWrapper
 	{

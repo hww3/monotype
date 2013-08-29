@@ -205,6 +205,39 @@ int is_punctuation(string character)
   else return 0;
 }
 
+array get_highspaces(object wedge)
+{
+  array highspaces = ({});
+
+  highspaces = get_empties(wedge);
+ 
+  return highspaces;
+}
+
+array get_empties(object wedge)
+{
+  array empties = ({});
+
+  for(int row = 1; row <= maxrow; row++)
+  {
+    foreach(validcolumns; string column;)
+    {
+      if(!get(column, row))
+      {
+        object m = Matrix();
+        m->set_position(row, column);
+        m->set_character(" ");
+        m->set_set_width((float)wedge->get(row));
+        m->is_hs = 1;
+
+        empties += ({m});
+      }
+    }
+  }
+
+  return empties;
+}
+
 array get_punctuation()
 {
   array punctuation = ({});
