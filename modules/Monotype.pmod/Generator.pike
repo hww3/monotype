@@ -1348,6 +1348,30 @@ string generate_ribbon()
 	
 	foreach(reverse(lines);; object current_line)
   {
+    // if this is the first line and we've opted to make the first line long 
+    //  (to kick the caster off,) add an extra space at the beginning.
+      if(config->trip_at_end && sizeof(lines) && current_line == lines[0])
+      {
+     	  string activator = "";
+    	  array aspaces = indices(spaces);
+    	  int spacesize;
+    	  aspaces = sort(aspaces);
+
+    	  if(sizeof(aspaces))
+    	    spacesize = aspaces[-1];
+    	  if(spacesize)
+    	  {
+    		  // add at least 18 units of space to the line.
+    		  for(int i = spacesize; i <= 18; i+=spacesize)
+    	 		  current_line->add(Sort(spaces[spacesize]), 1, 1);
+    	  }
+    	  else
+    	  {
+    		  throw(Error.Generic("No spaces in matcase, unable to produce a caster-trip line.\n"));
+    	  }		
+      }
+    
+    
     buf += current_line->generate_line();
   }  
 
@@ -1367,28 +1391,6 @@ void new_line(int|void newpara)
   else if(current_line->linespaces && !current_line->can_justify()) 
     throw(Error.Generic(sprintf("Unable to justify line; %f length with %f units, %d spaces, justification code would be: %d/%d, text on line is %s\n", (float)current_line->linelength, (float)current_line->lineunits, current_line->linespaces, current_line->big, current_line->little, (string)current_line)));
 
-// if this is the first line and we've opted to make the first line long 
-//  (to kick the caster off,) add an extra space at the beginning.
-  if(config->trip_at_end && numline == 1)
-  {
- 	  string activator = "";
-	  array aspaces = indices(spaces);
-	  int spacesize;
-	  aspaces = sort(aspaces);
-
-	  if(sizeof(aspaces))
-	    spacesize = aspaces[-1];
-	  if(spacesize)
-	  {
-		  // add at least 18 units of space to the line.
-		  for(int i = spacesize; i <= 18; i+=spacesize)
-	 		  current_line->add(Sort(spaces[spacesize]), 1, 1);
-	  }
-	  else
-	  {
-		  throw(Error.Generic("No spaces in matcase, unable to produce a caster-trip line.\n"));
-	  }		
-  }
   lines += ({current_line});
 
   if(config->page_length && !(linesonpage%config->page_length))
