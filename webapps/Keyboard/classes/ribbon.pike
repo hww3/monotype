@@ -123,8 +123,8 @@ public void do_generate(Request id, Response response, Template.View v, mixed ..
 	g->parse(data);
 
     response->set_data(g->generate_ribbon());
-    response->set_header("content-disposition", "attachment; filename=" + 
-        id->variables->jobname + ".rib");	
+    response->set_header("content-disposition", "attachment; filename=\"" + 
+        (id->variables->jobname || "untitled_job") + ".rib\"");	
     response->set_type("application/x-monotype-e-ribbon");
     response->set_charset("utf-8");
     id->misc->session_variables->generator = -1;
