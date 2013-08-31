@@ -408,7 +408,7 @@ int process_setting_buffer(int|void exact)
 {
 	int lastjs = 0;
 	object tightline;
-	object phline;
+//	object phline;
 	int tightpos;
 	
 	if(!current_line)
@@ -419,8 +419,8 @@ int process_setting_buffer(int|void exact)
  
   for(int i = 0; i<sizeof(data_to_set) ;i++)
 	{
-  	int additback;
-  	object hpspace;
+//  	int additback;
+//  	object hpspace;
 
 	  tightline = 0;
 	  tightpos = 0;
