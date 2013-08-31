@@ -64,7 +64,7 @@ test_any([[
   object g = Monotype.Generator(settings + (["linelengthp": 30.0]));
   g->parse("Mary<p>\n");
 
-  return ((g->lines[0]->little == 1) && (g->lines[0]->big == 1) && !sizeof(g->lines[0]->errors));
+  return ((g->lines[0]->little == 8) && (g->lines[0]->big == 3) && !sizeof(g->lines[0]->errors));
 ]], 1);
 
 test_any([[
@@ -110,11 +110,30 @@ test_any([[
 test_any([[
   // we should get a complaint when a non-available sort is used.
   object g = Monotype.Generator(settings);
-  g->parse(utf8_to_string("Açe<p>\n"));
+  g->parse("A\u2011<p>\n");
   g->generate_ribbon();
   return sizeof(g->lines[0]->errors);
 ]], 1);
 
+test_any([[
+  // we shouldn't drop utf8 sorts.
+  object g = Monotype.Generator(settings);
+  g->parse("c<p>\n");
+  string w = g->generate_ribbon();
+  
+  object f = Monotype.Generator(settings);
+  f->parse("\u2013s<p>\n");
+  string x = f->generate_ribbon();
+  return w && x && sizeof(x/"\n") == sizeof(w/"\n");
+]], 1);
 
-
-
+test_any([[
+  // test that a hyperextension of mould is flagged.
+  object g = Monotype.Generator(settings);
+  mixed e = catch {
+    g->parse("<l4>W</l4><p>\n");
+    g->generate_ribbon();
+  };
+  if(e) return 1;
+  else return 0;  
+]], 1);
