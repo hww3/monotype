@@ -1,3 +1,8 @@
+20130830
+- Ribbon Generator: add Small Caps to punctuation 
+   substitution list and expand punctuation subset.
+- Ribbon Generator: check that mould blade isn't drawn too far.
+- Ribbon Generator: 
 20130826
 - Ribbon Generator: ensure at least one justifying space
    is present on a line when quadding out, in order to 
