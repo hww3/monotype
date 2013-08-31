@@ -1,5 +1,7 @@
 inherit .Sort;
 
+constant punctuation_subset = (<".", ",", ":", ";", "'", "’", "‘", "(", ")", "[", "]", "“", "”", "!", "?", "-", "–">);
+
 object mca;
 mapping config;
 object mat;
@@ -72,7 +74,7 @@ object get_mat(object errors)
 
   mat = mca->elements[code];
   
-  if(!mat && (modifier&Monotype.MODIFIER_ITALICS) && config->allow_punctuation_substitution && (<".", ",", ":", ";", "'", "’", "‘", "!", "?", "-", "–">)[activator])
+  if(!mat && ((modifier&Monotype.MODIFIER_ITALICS) || (modifier&Monotype.MODIFIER_SMALLCAPS))&& config->allow_punctuation_substitution && punctuation_subset[activator])
   {
     if(mat = mca->elements[activator])
 	    errors->append("Substituted activator " + (activator) + " from roman alphabet.");
