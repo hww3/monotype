@@ -227,6 +227,7 @@ import Monotype;
 		}
 		if(x[0] > 15 || x[0] < 1) throw(Error.Generic(sprintf("Bad Justification code %d/%d\n", x[0], x[1])));
 		if(x[1] > 15 || x[1] < 1) throw(Error.Generic(sprintf("Bad Justification code %d/%d\n", x[0], x[1])));
+		
 		return x;
 	}
 
@@ -366,9 +367,10 @@ import Monotype;
 
       foreach(reverse(render_line());; object me)
       {
-        mixed e;
-        if(e = catch(
-        add_code(me, buf))) werror("Error %O!\n", e);
+//        mixed e;
+//        if(e = catch(
+        add_code(me, buf);
+// werror("Error %O!\n", e);
       }
     return buf->get();
   }
@@ -492,8 +494,16 @@ import Monotype;
 
       			// 5. letterspacing via justification wedge (currently the only technique in use here) 
       	        // then, figure out what that adjustment is in terms of 0075 and 0005
-    				    else
-      	        {  	            
+                else
+      	        {
+  	              float max;
+                  float want = me->get_set_width() * config->setwidth * 0.0007685;
+                  if(config->mould >=12) max = 0.170;
+                  else max = 0.160; 
+              
+                  werror("Sort width check: wanted = %f, max allowed = %f inches.\n", want, max);
+                  if(want > max) throw(Error.Generic(sprintf("Requested sort wider than mould would allow: %f > %f inches.\n", want, max)));
+   	            
     //werror("needed units: %d, max_ls_adjustment: %d\n", needed_units, max_ls_adjustment);
       	          if(needed_units > max_ls_adjustment || abs(needed_units) > max_reduction_units)
       	          {
