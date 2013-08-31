@@ -382,7 +382,7 @@ import Monotype;
 
     	  if(me->is_fs || me->is_js)
           ch = " ";
-          werror("add_code(%O, %O)\n", me, raw);
+//          werror(string_to_utf8(sprintf("add_code(%O, %O)\n", me, raw)));
 
         if(!raw)
         {
@@ -530,21 +530,21 @@ import Monotype;
       		          cc = nc;
       	          }
 
-      	          buf+=sprintf("S ");
+      	          buf->sprintf("S ");
       	       }
       	    }
           }
           
-            werror(string_to_utf8(ch||""));
+ //           werror(string_to_utf8(ch||""));
             
-    			}
-    			if(raw && config->unit_shift)
-  			  {
-  			    col_pos = replace(col_pos, "D", "EF");
-  			  }
-      	  buf->add(sprintf("%s %s %s [%s]\n", (string)row_pos, ((col_pos/"")-({""}))*" ", this_combined_space?"S":"", string_to_utf8(ch||""), /* me->get_set_width() */));
+    	}
+    	if(raw && config->unit_shift)
+        {
+          col_pos = replace(col_pos, "D", "EF");
+        }
+        buf->add(sprintf("%s %s %s [%s]\n", (string)row_pos, ((col_pos/"")-({""}))*" ", this_combined_space?"S":"", string_to_utf8(ch||""), /* me->get_set_width() */));
    
-	}
+    }
 	
 	class MatWrapper
 	{
