@@ -201,18 +201,36 @@ void checkClicked_(object b)
 void showPinControl_(object i)
 {
 	werror("showPinControl_(%s)\n", (string)(i->title()->UTF8String()));
+/*
 	PinControlWindow->setDelegate_(this);
-//	if(!PinControlWindow->isVisible())
 		PinControlWindow->makeKeyAndOrderFront_(i);
 	pcmi = i;
-	pcmi->setEnabled_(0);
-	JumpToLineItem->setEnabled_(0);
-	app->mainMenu()->update();
-	was_caster_enabled = CasterToggleButton->isEnabled();
-	CasterToggleButton->setEnabled_(0);
-	Driver->enableManualControl();
-	ignoreCycleClicked_(IgnoreCycleButton);
-	allOff_(i);
+	*/
+	if(!showingPinControl)
+	{
+	  ManualPinControl->toggle_(i);
+	  was_caster_enabled = CasterToggleButton->isEnabled();
+	  CasterToggleButton->setEnabled_(0);
+	  Driver->enableManualControl();
+	  ignoreCycleClicked_(IgnoreCycleButton);
+	  allOff_(i);
+  	pcmi->setEnabled_(0);
+  	JumpToLineItem->setEnabled_(0);
+  	app->mainMenu()->update();
+  }
+	else
+	{
+	  ManualPinControl->toggle_(i);
+	  werror("windowWillClose_()");
+	  pcmi->setEnabled_(1);
+	  JumpToLineItem->setEnabled_(1);
+	  app->mainMenu()->update();
+	  Driver->disableManualControl();
+	  CasterToggleButton->setEnabled_(was_caster_enabled);
+  }
+  
+  showingPinControl = !showingPinControl;
+	
 }
 
 void showPreferences_(object i)
@@ -267,9 +285,9 @@ void ignoreCycleClicked_(object button)
 	}
 }
 
-
 void windowWillClose_(object n)
 {
+/*
 	if(n->var_object == PinControlWindow)
 	{
 		werror("windowWillClose_()");
@@ -280,6 +298,7 @@ void windowWillClose_(object n)
 		Driver->disableManualControl();
 		CasterToggleButton->setEnabled_(was_caster_enabled);
 	}
+*/
 }
 
 void jumpCancelClicked_(object b)
