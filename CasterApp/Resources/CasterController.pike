@@ -11,6 +11,13 @@ int icc;
 object pcmi;
 object jlmi;
 
+
+// 
+// 0075 + 0005 = Trip Galley
+// 0005 = Stop pump
+// 0075 = Start pump
+//
+
 static void create()
 {
   ::create();
@@ -189,7 +196,6 @@ void checkClicked_(object b)
 	  Driver->enablePin(b, pin);
 	else
   	  Driver->disablePin(b, pin);
-	
 }
 
 void showPinControl_(object i)
@@ -286,6 +292,25 @@ void jumpOKClicked_(object b)
 {
 	app->stopModalWithCode_(1);
   //JumpToLineWindow->performClose_(b);
+}
+
+void enablePumpClicked_(object b)
+{
+  driver->enablePump();
+}
+
+void disablePumpClicked_(object b)
+{
+  driver->disablePump();
+}
+
+void tripGalleyClicked_(object b)
+{
+  driver->tripGalley();
+}
+
+void checkClicked_(object b)
+{
 }
 
 void _finishedMakingConnections()
