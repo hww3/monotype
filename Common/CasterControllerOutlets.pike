@@ -1,6 +1,10 @@
 
 object Driver;
 
+object EnablePumpButton;
+object DisablePumpButton;
+object TripGalleyButton;
+
 object SkipForwardButton;
 object SkipBackwardButton;
 object SkipBeginButton;
@@ -16,6 +20,9 @@ object LoadJobItem;
 object JumpToLineBox;
 object MainWindow;
 object PreferenceWindow;
+
+object ManualPinControl; // drawer
+int showingPinControl;
 
 /* Preference controls */
 object CycleSensorTypeCheckbox;

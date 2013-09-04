@@ -162,7 +162,7 @@ void start_code()
 
   if(!code_str)
   {
-  	  driver->codesEnded();
+  	driver->codesEnded();
 	  driver->doStop();
 	  driver->rewindRibbon();
 	  driver->setStatus("End of Ribbon.");

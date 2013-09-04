@@ -11,6 +11,8 @@ int body_start;
 mapping job_info = ([]);
 array(array(string)) line_contents = ({});
 
+string current_coarse;
+string current_fine;
 
 static void create(string filename)
 {
@@ -23,6 +25,7 @@ static void create(string filename)
 	job_info->code_count = file->count_lines();
 	parse_body();
 }
+
 
 array get_current_line_contents()
 {
@@ -152,9 +155,33 @@ array low_get_previous_code()
 
   return 0;
 }
+  
+  string get_current_coarse()
+  {
+    return current_coarse || "15";    
+  }
+  
+  string get_current_fine()
+  {
+    return current_fine || "15";
+  }
+  
+string find_setting(array code, string pin)
+{
+  if(search(code, pin) != -1)
+  {
+    foreach(code;;string val)
+      if((<"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15">)[val])
+       return val; 
+  }
+  
+  return 0;
+}
 
 array get_next_code()
 {
+  string ws;
+  
 	last_code = current_code;
 	array code = low_get_next_code();
 	if(code)
@@ -174,6 +201,18 @@ array get_next_code()
 	// werror("no code.\n");
       current_code = 0;
     }
+    
+    // keep track of the current wedge settings, for use by start/stop pump commands
+    if(ws = find_setting(code, "0075"))
+    {
+      current_coarse = ws;
+    }
+    else if(ws = find_setting(code, "0005"))
+    {
+      current_fine = ws;
+    }
+    
+    
 	return code;
 }
 

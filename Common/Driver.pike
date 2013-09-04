@@ -13,10 +13,28 @@
 
   int inManualControl = 0;
   int forced = 0;
-
+  int started = 0;
+  
   array(string) manualCode = ({});
 
-void jump_to_line(int line)
+  ADT.Queue next_code = ADT.Queue();
+  
+  string get_current_coarse()
+  {
+    return ribbon?ribbon->get_current_coarse():"15";    
+  }
+  
+  string get_current_fine()
+  {
+    return ribbon?ribbon->get_current_fine():"15"; 
+  }
+  
+  void set_next_code(array(string) nextCode)
+  {
+    next_code->put(nextCode);
+  }
+
+  void jump_to_line(int line)
   {
 //	werror("\n\n\njump_to_line: %O\n", line);
    	ribbon->rewind(-1);
@@ -37,6 +55,7 @@ void jump_to_line(int line)
 	ribbon->return_code();
 ribbon->current_line--;
   }
+  
   void enableManualControl()
   {
 //werror("**\n** manual control enabled.\n**\n");
@@ -57,14 +76,14 @@ ribbon->current_line--;
 
   void forceOn()
   {
-	forced = 1;
-	plugin->do_start_code(getNextCode());
+	  forced = 1;
+	  plugin->do_start_code(getNextCode());
   }
 
   void forceOff()
   {
-	forced = 0;
-	plugin->do_start_code(({}));
+	  forced = 0;
+	  plugin->do_start_code(({}));
   }
 
   void allOn()
@@ -83,7 +102,6 @@ ribbon->current_line--;
 
   void enablePin(object control, string pin)
   {
-
     manualCode = __builtin.uniq_array(manualCode + ({pin}));
     if(forced)
        plugin->do_start_code(getNextCode());
@@ -101,15 +119,45 @@ ribbon->current_line--;
  
   array getNextCode()
   {
-    if(inManualControl) 
+    // next_code always takes precedence, regardless of start/stop status.
+    if(!next_code->is_empty())
     {
-//      werror("getNextCode(): manual code %s\n", manualCode*"");
+      return next_code->get();
+    }
+    else if(inManualControl) 
+    {
+      //      werror("getNextCode(): manual code %s\n", manualCode*"");
       return manualCode;
     }
+    // if we're not in manual control and not started, return an empty code
+    else if(!started)
+    {
+      return ({});
+    }
     else if(ribbon)
-      return ribbon->get_next_code(); 
-	else
-	  throw(Error.Generic("No ribbon and not in manual control!\n"));
+    {
+      // get the next code and make a note of the current wedge settings.
+      return ribbon->get_next_code();
+    }
+	  else
+	  {
+	    throw(Error.Generic("No ribbon and not in manual control!\n"));
+    }
+  }
+
+  void enablePump()
+  {
+    set_next_code(({"0075", get_current_coarse()}));    
+  }
+  
+  void disablePump()
+  {
+    set_next_code(({"0005", get_current_fine()}));
+  }
+
+  void tripGalley()
+  {
+    set_next_code(({"0005", "0075", get_current_fine()}));    
   }
 
   void stop()
@@ -119,6 +167,8 @@ ribbon->current_line--;
     if(inManualControl)
       return;
 
+    started = 0;
+    disablePump();
     plugin->stop();		
   }
 
@@ -128,6 +178,8 @@ ribbon->current_line--;
     if(inManualControl)
       return;
 
+    started = 1;
+    enablePump();
     plugin->start();
   }
 
