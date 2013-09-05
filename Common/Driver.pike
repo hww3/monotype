@@ -147,6 +147,7 @@ ribbon->current_line--;
 
   void enablePump()
   {
+    set_next_code(({"0005", get_current_fine()}));    
     set_next_code(({"0075", get_current_coarse()}));    
   }
   
