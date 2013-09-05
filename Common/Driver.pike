@@ -265,6 +265,27 @@ ribbon->current_line--;
     ui->toggleCaster(0);
   }
 
+  string getRibbonContents()
+  {
+    String.Buffer buf = String.Buffer();
+    buf+= "<html>";
+    buf+= "<table>";
+
+    if(ribbon)
+    {
+      foreach(ribbon->line_contents; int x; array line)
+      {
+        buf += "<tr><td><b>" + (x+1) + " &nbsp;</b> </td>\n";
+        buf += "<td><tt>" + (reverse(line)*"") + "</tt><br></td></tr>\n";
+      }
+    }
+
+    buf+= "</table>";
+    buf+="</html>";
+    
+    return buf->get();
+  }
+  
   void setStatus(string s)
   {
     werror("%O\n", ui->Status);

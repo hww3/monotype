@@ -1,10 +1,6 @@
 
 object Driver;
 
-object EnablePumpButton;
-object DisablePumpButton;
-object TripGalleyButton;
-
 object SkipForwardButton;
 object SkipBackwardButton;
 object SkipBeginButton;
@@ -21,8 +17,7 @@ object JumpToLineBox;
 object MainWindow;
 object PreferenceWindow;
 
-object ManualPinControl; // drawer
-int showingPinControl;
+object LinesWebView;
 
 /* Preference controls */
 object CycleSensorTypeCheckbox;
@@ -43,6 +38,7 @@ object Status;
 object CycleIndicator;
 
 object IgnoreCycleButton;
+object ManualPinControl;
 
 object cA;
 object cB;

@@ -1,8 +1,8 @@
 
 import Public.ObjectiveC;
 
-inherit Cocoa.NSObject;
 inherit "CasterControllerOutlets";
+inherit Cocoa.NSObject;
  
 object app;
 object defaults;
@@ -10,8 +10,8 @@ int icc;
 
 object pcmi;
 object jlmi;
-
-
+int showingPinControl;
+int jumpToLineCode = 0;
 // 
 // 0075 + 0005 = Trip Galley
 // 0005 = Stop pump
@@ -21,6 +21,7 @@ object jlmi;
 static void create()
 {
   ::create();
+//  Driver = ((program)"Driver")(this);
 werror("****\n**** create\n****\n");	
    app = Cocoa.NSApplication.sharedApplication();
 }
@@ -93,6 +94,13 @@ void loadJob_(object a)
   CasterToggleButton->setEnabled_(1);
   JumpToLineItem->setEnabled_(1);
   app->mainMenu()->update();
+  updateLinesView();
+}
+
+void updateLinesView()
+{
+  werror("LinesWebView: %O\n", sort(indices(LinesWebView->mainFrame())));
+  LinesWebView->mainFrame()->loadHTMLString_baseURL_(Driver->getRibbonContents(), Cocoa.NSURL.URLWithString_("file:///"));
 }
 
 void debounceChanged_(object slider)
@@ -198,14 +206,10 @@ void checkClicked_(object b)
   	  Driver->disablePin(b, pin);
 }
 
+
 void showPinControl_(object i)
 {
 	werror("showPinControl_(%s)\n", (string)(i->title()->UTF8String()));
-/*
-	PinControlWindow->setDelegate_(this);
-		PinControlWindow->makeKeyAndOrderFront_(i);
-	pcmi = i;
-	*/
 	if(!showingPinControl)
 	{
 	  ManualPinControl->toggle_(i);
@@ -228,48 +232,31 @@ void showPinControl_(object i)
 	  Driver->disableManualControl();
 	  CasterToggleButton->setEnabled_(was_caster_enabled);
   }
-  
-  showingPinControl = !showingPinControl;
-	
+  	showingPinControl = !showingPinControl;
+
 }
 
 void showPreferences_(object i)
 {
-	stopCaster();
-	PreferenceWindow->setDelegate_(this);
-	PreferenceWindow->makeKeyAndOrderFront_(i);
-
-//	werror("\n\n\ncode: %O\n\n\n", code);
-/*
-	JumpToLineWindow->makeKeyAndOrderFront_(i);
-	
-	jlmi = i;
-	jlmi->setEnabled_(0);
-	app->mainMenu()->update();	
-	*/
+  stopCaster();
+  PreferenceWindow->setDelegate_(this);
+  PreferenceWindow->makeKeyAndOrderFront_(i);
 }
 
 void showJumpToLine_(object i)
 {
-	stopCaster();
-	JumpToLineWindow->setDelegate_(this);
-	int code = app->runModalForWindow_(JumpToLineWindow);
-	JumpToLineWindow->close();
+  stopCaster();
+  JumpToLineWindow->setDelegate_(this);
+  jumpToLineCode = app->runModalForWindow_(JumpToLineWindow);
+  JumpToLineWindow->close();
+  if(jumpToLineCode) // we clicked OK
+  {
+    mixed line_to_jump_to = JumpToLineBox->intValue();
+    werror("destination line: %O\n", line_to_jump_to);
+    Driver->jump_to_line((int)line_to_jump_to);
+  }
 	
-	if(code) // we clicked OK
-	{
-	  mixed line_to_jump_to = JumpToLineBox->intValue();
-	  werror("destination line: %O\n", line_to_jump_to);
-	  Driver->jump_to_line((int)line_to_jump_to);
-	}
-//	werror("\n\n\ncode: %O\n\n\n", code);
-/*
-	JumpToLineWindow->makeKeyAndOrderFront_(i);
-	
-	jlmi = i;
-	jlmi->setEnabled_(0);
-	app->mainMenu()->update();	
-	*/
+	jumpToLineCode = 0; 
 }
 
 void ignoreCycleClicked_(object button)
@@ -285,51 +272,35 @@ void ignoreCycleClicked_(object button)
 	}
 }
 
+
+
 void windowWillClose_(object n)
 {
-/*
-	if(n->var_object == PinControlWindow)
-	{
-		werror("windowWillClose_()");
-		pcmi->setEnabled_(1);
-		JumpToLineItem->setEnabled_(1);
-		app->mainMenu()->update();
-		
-		Driver->disableManualControl();
-		CasterToggleButton->setEnabled_(was_caster_enabled);
-	}
-*/
 }
 
 void jumpCancelClicked_(object b)
 {
 	app->stopModalWithCode_(0);
-//  JumpToLineWindow->performClose_(b);
 }
 
 void jumpOKClicked_(object b)
 {
 	app->stopModalWithCode_(1);
-  //JumpToLineWindow->performClose_(b);
 }
 
 void enablePumpClicked_(object b)
 {
-  driver->enablePump();
+  Driver->enablePump();
 }
 
 void disablePumpClicked_(object b)
 {
-  driver->disablePump();
+  Driver->disablePump();
 }
 
 void tripGalleyClicked_(object b)
 {
-  driver->tripGalley();
-}
-
-void checkClicked_(object b)
-{
+  Driver->tripGalley();
 }
 
 void _finishedMakingConnections()
