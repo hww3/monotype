@@ -15,4 +15,12 @@ void post_define(object context)
   set_renderer_for_field("is_admin", Fins.Helpers.Renderers.CheckBoxRenderer());
   set_renderer_for_field("is_active", Fins.Helpers.Renderers.CheckBoxRenderer());
 }
-
+void transform(mapping changes, Fins.Errors.Validation errors, object i)
+{
+  werror("transform.\n");
+  // if the password is not a valid md5 hash entry, encrypt it.
+  if(has_index(changes, "password") && catch(Crypto.verify_crypt_md5("foo", changes["password"])))
+  {
+    changes["password"] = Crypto.make_crypt_md5(changes["password"]);
+  }
+}
