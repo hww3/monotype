@@ -32,7 +32,25 @@ void initialize()
 //werror("this: %O\n", mkmapping(indices(this), values(this)));
 	registerDefaultPreferences();
 	setupPreferences();
+	setupLinesView();
 }
+
+void webView_didClearWindowObject_forFrame_(object webView, object windowScriptObject, object webFrame)
+{
+  object so = webView->windowScriptObject();
+  so->setValue_forKey_(this, "caster");
+}
+
+void setupLinesView()
+{
+//  LinesWebView->setUIDelegate_(this);
+//  LinesWebView->setFrameLoadDelegate_(x());
+}
+
+
+//constant _type_encoding_CLASS_isSelectorExcludedFromWebScript_ = "s@::";
+//constant CLASS_isSelectorExcludedFromWebScript_ = Foo.isSelectorExcludedFromWebScript_;
+
 
 void registerDefaultPreferences()
 {
@@ -40,6 +58,7 @@ void registerDefaultPreferences()
 	mapping defs = ([]);
 	
 	defs->cycleSensorIsPermanent = "YES";
+	defs->autoStartStop = "YES";
 	defs->cycleSensorDebounce = "25"; // cycle sensor debounce in ms, range 0 - 55 ms
 	
 	defaults->registerDefaults_(defs);
@@ -52,11 +71,16 @@ void setupPreferences()
 	CycleSensorTypeCheckbox->setState_(bool);
 	CycleSensorMode = bool;
 
+	bool = (defaults->boolForKey_("autoStartStop"));
+	AutoStartStopCheckbox->setState_(bool);
+	Driver->AutoStartStopMode = bool;
+
 	bool = (defaults->integerForKey_("cycleSensorDebounce"));
 	DebounceSlider->setIntegerValue_(bool);
         Driver->CycleSensorDebounce = bool;		
 
 	werror("SET DEFAULT: %O\n", defaults->boolForKey_("cycleSensorIsPermanent"));
+	werror("SET DEFAULT: %O\n", defaults->boolForKey_("autoStartStop"));
 	werror("SET DEFAULT: %O\n", defaults->integerForKey_("cycleSensorDebounce"));
 }
 
@@ -99,7 +123,6 @@ void loadJob_(object a)
 
 void updateLinesView()
 {
-  werror("LinesWebView: %O\n", sort(indices(LinesWebView->mainFrame())));
   LinesWebView->mainFrame()->loadHTMLString_baseURL_(Driver->getRibbonContents(), Cocoa.NSURL.URLWithString_("file:///"));
 }
 
@@ -126,16 +149,30 @@ void toggleCycleSensorType_(object checkbox)
 	
 }
 
+void toggleAutoStartStop_(object checkbox)
+{
+  
+	int state = checkbox->state();
+	
+	werror("state: %O\n", state);
+	werror("SET DEFAULT: %O\n", indices(defaults));
+
+	defaults->setBool_forKey_(state, "autoStartStop");
+	Driver->AutoStartStopMode = state;
+	werror("SET DEFAULT: %O\n", defaults->boolForKey_("autoStartStop"));
+	
+}
+
 // callback from the start/stop button
 void toggleCaster_(mixed ... args)
 {
   int state = CasterToggleButton->state();
-werror("state: %O\n", state);
+werror("!!\n!!\n!!state: %O\n!!\n!!\n", state);
   LoadJobButton->setEnabled_(!state);
   LoadJobItem->setEnabled_(!state);
-  SkipForwardButton->setEnabled_(state);
-  SkipBackwardButton->setEnabled_(state);
-  SkipBeginButton->setEnabled_(state);
+  SkipForwardButton->setEnabled_(1);
+  SkipBackwardButton->setEnabled_(1);
+  SkipBeginButton->setEnabled_(1);
   if(state) Driver->start();
   else Driver->stop();
 }
@@ -148,9 +185,9 @@ void stopCaster()
 	  CasterToggleButton->setState_(!state);
 	  LoadJobButton->setEnabled_(state);
 	  LoadJobItem->setEnabled_(state);
-	  SkipForwardButton->setEnabled_(!state);
-	  SkipBackwardButton->setEnabled_(!state);
-	  SkipBeginButton->setEnabled_(!state);
+	  SkipForwardButton->setEnabled_(1);
+	  SkipBackwardButton->setEnabled_(1);
+	  SkipBeginButton->setEnabled_(1);
 	  Driver->stop();
   }	
 }
@@ -330,6 +367,13 @@ void setCycleIndicator(int(0..1) status)
   void setLineContents(string s)
   {
     LineContentsLabel->setStringValue_(s);
+  }
+
+  void setCurrentLine(int n)
+  {
+    string js = "highlight_line(" + n + ");";
+    object win = LinesWebView->windowScriptObject();
+    win->evaluateWebScript_(js);
   }
 
   void setLineStatus(string s)

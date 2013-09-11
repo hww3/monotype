@@ -327,6 +327,10 @@ void setCycleIndicator(int(0..1) status)
     CurrentLine->set_label(s);
   }
 
+  void setCurrentLine(int n)
+  {
+  }
+
   void setStatus(string s)
   {
     Status->set_label(s);

@@ -7,7 +7,7 @@ int current_pos = 0;
 int current_line = 0;
 multiset current_code, last_code;
 int body_start;
-
+int at_line_end = 0;
 mapping job_info = ([]);
 array(array(string)) line_contents = ({});
 
@@ -30,8 +30,8 @@ static void create(string filename)
 array get_current_line_contents()
 {
   array contents;
-  //werror("line contents: %O=>%O\n", current_line, line_contents);
-  catch(contents = line_contents[current_line] + ({}));
+//  werror("line contents: %O=>%O\n", current_line, line_contents[current_line]);
+  catch(contents = line_contents[current_line-1] + ({}));
   return contents || ({});
 }
 
@@ -168,7 +168,7 @@ array low_get_previous_code()
   
 string find_setting(array code, string pin)
 {
-  if(search(code, pin) != -1)
+  if(code && search(code, pin) != -1)
   {
     foreach(code;;string val)
       if((<"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15">)[val])
@@ -181,7 +181,7 @@ string find_setting(array code, string pin)
 array get_next_code()
 {
   string ws;
-  
+  at_line_end = 0;
 	last_code = current_code;
 	array code = low_get_next_code();
 	if(code)
@@ -259,24 +259,34 @@ void skip_to_line_beginning()
 }
 
 void skip_to_line_end()
-{	
-	do
-	{
-		get_next_code();
-//		werror("current_code: %O\n", current_code);
-		if(!current_code) return; // at the end of the ribbon.
-		else if(current_code["0075"] && current_code["0005"]) // line ended.
-		{
-			// we want to have both the 0075-0005 and 0005 code sequences, so we put the line end back.
-			current_code = last_code;
-			last_code = 0;
-			current_line--;
-			line_changed();
-			return_code();
-			return;
-		}
-	}
-	while(1);
+{
+  if(at_line_end)
+  {	
+    get_next_code();  // skip past the line ending.
+    get_next_code();
+  }
+  do
+  {
+    get_next_code();
+// werror("current_code: %O\n", current_code);
+    if(!current_code) 
+    { 
+      at_line_end = 1;
+      return; 
+    } // at the end of the ribbon.
+    else if(current_code["0075"] && current_code["0005"]) // line ended.
+    {
+      // we want to have both the 0075-0005 and 0005 code sequences, so we put the line end back.
+      current_code = last_code;
+      last_code = 0;
+      current_line--;
+      line_changed();
+      return_code();
+      at_line_end = 1;
+      return;
+    }
+  }
+  while(1);
 }
 
 void return_code()

@@ -8,7 +8,6 @@ object driver;
 
 int cv;
 int state;
-int started = 0;
 int last_changed = 0;
 
 // this should be the bit attached to the single input from the caster.
@@ -139,10 +138,7 @@ void doStart()
 
 	if(driver->forced) return 0;
 
-	if(started)
-	  start_code();
-	else
-	  end_code();
+        start_code();
 }
 
 void doEnd()
@@ -150,8 +146,7 @@ void doEnd()
 	state = 0;
 	driver->setCycleStatus(0);
 	//write("off\n");
-	if(started)
-  	  end_code();	
+        end_code();	
 }
 
 void start_code()
@@ -231,12 +226,10 @@ int map_code_to_pins(array codes)
 void start()
 {
 	werror("start()\n");
-	started = 1;
 }
 
 void stop()
 {
 	werror("stop()\n");
-	started = 0;
 }
 

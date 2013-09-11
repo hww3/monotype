@@ -5,12 +5,14 @@ mixed call_out_id;
 void start()
 {
 //	throw(Error.Generic("aiiee"));
+if(call_out_id)
+  remove_call_out(call_out_id);
 	call_out_id = call_out(process_code, 0.1);
 }
 
 void stop()
 {
-	remove_call_out(call_out_id);
+//	remove_call_out(call_out_id);
 }
 
 void do_start_code(array code_str)

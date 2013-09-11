@@ -3,6 +3,7 @@
                          "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14",
                          "S", "0005", "0075"});
 
+  int AutoStartStopMode; // set in the preference window.
   int CycleSensorDebounce; // set in the preference window.
   object plugin;
   object ribbon;
@@ -169,7 +170,8 @@ ribbon->current_line--;
       return;
 
     started = 0;
-    disablePump();
+    if(AutoStartStopMode)
+      disablePump();
     plugin->stop();		
   }
 
@@ -180,7 +182,8 @@ ribbon->current_line--;
       return;
 
     started = 1;
-    enablePump();
+    if(AutoStartStopMode)
+      enablePump();
     plugin->start();
   }
 
@@ -189,8 +192,9 @@ ribbon->current_line--;
     if(inManualControl)
       return;
 
+    setStatus("Seeking next line.");
     ribbon->skip_to_line_end();
-	setLineStatus(ribbon?ribbon->current_line:"0");
+    setLineStatus(ribbon?ribbon->current_line:"0");
   }
 
   void backwardLine()
@@ -198,6 +202,7 @@ ribbon->current_line--;
     if(inManualControl)
       return;
 
+    setStatus("Seeking previous line.");
     ribbon->skip_to_line_beginning();
 	setLineStatus(ribbon->current_line);
     processedCode();
@@ -270,13 +275,40 @@ ribbon->current_line--;
   {
     String.Buffer buf = String.Buffer();
     buf+= "<html>";
+    buf+=
+#"<script type=\"text/javascript\">
+  var linehighlighted;
+function highlight_line(line)
+{
+  var i;
+  var span;
+  var url = location.href; 
+  if(linehighlighted)
+  {
+    span = document.getElementById(\"line\" + linehighlighted);
+    span.style['background-color'] = '';
+  }
+
+  location.href = \"#line\"+ (line-3);  
+  span = document.getElementById(\"line\" + line);
+  
+if(span)
+  {
+    span.style['background-color'] = 'yellow';
+    linehighlighted = line;
+  }
+  else linehighlighted = 0;
+  history.replaceState(null,null,url); 
+}
+</script>
+";
     buf+= "<table>";
 
     if(ribbon)
     {
       foreach(ribbon->line_contents; int x; array line)
       {
-        buf += "<tr><td><b>" + (x+1) + " &nbsp;</b> </td>\n";
+        buf += "<tr id=\"line" + (x+1) + "\"><td><a name=\"line" + x+3 + "\"><a onClick='caster.jumpToLine_(" + (x+1) + ");'><b>" + (x+1) + "</a> &nbsp;</b> </td>\n";
         buf += "<td><tt>" + (reverse(line)*"") + "</tt><br></td></tr>\n";
       }
     }
@@ -302,6 +334,7 @@ ribbon->current_line--;
 
   void setLineStatus(string s)
   {
+    ui->setCurrentLine((int)s);
     ui->setLineStatus(s + "/" + jobinfo->line_count);
   }
 

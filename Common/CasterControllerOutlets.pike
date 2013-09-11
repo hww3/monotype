@@ -21,6 +21,7 @@ object LinesWebView;
 
 /* Preference controls */
 object CycleSensorTypeCheckbox;
+object AutoStartStopCheckbox;
 object DebounceSlider;
 
 object CurrentLine;
@@ -77,7 +78,6 @@ object c14;
 mapping jobinfo;
 
 int CycleSensorMode;
-int CycleSensorDebounce;
 int was_caster_enabled;
 
 array buttonstotouch = 
