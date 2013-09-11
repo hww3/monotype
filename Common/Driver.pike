@@ -328,7 +328,7 @@ if(span)
 
   void processedCode()
   {
-    if(!inManualControl)
+    if(!inManualControl && ribbon)
       ui->updateThermometer(((float)ribbon->current_pos/jobinfo->code_count)*100);
   }
 
