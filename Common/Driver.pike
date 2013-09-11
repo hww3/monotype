@@ -231,7 +231,7 @@ ribbon->current_line--;
   void ribbon_line_changed(object ribbon)
   {
 	array current_line = ribbon->get_current_line_contents();
-	setLineContents(current_line *"");
+	setLineContents(reverse(current_line) *"");
   }
 
   static void create(object _ui, mapping config)
@@ -340,7 +340,7 @@ if(span)
 
   void setLineContents(string s)
   {
-    ui->setLineContents(reverse(s));
+    ui->setLineContents(s);
   }
 
   void setCycleStatus(int(0..1) status)

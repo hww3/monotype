@@ -1,9 +1,9 @@
-SPARKLE_HOME=${HOME}/Downloads/Sparkle 1/
+SPARKLE_HOME=${HOME}/SparkleShare/hww3/Development/SparkleDist
 PUBLIC_OBJECTIVEC=${HOME}/devel/Public_ObjectiveC
 FINS_REPO="https://hg.welliver.org"
 RIBBON_GENERATOR=RibbonGenerator
 CASTER_CONTROL=Caster
-PRIVATE_KEY_DIR=/Users/hww3/Dropbox/Development/Sparkle
+PRIVATE_KEY_DIR=${HOME}/SparkleShare/hww3/Development/Sparkle
 
 # note: Public.ObjectiveC must be available and built
 #

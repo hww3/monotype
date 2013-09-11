@@ -65,17 +65,22 @@ void parse_body()
 		if(c["0075"] && (last && last["0005"] && last["0075"])) 
 		{
 			//werror("got new line. %O\n", line_codes); 
+         if(sizeof(line_codes))
+         {
           codes->push(line_codes);
           line_codes = ({});
-		  total_lines++;
+	  total_lines++;
+         }
 		}
 		if(!sizeof(c)) continue;
 		last = c;
 		total_codes ++;
 	}
 
-	if(sizeof(line_codes)) codes->push(line_codes);
-
+	if(sizeof(line_codes)) {
+          total_lines ++;
+          codes->push(line_codes);
+        }
 	job_info->code_count = total_codes + 1;
 	job_info->line_count = total_lines;
 	
@@ -122,7 +127,7 @@ array low_get_next_code()
 {
   catch
   {
-	string line = file->gets();
+    string line = file->gets();
 //	werror("LINE: %O\n", line);
     catch(line = String.trim_all_whites(utf8_to_string(line)));
     if(!line)
@@ -182,38 +187,37 @@ array get_next_code()
 {
   string ws;
   at_line_end = 0;
-	last_code = current_code;
-	array code = low_get_next_code();
-	if(code)
-	{
-	//	werror("have code.\n");
-  	  current_code = (multiset)code;
-      current_pos++;
-	  if(current_code && current_code["0075"] && current_code["0005"])
-	  {
-		// werror("have end of line\n");
-		current_line++;
-		line_changed();
-	  }
-    }
-    else 
+  last_code = current_code;
+  array code = low_get_next_code();
+  if(code)
+  {
+  //	werror("have code.\n");
+    current_code = (multiset)code;
+    current_pos++;
+    if(current_code && current_code["0075"] && current_code["0005"])
     {
-	// werror("no code.\n");
-      current_code = 0;
+      // werror("have end of line\n");
+      current_line++;
+      line_changed();
     }
+  }
+  else 
+  {
+    // werror("no code.\n");
+    current_code = 0;
+  }
     
-    // keep track of the current wedge settings, for use by start/stop pump commands
-    if(ws = find_setting(code, "0075"))
-    {
-      current_coarse = ws;
-    }
-    else if(ws = find_setting(code, "0005"))
-    {
-      current_fine = ws;
-    }
+  // keep track of the current wedge settings, for use by start/stop pump commands
+  if(ws = find_setting(code, "0075"))
+  {
+    current_coarse = ws;
+  }
+  else if(ws = find_setting(code, "0005"))
+  {
+    current_fine = ws;
+  }    
     
-    
-	return code;
+  return code;
 }
 
 
