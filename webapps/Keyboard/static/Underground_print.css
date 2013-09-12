@@ -125,26 +125,26 @@ blockquote {
   	min-height: 100%;
   	height: auto !important;
   	height: 100%;
-  	margin: 0 auto -24pt; /* the bottom margin is the negative value of the footer's height */
+  	margin: 0 auto
 }
 
 /* header */
 #header {
 	position: relative;
 	margin: 0; padding: 0;
-	height: 10px;
+	height: 0px;
 }
 #slogan {
 	position: absolute;
 	font: bold 2.1em Verdana, Arial, Tahoma,  Sans-serif;
-	font-size: 12pt;
+	font-size: 10pt; line-height: 6pt;
 	color: black;	
 }
 
 #header-logo {
 	position: relative;
 	clear: both;
-	height: 70px; 
+	height: 35px; 
 	width: 100%;
 	margin: 0; padding: 0;	
 }
@@ -153,8 +153,8 @@ blockquote {
 #logo {
 	position: absolute;
 	width: 100%;
-	top: 3px; left: 5px;
-	font: bold 30px "trebuchet MS", Arial, Tahoma, Sans-Serif;
+	top: -7px; left: 5px;
+	font: bold 26px "trebuchet MS", Arial, Tahoma, Sans-Serif;
 	margin: 0; padding: 0;
 	letter-spacing: -1px;
 	color: #000;
@@ -169,7 +169,7 @@ blockquote {
 }
 #main h1 {
 	margin: 10px 0 15px 0;
-	padding: 5px 5px 5px 8px;
+	padding: 3px 3px 3px 8px;
 	font-size: 105%;
 	color: #FFF;
 	text-transform: uppercase; 
@@ -177,17 +177,6 @@ blockquote {
 	letter-spacing: .5px;
 }
 
-
-/* footer */
-.footer { 
-	clear: both; 	
-	border-top: 1px solid #f2f2f2;
-	background: #FFF url(/static/images/footerbg.gif) repeat-x;
-	padding: 2px 0 10px 0; 
-	text-align: center;  
-	line-height: 1.5em;	
-	font-size: .9em;
-}
 
 /* alignment classes */
 .float-left  { float: left; }

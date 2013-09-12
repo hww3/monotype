@@ -375,6 +375,20 @@ public void edit(Request id, Response response, Template.View view, mixed ... ar
   processMCARequest(id, response, view, mcaid);
 }
 
+public void pdfdisplay(Request id, Response response, Template.View view, mixed ... args)
+{
+  object t = this->view->get_view("mca/display");
+  object resp = Fins.Response(id);
+  display(id, resp, t, @args);
+  string fn = sprintf("/tmp/%d_%d_%s", getpid(), time(), args[0]);
+  Stdio.write_file(fn + ".html", string_to_utf8(t->render()));
+  Process.popen("phantomjs Keyboard/bin/render.js " + fn + ".html " +fn + ".pdf Letter");
+  response->set_data(Stdio.read_file(fn + ".pdf"));
+  response->set_type("application/pdf");
+  rm(fn + ".pdf");
+//  rm(fn + ".html");
+}
+
 public void display(Request id, Response response, Template.View view, mixed ... args)
 {
   if(!sizeof(args))

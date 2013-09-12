@@ -10,7 +10,13 @@
     "**",
     "††",
     "‡‡",
-    "⁑⁑"
+    "⁑⁑",
+    "⚉",
+    "***",
+    "†††",
+    "‡‡‡",
+    "⁑⁑⁑",
+    "⚉⚉⚉",
   });
   
   array subtexts = ({});
@@ -20,9 +26,9 @@
 <p>
 	<style>
 	div.cell {
-		font-size: 12pt; width:35px; height:35px; 
+		font-size: 10pt; width:30px; height:30px; 
 border-width:1px; border-style: solid; position:relative; float:left; 
-line-height: 12.5pt;
+line-height: 11.5pt;
 	}
 	input.mine { border-width:1px; border-style: solid; border-color: background-color: #dddddd; }
 	</style>
@@ -34,7 +40,7 @@ line-height: 12.5pt;
 </style>
 <div style="border:3px; margin-left: auto;
     margin-right: auto;
-    width: 705px;">
+    width: 650px;">
 <div style="clear: left;">
 <div class="cell"><font style="color:grey"><%=data->wedge->name%></font></div>
 <%foreach(data->cols; int k; string v){%>
@@ -78,11 +84,11 @@ line-height: 12.5pt;
    			    subtext = "<span style='font-size: 12pt;'>" + utf8_to_string(subtext_symbols[stn]) + "</span>";
    			  }
 //
-                st+= "font-size: 16pt; font-family: serif";
+                st+= "font-size: 14pt; font-family: serif";
 			  if(mat->is_js)
-		  	    ch = "<img style='padding:5px; border:0px' src=\"/static/images/js.png\">";
+		  	    ch = "<img style='padding:2px; border:0px' src=\"/static/images/js.png\">";
 			  else if(mat->is_fs)
-		  	  	ch = "<img style='padding:5px; border:0px' src=\"/static/images/fs.png\">";
+		  	  	ch = "<img style='padding:2px; border:0px' src=\"/static/images/fs.png\">";
 			  else
 			  {
 				switch(mat->style)
@@ -124,26 +130,26 @@ line-height: 12.5pt;
 <div style="display:block; padding-top: 15px; clear: left">
 <h1>Legend</h1>
 <div style='height: 100%; display:block;'>
-<div style='clear: left; display:block; float:left; height:20pt; width:190px'><span style='font-size:16pt; font-family: serif'><i>M</i></span> roman sorts</div>
-<div style='display:block; float:left; height:20pt; width:190px'><span style='font-size:16pt; font-family: serif'><i>M</i></span> italic sorts</div>
-<div style='display:block; float:left; height:20pt; width:190px'><span style='font-size:16pt; font-family: serif'><span style='border:1px dotted;'><tt>M</tt></span></span> small cap sorts</div>
-<div style='display:block; float:left; height:20pt; width:190px'><span style='font-size:16pt; font-family: serif'><b>M</b></span> bold sorts</div>
+<div style='clear: left; display:block; float:left; height:18pt; width:190px'><span style='font-size:14pt; font-family: serif'><i>M</i></span> roman sorts</div>
+<div style='display:block; float:left; height:18pt; width:190px'><span style='font-size:14pt; font-family: serif'><i>M</i></span> italic sorts</div>
+<div style='display:block; float:left; height:18pt; width:190px'><span style='font-size:14pt; font-family: serif'><span style='border:1px dotted;'><tt>M</tt></span></span> small cap sorts</div>
+<div style='display:block; float:left; height:18pt; width:190px'><span style='font-size:14pt; font-family: serif'><b>M</b></span> bold sorts</div>
 
 <% if(sizeof(subtexts)) { %>
 <br/>
 <%
   foreach(subtexts; int i; string txt) {
-    string st = "<span style='font-size:12pt; font-family: serif'>" + utf8_to_string(subtext_symbols[i])  + "</span> &nbsp; actual width of sort is " + txt + " units.";
+    string st = "<span style='font-size:12pt; font-family: serif'>" + utf8_to_string(subtext_symbols[i])  + "</span> &nbsp; sort width = " + txt + " units.";
     %> 
-    <div style='display:block; float:left; height:20pt; width:240px'><%=st%></div>
+    <div style='display:block; float:left; height:18pt; width:190px'><%=st%></div>
 <% }
  } %>
  <br clear="all"/>
  </div>
 <h1>MCA Description</h1><p>
-
-<%=data->description%>
-
+<tt>
+<%#autoformat "var": data->description%>
+</tt>
 <% if( data && data->problems && sizeof(data->problems) ) { %>
   <img style="padding:0px; border:0px" src="<%#context_root%>static/images/warning.png"/>
   
