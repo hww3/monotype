@@ -331,11 +331,16 @@ int(0..1) old_wedge_exists(string name)
 int admin_user_filter(Fins.Request id, Fins.Response response, mixed ... args)
 {
    werror("fuser: %O\n", id->misc->session_variables->user);
+  werror("event_name: %O, controller: %O, auth-free? %O\n", id->event_name, id->controller, id->controller[id->event_name]);
    if(is_desktop && !id->misc->session_variables->user)
    {
 	 object user = master()->resolv("Fins.Model.find.users_by_alt")("desktop");
 	 id->misc->session_variables->user = user;
          populate_user_prefs(user);
+   }
+   else if(id->controller["_no_auth_" + id->event_name])
+   {
+     return 1;
    }
    else if(!id->misc->session_variables->user)
    {

@@ -1,0 +1,206 @@
+/* -----------------------------------------------------
+
+   AUTHOR           :  	Erwin Aligam
+   WEBSITE          :   http://www.styleshout.com/
+   TEMPLATE NAME    : 	Underground
+   TEMPLATE CODE    :	S-0006
+   VERSION          :   1.2
+   LAST DATE MOD    :   January 20, 2010
+
+-------------------------------------------------------- */
+
+/* -----------------------------------------------------
+   HTML ELEMENTS
+-------------------------------------------------------- */
+
+/* top elements */
+* { margin: 0;	padding: 0; outline: 0; }
+
+html, body {
+	height: 100%;
+}
+.footer, .push {
+	height: 24pt; /* .push must be the same height as .footer */
+}
+
+body {
+	font: 12px/160% 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, Sans-Serif;
+	color: #555;
+/*	background: #FFF url(/static/images/bg.gif) repeat-x;	*/
+}
+
+/* links */
+a:link, a:visited {
+	color: #003366;
+	background-color: inherit;
+	text-decoration: none;
+}
+a:hover {
+	color: #CC0001; 
+	background-color: inherit;
+}
+
+/* headers */
+h1, h2, h3 {
+	font-family: Arial, 'Trebuchet MS', Sans-Serif;
+	font-weight: bold;
+	color: #333;
+}
+h1 {
+	font-size: 120%;
+	letter-spacing: .5px;
+}
+h2 {
+	font-size: 115%;	
+	text-transform: uppercase; 		
+}
+h3 {
+	font-size: 115%;
+	color: #003366;		
+}
+
+/* images */
+img {
+	background: #FAFAFA;
+    border: 1px solid #DCDCDC;
+	padding: 8px;
+}
+
+img.dijitArrowNode
+{
+  background: #FAFAFA;
+  border: 0px solid #DCDCDC;
+  padding: 0px;
+}
+
+img.float-right {
+  margin: 5px 0px 10px 10px;  
+}
+img.float-left {
+  margin: 5px 10px 10px 0px;
+}
+
+h1, h2, h3, p {
+	padding: 0;		
+	margin: 10px;
+}
+
+ul, ol {
+	margin: 10px 20px;
+	padding: 0 20px;
+}
+
+code {
+  margin: 10px 0;
+  padding: 15px 20px;
+  text-align: left;
+  display: block;
+  overflow: auto;  
+  font: 500 1em/1.5em 'Lucida Console', 'courier new', monospace;
+  /* white-space: pre; */
+  background: #FAFAFA;
+  border: 1px solid #f2f2f2;  
+  border-left: 4px solid #CC0000;
+}
+acronym {
+  cursor: help;
+  border-bottom: 1px solid #777;
+}
+blockquote {
+	margin: 10px;
+ 	padding: 10px 10px 15px 32px;
+  	background: #FAFAFA url(/static/images/quote.gif) no-repeat 7px 10px !important;
+	background-position: 8px 10px;
+	border: 1px solid #f2f2f2; 
+	border-left: 4px solid #CC0000; 
+	font-weight: bold;  
+}
+
+
+/* -----------------------------------
+  LAYOUT
+-------------------------------------- */
+#wrap {
+    width: 768px;
+  	min-height: 100%;
+  	height: auto !important;
+  	height: 100%;
+  	margin: 0 auto -24pt; /* the bottom margin is the negative value of the footer's height */
+}
+
+/* header */
+#header {
+	position: relative;
+	margin: 0; padding: 0;
+	height: 10px;
+}
+#slogan {
+	position: absolute;
+	font: bold 2.1em Verdana, Arial, Tahoma,  Sans-serif;
+	font-size: 12pt;
+	color: black;	
+}
+
+#header-logo {
+	position: relative;
+	clear: both;
+	height: 70px; 
+	width: 100%;
+	margin: 0; padding: 0;	
+}
+
+
+#logo {
+	position: absolute;
+	width: 100%;
+	top: 3px; left: 5px;
+	font: bold 30px "trebuchet MS", Arial, Tahoma, Sans-Serif;
+	margin: 0; padding: 0;
+	letter-spacing: -1px;
+	color: #000;
+}
+
+
+/* main column */
+#main {
+	float: right;
+	margin: 0; padding: 0;
+	width: 770px;	
+}
+#main h1 {
+	margin: 10px 0 15px 0;
+	padding: 5px 5px 5px 8px;
+	font-size: 105%;
+	color: #FFF;
+	text-transform: uppercase; 
+	background-color: #CC0000;	
+	letter-spacing: .5px;
+}
+
+
+/* footer */
+.footer { 
+	clear: both; 	
+	border-top: 1px solid #f2f2f2;
+	background: #FFF url(/static/images/footerbg.gif) repeat-x;
+	padding: 2px 0 10px 0; 
+	text-align: center;  
+	line-height: 1.5em;	
+	font-size: .9em;
+}
+
+/* alignment classes */
+.float-left  { float: left; }
+.float-right { float: right; }
+.align-left  { text-align: left; }
+.align-right { text-align: right; }
+
+/* display and additional classes  */
+.clear {	clear: both; }
+.red   { color: #CC0000; }
+.comments { 
+	margin: 20px 10px 25px 10px;
+	padding: 5px 3px;
+	border-bottom: 1px solid #EFF0F1;
+	border-top: 1px solid #EFF0F1;
+}

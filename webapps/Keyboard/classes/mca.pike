@@ -35,6 +35,8 @@ array small_caps_elements =
   });
 
 
+// don't need authentication to access the MCA display.
+constant _no_auth_display = 1;
 
 public void index(Request id, Response response, Template.View view, mixed args)
 {
@@ -364,45 +366,50 @@ public void moveMat(Request id, Response response, Template.View view, mixed arg
 
 public void edit(Request id, Response response, Template.View view, mixed ... args)
 {
-  object mca;
-
   if(!sizeof(args))
   {
     response->set_data("You must provide a mat case layout to edit.");
   }
+  mixed mcaid = args[0];
 
+  processMCARequest(id, response, view, mcaid);
+}
+
+public void display(Request id, Response response, Template.View view, mixed ... args)
+{
+  if(!sizeof(args))
+  {
+    response->set_data("You must provide a mat case layout to display.");
+  }
+  mixed mcaid = args[0];
+
+  view->set_layout("mca/display_layout");
+  processMCARequest(id, response, view, mcaid);
+}
+
+void processMCARequest(Request id, Response response, Template.View view, string mcaid)
+{
+  object mca;
   werror("view: %O\n", view);
 
   view->add("now", (string)time());
 
-  mca = app->load_matcase(args[0]);
-  werror("**** name: %O mca: %O wedge: %O\n", args[0], mca, mca?mca->wedge:0);
+  mca = app->load_matcase(mcaid);
+  werror("**** name: %O mca: %O wedge: %O\n", mcaid, mca, mca?mca->wedge:0);
 
   if(mca->wedge)
   {
     object wedge = app->load_wedge(mca->wedge);
     if(!wedge) // if a user doesn't have their own wedge, try loading a global one.
-/*
     {
-      int wedgeid;
-      array x = Fins.Model.find.stopbars(([ "name": mca->wedge ]));
-      if(sizeof(x))
-      {
-         wedgeid = x[0]["id"];
-         wedge = app->w(wedgeid);
-      }
-      else
-*/
-      {
-        throw(Error.Generic("Unable to load wedge " + mca->wedge + " for user.")); 
-      }
-   // }
+      throw(Error.Generic("Unable to load wedge " + mca->wedge + " for user.")); 
+    }
     view->add("wedge", wedge);
   }
 
   id->misc->session_variables->mca = mca;
 
-object dbo = app->load_matcase_dbobj_by_id(args[0]);
+object dbo = app->load_matcase_dbobj_by_id(mcaid);
 if(dbo && dbo["owner"] == id->misc->session_variables->user)
   view->add("is_owner", 1);
 else
@@ -454,8 +461,11 @@ if(matrix->character == "0")
 
 }
 
+
 mapping get_case_contents(object id)
 {
+  if(!id->misc->session_variables->user) return ([]);
+  
   array full_alphabet_elements = ((replace(id->misc->session_variables->user["Preferences"]["full_sorts_palette_contents"]["value"], ({"\t", "\r", "\n"}), ({" ", " ", " "})) / " ") - ({""}));
   array small_caps_elements = ((replace(id->misc->session_variables->user["Preferences"]["sc_sorts_palette_contents"]["value"], ({"\t", "\r", "\n"}), ({" ", " ", " "})) / " ") - ({""}));
   

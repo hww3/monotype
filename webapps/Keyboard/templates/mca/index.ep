@@ -18,6 +18,7 @@ List size: <%#page_size_selector "paginator": data->mca_page, "size":"10, 25, 50
   <li> <%#action_link "action": "edit", "args": (string)mca["id"]%><%=mca["name"] %></a> 
  [ <%#action_link "action" : "copy", "args": (string)mca["id"]%>Copy</a> 
  | <%#action_link "action" : "download", "args": (string)mca["id"]%>Download</a>
+ | <%#action_link "action" : "display", "args": (string)mca["id"]%>Display</a>
 <% if(mca["owner"] == data->owner) { %>
   | 
   <% if(mca["is_public"]) {%>
