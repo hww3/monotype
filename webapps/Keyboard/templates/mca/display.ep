@@ -42,11 +42,11 @@ line-height: 11.5pt;
     margin-right: auto;
     width: 650px;">
 <div style="clear: left;">
-<div class="cell"><font style="color:grey"><%=data->wedge->name%></font></div>
+<div class="cell" style="background-color: #dddddd"></div>
 <%foreach(data->cols; int k; string v){%>
 <div style="background-color: #dddddd" class="cell"><b><%=v%></b></div>
 <%}%>
-<div class="cell"><font style="color:grey"><%=data->wedge->name%></font></div>
+<div class="cell" style="background-color: #dddddd"></div>
 </div>
 
 <%
@@ -54,7 +54,7 @@ line-height: 11.5pt;
        int rn;
         if(v==16) rn=v-1; else rn = v;
 	int u = data->wedge->bars[rn];
-		%>
+		%>  
 <div style="clear: left">
 	<!-- the first div is the row number with the unit width for that row from the default wedge -->
 <div class="cell" style="background-color: #dddddd"
@@ -123,10 +123,25 @@ line-height: 11.5pt;
 <div style="background-color: #dddddd" class="cell"
 ><b><%=v%></b><br/><font style="color: grey"><%=u%>U</font></div>
 
-	<p/>
 <%}	%>
-<p>
 </div>
+
+
+
+<div style="border:3px; margin-left: auto;
+    margin-right: auto;
+    width: 650px;">
+<div style="clear: left;">
+<div class="cell" style="background-color: #dddddd"></div>
+<%foreach(data->cols; int k; string v){%>
+<div style="background-color: #dddddd" class="cell"><b><%=v%></b></div>
+<%}%>
+<div class="cell" style="background-color: #dddddd"></div>
+</div>
+</div>
+
+
+
 <div style="display:block; padding-top: 15px; clear: left">
 <h1>Legend</h1>
 <div style='height: 100%; display:block;'>

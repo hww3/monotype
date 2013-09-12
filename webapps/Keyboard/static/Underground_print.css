@@ -137,14 +137,14 @@ blockquote {
 #slogan {
 	position: absolute;
 	font: bold 2.1em Verdana, Arial, Tahoma,  Sans-serif;
-	font-size: 10pt; line-height: 6pt;
+	font-size: 11pt; line-height: 6pt;
 	color: black;	
 }
 
 #header-logo {
 	position: relative;
 	clear: both;
-	height: 35px; 
+	height: 40px; 
 	width: 100%;
 	margin: 0; padding: 0;	
 }
@@ -154,7 +154,7 @@ blockquote {
 	position: absolute;
 	width: 100%;
 	top: -7px; left: 5px;
-	font: bold 26px "trebuchet MS", Arial, Tahoma, Sans-Serif;
+	font: bold 30px "trebuchet MS", Arial, Tahoma, Sans-Serif;
 	margin: 0; padding: 0;
 	letter-spacing: -1px;
 	color: #000;

@@ -382,11 +382,15 @@ public void pdfdisplay(Request id, Response response, Template.View view, mixed 
   display(id, resp, t, @args);
   string fn = sprintf("/tmp/%d_%d_%s", getpid(), time(), args[0]);
   Stdio.write_file(fn + ".html", string_to_utf8(t->render()));
-  Process.popen("phantomjs Keyboard/bin/render.js " + fn + ".html " +fn + ".pdf Letter");
+  Process.popen("phantomjs Keyboard/bin/render.js " + fn + ".html " +fn + ".pdf Letter 0.80");
   response->set_data(Stdio.read_file(fn + ".pdf"));
   response->set_type("application/pdf");
+  
+ //  object mca = app->load_matcase(args[0]);
+ // response->set_header("content-disposition", "attachment; filename=\"" + 
+ //      mca["name"] + ".pdf\"");
   rm(fn + ".pdf");
-//  rm(fn + ".html");
+  rm(fn + ".html");
 }
 
 public void display(Request id, Response response, Template.View view, mixed ... args)
@@ -536,8 +540,8 @@ public void download(Request id, Response response, Template.View view, mixed ..
 	  mca = app->load_matcase_dbobj_by_id(args[0], id->misc->session_variables->user);
 	
 	response->set_data(mca["xml"]);
-    response->set_header("content-disposition", "attachment; filename=" + 
-        mca["name"] + ".xml");	
+    response->set_header("content-disposition", "attachment; filename=\"" + 
+        mca["name"] + ".xml\"");	
     response->set_type("application/x-monotype-e-matcase");
     response->set_charset("utf-8");
    
