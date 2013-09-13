@@ -398,6 +398,7 @@ public void display(Request id, Response response, Template.View view, mixed ...
   if(!sizeof(args))
   {
     response->set_data("You must provide a mat case layout to display.");
+    return;
   }
   mixed mcaid = args[0];
 
@@ -405,19 +406,20 @@ public void display(Request id, Response response, Template.View view, mixed ...
   processMCARequest(id, response, view, mcaid);
 }
 
-void processMCARequest(Request id, Response response, Template.View view, string mcaid)
+int processMCARequest(Request id, Response response, Template.View view, string mcaid)
 {
   object mca;
-  werror("view: %O\n", view);
+  object dbo = app->load_matcase_dbobj_by_id(mcaid);
 
   view->add("now", (string)time());
 
   mca = app->load_matcase(mcaid);
+  werror("view: %O %O\n", view, mca);
   
-  if(mca && mca["owner"] != id->misc->session_variables->user && !mca["is_public"])
+  if(dbo && dbo["owner"] != id->misc->session_variables->user && !dbo["is_public"])
   {
-		response->set_data("Unable to view this MCA.");
-		return;
+		throw(Error.Generic("Unable to view this MCA."));
+		return 0;
   }
 
   werror("**** name: %O mca: %O wedge: %O\n", mcaid, mca, mca?mca->wedge:0);
@@ -434,7 +436,6 @@ void processMCARequest(Request id, Response response, Template.View view, string
 
   id->misc->session_variables->mca = mca;
 
-object dbo = app->load_matcase_dbobj_by_id(mcaid);
 if(dbo && dbo["owner"] == id->misc->session_variables->user)
   view->add("is_owner", 1);
 else
@@ -484,7 +485,7 @@ if(matrix->character == "0")
   view->add("not_in_matcase", not_in_matcase);    
 
   // response->set_data("<pre>" + sprintf("%O", not_in_matcase));
-
+  return 1;
 }
 
 

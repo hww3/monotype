@@ -174,7 +174,7 @@ line-height: 11.5pt;
 		  <% } %>
 <% } %>
 <p>
-prepared by <%=data->dbo["owner"]["name"]%> at <%#format_date "var": Calendar.now() %>
+prepared by <%=data->dbo["owner"]["name"]%> on <%#format_date "var": Calendar.now() %>
 
     </div>
 
