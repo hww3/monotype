@@ -118,6 +118,9 @@ public void do_generate(Request id, Response response, Template.View v, mixed ..
 		else data = id->variables->input_text;
 		// = "Now is the time for all good men to come to the aid of their country. Mary had a little lamb, its fleece was white as snow. Everywhere that mary went, the lamb was sure to go.<qo>";
 	
+	// skip braindead windows byte order mark.
+	if(data[0..2] == "\xEF\xBB\xBF") data = data[3..];
+
 	object g = Monotype.Generator(settings);
 	g->set_hyphenation_rules(id->misc->session_variables->user["Preferences"]["hyphenation_rules"]["value"]);
 	g->parse(data);
@@ -226,6 +229,10 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 	string data;
 	if(id->variables->input_type=="file") data = /*utf8_to_string*/(id->variables["input-file"]);
 	else data = (id->variables->input_text);
+
+	// skip braindead windows byte order mark.
+	if(data[0..2] == "\xEF\xBB\xBF") data = data[3..];
+
 	// = "Now is the time for all good men to come to the aid of their country. Mary had a little lamb, its fleece was white as snow. Everywhere that mary went, the lamb was sure to go.<qo>";
 	
 	object g, b;
