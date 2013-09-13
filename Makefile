@@ -92,3 +92,9 @@ webapp: fins
 	cp -Rf webapps/Keyboard "${RIBBON_GENERATOR}.app/Contents/Resources"
 	cp -Rf modules/* "${RIBBON_GENERATOR}.app/Contents/Resources/Keyboard/modules"
 	cp -Rf CHANGES "${RIBBON_GENERATOR}.app/Contents/Resources"
+
+testsuite: testsuite.in
+	/usr/local/pike/7.9.5/include/pike/mktestsuite testsuite.in > testsuite
+
+verify:	testsuite
+	pike -Mmodules -x test_pike testsuite

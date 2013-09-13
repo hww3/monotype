@@ -4,6 +4,7 @@
    from ribbon input, which was causing suprious "invalid
    activator" warnings.
 - Ribbon Generator: allow ribbon configs to be re-saved.
+- MCA Editor: allow shared MCAs to be downloaded and printed.
 
 20130908
 - Caster Controller: Resized screen and buttons for ease of 
