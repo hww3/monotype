@@ -413,6 +413,13 @@ void processMCARequest(Request id, Response response, Template.View view, string
   view->add("now", (string)time());
 
   mca = app->load_matcase(mcaid);
+  
+  if(mca && mca["owner"] != id->misc->session_variables->user && !mca["is_public"])
+  {
+		response->set_data("Unable to view this MCA.");
+		return;
+  }
+
   werror("**** name: %O mca: %O wedge: %O\n", mcaid, mca, mca?mca->wedge:0);
 
   if(mca->wedge)
@@ -537,9 +544,14 @@ public void download(Request id, Response response, Template.View view, mixed ..
 	  {
 		response->set_data("You must provide an MCA to download.");
 	  }
+	  
+	  mca = app->load_matcase_dbobj_by_id(args[0]);
 
-	  mca = app->load_matcase_dbobj_by_id(args[0], id->misc->session_variables->user);
-	
+    if(mca && mca["owner"] != id->misc->session_variables->user && !mca["is_public"])
+    {
+  		response->set_data("Unable to view this MCA.");
+  		return;
+	  }
 	response->set_data(mca["xml"]);
     response->set_header("content-disposition", "attachment; filename=\"" + 
         mca["name"] + ".xml\"");	
