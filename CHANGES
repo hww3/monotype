@@ -1,8 +1,26 @@
 20130911
 - MCA Editor: add printable PDF view.
+- Ribbon Generator: 
+
+20130908
+- Caster Controller: Resized screen and buttons for ease of 
+   use in foundry.
+- Caster Controller: Pin Control is now a drawer, and has an 
+   easy access button on the main screen.
+- Caster Controller: Forward/Backward/Beginning buttons are 
+   always enabled once a ribbon is started.
+- Caster Controller: Added Start Pump/Stop Pump and Deliver 
+   line buttons.
+- Caster Controller: Added new preference (on by default) 
+    that enables automatic stopping/starting of the pump when
+    the ribbon is started and stopped.
+- Caster Controller: Added "Lines in Job" drawer that shows 
+    the lines in the job, with the current line highlighted.
+- Caster Controller: Fixed an "off by 1" error that caused 
+    the user interface to suggest the ribbon was 1 line 
+    longer than it actually was.
 
 20130830
-
 - Ribbon Generator: add Small Caps to punctuation 
    substitution list and expand punctuation subset.
 - Ribbon Generator: check that mould blade isn't drawn too far.
