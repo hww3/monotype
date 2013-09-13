@@ -453,6 +453,7 @@ else
   view->add("mca", mca);
   view->add("rows", r);   
   view->add("cols", c);
+  view->add("dbo", dbo);
   view->add("problems", mca->problems);
   view->add("description", mca->description);
 

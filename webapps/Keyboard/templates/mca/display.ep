@@ -173,6 +173,8 @@ line-height: 11.5pt;
 		   <%=(((int)i)+1)%>. <%=replace(p[2], "\n", "")%><br>
 		  <% } %>
 <% } %>
+<p>
+prepared by <%=data->dbo["owner"]["name"]%> at <%#format_date "var": Calendar.now() %>
 
     </div>
 
