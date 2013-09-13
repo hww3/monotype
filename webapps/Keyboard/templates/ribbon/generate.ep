@@ -67,8 +67,16 @@ function setWedge(data, wedgeid)
 <%}%>
 </select>
 <button name="load_config" value="Load">Load Settings</button>
-Name <input type="text" name="name"/> <button name="save_config">Save Settings</button> 
+&nbsp; || &nbsp; 
+Name <select name="save_name">
+  <option></option>
+<%foreach(data->configs; int i; object c){ %>
+  <option><%=c.name%>
+<%}%>
+</select>
 
+or <input type="text" name="name"/> <button name="save_config">Save Settings</button> 
+&nbsp; || &nbsp; 
 <select name="dconfig">
 <%foreach(data->configs; int i; object c){ %>
   <option value="<%=c.id%>"><%=c.name%>

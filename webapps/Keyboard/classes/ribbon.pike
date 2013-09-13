@@ -160,11 +160,25 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 	  return;
   }  
   
-	if(id->variables->save_config)
+	else if(id->variables->load_config)
 	{
 	  object rc;
+    array rv = Fins.Model.find.ribbon_configs((["id": (int)id->variables->config, "User": user]));
+    if(sizeof(rv))
+      rc = rv[0];
+    if(!rc)
+      throw(Error.Generic("Unable to find ribbon config for user " + user["username"] + " with id=" + id->variables->config + ".\n"));
+    
+	  response->flash("msg", "Settings loaded from " + rc["name"] + ".");	  
+	  response->redirect_temp(generate, ({}), (["load_config": 1, "config": rc["id"]]));
+	  return;
+	}
+	else if(id->variables->save_config)
+	{
+	  object settings;
 	  
 	  string name = String.trim_all_whites(id->variables->name || "");
+	  if(id->variables->save_name != "") name = id->variables->save_name;
 	  
 	  if(!name) 
 	  { 
@@ -174,9 +188,11 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 	  
     array rv = Fins.Model.find.ribbon_configs((["name": name, "User": user]));
     if(sizeof(rv))
-      rc = rv[0]; 
-    if(rc)
-      throw(Error.Generic("Configuration for " + user["username"] + " with name=" + name + " already exists.\n"));
+      settings = rv[0]; 
+    else
+      settings = Keyboard.Objects.Ribbon_config();
+
+//      throw(Error.Generic("Configuration for " + user["username"] + " with name=" + name + " already exists.\n"));
 	  
 	  mapping s = copy_value(id->variables);
 	  m_delete(s, "input-file");
@@ -190,27 +206,15 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
     werror("s: %O\n", s);
     string se = encode_value(s);
     
-    object settings = Keyboard.Objects.Ribbon_config();
     settings["name"] = name;
     settings["definition"] = se;
     settings["User"] = user;
-    settings->save();
+    
+    if(settings->is_new_object())
+      settings->save();
     
 	  response->flash("msg", "Settings saved as " + name + ".");
 	  response->redirect_temp(generate, ({}), (["load_config": 1, "config": settings["id"] ]));
-	  return;
-	}
-	else if(id->variables->load_config)
-	{
-	  object rc;
-    array rv = Fins.Model.find.ribbon_configs((["id": (int)id->variables->config, "User": user]));
-    if(sizeof(rv))
-      rc = rv[0];
-    if(!rc)
-      throw(Error.Generic("Unable to find ribbon config for user " + user["username"] + " with id=" + id->variables->config + ".\n"));
-    
-	  response->flash("msg", "Settings loaded from " + rc["name"] + ".");	  
-	  response->redirect_temp(generate, ({}), (["load_config": 1, "config": rc["id"]]));
 	  return;
 	}
 	

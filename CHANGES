@@ -1,6 +1,9 @@
 20130911
 - MCA Editor: add printable PDF view.
-- Ribbon Generator: 
+- Ribbon Generator: remove windows UTF8 byte order mark (BOM)
+   from ribbon input, which was causing suprious "invalid
+   activator" warnings.
+- Ribbon Generator: allow ribbon configs to be re-saved.
 
 20130908
 - Caster Controller: Resized screen and buttons for ease of 
