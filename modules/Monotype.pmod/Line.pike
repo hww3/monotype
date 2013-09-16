@@ -540,7 +540,7 @@ import Monotype;
       		          cc = nc;
       	          }
 
-      	          buf->sprintf("S ");
+      	          buf->add("S ");
       	       }
       	    }
           }
