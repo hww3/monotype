@@ -53,3 +53,21 @@ void changes(object id, object response, object v, mixed ... args)
 {
 	v->add("changes" , Stdio.read_file("CHANGES"));
 }
+
+void _backup_db(object id, object response, object v, mixed ... args)
+{
+  if(id->variables->destination)
+  {
+werror("REMOTE: %O\n", id->remoteaddr);
+    if(!has_prefix(id->remoteaddr, "127.0.0.1"))
+    {
+      response->set_data("ERROR");
+      return;
+    }
+    string src = master()->resolv("Fins.DataSource._default")->path;
+    string dest = id->variables->destination;
+    werror("Copying database from %O to %O\n", src, dest);
+    Stdio.cp(src, dest);    
+    response->set_data("OK");
+  }
+}

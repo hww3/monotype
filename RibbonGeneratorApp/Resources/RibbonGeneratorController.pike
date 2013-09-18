@@ -2,6 +2,8 @@ import Public.ObjectiveC;
 
 //inherit Cocoa.NSObject;
 
+string URL = "http://localhost:5675/";
+
 Cocoa.NSApplication app;
 object Spinner;
 Cocoa.NSButton LaunchBrowser;
@@ -33,8 +35,14 @@ void doBackupData_(Cocoa.NSObject obj)
   object file = files->path();
   werror("fILE:%O\n",(string)( file->__objc_classname));
   werror("fILE:%O\n",(string)( file->UTF8String() ));
-
-  werror("app: %O\n", values(finserve->apps)[0]->get_application()->do_generic_method(copy_db, utf8_to_string(file->UTF8String())));
+  string res;
+  res = Protocols.HTTP.post_url(URL + "_backup_db/", (["destination": utf8_to_string(file->UTF8String()), "PSESSIONID": "12345"]))->data();
+//werror("RES: %O\n", res);
+  if(res != "OK") 
+  {
+    throw(Error.Generic("An error occurred backing up your database: " + res + "\n"));
+  }
+//  werror("app: %O\n", values(finserve->apps)[0]->get_application()->do_generic_method(copy_db, utf8_to_string(file->UTF8String())));
 
 //  Stdio.cp(finserve, utf8_to_string(file->UTF8String()));
 }
@@ -58,7 +66,7 @@ void doLaunchBrowser_(Cocoa.NSObject obj)
 
   object ws = Cocoa.NSWorkspace.sharedWorkspace();
 
-  object url = Cocoa.NSURL.URLWithString_("http://localhost:5675");
+  object url = Cocoa.NSURL.URLWithString_(URL);
 
   ws.openURL_(url);
 }
