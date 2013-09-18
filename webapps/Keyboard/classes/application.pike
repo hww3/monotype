@@ -8,10 +8,12 @@ void start()
 {
 	// among other things, if we're a desktop version of this app, 
 	// we always log in autmatically as the user 'desktop'
-	if(all_constants()["NSApp"])
+	if(all_constants()["__APPPATH"])
 	{
+werror("RUNNIGN IN DESKTOP MODE.\n");
 	 	is_desktop = 1;
 	}
+
 }
 
 void migrate_old_to_db()

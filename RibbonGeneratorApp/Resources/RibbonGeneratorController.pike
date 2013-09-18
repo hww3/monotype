@@ -9,6 +9,8 @@ Cocoa.NSTextField StartupLabel;
 Cocoa.NSButton ViewLog;
 Cocoa.NSButton BackupData;
 
+object server;
+
 void create()
 {
 //  ::create();
@@ -88,16 +90,27 @@ werror("**** " + (string)folder  + "\n");
 		fm->createDirectoryAtPath_attributes_(folder, ([]));
 	}
 
-   finserve = master()->resolv("Fins.AdminTools.FinServe")(({}));
+
+   string ap = __APPPATH;
+   if(ap[0] != '/')
+   {
+werror("AP: %O\n", ap);
+werror("CWD: %O\n", getcwd());
+     ap = combine_path(getcwd(), "../../..",  ap);
+   } 
+
+   signal(signum("USR1"), finserveStarted);  
+   server = Process.create_process(({ap, "--run-generator", "5675", "--parent-process", (string)getpid()}));
+//   finserve = master()->resolv("Fins.AdminTools.FinServe")(({}));
 /*
    finserve->project = "Keyboard";
    finserve->config_name = "desktop";
    finserve->my_port = 5675;
 */
-    finserve->no_virtual = 1;
-   finserve->ready_callback = finserveStarted;
-   Thread.Thread(finserve->do_startup, ({"Keyboard"}), ({"desktop"}), 5675);
-  if(!finserve->started())
+//   finserve->no_virtual = 1;
+//  finserve->ready_callback = finserveStarted;
+//   Thread.Thread(finserve->do_startup, ({"Keyboard"}), ({"desktop"}), 5675);
+//  if(!finserve->started())
   {
     Spinner->startAnimation_(this);
     StartupLabel->setStringValue_("Starting...");
@@ -107,10 +120,11 @@ werror("**** " + (string)folder  + "\n");
 void applicationWillTerminate_(object event)
 {
 werror("**** QUITTING\n");
-  destruct(finserve);
+  server->kill(9);
+//  destruct(finserve);
 }
 
-void finserveStarted(object app)
+void finserveStarted(int x)
 {
 Spinner->stopAnimation_(this);
 LaunchBrowser->setEnabled_(1);

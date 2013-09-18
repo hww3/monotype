@@ -5,7 +5,7 @@ object get_context(mapping _config)
   object c;
 
   // are we running in a desktop mode?
-  if(all_constants()["NSApp"])
+  if(all_constants()["__APPPATH"])
   {
     c = Keyboard.DesktopAppModelContext(_config, Fins.Model.DEFAULT_MODEL);
     c->config = config;
