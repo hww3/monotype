@@ -477,7 +477,8 @@ int process_setting_buffer(int|void exact)
       {
  	      while(sizeof(data_to_set)>++j && data_to_set[j] != JustifyingSpace)
  	      {
-          tl->add(data_to_set[i]);
+//		werror("adding to tight line: %O\n", data_to_set[j]);
+          tl->add(data_to_set[j]);
         } 
       }
  	     
@@ -854,75 +855,75 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 //		process_setting_buffer();
 		isitalics ++;
 	}
-	if(lcdata == "</i>")
+	else if(lcdata == "</i>")
 	{
 //		process_setting_buffer();
 		isitalics --;
 		if(isitalics < 0) isitalics = 0;
 	}
-	if(lcdata == "<b>")
+	else if(lcdata == "<b>")
 	{
 	//	process_setting_buffer();
 	//	process_setting_buffer();
 		isbold ++;
 	}
-	if(lcdata == "</b>")
+	else if(lcdata == "</b>")
 	{
 //		process_setting_buffer();
 		isbold --;
 		if(isbold < 0) isbold = 0;
 	}
-    if(lcdata == "<sc>")
+   else if(lcdata == "<sc>")
     {
 //	   process_setting_buffer();
        issmallcaps ++;
     }
-    if(lcdata == "</sc>")
+   else if(lcdata == "</sc>")
     {
 //	  process_setting_buffer();
       issmallcaps --;
       if(issmallcaps < 0) issmallcaps = 0;
     }
 
-    if(lcdata == "<allowtightlines>")
+   else if(lcdata == "<allowtightlines>")
     {
       werror("ENABLING TIGHT LINES\n");
       allow_tight_lines = 1;  
     }
 
-    if(lcdata == "</allowtightlines>")
+   else if(lcdata == "</allowtightlines>")
     {
       werror("DISABLING TIGHT LINES\n");
       allow_tight_lines = 0;  
     }
 
-  if(lcdata == "<nohyphenation>")
+  else if(lcdata == "<nohyphenation>")
   {
     werror("disABLING HYPHENATION\n");
     canHyphenate = 0;  
   }
 
-  if(lcdata == "</nohyphenation>")
+  else if(lcdata == "</nohyphenation>")
   {
     canHyphenate = 1;  
   }
   
-	if(lcdata == "<left>")
+	else if(lcdata == "<left>")
 	{
 		process_setting_buffer();
 		line_mode = MODE_LEFT;
 	}
-	if(lcdata == "</left>")
+	else if(lcdata == "</left>")
 	{
 		process_setting_buffer();
 		line_mode = MODE_JUSTIFY;
 	}
-	if(lcdata == "<center>")
+	else if(lcdata == "<center>")
 	{
 		process_setting_buffer();
 		line_mode = MODE_CENTER;
 	}
-	if(lcdata == "</center>")
+	else if(lcdata == "</center>")
 	{
 		process_setting_buffer();
 		line_mode = MODE_JUSTIFY;
@@ -1092,12 +1093,12 @@ void make_new_line(int|void newpara)
     }
     else
     {
-      werror(" NOT adding buffer.\n");
+//      werror(" NOT adding buffer.\n");
     }
   }
   else
   {
-    werror(" OTHER not adding buffer.\n");
+//    werror(" OTHER not adding buffer.\n");
   }
   
   if(current_line && pad_units)

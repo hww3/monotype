@@ -14,6 +14,11 @@ string character;
 
 constant is_styled_sort = 1;
 
+protected string _sprintf(mixed t)
+{
+  return "StyledSort(" + activator + "/" + character + ")";
+}
+
 protected void create(string sort, object m, mapping c, int isitalics, int isbold, int issmallcaps, float adjust, int nohyphenation)
 {
   create_modifier(isitalics, isbold, issmallcaps);
