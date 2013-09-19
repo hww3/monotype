@@ -108,6 +108,7 @@ werror("CWD: %O\n", getcwd());
    } 
 
    signal(signum("USR1"), finserveStarted);  
+   signal(signum("USR2"), finserveFailed);  
    server = Process.create_process(({ap, "--run-generator", "5675", "--parent-process", (string)getpid()}));
 //   finserve = master()->resolv("Fins.AdminTools.FinServe")(({}));
 /*
@@ -138,4 +139,12 @@ Spinner->stopAnimation_(this);
 LaunchBrowser->setEnabled_(1);
 BackupData->setEnabled_(1);
     StartupLabel->setStringValue_("Running");
+}
+
+void finserveFailed(int x)
+{
+Spinner->stopAnimation_(this);
+LaunchBrowser->setEnabled_(0);
+BackupData->setEnabled_(0);
+    StartupLabel->setStringValue_("Startup Failed");
 }

@@ -25,16 +25,26 @@ int main(int argc, array argv)
 
   if(port)
   {
-    master()->add_predefine("SINGLE_TENANT", "1");
-     finserve = master()->resolv("Fins.AdminTools.FinServe")(({}));  
+    mixed err;
+    System.syslog(5, "Starting Ribbon Generator, PID = " + getpid());
+    err = catch {
+      master()->add_predefine("SINGLE_TENANT", "1");
+	
+       finserve = master()->resolv("Fins.AdminTools.FinServe")(({}));  
 werror("PROJECT: %O\n", finserve);
 //     finserve->project = "Keyboard";
 //     finserve->config_name = "desktop";
 //     finserve->my_port = 5675;
-     finserve->no_virtual = 1;
-     finserve->ready_callback = finserveStarted;
-     finserve->do_startup(({"Keyboard"}), ({"desktop"}), 5675);    
-      return -1;
+       finserve->no_virtual = 1;
+       finserve->ready_callback = finserveStarted;
+       finserve->failure_callback = finserveFailed;
+       finserve->do_startup(({"Keyboard"}), ({"desktop"}), 5675);    
+       return -1;
+    };
+    if(err) 
+    {
+      finserveFailed(err);
+    }
   }
   else
   {
@@ -60,5 +70,17 @@ void finserveStarted(object app)
   {
     werror("SIGNALLING WE'RE UP.\n");
     kill(parent, signum("USR1"));
+  }
+}
+
+void finserveFailed(object bt)
+{
+  if(parent)
+  {
+    werror("SIGNALLING WE'RE DOWN.\n");
+    System.syslog(3, master()->describe_backtrace(bt));
+    kill(parent, signum("USR2"));
+    sleep(2);
+    exit(2);
   }
 }
