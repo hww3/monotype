@@ -1,3 +1,10 @@
+20130918
+- RibbonGenerator: improve standalone performance by
+   spawning RibbonGenerator server in child process. Also,
+   failures during startup are logged in Console.
+- RibbonGenerator: tight lines on partial words no longer
+   add incorrect sorts to the line.
+
 20130911
 - MCA Editor: add printable PDF view.
 - Ribbon Generator: remove windows UTF8 byte order mark (BOM)
