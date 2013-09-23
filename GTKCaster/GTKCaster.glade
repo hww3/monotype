@@ -513,6 +513,124 @@
           </packing>
         </child>
         <child>
+          <widget class="GtkHBox" id="hbox17">
+            <property name="height_request">120</property>
+            <property name="visible">True</property>
+            <child>
+              <widget class="GtkButton" id="DisablePumpButton">
+                <property name="label" translatable="yes">Disable Pump</property>
+                <property name="width_request">125</property>
+                <property name="height_request">125</property>
+                <property name="visible">True</property>
+                <property name="sensitive">False</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <signal name="clicked" handler="DisablePumpButton_clicked_cb"/>
+              </widget>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="padding">12</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkButton" id="EnblePumpButton">
+                <property name="label" translatable="yes">Enable Pump</property>
+                <property name="width_request">125</property>
+                <property name="height_request">125</property>
+                <property name="visible">True</property>
+                <property name="sensitive">False</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <signal name="clicked" handler="EnablePumpButton_clicked_cb"/>
+              </widget>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="padding">12</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkButton" id="TripGalleyButton">
+                <property name="label" translatable="yes">Trip Galley</property>
+                <property name="width_request">125</property>
+                <property name="height_request">125</property>
+                <property name="visible">True</property>
+                <property name="sensitive">False</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <signal name="clicked" handler="TripGalleyButton_clicked_cb"/>
+              </widget>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="padding">12</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkFixed" id="fixed7">
+                <property name="width_request">120</property>
+                <property name="visible">True</property>
+              </widget>
+              <packing>
+                <property name="position">3</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkVBox" id="vbox40">
+                <property name="visible">True</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <widget class="GtkButton" id="ManualPinControlButton">
+                    <property name="label" translatable="yes">Manual Pin Control</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <signal name="clicked" handler="ManualPinControlButton_clicked_cb"/>
+                  </widget>
+                  <packing>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="GtkButton" id="LinesInJobButton">
+                    <property name="label" translatable="yes">Lines in Job</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <signal name="clicked" handler="LinesInJobButton_clicked_cb"/>
+                  </widget>
+                  <packing>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="GtkButton" id="JumpToLine">
+                    <property name="label" translatable="yes">Jump to Line</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <signal name="clicked" handler="JumpToLineButton_clicked_cb"/>
+                  </widget>
+                  <packing>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+              </widget>
+              <packing>
+                <property name="position">4</property>
+              </packing>
+            </child>
+          </widget>
+          <packing>
+            <property name="fill">False</property>
+            <property name="position">9</property>
+          </packing>
+        </child>
+        <child>
           <widget class="GtkHBox" id="hbox2">
             <property name="height_request">120</property>
             <property name="visible">True</property>
@@ -600,7 +718,7 @@
           </widget>
           <packing>
             <property name="fill">False</property>
-            <property name="position">9</property>
+            <property name="position">10</property>
           </packing>
         </child>
         <child>
@@ -609,7 +727,7 @@
             <property name="visible">True</property>
           </widget>
           <packing>
-            <property name="position">10</property>
+            <property name="position">11</property>
           </packing>
         </child>
       </widget>
@@ -2186,7 +2304,7 @@ H William Welliver III</property>
                     <property name="update_policy">delayed</property>
                     <property name="adjustment">0 0 35 1 5 5</property>
                     <property name="digits">0</property>
-                    <signal name="value-changed" handler="debounceChanged"/>
+                    <signal name="value_changed" handler="debounceChanged"/>
                   </widget>
                   <packing>
                     <property name="position">0</property>
