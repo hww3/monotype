@@ -116,7 +116,8 @@ void loadJob_(object a)
   set_job_info();
 
   CasterToggleButton->setEnabled_(1);
-  JumpToLineItem->setEnabled_(1);
+  JumpToLineButton->setEnabled_(1);
+  JumpToLine->setEnabled_(1);
   app->mainMenu()->update();
   updateLinesView();
 }

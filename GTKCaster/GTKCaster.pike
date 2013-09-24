@@ -290,7 +290,8 @@ void LoadJobButton_clicked_cb(mixed ... args)
     jobinfo = Driver->loadRibbon(file);
     set_job_info();
     CasterToggleButton->set_sensitive(1);
-    JumpToLineItem->set_sensitive(1);
+    View_JumpToLine_Menu->set_sensitive(1);
+    JumpToLineButton->set_sensitive(1);
 //  app->mainMenu()->update();
 
   }

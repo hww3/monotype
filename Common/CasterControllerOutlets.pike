@@ -9,6 +9,8 @@ object LoadJobButton;
 object PinControlWindow;
 object JumpToLineWindow;
 
+object JumpToLineButton;
+
 object PinControlItem;
 object JumpToLineItem;
 object LoadJobItem;

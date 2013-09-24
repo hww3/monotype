@@ -600,10 +600,11 @@
                 <child>
                   <widget class="GtkButton" id="LinesInJobButton">
                     <property name="label" translatable="yes">Lines in Job</property>
-                    <property name="visible">True</property>
+                    <property name="sensitive">False</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="focus_on_click">False</property>
+                    <property name="xalign">0.46000000834465027</property>
                     <signal name="clicked" handler="LinesInJobButton_clicked_cb"/>
                   </widget>
                   <packing>
@@ -611,9 +612,10 @@
                   </packing>
                 </child>
                 <child>
-                  <widget class="GtkButton" id="JumpToLine">
+                  <widget class="GtkButton" id="JumpToLineButton">
                     <property name="label" translatable="yes">Jump to Line</property>
                     <property name="visible">True</property>
+                    <property name="sensitive">False</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="focus_on_click">False</property>
@@ -2230,7 +2232,7 @@
     <property name="type_hint">normal</property>
     <property name="has_separator">False</property>
     <property name="program_name">Monotype Caster Control</property>
-    <property name="version">0.8</property>
+    <property name="version">1.0</property>
     <property name="copyright" translatable="yes">Copyright 2005-2013
 H William Welliver III</property>
     <property name="website">http://bill.welliver.org/space/letterpress/monotype/</property>
