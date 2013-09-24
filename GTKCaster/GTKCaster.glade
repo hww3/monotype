@@ -374,6 +374,7 @@
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="tooltip" translatable="yes">	</property>
+                <property name="focus_on_click">False</property>
                 <signal name="clicked" handler="LoadJobButton_clicked_cb"/>
               </widget>
               <packing>
@@ -522,9 +523,9 @@
                 <property name="width_request">125</property>
                 <property name="height_request">125</property>
                 <property name="visible">True</property>
-                <property name="sensitive">False</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="focus_on_click">False</property>
                 <signal name="clicked" handler="DisablePumpButton_clicked_cb"/>
               </widget>
               <packing>
@@ -540,9 +541,9 @@
                 <property name="width_request">125</property>
                 <property name="height_request">125</property>
                 <property name="visible">True</property>
-                <property name="sensitive">False</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="focus_on_click">False</property>
                 <signal name="clicked" handler="EnablePumpButton_clicked_cb"/>
               </widget>
               <packing>
@@ -558,9 +559,9 @@
                 <property name="width_request">125</property>
                 <property name="height_request">125</property>
                 <property name="visible">True</property>
-                <property name="sensitive">False</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="focus_on_click">False</property>
                 <signal name="clicked" handler="TripGalleyButton_clicked_cb"/>
               </widget>
               <packing>
@@ -589,7 +590,8 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <signal name="clicked" handler="ManualPinControlButton_clicked_cb"/>
+                    <property name="focus_on_click">False</property>
+                    <signal name="clicked" handler="do_manual_pin_control"/>
                   </widget>
                   <packing>
                     <property name="position">0</property>
@@ -601,6 +603,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <property name="focus_on_click">False</property>
                     <signal name="clicked" handler="LinesInJobButton_clicked_cb"/>
                   </widget>
                   <packing>
@@ -613,7 +616,8 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <signal name="clicked" handler="JumpToLineButton_clicked_cb"/>
+                    <property name="focus_on_click">False</property>
+                    <signal name="clicked" handler="do_jump"/>
                   </widget>
                   <packing>
                     <property name="position">2</property>
@@ -627,6 +631,7 @@
           </widget>
           <packing>
             <property name="fill">False</property>
+            <property name="padding">12</property>
             <property name="position">9</property>
           </packing>
         </child>
@@ -643,6 +648,7 @@
                 <property name="sensitive">False</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="focus_on_click">False</property>
                 <signal name="clicked" handler="SkipBeginButton_clicked_cb"/>
               </widget>
               <packing>
@@ -661,6 +667,7 @@
                 <property name="sensitive">False</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="focus_on_click">False</property>
                 <signal name="clicked" handler="SkipBackwardButton_clicked_cb"/>
               </widget>
               <packing>
@@ -679,6 +686,7 @@
                 <property name="sensitive">False</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="focus_on_click">False</property>
                 <signal name="clicked" handler="SkipForwardButton_clicked_cb"/>
               </widget>
               <packing>
@@ -706,6 +714,7 @@
                 <property name="sensitive">False</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="focus_on_click">False</property>
                 <signal name="toggled" handler="CasterToggleButton_toggled_cb"/>
               </widget>
               <packing>
@@ -2295,6 +2304,20 @@ H William Welliver III</property>
               </packing>
             </child>
             <child>
+              <widget class="GtkCheckButton" id="AutoStartStopCheckbox">
+                <property name="label" translatable="yes">Enable Auto Start/Stop Mode</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="draw_indicator">True</property>
+                <signal name="toggled" handler="toggleAutoStartStop"/>
+              </widget>
+              <packing>
+                <property name="padding">7</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
               <widget class="GtkHBox" id="hbox16">
                 <property name="visible">True</property>
                 <child>
@@ -2322,7 +2345,7 @@ H William Welliver III</property>
                 </child>
               </widget>
               <packing>
-                <property name="position">2</property>
+                <property name="position">3</property>
               </packing>
             </child>
             <child>
@@ -2331,7 +2354,7 @@ H William Welliver III</property>
                 <property name="visible">True</property>
               </widget>
               <packing>
-                <property name="position">3</property>
+                <property name="position">4</property>
               </packing>
             </child>
           </widget>

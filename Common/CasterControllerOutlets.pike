@@ -78,6 +78,7 @@ object c14;
 mapping jobinfo;
 
 int CycleSensorMode;
+int AutoStartStop;
 int was_caster_enabled;
 
 array buttonstotouch = 

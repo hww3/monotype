@@ -53,9 +53,15 @@ void register_preferences()
   load_preferences();
   add_preference("cycleSensorDebounce", 0);
   add_preference("cycleSensorIsPermanent", 0);
+  add_preference("autoStartStop", 1);
   save_preferences();
   DebounceSlider->set_value(preferences->cycleSensorDebounce);
   CycleSensorTypeCheckbox->set_active(preferences->cycleSensorIsPermanent);
+  AutoStartStopCheckbox->set_active(preferences->autoStartStop);
+
+  Driver->AutoStartStopMode = preferences->autoStartStop;
+  Driver->CycleSensorDebounce = preferences->cycleSensorDebounce;
+  CycleSensorMode = preferences->cycleSensorIsPermanent;	
 }
 
 void add_preference(string key, mixed value)
@@ -98,6 +104,14 @@ void toggleCycleSensorType(object checkbox)
 
   update_preference("cycleSensorIsPermanent", state);
   CycleSensorMode = state;	
+}
+
+void toggleAutoStartStop(object checkbox)
+{
+  int state = checkbox->get_active();
+
+  update_preference("autoStartStop", state);
+  Driver->AutoStartStopMode = state;	
 }
 
 
@@ -283,6 +297,20 @@ void LoadJobButton_clicked_cb(mixed ... args)
   fc->destroy();
 }
 
+void EnablePumpButton_clicked_cb(mixed ... args)
+{
+  Driver->enablePump();
+}
+
+void DisablePumpButton_clicked_cb(mixed ... args)
+{
+  Driver->disablePump();
+}
+
+void TripGalleyButton_clicked_cb(mixed ... args)
+{
+  Driver->tripGalley();
+}
 
 void set_job_info()
 {
