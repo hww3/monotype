@@ -852,35 +852,28 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	
 	if(lcdata == "<i>")
 	{
-//		process_setting_buffer();
 		isitalics ++;
 	}
 	else if(lcdata == "</i>")
 	{
-//		process_setting_buffer();
 		isitalics --;
 		if(isitalics < 0) isitalics = 0;
 	}
 	else if(lcdata == "<b>")
 	{
-	//	process_setting_buffer();
-	//	process_setting_buffer();
 		isbold ++;
 	}
 	else if(lcdata == "</b>")
 	{
-//		process_setting_buffer();
 		isbold --;
 		if(isbold < 0) isbold = 0;
 	}
    else if(lcdata == "<sc>")
     {
-//	   process_setting_buffer();
        issmallcaps ++;
     }
    else if(lcdata == "</sc>")
     {
-//	  process_setting_buffer();
       issmallcaps --;
       if(issmallcaps < 0) issmallcaps = 0;
     }
@@ -960,7 +953,7 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	  new_paragraph();
     }
 	// insert fixed spaces
-    else if(Regexp.SimpleRegexp("<[sS][0-9]*>")->match(data))
+  else if(Regexp.SimpleRegexp("<[sS][0-9]*>")->match(data))
 	{
 		process_setting_buffer();
 		int toadd = (int)(data[2..sizeof(data)-2]);
@@ -970,6 +963,31 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 			current_line->errors->append(sprintf("Fixed space (want %f units, got %f) won't fit on line... dropping.\n", (float)toadd, added));
 		}
 	}
+	else if(Regexp.SimpleRegexp("<[sS][tT][0-9]*>")->match(data))
+	{
+		process_setting_buffer();
+		int toset = (int)(data[3..sizeof(data)-2]);
+		if(toset > current_line->lineunits)
+		{
+			current_line->errors->append(sprintf("Cannot add space beyond end of line. Requested %f, trimming to %O\n", (float)toset, current_line->lineunits));		  
+      toset = current_line->lineunits;
+		}
+		if(toset > current_line->linelength)
+		{
+			current_line->errors->append(sprintf("Line set beyond requested units, skipping: requested %f, line contains %O\n", (float)toset, current_line->linelength));		  
+      toset = current_line->lineunits;
+		}
+	  
+	  // TODO: we need to get the justifying spaces adjusted appropriately (either remove the S code and make them fixed 
+	  // spaces, or calculate the justification constant required to make them the width of the "placeholder".)
+	  float toadd = toset - current_line->linelength;
+    float added = low_quad_out((float)toadd);
+		if((float)added != (float)toadd)
+		{
+			current_line->errors->append(sprintf("Fixed space (want %f units, got %f) won't fit on line... dropping.\n", (float)toadd, added));
+		}
+	}
+  
 	// indent
 	else if(Regexp.SimpleRegexp("<indent[\\-0-9]*>")->match(lcdata))
 	{
