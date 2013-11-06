@@ -69,6 +69,7 @@ float hanging_punctuation_width = 0.0;
 string last = "";
 array data_to_set = ({});
 
+object space_regex;
 /*
   Settings (partial):
     setwidth
@@ -128,6 +129,8 @@ void create(mapping settings)
     }
   }
   
+  if(!space_regex) 
+    space_regex = Regexp.PCRE.Widestring("\\h");  
 }
 
 void set_matcase(Monotype.MatCaseLayout mca)
@@ -239,6 +242,8 @@ protected array prepare_data(array data, void|StyledSort template)
   {
     if(d == " ")
       out[i] = JustifyingSpace;
+    else if(space_regex->match(d)
+      out[i] = JustifyingSpace;
     else
       out[i] = create_styled_sort(d, space_adjust, template);
   }
@@ -322,6 +327,7 @@ mixed i_parse_data(object parser, string data, mapping extra)
     else if (isbold) mod = "B";
 
     string xdata = replace(data, ({"\r", "\t"}), ({"\n", " "}));
+    
     string dts = replace(xdata, ligature_replacements_from[mod] || ({}), ligature_replacements_to[mod] || ({}));
 
 	if(dts !=  xdata) return dts;
