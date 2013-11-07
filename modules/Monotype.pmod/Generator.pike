@@ -242,7 +242,7 @@ protected array prepare_data(array data, void|StyledSort template)
   {
     if(d == " ")
       out[i] = JustifyingSpace;
-    else if(space_regex->match(d)
+    else if(space_regex->match(d))
       out[i] = JustifyingSpace;
     else
       out[i] = create_styled_sort(d, space_adjust, template);
@@ -978,7 +978,7 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 			current_line->errors->append(sprintf("Cannot add space beyond end of line. Requested %f, trimming to %O\n", (float)toset, current_line->lineunits));		  
       toset = current_line->lineunits;
 		}
-		if(toset > current_line->linelength)
+		if(toset < current_line->linelength)
 		{
 			current_line->errors->append(sprintf("Line set beyond requested units, skipping: requested %f, line contains %O\n", (float)toset, current_line->linelength));		  
       toset = current_line->lineunits;
@@ -987,7 +987,10 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	  // TODO: we need to get the justifying spaces adjusted appropriately (either remove the S code and make them fixed 
 	  // spaces, or calculate the justification constant required to make them the width of the "placeholder".)
 	  float toadd = toset - current_line->linelength;
+	  current_line->set_fixed_js(1);
+	  werror("spacing to\n");
     float added = low_quad_out((float)toadd);
+	  werror("/spacing to\n");
 		if((float)added != (float)toadd)
 		{
 			current_line->errors->append(sprintf("Fixed space (want %f units, got %f) won't fit on line... dropping.\n", (float)toadd, added));
@@ -1105,8 +1108,8 @@ void make_new_line(int|void newpara)
 {
   if(current_line)
     current_line->finalized = 1; // might have to move this further back.
-  
-  werror("*** make_new_line()\n");
+  if(current_line)
+  werror("*** make_new_line(%f/%f)\n", (float)current_line->lineunits, (float)current_line->linelength);
   if(hanging_punctuation_width != 0.0 && current_line && sizeof(current_line->elements))
   {
     string c = current_line->elements[-1]->character;
@@ -1132,6 +1135,14 @@ void make_new_line(int|void newpara)
     low_quad_out((float)pad_units);
     low_quad_out((float)pad_units, 1);
   }
+
+  if(current_line && current_line->js_are_fixed && ((float)current_line->lineunits - (float)current_line->linelength) >= 1.0)
+  {
+    throw(Error.Generic(sprintf("Line without justifying spaces is short by %f units. Correct by quading out!\n", ((float)current_line->lineunits - (float)current_line->linelength))));
+  }
+  
+  if(current_line)
+  werror("*** make_new_line(%f/%f)\n", (float)current_line->lineunits, (float)current_line->linelength);
   
   current_line = low_make_new_line();
   
@@ -1258,7 +1269,7 @@ float low_quad_out(float amount, int|void atbeginning)
   foreach(toadd;int z;int i)
   {
     ix+=i;
-//    werror("adding(%O, %d)\n", i, atbeginning);
+    werror("adding(%O, %d)\n", i, atbeginning);
     
     current_line->add(Sort(spaces[i]), atbeginning, 0);	
 	if(current_line->is_overset())

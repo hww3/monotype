@@ -15,6 +15,9 @@ import Monotype;
 	int little;
 	int spaces; 
 
+  // should justifying spaces be fixed at the "base width" (1 or 2 units less than the js row width)?
+  int js_are_fixed = 0;
+  
   int finalized;
   
   int line_number;
@@ -25,8 +28,8 @@ import Monotype;
 		
 	int max_reduction_units;
 	int min_space_units;
-	int min_little;
-	int min_big;	
+	int min_little, _min_little;
+	int min_big, _min_big;	
 
   // determines whether a line ends with a galley trip justification code.
   int double_justification = 0;
@@ -55,7 +58,23 @@ import Monotype;
   mapping config;
 	
 	int max_ls_adjustment = 2;
-	
+
+  void set_fixed_js(int x)
+  {
+    if(x)
+    {
+      js_are_fixed = 1;
+      min_little = 1;
+      min_big = 1;
+    }
+    else
+    {
+      js_are_fixed = 0;
+      min_little = _min_little;
+      min_big = _min_big;
+    }
+  }	
+  
 	static mixed cast(string t)
 	{
 	   if(t!="string") throw(Error.Generic("invalid cast type " + t + ".\n"));
@@ -88,8 +107,10 @@ import Monotype;
 		m = _m;
 		s = _s;
 		generator = _g;
-		min_little = config->min_little||1;
-		min_big = config->min_big||1;
+		_min_little = config->min_little||1;
+		_min_big = config->min_big||1;
+		min_little = _min_little;
+		min_big = _min_big;
 		
 		setwidth = config->setwidth;
 		lineunits = config->lineunits;		
@@ -154,7 +175,7 @@ import Monotype;
 	{
 	  float justspace = 0.00;
 
-	  if(linespaces)
+	  if(linespaces && !js_are_fixed)
 	  {
 		// algorithm from page 14
 		justspace = (((float)(lineunits)-get_line_length(mylinelength))/linespaces); // in units of set.
@@ -310,7 +331,8 @@ import Monotype;
 	int can_justify()
 	{
 	//	werror("linespaces: %O big: %O little: %O\n", linespaces, big, little);
-	  	return(linespaces && ((big <= 15) && (big > 0))  && ((little <= 15) && (little > 0)));
+	  	return((!js_are_fixed && linespaces && ((big <= 15) && (big > 0))  && ((little <= 15) && (little > 0)))
+	  	  || (((float)lineunits - (float)linelength) <= 1.0));
 	}
 	
 	array render_line()
