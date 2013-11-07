@@ -22,7 +22,7 @@ function getWedge(e)
 {
   var sel = e.options[e.selectedIndex];
   sel = sel.value;
-
+//alert("get wedge: " + sel);
   getWedgeForMCA(sel, "wedge");
 }
 
@@ -46,6 +46,7 @@ function enableText()
 function setWedge(data, wedgeid)
 {
   var s = dojo.byId(wedgeid);
+//alert("wedge: " + s);
   if(!s) return;
 
   for(var i = 0; i < s.options.length; i++)

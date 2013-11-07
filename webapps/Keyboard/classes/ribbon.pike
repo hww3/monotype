@@ -3,6 +3,9 @@ inherit "mono_doccontroller";
 
 int __quiet = 1;
 
+
+mapping pointsystems = (["12.0":"Anglo-American Pica", "12.84":"Cicero", "12.8":"Old English Pica"]);
+
 void start()
 {
   before_filter(app->admin_user_filter);
@@ -80,6 +83,7 @@ public mapping extract_settings(Request id)
 		"unit_adding": (int)id->variables->unitadding,
 		"unit_shift": (int)(id->variables->unit_shift),
 		"mould": (int)id->variables->points,
+		"pointsystemname": pointsystems[id->variables->pointsystem||"12.0"],
 		"pointsystem": (float)id->variables->pointsystem,
 		"setwidth": (float)id->variables->set,
 		"linelengthp": (float)id->variables->linelength,

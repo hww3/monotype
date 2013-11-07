@@ -258,7 +258,7 @@ import Monotype;
 	{
 	  object mat;
 
-//werror("Line.add(%O, %O)\n", activator, atbeginning);
+//werror("Line.add(%O, %O) => %f, %O\n", activator, atbeginning, linelength, min_space_units);
 // justifying space
     if(activator->is_real_js)
     {
@@ -313,11 +313,11 @@ import Monotype;
       }
     };
     int overset = get_line_length(mylinelength) > lineunits ;//|| (linespaces && ((mbig*15)+mlittle)<((min_big*15)+min_little) );
-
+    if(overset) werror("overset, no need to calc.\n");
     overset = overset || (linespaces && ((mbig*15)+mlittle)<((min_big*15)+min_little));
     if(overset)
     {
-      werror("overset: # %d => line length: %d, units in line: %.1f, to add: %.1f, linespaces: %d, just: %d/%d min: %d/%d\n", line_number, lineunits, linelength, (float)mylinelength, linespaces, mbig, mlittle, min_big, min_little);
+      werror("overset: # %d => line length: %d, units in line: %.1f, to add: %.1f, linespaces: %d, just: %d/%d min: %d/%d\n", line_number, lineunits,  get_line_length(mylinelength), (float)mylinelength, linespaces, mbig, mlittle, min_big, min_little);
     }
 
     if(!mylinelength)

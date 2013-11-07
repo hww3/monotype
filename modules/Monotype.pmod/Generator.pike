@@ -973,25 +973,27 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	{
 		process_setting_buffer();
 		int toset = (int)(data[3..sizeof(data)-2]);
+		werror("requesting space to %d\n", toset);
 		if(toset > current_line->lineunits)
 		{
 			current_line->errors->append(sprintf("Cannot add space beyond end of line. Requested %f, trimming to %O\n", (float)toset, current_line->lineunits));		  
       toset = current_line->lineunits;
 		}
-		if(toset < current_line->linelength)
+		if(current_line->linelength > toset)
 		{
 			current_line->errors->append(sprintf("Line set beyond requested units, skipping: requested %f, line contains %O\n", (float)toset, current_line->linelength));		  
-      toset = current_line->lineunits;
+      toset = 0;
 		}
 	  
 	  // TODO: we need to get the justifying spaces adjusted appropriately (either remove the S code and make them fixed 
 	  // spaces, or calculate the justification constant required to make them the width of the "placeholder".)
 	  float toadd = toset - current_line->linelength;
+	  if(toadd < 0.0) toadd = 0.0;
 	  current_line->set_fixed_js(1);
-	  werror("spacing to\n");
+	  werror("spacing to %d/%f/%f/%d\n", toset, toadd, current_line->linelength, current_line->lineunits);
     float added = low_quad_out((float)toadd);
-	  werror("/spacing to\n");
-		if((float)added != (float)toadd)
+	  werror("/spacing to %d/%f/%f/%d\n", toset, toadd, current_line->linelength, current_line->lineunits);
+		if((float)toadd - (float)added >= 1.0)
 		{
 			current_line->errors->append(sprintf("Fixed space (want %f units, got %f) won't fit on line... dropping.\n", (float)toadd, added));
 		}
@@ -1109,7 +1111,7 @@ void make_new_line(int|void newpara)
   if(current_line)
     current_line->finalized = 1; // might have to move this further back.
   if(current_line)
-  werror("*** make_new_line(%f/%f)\n", (float)current_line->lineunits, (float)current_line->linelength);
+//  werror("*** make_new_line(%f/%f)\n", (float)current_line->lineunits, (float)current_line->linelength);
   if(hanging_punctuation_width != 0.0 && current_line && sizeof(current_line->elements))
   {
     string c = current_line->elements[-1]->character;
@@ -1192,7 +1194,7 @@ object create_styled_sort(string sort, float adjust, void|StyledSort template)
 // fill out the line according to the justification method (left/right/etc)
 void quad_out()
 {
-  werror("quad_out()\n");
+//  werror("quad_out()\n");
   current_line->finalized = 1;
   float left = current_line->lineunits - current_line->linelength;
   werror("* have %.1f units left on line.\n", left);
@@ -1232,7 +1234,7 @@ void quad_out()
 //    Tools.throw(Error.Generic, "unable to add %d units because it would cause the line to be overset.\n", left);
   }
 
-  werror("* %.1f units can be added to give acceptably sized justifying spaces.\n", left);
+  werror("* %.1f units can be added to %.1f units already on line to give acceptably sized justifying spaces.\n", left, current_line->linelength);
 
   if(line_mode == MODE_LEFT || line_mode == MODE_JUSTIFY)
   {
@@ -1269,9 +1271,10 @@ float low_quad_out(float amount, int|void atbeginning)
   foreach(toadd;int z;int i)
   {
     ix+=i;
-    werror("adding(%O, %d)\n", i, atbeginning);
+  //  werror("adding(%O, %d) ", i, atbeginning);
     
     current_line->add(Sort(spaces[i]), atbeginning, 0);	
+//    werror("line at %f\n", current_line->linelength);
 	if(current_line->is_overset())
 	{
       werror("overset. added %.2f, at %d\n", current_line->linelength, ix);
@@ -1373,7 +1376,7 @@ string generate_ribbon()
 	buf+=sprintf("mould: %d\n", config->mould);
 	buf+=sprintf("generated: %s\n", Calendar.now()->format_smtp());
 	buf+=sprintf("version: %s\n", Monotype.version);
-	buf+=sprintf("linelength: %.2f\n", config->linelengthp);
+	buf+=sprintf("linelength: %.2f %s\n", config->linelengthp, config->pointsystemname);
 	if(config->unit_adding)
           buf+=sprintf("unit_adding: %s units\n", (string)config->unit_adding);
 
