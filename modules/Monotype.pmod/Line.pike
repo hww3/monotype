@@ -276,6 +276,7 @@ import Monotype;
     }
     else if(mat = activator->get_mat(errors))
 	  {
+//	    werror("have mat: %O width %O, adjust %O\n", mat, mat->get_set_width(), activator->space_adjust);
 	    if(!stealth)
  	  	  linelength+=(mat->get_set_width() + activator->space_adjust);
  	  	 
@@ -287,6 +288,10 @@ import Monotype;
   	  {
   		  elements += ({activator});		
   	  }    
+    }
+    else
+    {
+      werror("No mat!\n");
     }
 
 	  if(!stealth)
@@ -350,12 +355,13 @@ import Monotype;
 	    }
 	    else if(matrix = e->get_mat(errors))
 	    {
+	      werror(string_to_utf8(sprintf("matrix: %O\n", matrix)));
 	      x[i] = MatWrapper(matrix, e->space_adjust);
   	    i++;
 	    }
 	    else
 	    {
-	      werror("skipping %O\n", e);
+	      werror(string_to_utf8(sprintf("skipping %O/%O\n", e, matrix)));
 	    }
 	  }
 	  
@@ -587,6 +593,7 @@ import Monotype;
 		
 		static void create(object _mat, int|float _adjust_space)
 		{
+		  if(_mat == 1) throw(Error.Generic("whoa!\n"));
 			mat = _mat;
 			adjust_space = _adjust_space;
 		}
@@ -607,7 +614,7 @@ import Monotype;
 		static mixed `->(mixed a)
 		{
 			mixed m = ::`->(a);
-			if(m) return m;
+			if(m) return m; 
 			else return mat[a];
 		}
 		mixed _sprintf(mixed x)

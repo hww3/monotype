@@ -1112,6 +1112,7 @@ void make_new_line(int|void newpara)
     current_line->finalized = 1; // might have to move this further back.
   if(current_line)
 //  werror("*** make_new_line(%f/%f)\n", (float)current_line->lineunits, (float)current_line->linelength);
+
   if(hanging_punctuation_width != 0.0 && current_line && sizeof(current_line->elements))
   {
     string c = current_line->elements[-1]->character;
@@ -1143,11 +1144,12 @@ void make_new_line(int|void newpara)
     throw(Error.Generic(sprintf("Line without justifying spaces is short by %f units. Correct by quading out!\n", ((float)current_line->lineunits - (float)current_line->linelength))));
   }
   
-  if(current_line)
-  werror("*** make_new_line(%f/%f)\n", (float)current_line->lineunits, (float)current_line->linelength);
+//  if(current_line)
+//  werror("*** make_new_line(%f/%f)\n", (float)current_line->lineunits, (float)current_line->linelength);
   
   current_line = low_make_new_line();
   
+//  werror("made new line.\n");
   if(indent_adjust)
 	{
   	float toadd = (float)indent_adjust;
@@ -1222,17 +1224,15 @@ void quad_out()
       }
     }
   }
-  {
-    if(left >= current_line->min_space_units && !current_line->linespaces)
-      current_line->add(JustifyingSpace);    
-  }
-
+    
   while(!current_line->can_add(left))
   {
 //    werror("onoe!\n");
     left --;
 //    Tools.throw(Error.Generic, "unable to add %d units because it would cause the line to be overset.\n", left);
   }
+
+  left = current_line->lineunits - current_line->linelength;
 
   werror("* %.1f units can be added to %.1f units already on line to give acceptably sized justifying spaces.\n", left, current_line->linelength);
 
@@ -1256,7 +1256,7 @@ void quad_out()
 
 float low_quad_out(float amount, int|void atbeginning)
 {
-//  werror("low_quad_out(%f, %d)\n", amount, atbeginning);
+//  werror("low_quad_out(%f, %d, %f)\n", amount, atbeginning, current_line->linelength);
   
   array toadd = ({});
   int ix;
@@ -1268,13 +1268,15 @@ float low_quad_out(float amount, int|void atbeginning)
 
   toadd = reverse(toadd);
 
+//werror("spaces: %O\n", spaces);
+
   foreach(toadd;int z;int i)
   {
     ix+=i;
-  //  werror("adding(%O, %d) ", i, atbeginning);
+//    werror("adding(%O, %d, %O) ", i, atbeginning, spaces[i]);
     
     current_line->add(Sort(spaces[i]), atbeginning, 0);	
-//    werror("line at %f\n", current_line->linelength);
+//   werror("line at %f\n", current_line->linelength);
 	if(current_line->is_overset())
 	{
       werror("overset. added %.2f, at %d\n", current_line->linelength, ix);
@@ -1390,19 +1392,25 @@ string generate_ribbon()
     // if this is the first line and we've opted to make the first line long 
     //  (to kick the caster off,) add an extra space at the beginning.
       if(config->trip_at_end && sizeof(lines) && current_line == lines[0])
-      {
+      {  		  
      	  string activator = "";
     	  array aspaces = indices(spaces);
     	  int spacesize;
     	  aspaces = sort(aspaces);
-
+        if(aspaces[-1] == 27) //27 isn't a real space.
+          aspaces[-1] = 18;
+          
     	  if(sizeof(aspaces))
     	    spacesize = aspaces[-1];
     	  if(spacesize)
     	  {
     		  // add at least 18 units of space to the line.
-    		  for(int i = spacesize; i <= 18; i+=spacesize)
+    		  for(int i = 0; i <= 18; i+=spacesize)
+          {
+            werror("trip space added: %O.\n", spaces[spacesize]);            
     	 		  current_line->add(Sort(spaces[spacesize]), 1, 1);
+    	 		  werror("done.\n");
+          }
     	  }
     	  else
     	  {
