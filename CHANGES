@@ -1,3 +1,8 @@
+20131107
+- RibbonGenerator: fix caster trip option so that it now works.
+- RibbonGenerator: add <stN> command that inserts fixed space
+   until the line is at N units. Useful for simple tables.
+
 20130918
 - RibbonGenerator: improve standalone performance by
    spawning RibbonGenerator server in child process. Also,
