@@ -29,3 +29,8 @@ float get_set_width()
   
   else return m->get_set_width() + space_adjust;
 }
+
+static string _sprintf(mixed t)
+{
+  return "Monotype.Sort(" + sprintf("%O", mat) + ")";
+}

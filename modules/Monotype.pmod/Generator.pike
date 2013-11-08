@@ -190,6 +190,9 @@ protected void load_spaces(object m)
   foreach(m->spaces;;object mat)
     spaces[s->get((mat->row_pos<16?mat->row_pos:15))] = mat;  
   
+  if(spaces[9] && spaces[18])
+     spaces[27] = 1;
+
   foreach(m->get_highspaces(s);;object matrix)
   {
     highspaces[matrix->set_width] = matrix;
@@ -197,7 +200,7 @@ protected void load_spaces(object m)
   
   if(config->unit_shift)
   {
-    foreach(m->spaces;;object mat)
+    foreach(m->spaces(s);;object mat)
     {
       object ns = mat->clone();
       float new_width = (float)s->get(mat->row_pos-1 || mat->row_pos);
@@ -1266,14 +1269,17 @@ float low_quad_out(float amount, int|void atbeginning)
   if(!toadd || !sizeof(toadd))
     toadd = simple_find_space((int)floor(amount), spaces);
 
+  array list = ({});
   toadd = reverse(toadd);
+  foreach(toadd;;int x)
+  {
+    if(x == 27) list += ({18,9});
+    else list += ({x});
+  }
 
-//werror("spaces: %O\n", spaces);
-
-  foreach(toadd;int z;int i)
+  foreach(list;int z;int i)
   {
     ix+=i;
-//    werror("adding(%O, %d, %O) ", i, atbeginning, spaces[i]);
     
     current_line->add(Sort(spaces[i]), atbeginning, 0);	
 //   werror("line at %f\n", current_line->linelength);
@@ -1337,8 +1343,6 @@ array simple_find_space(int amount, mapping spaces)
 
 	array toadd = ({});
 
-  if(spaces[9] && spaces[18])
-     spaces[27] = 1;
 
   foreach(reverse(indices(spaces)); int i; int space)
   {

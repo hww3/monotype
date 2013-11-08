@@ -24,7 +24,10 @@ import Public.Parser.XML2;
         if(!functionp(this[k])) m[k] = this[k];
       return m;
     }
-
+    else if(to == "string")
+    {
+      return series + "/" + character + "/" + set_width;
+    }
     else throw(Error.Generic("Casting Matrix to " + to + " not supported."));
   }
 
