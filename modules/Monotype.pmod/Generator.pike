@@ -200,7 +200,7 @@ protected void load_spaces(object m)
   
   if(config->unit_shift)
   {
-    foreach(m->spaces(s);;object mat)
+    foreach(m->spaces;;object mat)
     {
       object ns = mat->clone();
       float new_width = (float)s->get(mat->row_pos-1 || mat->row_pos);
