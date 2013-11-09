@@ -1,3 +1,11 @@
+20131110
+- MCA Editor: Allow <Escape> and <Enter> as shortcuts for 
+   "Cancel" and "OK" in the MCA editor. Note that <Escape>
+   only works when you're not editing one of the text fields.
+- MCA Editor: Format the sort width a bit more nicely.
+- MCA Editor: When editing an empty position, the "matrix type"
+   is changed to "Sort", in order to ease MCA completion.
+
 20131107
 - RibbonGenerator: fix caster trip option so that it now works.
 - RibbonGenerator: add <stN> command that inserts fixed space

@@ -359,6 +359,28 @@ function cancelMat(wgt)
 }
 
 
+var matrixEditor;
+
+function closeEditor(evt){
+  if(!isEditing) return;
+alert("yep1");
+  if (evt.keyCode == dojo.keys.ESCAPE){ 
+alert("yep");
+    matrixEditor._onDoCancel();
+//alert("didcancel");
+    dojo.stopEvent(evt); 
+//alert("didstop");
+    dojo.disconnect(document, "onkeydown", closeEditor);
+//alert("diddisconnect");
+
+  }
+  else if (evt.keyCode == dojo.keys.ENTER){ 
+alert("yep");
+    matrixEditor._onDoSave();
+    dojo.stopEvent(evt); 
+    dojo.disconnect(document, "onkeypress", closeEditor);
+  }
+};
 
 function openWidget(v, row, col, units)
 {
@@ -368,10 +390,13 @@ function openWidget(v, row, col, units)
   // get the mat element, set it to be the contents of the widget div, then create the widget
   dojo.xhrGet({ url: "/mca/getMat?col=" + col + "&row=" + row, handleAs: "xml", load: function(response, ioArgs){ 
 
-    var me = new dijit.TooltipDialog(({id: v.id}));
-    var e = new dijit.form.MatrixEditor(({srcId: v.id, row: row, column: col, default_set_width: units, onSave: saveMat, onCancel: cancelMat, mat: response, popup: me}));
-    me.set('content', e);
-	dijit.popup.open({ popup: me, around: dojo.byId(v.id) });
+    matrixEditor = new dijit.form.MatrixEditor(({id: "matrixeditor" + v.id, srcId: v.id, row: row, column: col, default_set_width: units, onSave: saveMat, onCancel: cancelMat, mat: response, /*popup: me*/}));
+    var me = new dijit.TooltipDialog(({id: v.id
+    }));
+    matrixEditor.setPopup(me);
+    me.set('content', matrixEditor);
+    dijit.popup.open({ popup: me, around: dojo.byId(v.id) });
+    dojo.connect(document, "onkeypress", closeEditor);
     dojo.connect(me, "onClose", function(){ isEditing = false; });
   }});
 }
