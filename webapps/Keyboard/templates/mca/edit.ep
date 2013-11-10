@@ -363,19 +363,13 @@ var matrixEditor;
 
 function closeEditor(evt){
   if(!isEditing) return;
-alert("yep1");
   if (evt.keyCode == dojo.keys.ESCAPE){ 
-alert("yep");
     matrixEditor._onDoCancel();
-//alert("didcancel");
     dojo.stopEvent(evt); 
-//alert("didstop");
     dojo.disconnect(document, "onkeydown", closeEditor);
-//alert("diddisconnect");
 
   }
   else if (evt.keyCode == dojo.keys.ENTER){ 
-alert("yep");
     matrixEditor._onDoSave();
     dojo.stopEvent(evt); 
     dojo.disconnect(document, "onkeypress", closeEditor);
@@ -438,8 +432,12 @@ dojo.xhrPost({ content: {description: value}, url: "/mca/saveDescription",
 <button href="<%#action_url "action": "cancel"%>">Cancel</button>
 </a>
 &nbsp;
+<%#action_link "action": "save", "args": data->now, "reopen": 1%>
+<button class="SaveButton" href="<%#action_url "action": "save", "args": data->now, "reopen": 1 %>" disabled="true">Save</button>
+</a>
+&nbsp;
 <%#action_link "action": "save", "args": data->now%>
-<button class="SaveButton" href="<%#action_url "action": "save", "args": data->now%>" disabled="true">Save</button>
+<button class="SaveButton" href="<%#action_url "action": "save", "args": data->now%>" disabled="true">Save and Close</button>
 </a>
 </div>
 <p>
@@ -588,9 +586,15 @@ function loadStyle(elements, style)
 <%#action_link "action": "cancel"%>
 <button href="<%#action_url "action": "cancel"%>">Cancel</button>
 </a>		
+&nbsp;
+<%#action_link "action": "save", "args": data->now, "reopen": 1 %>
+<button class="SaveButton" href="<%#action_url "action": "save", "args": data->now, "reopen": 1 %>" disabled="true">Save</button>
+</a>
+&nbsp;
 <%#action_link "action": "save", "args": data->now%>
-	<button  class="SaveButton" href="<%#action_url "action": "save", "args": data->now%>" disabled="true">Save</button>
-</a> &nbsp;
+<button class="SaveButton" href="<%#action_url "action": "save", "args": data->now%>" disabled="true">Save and Close</button>
+</a>
+</div>
 
 
 <div id="matsInCaseContainer" style="display:none">

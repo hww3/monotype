@@ -238,14 +238,18 @@ public void cancel(Request id, Response response, Template.View view, mixed args
 
 public void save(Request id, Response response, Template.View view, mixed args)
 {
+object mca_db;
 	werror("save\n");
-if(catch(
+if(catch(mca_db =
 	app->save_matcase(id->misc->session_variables->mca, id->misc->session_variables->user, id->variables->is_public)))
 response->set_data(sprintf("<pre>Request Debug: %O\n\n%O</pre>\n", id->cookies, id->misc));
-	id->misc->session_variables->mca = 0;
-
-	response->flash("Your changes were saved.");
-	response->redirect(index);
+werror("mca: %O\n", mca_db["id"]);
+  if(id->variables->reopen)
+    response->redirect(edit, ({mca_db["id"]}));
+  else
+    response->redirect(index);
+  id->misc->session_variables->mca = 0;
+  response->flash("Your changes were saved.");
 }
 
 public void setMat(Request id, Response response, Template.View view, mixed args)

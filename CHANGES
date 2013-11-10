@@ -1,4 +1,6 @@
 20131110
+- MCA Editor: Add "Save and Close" button, "Save" now 
+    returns to the MCA editor screen.
 - MCA Editor: Allow <Escape> and <Enter> as shortcuts for 
    "Cancel" and "OK" in the MCA editor. Note that <Escape>
    only works when you're not editing one of the text fields.
