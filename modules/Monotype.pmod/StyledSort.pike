@@ -19,6 +19,11 @@ protected string _sprintf(mixed t)
   return "StyledSort(" + activator + "/" + character + ")";
 }
 
+string _sprintf(mixed t)
+{
+  return "StyledSort(" + get_modifier() + "/" + character  + ") ";
+}
+
 protected void create(string sort, object m, mapping c, int isitalics, int isbold, int issmallcaps, float adjust, int nohyphenation)
 {
   create_modifier(isitalics, isbold, issmallcaps);
@@ -36,11 +41,15 @@ protected void create(string sort, object m, mapping c, int isitalics, int isbol
 
 object(this_program) clone(string sort)
 {
-  object s = this_program(sort, mca, config,0,0,0,0.0,1);
-  s->space_adjust = space_adjust;
-  s->modifier = modifier;
+  object s = this_program(sort, mca, config,
+      modifier&Monotype.MODIFIER_ITALICS,
+      modifier&Monotype.MODIFIER_BOLD,
+      modifier&Monotype.MODIFIER_SMALLCAPS,
+      space_adjust,hyphenation_disabled);
+//  s->space_adjust = space_adjust;
+//  s->modifier = modifier;
 //  s->character = character;
-  s->hyphenation_disabled = hyphenation_disabled;
+//  s->hyphenation_disabled = hyphenation_disabled;
   return s;  
 }
 

@@ -283,6 +283,7 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
   mixed render_time = gauge {
 	foreach(g->lines; int i; mixed line)
 	{
+//	  werror("line: %O\n", line->elements);
 		int mod;
 		int setonline;
 		int last_was_space = 0;

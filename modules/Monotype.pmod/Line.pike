@@ -279,7 +279,7 @@ import Monotype;
 //	    werror("have mat: %O width %O, adjust %O\n", mat, mat->get_set_width(), activator->space_adjust);
 	    if(!stealth)
  	  	  linelength+=(mat->get_set_width() + activator->space_adjust);
- 	  	 
+// 	  	 werror("activator: %O\n", activator);
   		if(atbeginning)
   	  {
   		  elements = ({activator}) + elements;

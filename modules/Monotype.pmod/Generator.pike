@@ -433,7 +433,7 @@ int process_setting_buffer(int|void exact)
 
 	  tightline = 0;
 	  tightpos = 0;
-	  
+//	  werror("data_to_set[%d]: %O\n", i, data_to_set[i]);
 	  if(data_to_set[i]->is_real_js)
     {
       lastjs = i;
@@ -743,15 +743,17 @@ int process_setting_buffer(int|void exact)
 					      array toadd = ({});
 					      if(sizeof(new_data_to_set) > (bs+1))
 					        toadd = new_data_to_set[bs+1..];
-
+//werror("toadd: %O\n", toadd);
 							  string lsyl = replace(word, ligature_replacements_from[wordsorts[-1]->get_modifier()]||({}), ligature_replacements_to[wordsorts[-1]->get_modifier()]||({}));
+//werror("word: %O, lsyl: %O\n", word, lsyl);
+//werror("wordsorts: %O\n", wordsorts);
 							  if(word != lsyl)
 							  {
 								  // we have a ligature in this word part. it must be applied.
 								  data_to_set = prepare_data((({" "}) + break_ligatures(lsyl)) + ({" "}), wordsorts[-1]) + toadd;
 							  }
-  							else data_to_set = prepare_data(((" " + word)/"") + ({" "}), wordsorts[-1])  + toadd;
- 
+  							else data_to_set = prepare_data(({" "}), wordsorts[-1]) + wordsorts + prepare_data(({" "}), wordsorts[-1])  + toadd;
+//werror("data_to_set: %O\n", data_to_set);
   						  i = -1;
 	  				  }
             }						
@@ -1443,6 +1445,8 @@ void new_line(int|void newpara)
     throw(Error.Generic(sprintf("Unable to justify line; %f length with %f units, %d spaces, justification code would be: %d/%d, text on line is %s\n", (float)current_line->linelength, (float)current_line->lineunits, current_line->linespaces, current_line->big, current_line->little, (string)current_line)));
 
   lines += ({current_line});
+
+//werror("line: %O->%O\n", lines[-1], lines[-1]->elements);
 
   if(config->page_length && !(linesonpage%config->page_length))
   {
