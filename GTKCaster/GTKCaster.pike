@@ -319,7 +319,7 @@ void set_job_info()
   Face->set_label(jobinfo->face);
   Wedge->set_label(jobinfo->wedge + "/" + jobinfo->set);
   Mould->set_label(jobinfo->mould);
-  LineLength->set_label(jobinfo->linelength + " pica");
+  LineLength->set_label(jobinfo->linelength);
   Thermometer->set_fraction(0.0);
 }
 

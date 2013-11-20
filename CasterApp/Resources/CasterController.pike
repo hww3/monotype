@@ -90,7 +90,7 @@ void set_job_info()
 	Face->setStringValue_(jobinfo->face);
 	Wedge->setStringValue_(jobinfo->wedge + "/" + jobinfo->set);
 	Mould->setStringValue_(jobinfo->mould);
-	LineLength->setStringValue_(jobinfo->linelength + " pica");
+	LineLength->setStringValue_(jobinfo->linelength);
 	Thermometer->setMinValue_(0.0);
 	Thermometer->setDoubleValue_(0.0);
 }
