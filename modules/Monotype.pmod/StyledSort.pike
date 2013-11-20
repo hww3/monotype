@@ -14,11 +14,6 @@ string character;
 
 constant is_styled_sort = 1;
 
-protected string _sprintf(mixed t)
-{
-  return "StyledSort(" + activator + "/" + character + ")";
-}
-
 string _sprintf(mixed t)
 {
   return "StyledSort(" + get_modifier() + "/" + character  + ") ";

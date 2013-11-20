@@ -355,7 +355,7 @@ import Monotype;
 	    }
 	    else if(matrix = e->get_mat(errors))
 	    {
-	      werror(string_to_utf8(sprintf("matrix: %O\n", matrix)));
+//	      werror(string_to_utf8(sprintf("matrix: %O\n", matrix)));
 	      x[i] = MatWrapper(matrix, e->space_adjust);
   	    i++;
 	    }

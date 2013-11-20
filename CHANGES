@@ -1,7 +1,14 @@
 20131119
+- Caster Controller: New ribbons from recent code already
+    includes the unit system type in the line length, so no
+    need to include the word "pica".
 - Ribbon Generator: Fixed a bug that sometimes caused words on
     the beginning of a line to lose their style information.
- 
+- Ribbon Generator: Fixed a bug that would cause letters to be
+    lost when trying to hyphenate words that already contain 
+    hyphens (which aren't sent to the hyphenation engine but
+    need to keep their existing hyphens). 
+
 20131110
 - MCA Editor: Add "Save and Close" button, "Save" now 
     returns to the MCA editor screen.

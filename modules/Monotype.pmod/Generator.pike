@@ -601,7 +601,7 @@ int process_setting_buffer(int|void exact)
 					  {
 					    // first, we need to get the sorts that make up this syllable. it's possible that the syllable
 					    // contains ligatures, so we might not be able to fully 
-					    string portion = (word_parts[0..final_portion] * "");
+					    string portion = (word_parts[0..final_portion] * (prehyphenated?"-":""));
 					    string carry = "";
 					    int currentsort = 0;
 					    array sortsinsyllable = ({});
@@ -614,7 +614,7 @@ int process_setting_buffer(int|void exact)
   					  foreach(portion/""; int x; string act)
 	  				  {
 		  			    carry += word[x..x];
-		  			    werror("carry: %O, sort: %O\n", carry, wordsorts[currentsort]->character);
+//		  			    werror("carry: %O, sort: %O\n", carry, wordsorts[currentsort]->character);
 			  		    if(wordsorts[currentsort]->character == carry)
 				  	    {
 					        sortsinsyllable += ({wordsorts[currentsort]});
@@ -687,13 +687,13 @@ int process_setting_buffer(int|void exact)
 						    // it fit! now we must put the rest of the word in the setting buffer.
 						    if(sizeof(word_parts)>=final_portion)
 						    {	
+						    //  werror("simple_break: %O, prehyphenated: %O, wordsorts: %O, sortsinsyllable: %O, final_portion: %O\n", simple_break, prehyphenated, wordsorts, sortsinsyllable, final_portion);
 						      if(simple_break)
 						      {
     						    if(prehyphenated)
-      						    data_to_set += wordsorts[sizeof(sortsinsyllable)+1 + final_portion+1..];
+      						    data_to_set += wordsorts[sizeof(sortsinsyllable) + 1 /*hyphen*/ ..];
                     else
   						        data_to_set = wordsorts[sizeof(sortsinsyllable)..];
-						        
 						      }
 						      else
 						      {
@@ -708,11 +708,6 @@ int process_setting_buffer(int|void exact)
 						    
 						    data_to_set += prepare_data(({" "}));
   					    data_to_set += new_data_to_set[bs+1..];
-  					    if(prehyphenated)
-  					    {
-  					      data_to_set = data_to_set[1..];
-  					      werror("data: %O\n", data_to_set->character);
-					      }
 	
 					      i = -1;
 						    current_line->is_broken = 1;
