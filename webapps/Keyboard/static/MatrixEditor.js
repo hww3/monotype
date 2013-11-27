@@ -458,7 +458,7 @@ dojo.declare(
 			"Activator Key: </td><td>" +
 			"<input style=\"width:45px\" maxLength=\"6\" required=\"true\" dojoType=\"dijit.form.ValidationTextBox\" dojoAttachPoint='actbox,focusNode' name=\"act${name}\"\n\tdojoAttachEvent='onChange:setAct'\n\tautocomplete=\"off\" type=\"${type}\" selectOnClick='true'\n\t/>" + 
 			"</td></tr><tr><td>Unit Width: </td><td>" +
-			"<input style=\"width:45px\" maxLength=\"5\" required=\"true\" dojoType=\"dijit.form.NumberTextBox\" dojoAttachPoint='setbox' constraints=\"{min: 3, max: 21, pattern: '0.0'}\" name=\"set${name}\"\n\tdojoAttachEvent='onChange:setSet'\n\tautocomplete=\"off\" type=\"${type}\" selectOnClick='true'\n\t/>" + 
+			"<input style=\"width:45px\" maxLength=\"5\" required=\"true\" dojoType=\"dijit.form.NumberTextBox\" dojoAttachPoint='setbox' constraints=\"{min: 3, max: 21, pattern: '##.0'}\" name=\"set${name}\"\n\tdojoAttachEvent='onChange:setSet'\n\tautocomplete=\"off\" type=\"${type}\" selectOnClick='true'\n\t/>" + 
 			"</td></tr></table>" +	
 
 			"</div>\n" +
