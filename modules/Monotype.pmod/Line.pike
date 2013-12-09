@@ -371,13 +371,11 @@ import Monotype;
 	}
 
   int cc, cf, c, f; // the current justification wedge settings
-  int last_space;
-
 	
 	string generate_line()
 	{
 	  String.Buffer buf = String.Buffer();
-	  last_space = 0;
+	  this_combined_space = 0;
 	  // a little nomenclature here: c == coarse (0075) f == fine (0005), 
     //   cc == current coarse setting, cf == current fine setting
   	  f = little;
@@ -393,19 +391,23 @@ import Monotype;
 
       buf->add(sprintf("%s %d\n", generator->coarse_code, c));
 
-      foreach(reverse(render_line());; object me)
+      array rendered_line_elements = reverse(render_line());
+      foreach(rendered_line_elements; int element_number; object me)
       {
-//        mixed e;
-//        if(e = catch(
+        // do we need to add combined space to the last letter of a word?
+	if(combined_space && (sizeof(rendered_line_elements) > element_number + 2) 
+             && rendered_line_elements[element_number + 1]->is_real_js) 
+          this_combined_space = 1;
+
         add_code(me, buf);
-// werror("Error %O!\n", e);
       }
     return buf->get();
   }
+      int this_combined_space = 0;
 	
+	// add a code to the ribbon.
 	void add_code(object me, object buf, int|void raw)
 	{
-	      int this_combined_space = 0;
 	      string row_pos = me->row_pos;
         string col_pos = me->col_pos;
         string ch = me->character;
@@ -417,7 +419,7 @@ import Monotype;
         if(!raw)
         {
           
-            if(last_space && combined_space)
+            if(this_combined_space && combined_space)
             {
               if(cf != f || cc != c)
       	      {
@@ -427,12 +429,9 @@ import Monotype;
       			    cf = f;
       			    cc = c;
       	      }
-      	      this_combined_space = 1;
-              last_space = 0;
             }
             if(me->is_real_js && combined_space)
             {
-              last_space = 1;
               return;
             }
             else if(me->is_real_js)
@@ -581,6 +580,7 @@ import Monotype;
           col_pos = replace(col_pos, "D", "EF");
         }
         buf->add(sprintf("%s %s %s [%s]\n", (string)row_pos, ((col_pos/"")-({""}))*" ", this_combined_space?"S":"", string_to_utf8(ch||""), /* me->get_set_width() */));
+	if(this_combined_space) this_combined_space = 0;
    
     }
 	
