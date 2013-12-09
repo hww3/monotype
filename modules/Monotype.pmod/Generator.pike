@@ -482,7 +482,7 @@ int process_setting_buffer(int|void exact)
 	     	
       int j = i;
 
-	   	if(lastjs != i) // we're not at the end of a word, here, folks.
+      if(lastjs != i) // we're not at the end of a word, here, folks.
       {
  	      while(sizeof(data_to_set)>++j && data_to_set[j] != JustifyingSpace)
  	      {
@@ -491,7 +491,7 @@ int process_setting_buffer(int|void exact)
         } 
       }
  	     
-	   	if(!tl->is_overset()) // did the word fit using combined spaces?
+	if(!tl->is_overset()) // did the word fit using combined spaces?
     	{
     	  werror("tight line fit!\n");
      	  tl->line_number = current_line->line_number;
