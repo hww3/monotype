@@ -88,13 +88,22 @@ fins: framework
 	mkdir -p ${RIBBON_GENERATOR}.app/Contents/Frameworks/Pike.framework/Resources/lib/modules/Public.pmod/Tools.pmod/ConfigFiles.pmod
 	cp -Rf ConfigFiles_build/module.pmod.in/* ${RIBBON_GENERATOR}.app/Contents/Frameworks/Pike.framework/Resources/lib/modules/Public.pmod/Tools.pmod/ConfigFiles.pmod/
 
-webapp: fins
+webapp: fins dojo
 	cp -Rf webapps/Keyboard "${RIBBON_GENERATOR}.app/Contents/Resources"
 	cp -Rf modules/* "${RIBBON_GENERATOR}.app/Contents/Resources/Keyboard/modules"
 	cp -Rf CHANGES "${RIBBON_GENERATOR}.app/Contents/Resources"
+	cp -Rf dojo-release-1.6.1-src/release/dojo "${RIBBON_GENERATOR}.app/Contents/Resources/Keyboard"
 
 testsuite: testsuite.in
-	/usr/local/pike/7.9.5/include/pike/mktestsuite testsuite.in > testsuite
+	/usr/local/pike/8.0.2/include/pike/mktestsuite testsuite.in > testsuite
 
 verify:	testsuite
 	pike -Mmodules -x test_pike testsuite
+
+dojo:
+	if [ ! -f dojo-release-1.6.1-src.tar.gz ]; then wget http://download.dojotoolkit.org/release-1.6.1/dojo-release-1.6.1-src.tar.gz; fi;
+	tar xzvf dojo-release-1.6.1-src.tar.gz
+	cp tools/monotype.profile.js dojo-release-1.6.1-src/util/buildscripts/profiles
+	cp webapps/Keyboard/static/MatrixEditor.js dojo-release-1.6.1-src/dijit/form
+	cd dojo-release-1.6.1-src/util/buildscripts && ./build.sh action=release profile=monotype version=1.6.1-release
+	
