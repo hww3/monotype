@@ -6,6 +6,7 @@ int is_desktop = 0;
 
 void start()
 {
+::start();
 	// among other things, if we're a desktop version of this app, 
 	// we always log in autmatically as the user 'desktop'
 	if(all_constants()["__APPPATH"])

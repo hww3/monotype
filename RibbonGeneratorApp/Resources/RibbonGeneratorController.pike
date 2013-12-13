@@ -107,29 +107,29 @@ werror("CWD: %O\n", getcwd());
      ap = combine_path(getcwd(), "../../..",  ap);
    } 
 
-   signal(signum("USR1"), finserveStarted);  
-   signal(signum("USR2"), finserveFailed);  
-   server = Process.create_process(({ap, "--run-generator", "5675", "--parent-process", (string)getpid()}));
-//   finserve = master()->resolv("Fins.AdminTools.FinServe")(({}));
-/*
+   finserve = master()->resolv("Fins.AdminTools.SimpleFinServe")(({}));
+
+   finserve->ready_callback = finserveStarted;
+   finserve->failure_callback = finserveFailed;
    finserve->project = "Keyboard";
-   finserve->config_name = "desktop";
    finserve->my_port = 5675;
-*/
-//   finserve->no_virtual = 1;
-//  finserve->ready_callback = finserveStarted;
+   finserve->config_name = "desktop";
+   finserve->do_startup(({"Keyboard"}), ({"desktop"}), 5675);
+
 //   Thread.Thread(finserve->do_startup, ({"Keyboard"}), ({"desktop"}), 5675);
-//  if(!finserve->started())
+
+  if(!finserve->started())
   {
     Spinner->startAnimation_(this);
     StartupLabel->setStringValue_("Starting...");
   }
+
 }
+
 
 void applicationWillTerminate_(object event)
 {
 werror("**** QUITTING\n");
-  server->kill(9);
 //  destruct(finserve);
 }
 
@@ -139,6 +139,7 @@ Spinner->stopAnimation_(this);
 LaunchBrowser->setEnabled_(1);
 BackupData->setEnabled_(1);
     StartupLabel->setStringValue_("Running");
+werror("Threads: %O\n", Thread.all_threads());
 }
 
 void finserveFailed(int x)
