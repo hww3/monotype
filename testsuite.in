@@ -137,3 +137,15 @@ test_any([[
   if(e) return 1;
   else return 0;  
 ]], 1);
+
+
+test_any([[
+// need to test simple tablature:
+// can add space and arrive at a given unit.
+// error when adding space past the requested unit.
+
+// need to test combined spaces
+
+// need to test trip caster
+  return 0; 
+]], 0);
