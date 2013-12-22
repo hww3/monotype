@@ -1232,7 +1232,10 @@ void quad_out()
 //    Tools.throw(Error.Generic, "unable to add %d units because it would cause the line to be overset.\n", left);
   }
 
-  left = current_line->lineunits - current_line->linelength;
+  // we've just figured out how many of the requested units will fit _and_ justify, 
+  // we don't want to ignore this conclusion.
+  // 
+  // left = current_line->lineunits - current_line->linelength;
 
   werror("* %.1f units can be added to %.1f units already on line to give acceptably sized justifying spaces.\n", left, current_line->linelength);
 
@@ -1379,7 +1382,7 @@ string generate_ribbon()
 	buf+=sprintf("mould: %d\n", config->mould);
 	buf+=sprintf("generated: %s\n", Calendar.now()->format_smtp());
 	buf+=sprintf("version: %s\n", Monotype.version);
-	buf+=sprintf("linelength: %.2f %s\n", config->linelengthp, config->pointsystemname);
+	buf+=sprintf("linelength: %.2f %s\n", config->linelengthp, config->pointsystemname || "");
 	if(config->unit_adding)
           buf+=sprintf("unit_adding: %s units\n", (string)config->unit_adding);
 
@@ -1437,7 +1440,7 @@ void new_line(int|void newpara)
 		current_line->lineunits, current_line->linelength, (string)current_line)));
   }
   else if(current_line->linespaces && !current_line->can_justify()) 
-    throw(Error.Generic(sprintf("Unable to justify line; %f length with %f units, %d spaces, justification code would be: %d/%d, text on line is %s\n", (float)current_line->linelength, (float)current_line->lineunits, current_line->linespaces, current_line->big, current_line->little, (string)current_line)));
+    throw(Error.Generic(sprintf("Unable to justify line; %f length with %f units, %d spaces, justification code would be: %d/%d, text on line is %s\n", (float)current_line->linelength, (float)current_line->lineunits, current_line->linespaces, current_line->big, current_line->little, string_to_utf8((string)current_line))));
 
   lines += ({current_line});
 
