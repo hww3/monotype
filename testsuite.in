@@ -79,7 +79,8 @@ test_any([[
   // <p> behaves differently from <qo> when within justifying range
   // note the return code of this test.
   object g = Monotype.Generator(settings);
-  g->parse("Mary had a little lamb<p>\n");
+  g->parse("Mary had ");
+  g->parse("a little lamb<p>\n");
 
   return ((g->lines[0]->little == 8) && (g->lines[0]->big == 3) && !sizeof(g->lines[0]->errors));
 ]], 0);
@@ -137,6 +138,33 @@ test_any([[
   if(e) return 1;
   else return 0;  
 ]], 1);
+
+test_any([[
+  // test that a hyperextension of mould is flagged.
+  object g = Monotype.Generator(settings);
+    g->parse("Mary had a little ");
+    g->parse("lamb<p>\n");
+    g->parse("<center>little lamb<p></center>\n");
+    g->parse("Bq dq s<p>\n");
+  
+    werror("lines: %O\n", g->lines);
+
+    object g1 = Monotype.Generator(settings + (["linelengthp": 40.0]));
+    g1->process_setting_buffer(1);
+    g1->parse("Foo bar yeah! ");
+    g1->process_setting_buffer(1);
+    g1->add_column(g->lines[0]);
+    g1->low_quad_out(18.0);
+    g1->add_column(g->lines[1]);
+    g1->low_quad_out(18.0);
+    g1->add_column(g->lines[2]);
+    g1->new_paragraph();
+werror("lines: %O\n", g1->lines[0]->elements);
+    
+    werror(g1->generate_ribbon());
+    return 1;
+]], 1);
+
 
 
 test_any([[

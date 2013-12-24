@@ -245,15 +245,18 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 	
 	object g, b;
   Error.Generic err;
+
+  mixed parse_time;
   
-  mixed parse_time = gauge {
+  parse_time
+   = gauge {
   	g = Monotype.Generator(settings);
   	g->set_hyphenation_rules(id->misc->session_variables->user["Preferences"]["hyphenation_rules"]["value"]);
 	  err = Error.mkerror(catch(g->parse(data)));
 	  id->misc->session_variables->generator = g;
 	  b = String.Buffer();
   };
-
+ 
 	if(err)
 	{
 		b+="<div style=\"clear: left\">\n";
@@ -297,7 +300,7 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 		int total_set; 
 		float spill =0.00;
 
-		foreach(line->render_line();int col; mixed e)
+		foreach(line->render_line(1);int col; mixed e)
 		{
 	//	  if(e->is_real_js && line->combined_space)
 	//	    continue;

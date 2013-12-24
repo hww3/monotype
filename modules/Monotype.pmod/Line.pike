@@ -359,30 +359,34 @@ werror("line length was: %O ", linelength);
 	  	  || (((float)lineunits - (float)linelength) <= 1.0));
 	}
 	
-	array render_line()
+	array render_line(int|void explode)
 	{
 	//  errors = ADT.List();
-	  int i;
-	  array x = allocate(sizeof(elements));
+	  array x = ({});
 	  foreach(elements;;mixed e)
 	  {
 	    mixed matrix;
 	    
 	    if(Program.implements(object_program(e), Line))
 	    {
-	      x[i] = e->generate_line();
-	      i++;
+	      if(explode)
+	      {
+	        array z = e->render_line(1);
+	        x += z ;
+        }
+	      else
+	      {
+  	      x += ({e});      
+	      }
 	    }
 	    else if(e->is_real_js)
 	    {
-	      x[i] = e;
-	      i++;
+	      x += ({e});
 	    }
 	    else if(matrix = e->get_mat(errors))
 	    {
 //	      werror(string_to_utf8(sprintf("matrix: %O\n", matrix)));
-	      x[i] = MatWrapper(matrix, e->space_adjust);
-  	    i++;
+	      x += ({MatWrapper(matrix, e->space_adjust)});
 	    }
 	    else
 	    {
@@ -390,9 +394,7 @@ werror("line length was: %O ", linelength);
 	    }
 	  }
 	  
-	  if(i)
-  	  return x[0 .. i-1];
-  	else return ({});
+    return x;
 	}
 
   int cc, cf, c, f; // the current justification wedge settings
@@ -433,9 +435,9 @@ werror("line length was: %O ", linelength);
       foreach(rendered_line_elements; int element_number; object|string me)
       {
         // do we need to add combined space to the last letter of a word?
-        if(stringp(me))
+        if(Program.implements(object_program(me), Line))
         {
-          buf->add(me);
+          buf->add(me->generate_line());
           continue;
         }
 	        if(combined_space && (sizeof(rendered_line_elements) > element_number + 2) 
