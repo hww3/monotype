@@ -252,15 +252,31 @@ import Monotype;
 		return x;
 	}
 
+  void add_line(Line line)
+  {
+    
+  }
 
 	// add a sort to the current line
-	void add(Sort|RealJS activator, int|void atbeginning, int|void stealth)
+	void add(Sort|RealJS|Line activator, int|void atbeginning, int|void stealth)
 	{
 	  object mat;
 
 //werror("Line.add(%O, %O) => %f, %O\n", activator, atbeginning, linelength, min_space_units);
 // justifying space
-    if(activator->is_real_js)
+werror("line length was: %O ", linelength);
+    if(Program.implements(object_program(activator), Line))
+    {
+      if(!activator->can_justify())
+        throw(Error.Generic("Unable to add an unjustifyable column to a line.\n"));
+      if(activator->lineunits > (lineunits - linelength))
+        throw(Error.Generic("Unable to fit column on line.\n"));
+      else
+        elements += ({activator});
+        linelength += activator->lineunits;
+        activator->double_justification = 1;
+    }
+    else if(activator->is_real_js)
     {
 	    if(atbeginning)
 	    {
@@ -293,6 +309,9 @@ import Monotype;
     {
       werror("No mat!\n");
     }
+    
+    werror("is now: %O\n", linelength);
+    
 
 	  if(!stealth)
 	    [big, little] = calculate_justification();
@@ -348,7 +367,13 @@ import Monotype;
 	  foreach(elements;;mixed e)
 	  {
 	    mixed matrix;
-	    if(e->is_real_js)
+	    
+	    if(Program.implements(object_program(e), Line))
+	    {
+	      x[i] = e->generate_line();
+	      i++;
+	    }
+	    else if(e->is_real_js)
 	    {
 	      x[i] = e;
 	      i++;
@@ -375,6 +400,7 @@ import Monotype;
 	string generate_line()
 	{
 	  String.Buffer buf = String.Buffer();
+	  int my_double_justification = 0;
 	  this_combined_space = 0;
 	  // a little nomenclature here: c == coarse (0075) f == fine (0005), 
     //   cc == current coarse setting, cf == current fine setting
@@ -384,18 +410,35 @@ import Monotype;
   	  cc = c;
 
   	  write("\n");
-  	  if(double_justification)
-        buf->add(sprintf("%s %d\n", generator->fine_code, f));
-  	  else
-        buf->add(sprintf("%s %s %d\n", generator->fine_code, generator->coarse_code, f));
-
-      buf->add(sprintf("%s %d\n", generator->coarse_code, c));
-
+  	  
+  	  // if the last element on the line is a Line object, make _it_ a single justification and we
+  	  // can skip the justification code ourselves. we should also force a justification reset, should
+  	  // that be needed once we're done with the current chunk.
+  	  if(elements && sizeof(elements) && Program.implements(object_program(elements[-1]), Line))
+  	  {
+  	    cf = 0, cc = 0;
+  	    elements[-1]->double_justification = 0;
+  	  }
+      else
+      {  	  
+    	  if(double_justification)
+          buf->add(sprintf("%s %d\n", generator->fine_code, f));
+  	    else
+          buf->add(sprintf("%s %s %d\n", generator->fine_code, generator->coarse_code, f));
+    
+        buf->add(sprintf("%s %d\n", generator->coarse_code, c));
+      }
+      
       array rendered_line_elements = reverse(render_line());
-      foreach(rendered_line_elements; int element_number; object me)
+      foreach(rendered_line_elements; int element_number; object|string me)
       {
         // do we need to add combined space to the last letter of a word?
-	if(combined_space && (sizeof(rendered_line_elements) > element_number + 2) 
+        if(stringp(me))
+        {
+          buf->add(me);
+          continue;
+        }
+	        if(combined_space && (sizeof(rendered_line_elements) > element_number + 2) 
              && rendered_line_elements[element_number + 1]->is_real_js) 
           this_combined_space = 1;
 
@@ -403,6 +446,7 @@ import Monotype;
       }
     return buf->get();
   }
+  
       int this_combined_space = 0;
 	
 	// add a code to the ribbon.

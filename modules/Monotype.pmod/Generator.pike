@@ -413,6 +413,11 @@ void insert_footer()
 	}
 }
 
+void add_column(Monotype.Line line)
+{
+  current_line->add(line);
+}
+
 int process_setting_buffer(int|void exact)
 {
 	int lastjs = 0;
