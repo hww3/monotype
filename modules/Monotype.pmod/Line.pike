@@ -264,13 +264,13 @@ import Monotype;
 
 //werror("Line.add(%O, %O) => %f, %O\n", activator, atbeginning, linelength, min_space_units);
 // justifying space
-werror("line length was: %O ", linelength);
+//werror("line length was: %O ", linelength);
     if(Program.implements(object_program(activator), Line))
     {
       if(!activator->can_justify())
         throw(Error.Generic("Unable to add an unjustifyable column to a line.\n"));
       if(activator->lineunits > (lineunits - linelength))
-        throw(Error.Generic("Unable to fit column on line.\n"));
+        throw(Error.Generic(sprintf("Unable to fit column on line: have %O units on %O unit line, want to add %O more.\n", lineunits, linelength, activator->lineunits)));
       else
         elements += ({activator});
         linelength += activator->lineunits;
@@ -310,7 +310,7 @@ werror("line length was: %O ", linelength);
       werror("No mat!\n");
     }
     
-    werror("is now: %O\n", linelength);
+  //  werror("is now: %O\n", linelength);
     
 
 	  if(!stealth)
@@ -381,7 +381,11 @@ werror("line length was: %O ", linelength);
 	    }
 	    else if(e->is_real_js)
 	    {
-	      x += ({e});
+	      //we must clone the realjs object, otherwise the width calculation will be shared among all js on this line.
+	      werror("units: %O\n", units);
+	      object e2 = object_program(e)(e->matrix);
+	      e2->calculated_width = units;
+	      x += ({e2});
 	    }
 	    else if(matrix = e->get_mat(errors))
 	    {

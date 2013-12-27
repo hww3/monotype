@@ -317,22 +317,23 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 		    if(!line->combined_space)
 		    {
 		      w = e->matrix->get_set_width();
-		      w = (w-max_red + line->units);
+		      w = (w-max_red + e->calculated_width);
+		      werror("width: %O, %O\n", e->calculated_width, w);
 		    }
 		    else
 		    {
-		      w = line->units;
+		      w = e->calculated_width;
 	//	      throw(Error.Generic("combined space " + w + "\n"));
 	      }
 		    setonline+=w;
 
  		// spill is used to even out the display lines, as we're not able to depict fractional units accurately on the screen.
-		    spill += (line->units-floor(line->units));
+		    spill += (e->calculated_width-floor(e->calculated_width));
 		if(spill > 1.0) { w+=1; spill -=1.0; }
 
 		total_set += (e->matrix->get_set_width()-max_red);
 		    b += ("<div style=\"position:relative; float:left; background:" + (!line->combined_space?"orange":"red") + "; width:" + (int)(w) + "px\"> &nbsp; </div>");
-			last_was_space = 1;
+  			last_was_space = 1;
 		  }
 		  else if(e->is_fs || e->is_js)
 		  {

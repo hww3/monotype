@@ -133,6 +133,12 @@ void create(mapping settings)
     space_regex = Regexp.PCRE.Widestring("\\h");  
 }
 
+this_program clone(mapping overrides)
+{
+  object c = this_program(config + overrides);
+  return c;
+}
+
 void set_matcase(Monotype.MatCaseLayout mca)
 {
   m = mca;
@@ -188,7 +194,7 @@ protected void load_hyphenator()
 protected void load_spaces(object m)
 {
   foreach(m->spaces;;object mat)
-    spaces[s->get((mat->row_pos<16?mat->row_pos:15))] = mat;  
+    spaces[s->get((mat->row_pos<16?mat->row_pos:12))] = mat;  
   
   if(spaces[9] && spaces[18])
      spaces[27] = 1;
@@ -306,6 +312,12 @@ mixed i_parse_data(object parser, string data, mapping extra)
 	// TODO: at the end of the document, we should verify that the setting buffer is empty.
 	// possible situations where that might happen include ending the job with a ligature
 	// where this callback wouldn't be called.
+
+  if(in_column)
+  {
+    column_data += data;
+    return 0;
+  }
 
 	if(in_header)
 	{
@@ -774,12 +786,53 @@ int in_footer;
 int in_header;
 int in_even;
 int in_odd;
+int in_column;
+string column_data = "";
+object column_parser;
 
 // TODO: this is just aweful. we need to come up with something a little more robust.
 mixed i_parse_tags(object parser, string data, mapping extra)
 {
     string lcdata = lower_case(data);
 
+    if(in_column && lcdata == "</column>")
+    {
+      werror("GOT END OF COLUMN\n");
+      in_column--;
+      if(in_column == 0)
+      {
+        werror("ACTUAL END OF COLUMN.\n");
+        column_parser->parse(column_data);
+        werror("column contains %O lines.\n", sizeof(column_parser->lines));
+        array x = column_parser->lines/(float)ceil((sizeof(column_parser->lines)/3.0));
+        werror("x: %O\n", x);
+        foreach(x[0]; int y; object el)
+        {
+          process_setting_buffer(1);
+          add_column(el);
+          low_quad_out(19.0);
+          add_column(x[1][y]);
+          if(sizeof(x[2])>y)
+          {
+            low_quad_out(20.0);
+            add_column(x[2][y]);
+          }
+          quad_out();
+          new_paragraph();
+        }
+        return 0;
+      }
+    }
+    
+    if(in_column && has_prefix(lcdata, "<column"))  
+      in_column++;  
+
+    if(in_column)
+    {
+      column_data += data;
+      return 0;
+    }
+    
   switch(lcdata)
   {
     case "<footer>":
@@ -964,6 +1017,14 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	  new_paragraph();
     }
 	// insert fixed spaces
+	else if(Regexp.SimpleRegexp("<column>")->match(lcdata))
+	{
+	  werror("STARTING COLUMN\n");
+	  column_parser = clone((["linelengthp": 12]));
+	  column_data = "";
+	  in_column++;
+	  return 0;
+  }
   else if(Regexp.SimpleRegexp("<[sS][0-9]*>")->match(data))
 	{
 		process_setting_buffer();
