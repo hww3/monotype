@@ -329,7 +329,7 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 		    setonline+=w;
 
  		// spill is used to even out the display lines, as we're not able to depict fractional units accurately on the screen.
-		    spill += (e->calculated_width-floor(e->calculated_width));
+		    spill += (e->calculated_width-floor((float)e->calculated_width));
 		if(spill > 1.0) { w+=1; spill -=1.0; }
 
 		total_set += (e->matrix->get_set_width()-max_red);
