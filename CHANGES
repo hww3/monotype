@@ -1,3 +1,17 @@
+20131227
+- Ribbon Generator: Added groundwork for multiple column layouts.
+
+20131223
+- Ribbon Generator: fix a few regressions caused by space-to command.
+
+20131208
+- Ribbon Generator: When using combined spaces, add space to the
+    correct sort being cast.
+- Framework: Use a bundled framework load (dojo) to speed loading.
+
+20131227
+- MCA Editor: Fix for unit width validation over 9.5
+
 20131119
 - Caster Controller: New ribbons from recent code already
     includes the unit system type in the line length, so no

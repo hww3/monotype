@@ -810,11 +810,11 @@ mixed i_parse_tags(object parser, string data, mapping extra)
         {
           process_setting_buffer(1);
           add_column(el);
-          low_quad_out(19.0);
+          low_quad_out(18.0);
           add_column(x[1][y]);
           if(sizeof(x[2])>y)
           {
-            low_quad_out(20.0);
+            low_quad_out(18.0);
             add_column(x[2][y]);
           }
           quad_out();
@@ -1020,7 +1020,7 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	else if(Regexp.SimpleRegexp("<column>")->match(lcdata))
 	{
 	  werror("STARTING COLUMN\n");
-	  column_parser = clone((["linelengthp": 12]));
+	  column_parser = clone((["linelengthp": 15]));
 	  column_data = "";
 	  in_column++;
 	  return 0;

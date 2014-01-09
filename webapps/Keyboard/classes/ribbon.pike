@@ -78,6 +78,7 @@ public void get_wedge_for_mca(Request id, Response response, Template.View v, mi
 
 public mapping extract_settings(Request id)
 {
+werror("EXCTRACT_SETTINGS: %O\n", id->variables);
   return ([
 		"justification": (int)id->variables->justification,
 		"unit_adding": (int)id->variables->unitadding,
@@ -146,7 +147,7 @@ public void get_line(Request id, Response response, Template.View v, string line
 public void do_validate(Request id, Response response, Template.View v, mixed ... args)
 {
   object user = id->misc->session_variables->user;
-
+  response->set_header("Cache-control", "no-cache");
 	if(id->variables->delete_config)
 	{
 	  object rc;
@@ -239,7 +240,7 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 	else data = (id->variables->input_text);
 
 	// skip braindead windows byte order mark.
-	if(data[0..2] == "\xEF\xBB\xBF") data = data[3..];
+	if(data && data[0..2] == "\xEF\xBB\xBF") data = data[3..];
 
 	// = "Now is the time for all good men to come to the aid of their country. Mary had a little lamb, its fleece was white as snow. Everywhere that mary went, the lamb was sure to go.<qo>";
 	
@@ -314,7 +315,7 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 			}
 			// need some better work on this.
 		    int w;
-		    if(!line->combined_space)
+		    if(!e->is_combined_space)
 		    {
 		      w = e->matrix->get_set_width();
 		      w = (w-max_red + e->calculated_width);
@@ -323,7 +324,7 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 		    else
 		    {
 		      w = e->calculated_width;
-	//	      throw(Error.Generic("combined space " + w + "\n"));
+//		      throw(Error.Generic("combined space " + w + "\n"));
 	      }
 		    setonline+=w;
 
@@ -332,7 +333,7 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 		if(spill > 1.0) { w+=1; spill -=1.0; }
 
 		total_set += (e->matrix->get_set_width()-max_red);
-		    b += ("<div style=\"position:relative; float:left; background:" + (!line->combined_space?"orange":"red") + "; width:" + (int)(w) + "px\"> &nbsp; </div>");
+		    b += ("<div style=\"position:relative; float:left; background:" + (!e->is_combined_space?"orange":"red") + "; width:" + (int)(w) + "px\"> &nbsp; </div>");
   			last_was_space = 1;
 		  }
 		  else if(e->is_fs || e->is_js)

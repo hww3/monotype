@@ -27,8 +27,8 @@ void doBackupData_(Cocoa.NSObject obj)
   savePanel->setNameFieldStringValue_("RibbonGeneratorData " + Calendar.now()->format_ymd() + ".sqlite3");
   savePanel->setTitle_("Backup Ribbon Generator Data");
  
-  if(!savePanel->runModal()) return 0;
-
+//  if(!savePanel->runModal()) return 0;
+  return;
 
   mixed files = savePanel->URL();
 

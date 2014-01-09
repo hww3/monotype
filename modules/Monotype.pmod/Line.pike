@@ -384,6 +384,11 @@ import Monotype;
 	      //we must clone the realjs object, otherwise the width calculation will be shared among all js on this line.
 	      werror("units: %O\n", units);
 	      object e2 = object_program(e)(e->matrix);
+	      if(combined_space)
+	      {
+	        e2->is_combined_space = 1;
+	        werror("combinedspace width: %O\n", units);
+        }
 	      e2->calculated_width = units;
 	      x += ({e2});
 	    }
