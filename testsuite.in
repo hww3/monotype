@@ -140,7 +140,7 @@ test_any([[
 ]], 1);
 
 test_any([[
-  // test that a hyperextension of mould is flagged.
+  // test simple tablature:
   object g = Monotype.Generator(settings);
     g->parse("Mary had a little ");
     g->parse("lamb<p>\n");
