@@ -26,9 +26,7 @@ void doBackupData_(Cocoa.NSObject obj)
 
   savePanel->setNameFieldStringValue_("RibbonGeneratorData " + Calendar.now()->format_ymd() + ".sqlite3");
   savePanel->setTitle_("Backup Ribbon Generator Data");
- 
-//  if(!savePanel->runModal()) return 0;
-  return;
+  if(!savePanel->runModal()) return 0;
 
   mixed files = savePanel->URL();
 
@@ -36,13 +34,9 @@ void doBackupData_(Cocoa.NSObject obj)
   werror("fILE:%O\n",(string)( file->__objc_classname));
   werror("fILE:%O\n",(string)( file->UTF8String() ));
   string res;
-  res = Protocols.HTTP.post_url(URL + "_backup_db/", (["destination": utf8_to_string(file->UTF8String()), "PSESSIONID": "12345"]))->data();
+//  res = Protocols.HTTP.post_url(URL + "_backup_db/", (["destination": utf8_to_string(file->UTF8String()), "PSESSIONID": "12345"]))->data();
 //werror("RES: %O\n", res);
-  if(res != "OK") 
-  {
-    throw(Error.Generic("An error occurred backing up your database: " + res + "\n"));
-  }
-//  werror("app: %O\n", values(finserve->apps)[0]->get_application()->do_generic_method(copy_db, utf8_to_string(file->UTF8String())));
+  werror("app: %O\n", finserve->app->do_generic_method(copy_db, utf8_to_string(file->UTF8String())));
 
 //  Stdio.cp(finserve, utf8_to_string(file->UTF8String()));
 }
