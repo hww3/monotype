@@ -9,6 +9,7 @@ mapping pointsystems = (["12.0":"Anglo-American Pica", "12.84":"Cicero", "12.8":
 void start()
 {
   before_filter(app->admin_user_filter);
+  after_filter(Fins.Helpers.Filters.Compress());
 }
 
 //int __quiet = 1;
