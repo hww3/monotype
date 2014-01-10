@@ -689,7 +689,7 @@ int process_setting_buffer(int|void exact)
 	  					  do
 	  					  {
 	  					    template = current_line->elements[i];
-	  					    werror("template: %O\n", template);
+	  					    werror(string_to_utf8(sprintf("template: %O\n", template)));
 	  					    i--;
 	  					  } while(template->is_real_js);
 	  					  

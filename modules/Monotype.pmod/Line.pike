@@ -382,7 +382,7 @@ import Monotype;
 	    else if(e->is_real_js)
 	    {
 	      //we must clone the realjs object, otherwise the width calculation will be shared among all js on this line.
-	      werror("units: %O\n", units);
+	    //  werror("units: %O\n", units);
 	      object e2 = object_program(e)(e->matrix);
 	      if(combined_space)
 	      {

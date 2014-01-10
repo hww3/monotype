@@ -320,7 +320,7 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 		    {
 		      w = e->matrix->get_set_width();
 		      w = (w-max_red + e->calculated_width);
-		      werror("width: %O, %O\n", e->calculated_width, w);
+//		      werror("width: %O, %O\n", e->calculated_width, w);
 		    }
 		    else
 		    {
