@@ -92,15 +92,6 @@ werror("**** " + (string)folder  + "\n");
 		fm->createDirectoryAtPath_attributes_(folder, ([]));
 	}
 
-
-   string ap = __APPPATH;
-   if(ap[0] != '/')
-   {
-werror("AP: %O\n", ap);
-werror("CWD: %O\n", getcwd());
-     ap = combine_path(getcwd(), "../../..",  ap);
-   } 
-
    finserve = master()->resolv("Fins.AdminTools.SimpleFinServe")(({}));
 
    finserve->ready_callback = finserveStarted;

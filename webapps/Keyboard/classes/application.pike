@@ -9,9 +9,9 @@ void start()
 ::start();
 	// among other things, if we're a desktop version of this app, 
 	// we always log in autmatically as the user 'desktop'
-	if(all_constants()["__APPPATH"])
+	if(all_constants()["NSApp"])
 	{
-werror("RUNNIGN IN DESKTOP MODE.\n");
+werror("RUNNING IN DESKTOP MODE.\n");
 	 	is_desktop = 1;
 	}
 
