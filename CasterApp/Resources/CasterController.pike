@@ -117,7 +117,7 @@ void loadJob_(object a)
 
   CasterToggleButton->setEnabled_(1);
   JumpToLineButton->setEnabled_(1);
-  JumpToLine->setEnabled_(1);
+  JumpToLineItem->setEnabled_(1);
   app->mainMenu()->update();
   updateLinesView();
 }
@@ -258,6 +258,7 @@ void showPinControl_(object i)
 	  allOff_(i);
   	pcmi->setEnabled_(0);
   	JumpToLineItem->setEnabled_(0);
+  	JumpToLineButton->setEnabled_(0);
   	app->mainMenu()->update();
   }
 	else
@@ -266,6 +267,7 @@ void showPinControl_(object i)
 	  werror("windowWillClose_()");
 	  pcmi->setEnabled_(1);
 	  JumpToLineItem->setEnabled_(1);
+	  JumpToLineButton->setEnabled_(1);
 	  app->mainMenu()->update();
 	  Driver->disableManualControl();
 	  CasterToggleButton->setEnabled_(was_caster_enabled);
