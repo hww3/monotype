@@ -5,7 +5,9 @@ object mainWindow;
 object AboutDialog;
 object File_Open_Menu;
 object View_JumpToLine_Menu;
-
+object lineview;
+object lineviewscroller;
+object linewebview;
 int block_signal;
 
 string pref_file = combine_path(getenv("HOME"), ".monotype_caster.preferences");
@@ -41,6 +43,14 @@ static void create(int argc, array argv)
 
   mainWindow->show_all();
   mainWindow->signal_connect("delete-event", do_exit);
+
+  if(!linewebview)
+  {
+    linewebview = Webkit.WebView();
+    lineviewscroller->add(linewebview);
+    linewebview->load_uri("http://www.welliver.org");  
+  }
+
 }
 
 int main(int argc, array argv)
@@ -202,6 +212,12 @@ void do_exit(mixed ... args)
   exit(0);
 }
 
+void setCurrentLine(int n)
+{
+  string js = "highlight_line(" + n + ");";
+  linewebview->execute_script(js);
+}
+
 void allOff(object b)
 {
   //werror("allOff(%O)\n", b);
@@ -292,10 +308,27 @@ void LoadJobButton_clicked_cb(mixed ... args)
     CasterToggleButton->set_sensitive(1);
     View_JumpToLine_Menu->set_sensitive(1);
     JumpToLineButton->set_sensitive(1);
+    LinesInJobButton->set_sensitive(1);
 //  app->mainMenu()->update();
-
+    UpdateLinesView();
   }
   fc->destroy();
+}
+
+void UpdateLinesView()
+{
+  linewebview->load_string(Driver->getRibbonContents(), "text/html", "UTF-8", "file:///");
+}
+
+int lineview_delete_cb(mixed ... args)
+{
+  lineview->hide();
+  return 1;
+}
+
+void LinesInJobButton_clicked_cb(mixed ... args)
+{
+  lineview->show_all();
 }
 
 void EnablePumpButton_clicked_cb(mixed ... args)
@@ -354,10 +387,6 @@ void setCycleIndicator(int(0..1) status)
   void setLineStatus(string s)
   {
     CurrentLine->set_label(s);
-  }
-
-  void setCurrentLine(int n)
-  {
   }
 
   void setStatus(string s)
