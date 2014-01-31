@@ -321,7 +321,7 @@ if(span)
   
   void setStatus(string s)
   {
-    werror("%O\n", ui->Status);
+   // werror("%O\n", ui->Status);
     ui->setStatus(s);
     setLineStatus(ribbon?ribbon->current_line:"0");
   }

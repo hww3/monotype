@@ -14,6 +14,7 @@ object JumpToLineButton;
 object PinControlItem;
 object JumpToLineItem;
 object LoadJobItem;
+object LinesInJobButton;
 
 object JumpToLineBox;
 object MainWindow;
