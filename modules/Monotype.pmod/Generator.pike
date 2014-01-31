@@ -1104,6 +1104,10 @@ mixed i_parse_tags(object parser, string data, mapping extra)
     else
       data_to_set+= ({(create_styled_sort(data[2..sizeof(data)-2], space_adjust))});
 	}
+	else if(has_prefix(lcdata, "<columnset"))
+	{
+	  mapping data = parse_tag(data);
+	}
 	else if(has_prefix(lcdata, "<setpagenumber "))
 	{
 		int matches, pn;
@@ -1130,6 +1134,103 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	{
 	   		 break_page();
 	}	
+}
+
+mapping parse_tag(string tag)
+{
+  mapping data = ([]);
+
+  sscanf(tag, "<%*s%*[ ]%s", tag);
+  if(sizeof(tag))
+    tag = tag[0..<1];
+    werror("tag: %O\n", tag);
+  string key = "", value = 0, delimiter = 0;
+  if(sizeof(tag))
+  {
+    int inkey, inval, beforekey = 1, beforeeq, beforeval;
+    foreach(tag/"";; string c)
+    {
+      if(beforekey)
+      {
+        if(space_regex->match(c)); // do nothing
+        else
+        {
+          beforekey = 0;
+          inkey = 1;
+          key += c;
+        }
+      }
+      else if(inkey)
+      {
+        if(space_regex->match(c))
+        {
+          inkey = 0;
+          beforeeq = 1;
+        }
+        else if(c == "=")
+        {
+          inkey = 0;
+          beforeval = 1;
+        }
+        else key += c;
+      }
+      else if(beforeeq)
+      {
+        if(space_regex->match(c)); // do nothing
+        else if(c == "=")
+        { 
+          beforeeq = 0;
+          beforeval = 1;
+        }
+        else
+        {
+          beforeeq = 0;
+          inkey = 1;
+          data[key] = "1";
+          key = c;
+        }
+      }
+      else if(beforeval)
+      {
+        if(space_regex->match(c)); // do nothing
+        else if(c == "\'" || c == "\"")
+        {
+          delimiter = c;
+          beforeval = 0;
+          inval = 1;
+          value = "";
+        }
+        else
+        {
+          delimiter = 0;
+          inval = 1;
+          beforeval = 0;
+          value = c;
+        }
+      }
+      else if(inval)
+      {
+        // no escaping of delimiters, yet.
+        if((!delimiter && space_regex->match(c)) || (delimiter && c == delimiter))
+        {
+          inval = 0;
+          beforekey = 1;
+          data[key] = value;
+          delimiter = 0;
+          key = "";
+          value = 0;
+        }
+        else 
+        {
+          value += c;
+        }
+      }
+    }
+
+  }
+  
+  if(sizeof(key)) data[key] = value?value:"1";
+  return data;
 }
 
 array hyphenate_word(string word)
