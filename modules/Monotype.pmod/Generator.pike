@@ -1250,7 +1250,18 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	  werror("column set lineunits = %d, count = %d, width = %O, gutter = %d", config->lineunits, count,  widths, gutter);
 	  werror("STARTING COLUMNSET\n");
 	  // the page length array is the number of lines left on the current page to spread columns across, followed by full length pages.
-	  column_parser = clone((["widths":widths, "gutter": gutter, "pad_margins": 0, "page_length": ({config->page_length-linesonpage, config->page_length}) ]));
+
+	  column_parser = clone(([]));
+    column_parser->eheader_code = eheader_code;
+    column_parser->efooter_code = efooter_code;
+    column_parser->oheader_code = oheader_code;
+    column_parser->ofooter_code = ofooter_code;
+
+	  column_parser->break_page();
+
+    werror("headers and footers consume %d lines.\n", sizeof(column_parser->lines));
+
+	  column_parser = clone((["widths":widths, "gutter": gutter, "pad_margins": 0, "page_length": ({config->page_length-(linesonpage + sizeof(column_parser->lines)), config->page_length - sizeof(column_parser->lines)}) ]));
 	  column_data = "";
 	  in_column++;
 	  return 0;
