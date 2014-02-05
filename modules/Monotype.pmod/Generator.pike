@@ -795,7 +795,63 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 {
     string lcdata = lower_case(data);
 
-    if(in_column && lcdata == "</column>")
+      if(in_column && lcdata == "</columnset>")
+      {
+        werror("GOT END OF COLUMNSET\n");
+        in_column--;
+        if(in_column == 0)
+        {
+          int cols;
+          werror("ACTUAL END OF COLUMNSET.\n");
+          column_parser->parse(column_data);
+          werror("column set contains %O lines.\n", sizeof(column_parser->lines));
+          cols = sizeof(column_parser->config->widths);
+          for(int l = 0; l < column_parser->config->page_length; l++)
+          {
+            if(sizeof(column_parser->lines) < l) break;
+            
+             for(int c = 0; c < cols; c++)
+             {
+               if(sizeof(column_parser->lines)<= ((l*cols) + c))
+               {
+                 quad_out();
+                 break;
+               }
+               else
+               {
+                 add_column(column_parser->lines[(l * cols) + c]);
+                 if((c+1) < cols)
+                   low_quad_out(column_parser->config->gutter);
+                 else 
+                 {
+                   quad_out();
+                   new_paragraph();
+                 }
+               }
+             }  
+          }
+          
+          /*
+          foreach(column_parser->lines; int y; object el)
+          {
+            process_setting_buffer(1);
+            add_column(el);
+            low_quad_out(column->gutter);
+            add_column(x[1][y]);
+            if(sizeof(x[2])>y)
+            {
+              low_quad_out(18.0);
+              add_column(x[2][y]);
+            }
+            quad_out();
+            new_paragraph();
+          }
+          */
+          return 0;
+        }
+      }
+
+    else if(in_column && lcdata == "</column>")
     {
       werror("GOT END OF COLUMN\n");
       in_column--;
@@ -824,6 +880,7 @@ mixed i_parse_tags(object parser, string data, mapping extra)
       }
     }
     
+    // do we really want to disallow columns within columns? 
     if(in_column && has_prefix(lcdata, "<column"))  
       in_column++;  
 
@@ -1166,7 +1223,15 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	    gutter = (config->lineunits - tot) / (count-1);
 	  }
 	  
+	  in_column++;
 	  werror("column set count = %d, width = %O, gutter = %d", count,  widths, gutter);
+	  werror("STARTING COLUMNSET\n");
+	  // the page length array is the number of lines left on the current page to spread columns across, followed by full length pages.
+	  column_parser = clone((["widths":widths, "gutter": gutter, "pad_margins": 0, "pagelength": ({config->page_length-linesonpage, config->page_length}) ]));
+	  column_data = "";
+	  in_column++;
+	  return 0;
+	  
 	}
 	else if(has_prefix(lcdata, "<setpagenumber "))
 	{
@@ -1403,13 +1468,38 @@ void make_new_line(int|void newpara)
 	}	
 }
 
+// used during new line creation to determine the length of the new line.
+// this can vary when setting columnar data when each column may be a different width.
+// at this point, lines on page reflects current number of lines on the page, and this function
+// should calculate the line length for the *next* line on the page.
+void calc_lineunits()
+{
+  if(!config->widths) return;
+  
+  int col_count = sizeof(config->widths);
+  int col;
+  if(sizeof(lines) < (config->page_length[0] * col_count))
+  {
+    // still on the first page
+    col = sizeof(lines) / config->page_length[0];
+  }
+  else
+  {
+    col = sizeof(lines) - ((config->page_length[0] * col_count)) / config->page_length[1];
+    col = col / col_count;
+  }
+  
+  werror("current column number: %d\n", col);
+  config->lineunits = config->widths[col];
+}
+
 Line low_make_new_line()
 {
 	Line l;	
-	
+	calc_lineunits();
+	linesonpage++;
 	l = Line(m, s, config + (["lineunits": pad_units?(config->lineunits-(pad_units*2)):config->lineunits]), this);
 	l->line_number = ++numline;
-	linesonpage++;
 	l->line_on_page = linesonpage;
 	return l;
 }
