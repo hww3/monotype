@@ -427,6 +427,11 @@ void insert_footer()
 
 void add_column(Monotype.Line line)
 {
+	if(!current_line)
+	{
+	  // if we get here, and there's no line present, it's the first line of the job, thus, by default, a new paragraph.
+	  insert_header(1);
+	}
   current_line->add(line);
 }
 
@@ -442,7 +447,7 @@ int process_setting_buffer(int|void exact)
 	  // if we get here, and there's no line present, it's the first line of the job, thus, by default, a new paragraph.
 	  insert_header(1);
 	}
- 
+ werror("data to set: %O\n", data_to_set);
   for(int i = 0; i<sizeof(data_to_set) ;i++)
 	{
 //  	int additback;
@@ -806,25 +811,34 @@ mixed i_parse_tags(object parser, string data, mapping extra)
           column_parser->parse(column_data);
           werror("column set contains %O lines.\n", sizeof(column_parser->lines));
           cols = sizeof(column_parser->config->widths);
-          for(int l = 0; l < column_parser->config->page_length; l++)
+          for(int l = 0; l < column_parser->config->page_length[0]; l++)
           {
             if(sizeof(column_parser->lines) < l) break;
             
              for(int c = 0; c < cols; c++)
              {
-               if(sizeof(column_parser->lines)<= ((l*cols) + c))
+               if(sizeof(column_parser->lines)<= ((column_parser->config->page_length[0] * c) + l))
                {
                  quad_out();
                  break;
                }
                else
                {
-                 add_column(column_parser->lines[(l * cols) + c]);
+                 add_column(column_parser->lines[l + (column_parser->config->page_length[0] * c)]);
                  if((c+1) < cols)
-                   low_quad_out(column_parser->config->gutter);
+                 {
+                   float g = column_parser->config->gutter;
+                   if(column_parser->config->gutter > current_line->min_space_units)
+                   {
+                     current_line->add(JustifyingSpace);
+                     werror("units: %O\n", current_line->min_space_units);
+                     g -= current_line->min_space_units;
+                   }
+                   low_quad_out(g);
+                 }
                  else 
                  {
-                   quad_out();
+                   //quad_out();
                    new_paragraph();
                  }
                }
@@ -1194,7 +1208,7 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	        throw(Error.Generic(count + " column set with gutter " + atts->gutter + " too wide for line.\n"));
 	      
 	      gutter = g;
-	      widths = ({((config->lineunits - (gutter * count-1)) / count)}) * count;
+	      widths = ({((config->lineunits - (gutter * (count-1))) / count)}) * count;
 	    }
 	    else
 	    {
@@ -1223,11 +1237,10 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	    gutter = (config->lineunits - tot) / (count-1);
 	  }
 	  
-	  in_column++;
-	  werror("column set count = %d, width = %O, gutter = %d", count,  widths, gutter);
+	  werror("column set lineunits = %d, count = %d, width = %O, gutter = %d", config->lineunits, count,  widths, gutter);
 	  werror("STARTING COLUMNSET\n");
 	  // the page length array is the number of lines left on the current page to spread columns across, followed by full length pages.
-	  column_parser = clone((["widths":widths, "gutter": gutter, "pad_margins": 0, "pagelength": ({config->page_length-linesonpage, config->page_length}) ]));
+	  column_parser = clone((["widths":widths, "gutter": gutter, "pad_margins": 0, "page_length": ({config->page_length-linesonpage, config->page_length}) ]));
 	  column_data = "";
 	  in_column++;
 	  return 0;
@@ -1486,7 +1499,7 @@ void calc_lineunits()
   else
   {
     col = sizeof(lines) - ((config->page_length[0] * col_count)) / config->page_length[1];
-    col = col / col_count;
+    col = col % col_count;
   }
   
   werror("current column number: %d\n", col);
@@ -1582,6 +1595,7 @@ float low_quad_out(float amount, int|void atbeginning)
   
   array toadd = ({});
   int ix;
+  if(!floatp(amount)) amount = (float)amount;
   toadd = Monotype.findspace()->simple_find_space((int)floor(amount), spaces);
   if(!toadd || !sizeof(toadd))
     toadd = Monotype.IterativeSpaceFinder()->findspaces((int)floor(amount), spaces);
@@ -1753,6 +1767,12 @@ string generate_ribbon()
 // add the current line to the job, if it's justifyable.
 void new_line(int|void newpara)
 {
+werror("new_line()\n");
+  if(!((float)current_line->linelength > 0.0))
+  {
+    werror("WARNING: new_line() called without any content.\n");
+    return 0;
+  }    
   if(!current_line->linespaces && (float)current_line->linelength != (float)current_line->lineunits)
   {
       throw(Error.Generic(sprintf("Off-length line without justifying spaces: need %d units to justify, line has %.1f units. Consider adding a justifying space to line - %s\n", 
@@ -1765,7 +1785,7 @@ void new_line(int|void newpara)
 
 //werror("line: %O->%O\n", lines[-1], lines[-1]->elements);
 
-  if(config->page_length && !(linesonpage%config->page_length))
+  if(config->page_length && intp(config->page_length) && !(linesonpage%config->page_length))
   {
   	break_page(newpara);
   }
