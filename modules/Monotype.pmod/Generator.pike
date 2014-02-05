@@ -811,7 +811,11 @@ mixed i_parse_tags(object parser, string data, mapping extra)
           column_parser->parse(column_data);
           werror("column set contains %O lines.\n", sizeof(column_parser->lines));
           cols = sizeof(column_parser->config->widths);
-          for(int l = 0; l < column_parser->config->page_length[0]; l++)
+          int page = 0;
+          
+          do
+          {
+          for(int l = 0; l < column_parser->config->page_length[page?1:0]; l++)
           {
             if(sizeof(column_parser->lines) < l) break;
             
@@ -819,12 +823,13 @@ mixed i_parse_tags(object parser, string data, mapping extra)
              {
                if(sizeof(column_parser->lines)<= ((column_parser->config->page_length[0] * c) + l))
                {
-                 quad_out();
-                 break;
+                 low_quad_out(column_parser->config->widths[c]);
                }
                else
                {
+                 werror("adding column %d\n", c);
                  add_column(column_parser->lines[l + (column_parser->config->page_length[0] * c)]);
+               }
                  if((c+1) < cols)
                  {
                    float g = column_parser->config->gutter;
@@ -841,9 +846,14 @@ mixed i_parse_tags(object parser, string data, mapping extra)
                    //quad_out();
                    new_paragraph();
                  }
-               }
              }  
           }
+          if(sizeof(column_parser->lines) > (column_parser->config->page_length[page?1:0] * cols))
+            column_parser->lines = column_parser->lines[(column_parser->config->page_length[page?1:0] * cols)..];
+          else column_parser->lines = ({});
+
+          page++;
+        } while(sizeof(column_parser->lines));
           
           /*
           foreach(column_parser->lines; int y; object el)
