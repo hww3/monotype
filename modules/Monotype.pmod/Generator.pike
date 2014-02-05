@@ -1106,7 +1106,67 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	}
 	else if(has_prefix(lcdata, "<columnset"))
 	{
-	  mapping data = parse_tag(data);
+	  array(int) widths;
+	  int gutter;
+    int count;
+    
+    int minspace = sort(indices(spaces))[0];
+    
+	  mapping atts = parse_tag(data);
+	  if(atts->count)
+	  {
+	    count = (int)atts->count;
+	   
+	    if(atts->width)
+	    {
+	      int w;
+	      if((count * w + (count-1) * minspace) > config->lineunits)
+	        throw(Error.Generic(count + " column set of width " + atts->width + " too wide for line.\n"));
+	        
+	      widths = ({ w }) * count;
+	      gutter = (config->lineunits - (w*count)) / (count-1);
+	    }
+	    else if(atts->gutter)
+	    {
+	      int g = (int)atts->gutter;
+	      
+	      if(g != 0 && g < minspace)
+	        throw(Error.Generic("gutter " + gutter + " is too small.\n"));
+	        
+	      if(((count * minspace) + (count-1) * gutter) > config->lineunits)
+	        throw(Error.Generic(count + " column set with gutter " + atts->gutter + " too wide for line.\n"));
+	      
+	      gutter = g;
+	      widths = ({((config->lineunits - (gutter * count-1)) / count)}) * count;
+	    }
+	    else
+	    {
+	      throw(Error.Generic("column set using count must specify either width or gutter.\n")); 
+	    }	      
+	  }
+	  else if(atts->widths)
+	  {
+	    int tot;
+	    array widths = atts->widths / ",";
+	    foreach(widths;int i; string w)
+	    {
+	      w = String.trim_all_whites(w);
+	      if(!(int)w)
+	      {
+	        throw(Error.Generic("column " + (i+1) + " width " + w + " is not a whole number.\n"));
+	      }
+	      widths[i] = (int)w;
+	      tot+=widths[i];
+	    }
+	    if(tot > config->lineunits && (tot + ((count-1) * minspace)) > config->lineunits)
+	    {
+	      throw(Error.Generic("total column widths are too wide for line.\n"));
+	    }
+	    
+	    gutter = (config->lineunits - tot) / (count-1);
+	  }
+	  
+	  werror("column set count = %d, width = %O, gutter = %d", count,  widths, gutter);
 	}
 	else if(has_prefix(lcdata, "<setpagenumber "))
 	{
@@ -1136,6 +1196,8 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	}	
 }
 
+
+//! a generic function that will extract attributes from an html-like tag.
 mapping parse_tag(string tag)
 {
   mapping data = ([]);
