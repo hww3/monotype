@@ -442,8 +442,12 @@ void insert_footer()
 
 void reset()
 {
+  current_line = 0;
   lines = ({});
   pages = ({});  
+  numline = 0;
+  pagenumber = 0;
+  linesonpage = 0;
   oheader_code = "";
   eheader_code = "";
   ofooter_code = "";
@@ -840,6 +844,7 @@ mixed i_parse_tags(object parser, string data, mapping extra)
           //
           // keep shortening the page length until the last column is 
           // longer than the first column, then lengthen the page lenth by 1.
+          werror("config: %O\n", column_parser->config);
           if(column_parser->config->column_strategy == COLUMN_STRATEGY_EQUAL)
           {
             do
@@ -872,6 +877,7 @@ mixed i_parse_tags(object parser, string data, mapping extra)
             column_parser->parse(column_data);
           }
           werror("column set contains %O lines.\n", sizeof(column_parser->lines));
+          werror("config: %O\n", column_parser->config);
           cols = sizeof(column_parser->config->widths);
           int page = 0;
           
@@ -893,7 +899,6 @@ mixed i_parse_tags(object parser, string data, mapping extra)
                }
                else
                {
-                 werror("adding column %d\n", c);
                  add_column(column_parser->lines[l + (column_parser->config->page_length[ps] * c)]);
                }
                  if((c+1) < cols)
@@ -902,7 +907,6 @@ mixed i_parse_tags(object parser, string data, mapping extra)
                    if(column_parser->config->gutter > current_line->min_space_units)
                    {
                      current_line->add(JustifyingSpace);
-                     werror("units: %O\n", current_line->min_space_units);
                      g -= current_line->min_space_units;
                    }
                    low_quad_out(g);
@@ -1311,8 +1315,9 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	  else if(atts->widths)
 	  {
 	    int tot;
-	    array widths = atts->widths / ",";
-	    foreach(widths;int i; string w)
+	    array wx = atts->widths / ",";
+	    widths = allocate(sizeof(wx));
+	    foreach(wx;int i; string w)
 	    {
 	      w = String.trim_all_whites(w);
 	      if(!(int)w)
@@ -1327,6 +1332,7 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	      throw(Error.Generic("total column widths are too wide for line.\n"));
 	    }
 	    
+	    count = sizeof(widths);
 	    gutter = (config->lineunits - tot) / (count-1);
 	  }
 	  
@@ -1591,10 +1597,12 @@ int calc_lineunits()
     
   int col_count = sizeof(config->widths);
   int col;
-  if(sizeof(lines) < (config->page_length[0] * col_count))
+  if(!sizeof(lines) || sizeof(lines) < (config->page_length[0] * col_count))
   {
     // still on the first page
-    col = sizeof(lines) / config->page_length[0];
+      col = sizeof(lines) / config->page_length[0];
+//      werror("col: %O => %O\n", col, config->widths[col]);
+//      throw(Error.Generic("foo\n"));
   }
   else
   { 
