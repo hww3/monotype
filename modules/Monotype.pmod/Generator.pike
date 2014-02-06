@@ -15,6 +15,9 @@ constant dicts = (["en_US": "hyph_en_US.dic",
        "fr_FR": "hyph_it_IT.dic",
 		]);
 
+constant COLUMN_STRATEGY_EQUAL = 1; // prefer that all columns have an equal length.
+constant COLUMN_STRATEGY_FILL = 0; // default, prefer to fill the first column before filling the second.
+
 object hyphenator;
 mapping hyphenation_rules = ([]);
 
@@ -34,7 +37,7 @@ mapping spaces = ([]);
 mapping highspaces = ([]);
 
 array(Line) lines = ({});
-
+array(Page) pages = ({});
 array ligatures = ({});
 mapping ligature_replacements_from = ([]);
 mapping ligature_replacements_to = ([]);
@@ -133,9 +136,18 @@ void create(mapping settings)
     space_regex = Regexp.PCRE.Widestring("\\h");  
 }
 
-this_program clone(mapping overrides)
+this_program clone(mapping overrides, void|int include_headfoot)
 {
   object c = this_program(config + overrides);
+  
+  if(include_headfoot)
+  {
+    c->eheader_code = eheader_code;
+    c->efooter_code = efooter_code;
+    c->oheader_code = oheader_code;
+    c->ofooter_code = ofooter_code;
+  }
+  
   return c;
 }
 
@@ -275,7 +287,10 @@ void parse(string input)
 
   // put the footer at the end of the set text if we have one.
   if(config->page_length)
+  {
 	  insert_footer();
+  }	
+  update_page();    
 }
 
 // TODO: make this method re-entrant.
@@ -423,6 +438,16 @@ void insert_footer()
 		data_to_set = _data_to_set;
 		in_do_footer = 0;
 	}
+}
+
+void reset()
+{
+  lines = ({});
+  pages = ({});  
+  oheader_code = "";
+  eheader_code = "";
+  ofooter_code = "";
+  efooter_code = "";
 }
 
 void add_column(Monotype.Line line)
@@ -808,27 +833,68 @@ mixed i_parse_tags(object parser, string data, mapping extra)
         {
           int cols;
           werror("ACTUAL END OF COLUMNSET.\n");
-          column_parser->parse(column_data);
+          
+          // if the column strategy is "level", we have to calculate the length 
+          // of the last page iteratively, unless we limit the columns to be of equal 
+          // length. since that seems arbitrary, we offer this algorithm:
+          //
+          // keep shortening the page length until the last column is 
+          // longer than the first column, then lengthen the page lenth by 1.
+          if(column_parser->config->column_strategy == COLUMN_STRATEGY_EQUAL)
+          {
+            do
+            {
+              column_parser->parse(column_data);
+              werror("pages: %O\n", column_parser->pages);
+              object last_page = column_parser->pages[-1];
+              array cnt = allocate(sizeof(column_parser->config->widths));
+              foreach(last_page->lines;; object l)
+              {
+                cnt[l->col_number]++;
+              }              
+              werror("col alignment: %O\n", cnt);
+              if(abs(cnt[-1] - cnt[0]) < sizeof(cnt)) // ok, as close as it's gonna get!
+                break;
+//                sleep(5);
+              if(sizeof(column_parser->config->page_length) != sizeof(column_parser->pages))
+              {
+                int fpl = column_parser->config->page_length[0];
+                column_parser->config->page_length = allocate(sizeof(column_parser->pages), column_parser->config->page_length[-1]);
+                column_parser->config->page_length[0] = fpl;
+              }
+              column_parser->config->page_length[-1]--;
+              column_parser->reset();
+            } while(1);
+            
+          }
+          else
+          {
+            column_parser->parse(column_data);
+          }
           werror("column set contains %O lines.\n", sizeof(column_parser->lines));
           cols = sizeof(column_parser->config->widths);
           int page = 0;
           
           do
           {
-          for(int l = 0; l < column_parser->config->page_length[page?1:0]; l++)
+            
+            int ps = page?1:0;
+            if(sizeof(column_parser->config->page_length) > page) ps = page;
+            
+          for(int l = 0; l < column_parser->config->page_length[ps]; l++)
           {
             if(sizeof(column_parser->lines) < l) break;
             
              for(int c = 0; c < cols; c++)
              {
-               if(sizeof(column_parser->lines)<= ((column_parser->config->page_length[0] * c) + l))
+               if(sizeof(column_parser->lines)<= ((column_parser->config->page_length[ps] * c) + l))
                {
                  low_quad_out(column_parser->config->widths[c]);
                }
                else
                {
                  werror("adding column %d\n", c);
-                 add_column(column_parser->lines[l + (column_parser->config->page_length[0] * c)]);
+                 add_column(column_parser->lines[l + (column_parser->config->page_length[ps] * c)]);
                }
                  if((c+1) < cols)
                  {
@@ -848,8 +914,9 @@ mixed i_parse_tags(object parser, string data, mapping extra)
                  }
              }  
           }
-          if(sizeof(column_parser->lines) > (column_parser->config->page_length[page?1:0] * cols))
-            column_parser->lines = column_parser->lines[(column_parser->config->page_length[page?1:0] * cols)..];
+          
+          if(sizeof(column_parser->lines) > (column_parser->config->page_length[ps] * cols))
+            column_parser->lines = column_parser->lines[(column_parser->config->page_length[ps] * cols)..];
           else column_parser->lines = ({});
 
           page++;
@@ -1190,10 +1257,26 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	  array(int) widths;
 	  int gutter;
     int count;
+    int strategy;
     
     int minspace = sort(indices(spaces))[0];
     
 	  mapping atts = parse_tag(data);
+	  if(atts->strategy)
+	  {
+	    switch(lower_case(atts->strategy))
+	    {
+	      case "equal":
+	        strategy = COLUMN_STRATEGY_EQUAL;
+	        break;
+  	    case "fill":
+  	      strategy = COLUMN_STRATEGY_FILL;
+  	      break;
+  	    default:
+  	      throw(Error.Generic("Unknown column strategy '" + lower_case(atts->strategy) + "'.\n"));
+	    }  
+	  }
+	  
 	  if(atts->count)
 	  {
 	    count = (int)atts->count;
@@ -1251,17 +1334,13 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	  werror("STARTING COLUMNSET\n");
 	  // the page length array is the number of lines left on the current page to spread columns across, followed by full length pages.
 
-	  column_parser = clone(([]));
-    column_parser->eheader_code = eheader_code;
-    column_parser->efooter_code = efooter_code;
-    column_parser->oheader_code = oheader_code;
-    column_parser->ofooter_code = ofooter_code;
+	  column_parser = clone(([]), 1);
 
 	  column_parser->break_page();
 
     werror("headers and footers consume %d lines.\n", sizeof(column_parser->lines));
 
-	  column_parser = clone((["widths":widths, "gutter": gutter, "pad_margins": 0, "page_length": ({config->page_length-(linesonpage + sizeof(column_parser->lines)), config->page_length - sizeof(column_parser->lines)}) ]));
+	  column_parser = clone((["widths":widths, "gutter": gutter, "column_strategy": strategy, "pad_margins": 0, "page_length": ({config->page_length-(linesonpage + sizeof(column_parser->lines)), config->page_length - sizeof(column_parser->lines)}) ]));
 	  column_data = "";
 	  in_column++;
 	  return 0;
@@ -1506,10 +1585,10 @@ void make_new_line(int|void newpara)
 // this can vary when setting columnar data when each column may be a different width.
 // at this point, lines on page reflects current number of lines on the page, and this function
 // should calculate the line length for the *next* line on the page.
-void calc_lineunits()
+int calc_lineunits()
 {
-  if(!config->widths) return;
-  
+  if(!config->widths) return 0;
+    
   int col_count = sizeof(config->widths);
   int col;
   if(sizeof(lines) < (config->page_length[0] * col_count))
@@ -1518,21 +1597,49 @@ void calc_lineunits()
     col = sizeof(lines) / config->page_length[0];
   }
   else
-  {
-    col = sizeof(lines) - ((config->page_length[0] * col_count)) / config->page_length[1];
-    col = col % col_count;
+  { 
+    int spl = (sizeof(lines) - (config->page_length[0] * col_count));
+    if(sizeof(lines) < (config->page_length[0] * col_count)); // do nothing
+    
+    else if(sizeof(lines) == (config->page_length[0] * col_count))
+    {
+      update_page();
+    }
+    else if(spl>0 && spl % (config->page_length[1] * col_count) == 0)
+    {
+      update_page();
+    }
+
+    // this only comes into play on the last page; so it shouldn't matter that we aren't
+    // calculating the current line on the page as if each page could have different lengths.
+    int current_page = sizeof(pages);   
+    int ps = current_page?1:0;
+    if(sizeof(config->page_length) > current_page) ps = current_page;
+    
+    int psl = sizeof(lines) - ((config->page_length[0] * col_count)); // the number of lines on pages of last page length.
+//    werror("psl: %O\n", psl);
+    int page = psl / (config->page_length[1] * col_count);
+    int lop = psl -  (page * col_count * config->page_length[1]);
+//    werror("page: %O\n", page);
+//    werror("lop: %O\n", lop);
+  werror("page len: %O\n", config->page_length[ps]);
+    col = (lop) / config->page_length[ps];
   }
   
-  werror("current column number: %d\n", col);
+//  werror("current column number: %d\n", col);
   config->lineunits = config->widths[col];
+  return col;
 }
 
 Line low_make_new_line()
 {
 	Line l;	
-	calc_lineunits();
+	int col_number;
+  col_number = calc_lineunits();
+
 	linesonpage++;
 	l = Line(m, s, config + (["lineunits": pad_units?(config->lineunits-(pad_units*2)):config->lineunits]), this);
+	l->col_number = col_number;
 	l->line_number = ++numline;
 	l->line_on_page = linesonpage;
 	return l;
@@ -1713,7 +1820,20 @@ array simple_find_space(int amount, mapping spaces)
 void break_page(int|void newpara)
 {
 	insert_footer();		
+	update_page();  
 	insert_header();
+}
+
+void update_page()
+{
+  object p = Page();
+	int start;
+	if(sizeof(pages))
+	  start = pages[-1]->end + 1;
+  p->lines = lines[start..];
+  p->begin = start;
+  p->end = sizeof(lines)-1;
+  pages += ({p});	
 }
 
 // actually generates the ribbon file from an array of lines of sorts.

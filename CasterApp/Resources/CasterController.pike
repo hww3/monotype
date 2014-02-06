@@ -20,10 +20,10 @@ int jumpToLineCode = 0;
 
 static void create()
 {
-  ::create();
 //  Driver = ((program)"Driver")(this);
 werror("****\n**** create\n****\n");	
    app = Cocoa.NSApplication.sharedApplication();
+  ::create();
 }
 
 // among other things here, we set default preferences.
@@ -116,7 +116,7 @@ void loadJob_(object a)
   set_job_info();
 
   CasterToggleButton->setEnabled_(1);
-  JumpToLineButton->setEnabled_(1);
+//  JumpToLineButton->setEnabled_(1);
   JumpToLineItem->setEnabled_(1);
   app->mainMenu()->update();
   updateLinesView();
@@ -357,9 +357,22 @@ void _finishedMakingConnections()
 // Driver interface functions
 //
 
-void alert(string title, string	body)
+int alert(string title, string body)
 {
-  AppKit()->NSRunAlertPanel(title, body, "OK", "", "");
+  call_out(_alert, 0, title, body);
+}
+
+int _alert(string title, string body)
+{
+  object a;
+   a  = Cocoa.NSAlert();
+   a->init();
+   a->setInformativeText_(body);
+   a->setMessageText_(title);
+   a->addButtonWithTitle_("OK");
+  Cocoa.NSApplication.sharedApplication()->activateIgnoringOtherApps_(1);
+  return a->runModal();   
+//  AppKit()->NSRunAlertPanel(title, body, "OK", "", "");
 }	
 
 void setCycleIndicator(int(0..1) status)

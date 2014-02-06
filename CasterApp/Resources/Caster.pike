@@ -19,8 +19,8 @@ int main(int argc, array argv)
 //  werror("%O\n\n", master()->pike_module_path);
 
   NSApp->setDelegate_(this);
-
-  add_backend_to_runloop(Pike.DefaultBackend, 0.3);
+Pike.DefaultBackend.enable_external_runloop(1);
+//  add_backend_to_runloop(Pike.DefaultBackend, 0.3);
   werror("NSApplicationMain returns: %d\n", AppKit()->NSApplicationMain(argc, argv));
 
  return 0;

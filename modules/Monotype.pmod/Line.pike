@@ -22,6 +22,7 @@ import Monotype;
   
   int line_number;
 	int line_on_page;
+	int col_number;
 	
 	int combined_space;
 //	float calculated_justifying_space = 0.0;
@@ -97,6 +98,7 @@ import Monotype;
 	
 	void re_set_line(object line)
 	{
+	  col_number = line->col_number;
 	  foreach(line->elements; int i; object e)
 	    add(e);
 	}
