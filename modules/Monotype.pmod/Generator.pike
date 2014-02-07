@@ -333,7 +333,11 @@ mixed i_parse_data(object parser, string data, mapping extra)
     column_data += data;
     return 0;
   }
-
+  else if(in_columnset)
+  {
+    // we don't want to keep any text inside of a column set but outside of a column.
+    return 0;
+  }
 	if(in_header)
 	{
 		if(in_even)
@@ -821,22 +825,25 @@ int in_header;
 int in_even;
 int in_odd;
 int in_column;
+int in_columnset;
 string column_data = "";
 object column_parser;
+array column_set = ({});
+int cs_gutter;
 
 // TODO: this is just aweful. we need to come up with something a little more robust.
 mixed i_parse_tags(object parser, string data, mapping extra)
 {
     string lcdata = lower_case(data);
 
-      if(in_column && lcdata == "</columnset>")
+      if(in_column && !in_columnset && lcdata == "</columns>")
       {
-        werror("GOT END OF COLUMNSET\n");
+        werror("GOT END OF COLUMNS\n");
         in_column--;
         if(in_column == 0)
         {
           int cols;
-          werror("ACTUAL END OF COLUMNSET.\n");
+          werror("ACTUAL END OF COLUMNS.\n");
           
           // if the column strategy is "level", we have to calculate the length 
           // of the last page iteratively, unless we limit the columns to be of equal 
@@ -844,7 +851,6 @@ mixed i_parse_tags(object parser, string data, mapping extra)
           //
           // keep shortening the page length until the last column is 
           // longer than the first column, then lengthen the page lenth by 1.
-          werror("config: %O\n", column_parser->config);
           if(column_parser->config->column_strategy == COLUMN_STRATEGY_EQUAL)
           {
             do
@@ -876,8 +882,7 @@ mixed i_parse_tags(object parser, string data, mapping extra)
           {
             column_parser->parse(column_data);
           }
-          werror("column set contains %O lines.\n", sizeof(column_parser->lines));
-          werror("config: %O\n", column_parser->config);
+          werror("columns contain %O lines.\n", sizeof(column_parser->lines));
           cols = sizeof(column_parser->config->widths);
           int page = 0;
           
@@ -926,60 +931,75 @@ mixed i_parse_tags(object parser, string data, mapping extra)
           page++;
         } while(sizeof(column_parser->lines));
           
-          /*
-          foreach(column_parser->lines; int y; object el)
-          {
-            process_setting_buffer(1);
-            add_column(el);
-            low_quad_out(column->gutter);
-            add_column(x[1][y]);
-            if(sizeof(x[2])>y)
-            {
-              low_quad_out(18.0);
-              add_column(x[2][y]);
-            }
-            quad_out();
-            new_paragraph();
-          }
-          */
-          return 0;
-        }
-      }
-
-    else if(in_column && lcdata == "</column>")
-    {
-      werror("GOT END OF COLUMN\n");
-      in_column--;
-      if(in_column == 0)
-      {
-        werror("ACTUAL END OF COLUMN.\n");
-        column_parser->parse(column_data);
-        werror("column contains %O lines.\n", sizeof(column_parser->lines));
-        array x = column_parser->lines/(float)ceil((sizeof(column_parser->lines)/3.0));
-        werror("x: %O\n", x);
-        foreach(x[0]; int y; object el)
-        {
-          process_setting_buffer(1);
-          add_column(el);
-          low_quad_out(18.0);
-          add_column(x[1][y]);
-          if(sizeof(x[2])>y)
-          {
-            low_quad_out(18.0);
-            add_column(x[2][y]);
-          }
-          quad_out();
-          new_paragraph();
-        }
         return 0;
       }
     }
-    
-    // do we really want to disallow columns within columns? 
-    if(in_column && has_prefix(lcdata, "<column"))  
-      in_column++;  
 
-    if(in_column)
+    else if(in_columnset && lcdata == "</columnset>")
+    {
+      werror("GOT END OF COLUMNSET\n");
+      in_columnset = 0;
+      
+      int max_lines;
+      foreach(column_set;; object c)
+      {
+        int l = sizeof(c->lines);
+        if(l > max_lines) max_lines = l;
+      }
+      
+      for(int i = 0; i < max_lines; i++)
+      {
+        foreach(column_set; int cn; object c)
+        {
+          if(sizeof(c->lines) > i)
+          {
+            if(cn != 0)
+              low_quad_out((float)cs_gutter);
+            add_column(c->lines[i]);
+          }
+          else
+          {
+            low_quad_out((float)c->config->widths[0]);
+          }
+        }
+        quad_out();
+        new_paragraph();
+      }
+      return 0;
+    }
+    else if(in_columnset)
+    {
+       if(has_prefix(lcdata, "<column "))
+       {
+         in_column = 1;
+         mapping atts = parse_tag(data);
+         if(!atts->width)
+           throw(Error.Generic("No column width specified.\n"));
+           
+         int width = (int)atts->width;   
+         if(!width)
+          throw(Error.Generic("Invalid column width specified.\n"));
+          
+         object cp = clone((["widths": ({width}), "gutter": cs_gutter, "column_strategy": COLUMN_STRATEGY_FILL, "pad_margins": 0, "page_length": ({config->page_length, config->page_length}) ]));
+      	 column_data = "";
+         column_set += ({cp});
+         return 0;
+       } 
+       else if(lcdata == "</column>")
+       {
+         in_column = 0;
+         column_set[-1]->parse(column_data);
+       }
+    
+       else if(in_column)
+       {
+         column_data += data;
+       }
+       
+       return 0;
+    }
+    
+    else if(in_column)
     {
       column_data += data;
       return 0;
@@ -1169,14 +1189,6 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	  new_paragraph();
     }
 	// insert fixed spaces
-	else if(Regexp.SimpleRegexp("<column>")->match(lcdata))
-	{
-	  werror("STARTING COLUMN\n");
-	  column_parser = clone((["linelengthp": 15]));
-	  column_data = "";
-	  in_column++;
-	  return 0;
-  }
   else if(Regexp.SimpleRegexp("<[sS][0-9]*>")->match(data))
 	{
 		process_setting_buffer();
@@ -1258,6 +1270,22 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	}
 	else if(has_prefix(lcdata, "<columnset"))
 	{
+	  mapping atts = parse_tag(data);
+    if(!atts->gutter)
+      throw(Error.Generic("No gutter specified.\n"));
+      
+    int minspace = sort(indices(spaces))[0];
+    int g = (int)atts->gutter;
+      
+    if(g != 0 && g < minspace)
+      throw(Error.Generic("gutter " + g + " is too small.\n"));
+        
+    cs_gutter = g;
+    in_columnset = 1;
+    return 0;  
+	}
+	else if(has_prefix(lcdata, "<columns"))
+	{
 	  array(int) widths;
 	  int gutter;
     int count;
@@ -1309,7 +1337,7 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	    }
 	    else
 	    {
-	      throw(Error.Generic("column set using count must specify either width or gutter.\n")); 
+	      throw(Error.Generic("columns using count must specify either width or gutter.\n")); 
 	    }	      
 	  }
 	  else if(atts->widths)
@@ -1336,8 +1364,8 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	    gutter = (config->lineunits - tot) / (count-1);
 	  }
 	  
-	  werror("column set lineunits = %d, count = %d, width = %O, gutter = %d", config->lineunits, count,  widths, gutter);
-	  werror("STARTING COLUMNSET\n");
+	  werror("columns lineunits = %d, count = %d, width = %O, gutter = %d", config->lineunits, count,  widths, gutter);
+	  werror("STARTING COLUMNS\n");
 	  // the page length array is the number of lines left on the current page to spread columns across, followed by full length pages.
 
 	  column_parser = clone(([]), 1);
