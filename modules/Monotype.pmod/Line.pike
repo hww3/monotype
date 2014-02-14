@@ -586,7 +586,7 @@ import Monotype;
                   else max = 0.160; 
               
                   werror("Sort width check: wanted = %f, max allowed = %f inches.\n", want, max);
-                  if(want > max) throw(Error.Generic(sprintf("Requested sort wider than mould would allow: %f > %f inches.\n", want, max)));
+                  if(want > max) errors->append(sprintf("Requested sort wider than mould would allow: %f > %f inches.\n", want, max));
    	            
     //werror("needed units: %d, max_ls_adjustment: %d\n", needed_units, max_ls_adjustment);
       	          if(needed_units > max_ls_adjustment || abs(needed_units) > max_reduction_units)
