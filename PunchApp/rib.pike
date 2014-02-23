@@ -32,7 +32,7 @@ int main(int argc, array argv)
   array codes;
 
   send_footer();
-  send_header();
+  send_header(rib->get_info());
 return 0;
   while(codes = rib->get_next_code())
   {
@@ -75,9 +75,14 @@ void send_codes(array codes)
 //  werror("<< %O\n", f->read(100, 1));
 }
 
-void send_header()
+void send_header(mapping info)
 {
   feed_lines(10);  
+  object ch = (object)("char");
+  array codes = ch->gen_chars((string)info->name, (string)info->face, (string)info->wedge + " " + (string)info->set);
+  foreach(codes;;int c)
+     write(replace(sprintf("%032b\n", c|(1<<31)),({"0", "1"}),({" ", "."})));
+  feed_lines(5);
   send_arrow();
 }
 
