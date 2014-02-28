@@ -101,8 +101,8 @@ void loadJob_(object a)
   object openPanel = Cocoa.NSOpenPanel.openPanel();
 
   openPanel->setAllowsMultipleSelection_(0);
-
-  if(!openPanel->runModalForTypes_(({"rib"}))) return 0;
+  openPanel->setAllowedFileTypes_(({"rib"}));
+  if(!openPanel->runModal()) return 0;
 
   mixed files = openPanel->URLs();
   if(!files->count())
@@ -116,7 +116,7 @@ void loadJob_(object a)
   set_job_info();
 
   CasterToggleButton->setEnabled_(1);
-//  JumpToLineButton->setEnabled_(1);
+  JumpToLineButton->setEnabled_(1);
   JumpToLineItem->setEnabled_(1);
   app->mainMenu()->update();
   updateLinesView();
