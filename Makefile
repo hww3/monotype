@@ -95,7 +95,7 @@ webapp: fins dojo
 	cp -Rf dojo-release-1.6.1-src/release/dojo "${RIBBON_GENERATOR}.app/Contents/Resources/Keyboard"
 
 testsuite: testsuite.in
-	/usr/local/pike/8.0.2/include/pike/mktestsuite testsuite.in > testsuite
+	/usr/local/pike/8.0.1/include/pike/mktestsuite testsuite.in > testsuite
 
 verify:	testsuite
 	pike -Mmodules -x test_pike testsuite

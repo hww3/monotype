@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>Punch</string>
+	<key>CFBundleGetInfoString</key>
+	<string>${punchVersion}, ${releaseType}</string>
+    <key>CFBundleVersion</key>
+    <string>${punchVersion}</string>
+	<key>CFBundleIdentifier</key>
+	<string>org.welliver.Punch</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleSignature</key>
+	<string>WvTx</string>
+	<key>NSMainNibFile</key>
+	<string>Punch.nib</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+	<key>CFBundleIconFile</key>
+	<string>Punch</string>
+    <key>SUFeedURL</key>
+    <string>http://hww3.riverweb.com/dist/monotype/updates/Punch/appcast.xml</string>
+    <key>SUPublicDSAKeyFile</key>
+    <string>dsa_pub.pem</string>
+</dict>
+</plist>
