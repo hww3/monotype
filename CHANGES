@@ -1,3 +1,15 @@
+20140313
+- Ribbon Generator: Added line unit display on generator page.
+- Ribbon Generator: Added clickable lables for radios and checkboxes.
+
+20140213
+- Ribbon Generator: Mould "over-extension" is now just a warning.
+
+20140130
+- Ribbon Generator: added response compression, which should greatly 
+    speed up soft proof display.
+- Caster: GTK caster app is at full feature parity with OSX Caster app.
+
 20131227
 - Ribbon Generator: Added groundwork for multiple column layouts.
 
