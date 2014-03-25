@@ -1922,7 +1922,7 @@ string generate_ribbon()
     		  for(int i = 0; i <= 18; i+=spacesize)
           {
             werror("trip space added: %O.\n", spaces[spacesize]);            
-    	 		  current_line->add(Sort(spaces[spacesize]), 1, 1);
+    	 		  current_line->add(Sort(spaces[spacesize]), 0, 1);
     	 		  werror("done.\n");
           }
     	  }
