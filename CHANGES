@@ -1,3 +1,7 @@
+20140324
+- Ribbon Generator: Swap location of "caster trip spaces" so that 
+   they're easier to remove from the end of the line.
+
 20140313
 - Ribbon Generator: Added line unit display on generator page.
 - Ribbon Generator: Added clickable lables for radios and checkboxes.
