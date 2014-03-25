@@ -275,7 +275,8 @@ import Monotype;
         throw(Error.Generic(sprintf("Unable to fit column on line: have %O units on %O unit line, want to add %O more.\n", lineunits, linelength, activator->lineunits)));
       else
         elements += ({activator});
-        linelength += activator->lineunits;
+  	    if(!stealth)
+          linelength += activator->lineunits;
         activator->double_justification = 1;
     }
     else if(activator->is_real_js)
@@ -288,7 +289,8 @@ import Monotype;
 	    {
 	      elements += ({activator});		
 	    }
-      linelength += (min_space_units);
+	    if(!stealth)
+	      linelength += (min_space_units);
       linespaces ++;
 	    return;
     }
