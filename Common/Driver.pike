@@ -38,6 +38,7 @@
   void jump_to_line(int line)
   {
 //	werror("\n\n\njump_to_line: %O\n", line);
+       if(!ribbon) return;
    	ribbon->rewind(-1);
 	setLineStatus(ribbon->current_line);
     processedCode();
@@ -217,7 +218,8 @@ ribbon->current_line--;
   {
     if(inManualControl)
       return;
- 
+    if(!ribbon) return;
+
     ribbon->rewind(-1);
 	setLineStatus(ribbon->current_line);
     processedCode();
