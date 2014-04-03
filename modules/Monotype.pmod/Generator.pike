@@ -85,9 +85,18 @@ void create(mapping settings)
 {	
 
 	werror("Monotype.Generator(%O)\n", settings);
-  int lineunits = (int)(18 * (settings->pointsystem||12) * 
-			(1/settings->setwidth) * settings->linelengthp);
+  int lineunits;
   
+  if(settings->linelengthp && settings->lineunits)
+  {
+    throw(Error.Generic("Line lenth must be specified in picas or units, but not both.\n"));
+  }
+  else if(settings->linelengthp)
+    lineunits = (int)(18 * (settings->pointsystem||12) * 
+			(1/settings->setwidth) * settings->linelengthp);
+  else if(settings->lineunits)
+    lineunits = settings->lineunits;
+    
   config = settings;
   config->lineunits = lineunits;
 
@@ -480,7 +489,7 @@ int process_setting_buffer(int|void exact)
 	  // if we get here, and there's no line present, it's the first line of the job, thus, by default, a new paragraph.
 	  insert_header(1);
 	}
- werror("data to set: %O\n", data_to_set);
+// werror("data to set: %O\n", data_to_set);
   for(int i = 0; i<sizeof(data_to_set) ;i++)
 	{
 //  	int additback;
@@ -525,15 +534,35 @@ int process_setting_buffer(int|void exact)
       current_line->non_spaces++;
     } 
     
-    
+//    werror("adding %O\n", data_to_set[i]);
 	  current_line->add(data_to_set[i]);
 
     // if permitted, prepare a tight line for possible use later.
+    
+    object removed_sort;
+    
+    
+    // if we've overset a line, and the thing that threw us over was a justifying space; it can be dropped 
+    // and a new line started because the previous sort fit.
+	  if(current_line->is_overset())
+	  {
+	    removed_sort = current_line->remove();
+	    
+	    if(removed_sort->is_real_js)
+ 	    {
+  	    werror("skipping to a new line.\n");
+  	    new_line();
+  	    continue;
+	    }
+      else current_line->add(removed_sort);
+	  }
+	  
 	  if(current_line->is_overset() && config->enable_combined_space)
 	  { 
       // first, let's see if removing 1 unit from each justifying space will work.
      	object tl = Line(m, s, config + (["combined_space": 1, "lineunits": pad_units?(config->lineunits-(pad_units*2)):config->lineunits]), this);
 	   	tl->re_set_line(current_line);
+//	   	werror("current_line: %O\n", current_line->render_line(1));
 	     	
       int j = i;
 
@@ -548,7 +577,7 @@ int process_setting_buffer(int|void exact)
  	     
 	if(!tl->is_overset()) // did the word fit using combined spaces?
     	{
-    	  werror("tight line fit!\n");
+    	  werror("tight line fit2!\n");
      	  tl->line_number = current_line->line_number;
      	  tl->line_on_page = current_line->line_on_page;
     	  tightline = tl;	 
@@ -1551,7 +1580,7 @@ void make_new_line(int|void newpara)
 {
   if(current_line)
     current_line->finalized = 1; // might have to move this further back.
-  if(current_line)
+//  if(current_line)
 //  werror("*** make_new_line(%f/%f)\n", (float)current_line->lineunits, (float)current_line->linelength);
 
   if(hanging_punctuation_width != 0.0 && current_line && sizeof(current_line->elements))
@@ -1667,16 +1696,20 @@ int calc_lineunits()
   return col;
 }
 
-Line low_make_new_line()
+Line low_make_new_line(int|void no_increment)
 {
 	Line l;	
 	int col_number;
   col_number = calc_lineunits();
 
-	linesonpage++;
+  if(!no_increment)
+  {
+	  linesonpage++;
+	  numline++;
+  }
 	l = Line(m, s, config + (["lineunits": pad_units?(config->lineunits-(pad_units*2)):config->lineunits]), this);
 	l->col_number = col_number;
-	l->line_number = ++numline;
+	l->line_number = numline;
 	l->line_on_page = linesonpage;
 	return l;
 }
