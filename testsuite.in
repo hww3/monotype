@@ -66,3 +66,18 @@ test_any([[
   return 1;
 ]], 1);
 
+test_any([[
+  object g = Monotype.ShapeGenerator(settings + (["linelengthp": 50.0, "unnatural_word_breaks": 1]), "Q");
+  array words = ({});
+  int x = 0;
+  do{
+    int len = random(4);
+    string word = "";
+    for(int i = 0; i < len; i++)
+      word += sprintf("%c", 'a' + random(26));
+    words += ({word});
+  }while(x++ < 500);
+  string t = words * " ";
+  g->parse(t + "<p>");
+  return 1;
+]], 1);

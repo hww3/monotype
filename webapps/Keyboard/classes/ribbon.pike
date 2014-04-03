@@ -145,6 +145,229 @@ public void get_line(Request id, Response response, Template.View v, string line
   response->set_data("<html>Codes for line " + ((int)line + 1) + ":<p>\n<pre style=\"font-family: courier, monospace; font-size: 8pt;\">\n" + replace(id->misc->session_variables->generator->lines[(int)(line)]->generate_line(), "\n", "\n") + "</pre><p/> <p/></html>\n");
 }
 
+public void trick(Request id, Response response, Template.View v, mixed ... args)
+{
+  
+  mixed test_stopbar = Monotype.load_stopbar(combine_path(getcwd(), "../test/wedges", "s5"));
+  mixed test_mca = Monotype.load_matcase(combine_path(getcwd(), "../test/matcases", "garamond"));
+  mixed dictdir = combine_path(getcwd(), "../test/dicts");
+  mapping settings = ([
+      "allow_lowercase_smallcaps": 0,
+      "allow_punctuation_substitution": 0,
+      "enable_combined_space": 1,
+      "hyphenate": 1,
+      "hyphenate_no_hyphen": 0,
+      "jobname": "",
+      "justification": 1,
+      "lang": "en_US",
+      "min_big": 1,
+      "min_little": 8,
+      "mould": 12,
+      "page_length": 42,
+      "pointsystem": 12.0,
+      "setwidth": 11.0,
+      "unit_adding": 0,
+      "unit_shift": 0,
+      "unnatural_word_breaks": 0,
+      "dict_dir": dictdir,
+      "matcase": test_mca,
+      "stopbar": test_stopbar,
+    ]);
+    
+  
+  
+   	object g, b;
+     Error.Generic err;
+   	int max_red = 2;
+string job_id = "tricky";
+     mixed parse_time;
+
+     parse_time
+      = gauge {
+     	
+     	g = Monotype.ShapeGenerator(settings + (["unnatural_word_breaks": 1]), "Q");
+         	g->set_hyphenation_rules(id->misc->session_variables->user["Preferences"]["hyphenation_rules"]["value"]);
+        array words = ({});
+        int x = 0;
+        do{
+          int len = random(4);
+          string word = "";
+          for(int i = 0; i < (len||3); i++)
+            word += sprintf("%c", 'a' + random(25) );
+          words += ({word});
+        }while(x++ < 800);
+        string t = words * " ";
+          
+          
+       //   werror("words: %O\n", t);
+      
+      //return;
+   	  err = Error.mkerror(catch(g->parse("<allowtightlines>" + 
+   	  /*  "Mary had a little lamb, its fleece was white as snow. Everywhere that mary went, the lamb was sure to go."
+   	              "Mary had a little lamb, its fleece was white as snow. Everywhere that mary went, the lamb was sure to go."
+   	              "Mary had a little lamb, its fleece was white as snow. Everywhere that mary went, the lamb was sure to go."
+                   "Mary had a little lamb, its fleece was white as snow. Everywhere that mary went, the lamb was sure to go."
+                    "Mary had a little lamb, its fleece was white as snow. Everywhere that mary went, the lamb was sure to go."
+                     "Mary had a little lamb, its fleece was white as snow. Everywhere that mary went, the lamb was sure to go."
+                      "Mary had a little lamb, its fleece was white as snow. Everywhere that mary went, the lamb was sure to go."
+                  "Mary had a little lamb, its fleece was white as snow. Everywhere that mary went, the lamb was sure to go."
+                  */
+                  
+            t
+            + "<p>")));
+   	  id->misc->session_variables->generator = g;
+   	  b = String.Buffer();
+     };
+
+   	if(err)
+   	{
+   		b+="<div style=\"clear: left\">\n";
+   		b+="An error occurred while validating the ribbon: <p><b>";
+   		b+=(err->message());
+   		b+="</b><p/>";
+   		b+="The ribbon will be displayed up to the point of the error.";
+   		b+="<!--\n\n";
+   		b+=err->describe();
+   		b+="\n\n-->";
+   		b+="</div>\n";
+
+   		Tools.Logging.Log.exception("An error occurred.", err);
+   	}
+   	werror("parse_time: %O\n", parse_time);
+
+   	int units;
+           if(g->lines && sizeof(g->lines)) units = g->lines[-1]->units;
+           else if(g->current_line) units = g->current_line->units;
+
+   	b+="<div style=\"clear: left\">";
+   	b+=("<div style=\"position:relative; float:left; width:50px\">Line</div><div style=\"position:relative; float:left; width:" 
+   		+ units + "px\">&nbsp;</div><div></div><div>Just Code / Comments</div>");
+   	b+=("</div>");
+
+   //	foreach(g->lines + (err?({g->current_line}):({})); int i; mixed line)
+     mixed render_time = gauge {
+   	foreach(g->lines; int i; mixed line)
+   	{
+   //	  werror("line: %O\n", line->elements);
+   		int mod;
+   		int setonline;
+   		int last_was_space = 0;
+   		int last_set;
+   //		b+="<span dojoType=\"dojox.widget.DynamicTooltip\" connectId=\"line_" + i + "\" href=\"" + action_url(get_line, ({(string)i}))+ "\" preventCache=\"true\">nevah seen!</span>";
+   		b+="<div style=\"clear: left\" id=\"line_" + i + "\" >";
+   		b+=("<div style=\"position:relative; float:left; width:50px\">" + (i+1) 
+   			+ "/"  + (sizeof(g->lines) - i)+ "</div>");
+   		string tobeadded = "";
+   		int tobeaddedwidth = 0;
+   		int total_set; 
+   		float spill =0.00;
+
+      mixed rendered_line = line->render_line(1);
+//      werror("rendered line: %O\n", rendered_line);
+   		foreach(rendered_line;int col; mixed e)
+   		{
+   	//	  if(e->is_real_js && line->combined_space)
+   	//	    continue;
+   		 if(e->is_real_js)
+   		  {
+   			if(tobeadded != "")
+   			{
+   			  b+= ("<div style=\"align:center; background: grey; position:relative; float:left; width:" + tobeaddedwidth + "px\">" + tobeadded + "</div>");
+   			  tobeadded = "";
+   			  tobeaddedwidth = 0;
+   			}
+   			// need some better work on this.
+   		    int w;
+   		    if(!e->is_combined_space)
+   		    {
+   		      w = e->matrix->get_set_width();
+   		      w = (w-max_red + e->calculated_width);
+   //		      werror("width: %O, %O\n", e->calculated_width, w);
+   		    }
+   		    else
+   		    {
+   		      w = e->calculated_width;
+   //		      throw(Error.Generic("combined space " + w + "\n"));
+   	      }
+   		    setonline+=w;
+
+    		// spill is used to even out the display lines, as we're not able to depict fractional units accurately on the screen.
+   		    spill += (e->calculated_width-floor((float)e->calculated_width));
+   		if(spill > 1.0) { w+=1; spill -=1.0; }
+
+   		    total_set += (e->matrix->get_set_width()-max_red);
+   		    b += ("<div style=\"position:relative; float:left; background:" + (!e->is_combined_space?"orange":"red") + "; width:" + (int)(w) + "px\"> &nbsp; </div>");
+     			last_was_space = 1;
+   		  }
+   		  else if(e->is_fs || e->is_js)
+   		  {
+   			if(tobeadded != "")
+   			{
+   			  b+= ("<div style=\"align:center; background: grey; position:relative; float:left; width:" + tobeaddedwidth + "px\">" + tobeadded + "</div>");
+   			  tobeadded = "";
+   			  tobeaddedwidth = 0;
+   			}
+   			// need some better work on this.
+   		    int w = e->get_set_width();
+   		    setonline+=w;
+   		    mod++;
+   		if(mod%2)					    
+   		    b += ("<div style=\"position:relative; float:left; background:pink; width:" + w + "px\">&nbsp;</div>");
+   		else
+   		    b += ("<div style=\"position:relative; float:left; background:lightpink; width:" + w + "px\">&nbsp;</div>");
+   			last_was_space = 1;
+   		  }
+     		  else
+    		  {
+   			total_set += e->get_set_width();
+   			 tobeaddedwidth += e->get_set_width();
+   			 setonline+=e->get_set_width();
+   			string ch = e->character;
+
+   			  if(e->style == "I")
+   			   ch = "<i>" + ch + "</i>";
+   			  if(e->style == "B")
+   			   ch = "<b>" + ch + "</b>";
+   			  if(e->style == "S")
+   			   ch = "<font size=\"-1\">" + ch + "</font>";
+
+
+   			if(e->mat && (float)e->get_set_width() != (float)e->mat->get_set_width())
+   			  ch = "<span style=\"text-decoration: overline; color: blue\">" + ch + "</span>";
+
+   			 if(sizeof(e->character) > 1) 
+   			  tobeadded += ("<u>" + (ch||" &nbsp; ") + "</u>");
+   			 else
+     			   tobeadded += (ch||" &nbsp; ");
+   		  }
+
+   //		  if((total_set-last_set) <= max_red) werror("%d %d whee!\n", i, col);
+   		  last_set = total_set;
+           }		
+
+   			if(tobeadded != "")
+   			{
+   			  b+= ("<div style=\"align:center; background: grey; position:relative; float:left; width:" + tobeaddedwidth + "px\">" + tobeadded + "</div>");
+   			  tobeadded = "";
+   			  tobeaddedwidth = 0;
+   			}
+   		b+=(" &nbsp; " /* +total_set + " " +(setonline) */ + " &lt;== " + line->big + " " + line->little /*+ " " + line->units*/ + "[" + line->line_on_page + "]");
+   		b+=" [<a onClick=\"showCodes(" + i + ", '" + action_url(get_line, ({(string)i})) + "')\">Codes</a>]";
+
+   		if(line->errors && sizeof(line->errors))
+   		  b+= ((array)line->errors * ", ");
+   		b+=("</div>\n");
+   	}
+   };
+   werror("render_time: %O\n", render_time);
+
+       v->add("job_id", job_id);
+       v->add("result", b);
+
+       response->set_charset("utf-8");
+  
+}
+
 public void do_validate(Request id, Response response, Template.View v, mixed ... args)
 {
   object user = id->misc->session_variables->user;
