@@ -55,10 +55,17 @@ import Monotype;
 	// the set width of the current face/wedge.	
 	float setwidth;
 	
-	object m, s;
+	object m, s; // matcase and stopbar objects
   mapping config;
 	
 	int max_ls_adjustment = 2;
+
+
+  int cc, cf, c, f; // the current justification wedge settings
+
+  ADT.Stack cjc = ADT.Stack();
+
+  
 
   void set_fixed_js(int x)
   {
@@ -234,6 +241,7 @@ import Monotype;
 	  return ({ large, small });
 	}
 
+
 	// calculates the large (0.0075) and small (0.0005) justification settings
 	// required to add units to the current sort.
 	array calculate_wordspacing_code(float units)
@@ -253,11 +261,6 @@ import Monotype;
 		
 		return x;
 	}
-
-  void add_line(Line line)
-  {
-    
-  }
 
 	// add a sort to the current line
 	void add(Sort|RealJS|Line activator, int|void atbeginning, int|void stealth)
@@ -391,9 +394,15 @@ import Monotype;
 	      if(combined_space)
 	      {
 	        e2->is_combined_space = 1;
+  	      e2->calculated_width = units;
 	        werror("combinedspace width: %O\n", units);
         }
-	      e2->calculated_width = units;
+        else
+        {
+	        e2->is_combined_space = 0;
+  	      e2->calculated_width = min_space_units + units;
+          werror("space width: %O\n", min_space_units + units);
+        }
 	      x += ({e2});
 	    }
 	    else if(matrix = e->get_mat(errors))
@@ -409,8 +418,6 @@ import Monotype;
 	  
     return x;
 	}
-
-  int cc, cf, c, f; // the current justification wedge settings
 	
 	string generate_line()
 	{
@@ -643,41 +650,4 @@ import Monotype;
    
     }
 	
-	class MatWrapper
-	{
-	  constant _is_matwrapper = 1;
-		int|float adjust_space;
 
-		object mat;
-		
-		static void create(object _mat, int|float _adjust_space)
-		{
-		  if(_mat == 1) throw(Error.Generic("whoa!\n"));
-			mat = _mat;
-			adjust_space = _adjust_space;
-		}
-		
-		static mixed `[](mixed a)
-		{
-			mixed m = ::`[](a);
-			if(m) return m;
-			else return mat[a];
-		}
-		
-		float get_set_width()
-		{
-			return (float)(adjust_space + mat->get_set_width());
-		}
-		
-		
-		static mixed `->(mixed a)
-		{
-			mixed m = ::`->(a);
-			if(m) return m; 
-			else return mat[a];
-		}
-		mixed _sprintf(mixed x)
-		{
-		  return "MatWrapper(" + sprintf("%O", mat) + ")";
-		}
-	}

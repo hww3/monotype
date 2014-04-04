@@ -190,12 +190,12 @@ string job_id = "tricky";
         array words = ({});
         int x = 0;
         do{
-          int len = random(4);
+          int len = random(6);
           string word = "";
           for(int i = 0; i < (len||3); i++)
             word += sprintf("%c", 'a' + random(25) );
           words += ({word});
-        }while(x++ < 800);
+        }while(x++ < 700);
         string t = words * " ";
           
           
@@ -278,17 +278,7 @@ string job_id = "tricky";
    			}
    			// need some better work on this.
    		    int w;
-   		    if(!e->is_combined_space)
-   		    {
-   		      w = e->matrix->get_set_width();
-   		      w = (w-max_red + e->calculated_width);
-   //		      werror("width: %O, %O\n", e->calculated_width, w);
-   		    }
-   		    else
-   		    {
-   		      w = e->calculated_width;
-   //		      throw(Error.Generic("combined space " + w + "\n"));
-   	      }
+ 		      w = e->calculated_width;
    		    setonline+=w;
 
     		// spill is used to even out the display lines, as we're not able to depict fractional units accurately on the screen.
@@ -527,8 +517,6 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 
 		foreach(line->render_line(1);int col; mixed e)
 		{
-	//	  if(e->is_real_js && line->combined_space)
-	//	    continue;
 		 if(e->is_real_js)
 		  {
 			if(tobeadded != "")
@@ -539,17 +527,7 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 			}
 			// need some better work on this.
 		    int w;
-		    if(!e->is_combined_space)
-		    {
-		      w = e->matrix->get_set_width();
-		      w = (w-max_red + e->calculated_width);
-//		      werror("width: %O, %O\n", e->calculated_width, w);
-		    }
-		    else
-		    {
-		      w = e->calculated_width;
-//		      throw(Error.Generic("combined space " + w + "\n"));
-	      }
+	      w = e->calculated_width;
 		    setonline+=w;
 
  		// spill is used to even out the display lines, as we're not able to depict fractional units accurately on the screen.
