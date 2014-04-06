@@ -166,6 +166,7 @@ line-height: 11.5pt;
 <%#autoformat "var": data->description%>
 </tt>
 <% if( data && data->problems && sizeof(data->problems) ) { %>
+<br/>
   <img style="padding:0px; border:0px" src="<%#context_root%>static/images/warning.png"/>
   
   <%=sizeof(data->problems)%> problem(s):<br>

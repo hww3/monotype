@@ -145,6 +145,7 @@ public void get_line(Request id, Response response, Template.View v, string line
   response->set_data("<html>Codes for line " + ((int)line + 1) + ":<p>\n<pre style=\"font-family: courier, monospace; font-size: 8pt;\">\n" + replace(id->misc->session_variables->generator->lines[(int)(line)]->generate_line(), "\n", "\n") + "</pre><p/> <p/></html>\n");
 }
 
+#if constant(Image.TrueType)
 public void trick(Request id, Response response, Template.View v, mixed ... args)
 {
   
@@ -357,6 +358,7 @@ string job_id = "tricky";
        response->set_charset("utf-8");
   
 }
+#endif /* Image.TrueType */
 
 public void do_validate(Request id, Response response, Template.View v, mixed ... args)
 {
