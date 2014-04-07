@@ -90,11 +90,12 @@ fins: framework
 	mkdir -p ${RIBBON_GENERATOR}.app/Contents/Frameworks/Pike.framework/Resources/lib/modules/Public.pmod/Tools.pmod/ConfigFiles.pmod
 	cp -Rf ConfigFiles_build/module.pmod.in/* ${RIBBON_GENERATOR}.app/Contents/Frameworks/Pike.framework/Resources/lib/modules/Public.pmod/Tools.pmod/ConfigFiles.pmod/
 
-webapp: fins dojo
+webapp: fins dojo phantomjs
 	cp -Rf webapps/Keyboard "${RIBBON_GENERATOR}.app/Contents/Resources"
 	cp -Rf modules/* "${RIBBON_GENERATOR}.app/Contents/Resources/Keyboard/modules"
 	cp -Rf CHANGES "${RIBBON_GENERATOR}.app/Contents/Resources"
 	cp -Rf dojo-release-1.6.1-src/release/dojo "${RIBBON_GENERATOR}.app/Contents/Resources/Keyboard"
+	cp -Rf phantomjs-1.9.7-macosx/bin/phantomjs "${RIBBON_GENERATOR}.app/Contents/Resources/Keyboard/bin"
 
 testsuite: testsuite.in
 	/usr/local/pike/8.0.1/include/pike/mktestsuite testsuite.in > testsuite
@@ -102,6 +103,9 @@ testsuite: testsuite.in
 verify:	testsuite
 	pike -Mmodules -x test_pike testsuite
 
+phantomjs:
+	if [ ! -f phantomjs-1.9.7-macosx.zip ]; then wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.7-macosx.zip; fi;
+	unzip phantomjs-1.9.7-macosx.zip
 dojo:
 	if [ ! -f dojo-release-1.6.1-src.tar.gz ]; then wget http://download.dojotoolkit.org/release-1.6.1/dojo-release-1.6.1-src.tar.gz; fi;
 	tar xzvf dojo-release-1.6.1-src.tar.gz

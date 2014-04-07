@@ -1,4 +1,5 @@
 import Fins;
+import Tools.Logging;
 
 inherit "mono_doccontroller";
 
@@ -386,7 +387,10 @@ public void pdfdisplay(Request id, Response response, Template.View view, mixed 
   display(id, resp, t, @args);
   string fn = sprintf("/tmp/%d_%d_%s", getpid(), time(), args[0]);
   Stdio.write_file(fn + ".html", string_to_utf8(t->render()));
-  Process.popen("phantomjs Keyboard/bin/render.js " + fn + ".html " +fn + ".pdf Letter 0.80");
+  string command = combine_path(app->config->app_dir, "bin/phantomjs") + " " + combine_path(app->config->app_dir, "bin/render.js") + " " + fn + ".html " +fn + ".pdf Letter 0.80";
+  Log.info(command);
+  string result = Process.popen(command);
+  Log.info("result: %O", result);
   response->set_data(Stdio.read_file(fn + ".pdf"));
   response->set_type("application/pdf");
   
