@@ -48,7 +48,9 @@ clean:
 
 Caster.app: ccstub ccapp ccapply_versions
 
-RibbonGenerator.app: stub framework fins webapp rgapply_versions
+RibbonGenerator.app: stub framework fins webapp cleanup_app rgapply_versions
+
+cleanup_app:
 	-rm "${RIBBON_GENERATOR}.app/Contents/Resources/Keyboard/config/Keyboard.sqlite3"
 	-rm "${RIBBON_GENERATOR}.app/Contents/Resources/Keyboard/logs/debug.log"
 	-rm "${RIBBON_GENERATOR}.app/Contents/Resources/Keyboard/logs/access.log"

@@ -94,11 +94,16 @@ void set(string column, int row, Matrix mat)
   //   U == UNDERLINE
   //   S == SMALL CAPS
 
+
   if(mat->is_fs || mat->is_js)
   {
     elements["SPACE_"+ (int)mat->set_width] = mat;
     if(spaces[(int)mat->set_width])
-      add_problem(column, row, sprintf("Redundant space in row %d.", row));
+      add_problem(column, row, sprintf("Redundant %d unit space: %s%d and %s%d.", 
+                (int)mat->set_width, 
+                spaces[(int)mat->set_width]->col_pos, 
+                spaces[(int)mat->set_width]->row_pos,
+                column, row));
     spaces[(int)mat->set_width] = mat;
   }
 
@@ -136,18 +141,17 @@ void set(string column, int row, Matrix mat)
 	    key2, column, row, elements[key]->col_pos, elements[key]->row_pos));
     }
     elements[key] = mat;
-  if(mat->style =="R" && mat->character == "0")
-  { 
-    werror(string_to_utf8(sprintf("loaded %s: %O\n", key, (mapping)mat)));
-  }
-
+    if(mat->style =="R" && mat->character == "0")
+    { 
+      werror(string_to_utf8(sprintf("loaded %s: %O\n", key, (mapping)mat)));
+    }
   }
 }
 
 private void add_problem(string column, int row, string desc)
 {
-       problems += ({ ({column, row, string_to_utf8(desc)}) });
-       werror(string_to_utf8(desc));
+  problems += ({ ({column, row, string_to_utf8(desc)}) });
+  werror(string_to_utf8(desc));
 }
 
 void set_size(int size)
