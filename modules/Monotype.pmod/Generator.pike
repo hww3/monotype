@@ -1800,7 +1800,10 @@ float low_quad_out(float amount, int|void atbeginning)
     toadd = simple_find_space((int)floor(amount), spaces);
 
   array list = ({});
-  toadd = reverse(toadd);
+
+  if(toadd[0] > toadd[-1])
+    toadd = reverse(toadd);
+
   foreach(toadd;;int x)
   {
     if(x == 27) list += ({18,9});
