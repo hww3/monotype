@@ -1,7 +1,7 @@
 #!/bin/sh
 PATH=/usr/local/pike/7.9.5/bin:$PATH
 export PATH
-FINS_HOME=/srv/delta-home/monotype/webapps/Keyboard
+FINS_HOME=/srv/delta-home/keyboard-deploy/Keyboard
 export FINS_HOME
 while /bin/true ; 
 do
