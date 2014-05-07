@@ -512,7 +512,10 @@ import Monotype;
       			    cf = f;
       			    cc = c;
       	      }
-              buf->add(sprintf("S %d %s [ ]\n", me->matrix->row_pos, me->matrix->col_pos));
+      	      if(config->enable_pneumatic_quads)
+                buf->add(sprintf("S %s %d %s [ ]\n", generator->pneumatic_quad_code, me->matrix->row_pos, me->matrix->col_pos));
+      	      else
+                buf->add(sprintf("S %d %s [ ]\n", me->matrix->row_pos, me->matrix->col_pos));
               werror("_");
               return;
             }
@@ -640,13 +643,18 @@ import Monotype;
           
  //           werror(string_to_utf8(ch||""));
             
-    	}
-    	if(raw && config->unit_shift)
+    	  }
+    	  if(raw && config->unit_shift)
         {
           col_pos = replace(col_pos, "D", "EF");
         }
+        
+        // if it's a low space and we have the pneumatic attachment, activate it here.
+        if(config->enable_pneumatic_quads && (me->is_fs || me->is_js))
+          buf->add(sprintf("%s ", generator->pneumatic_quad_code));
+          
         buf->add(sprintf("%s %s %s [%s]\n", (string)row_pos, ((col_pos/"")-({""}))*" ", this_combined_space?"S":"", string_to_utf8(ch||""), /* me->get_set_width() */));
-	if(this_combined_space) this_combined_space = 0;
+	      if(this_combined_space) this_combined_space = 0;
    
     }
 	

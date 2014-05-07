@@ -6,6 +6,8 @@ constant MODE_LEFT = 1;
 constant MODE_RIGHT = 2;
 constant MODE_CENTER = 3;
 
+constant pneumatic_quad_code = "XX";
+
 constant dicts = (["en_US": "hyph_en_US.dic",
 		   "nl_NL": "hyph_nl_NL.dic",
 		   "de_DE": "hyph_de_DE.dic",
