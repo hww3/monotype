@@ -4,6 +4,7 @@ FINS_REPO="https://hg.welliver.org"
 RIBBON_GENERATOR=RibbonGenerator
 CASTER_CONTROL=Caster
 PRIVATE_KEY_DIR=${HOME}/SparkleShare/hww3/Development/Sparkle
+DEPLOY_DEST=/srv/delta-home/keyboard-deploy
 
 # note: Public.ObjectiveC must be available and built
 #
@@ -82,15 +83,24 @@ stub:
 framework: 
 	cp -Rf RibbonGeneratorApp/* "${RIBBON_GENERATOR}.app/Contents/"
 
-
-fins: framework
+prereqs: dojo
 	if [ ! -d Fins_build ]; then hg clone ${FINS_REPO}/fins Fins_build; fi;
 	if [ ! -d ConfigFiles_build ]; then hg clone ${FINS_REPO}/pike_modules-public_tools_configfiles ConfigFiles_build; fi;
+
+fins: framework prereqs
 	cp -Rf Fins_build/lib/* ${RIBBON_GENERATOR}.app/Contents/Frameworks/Pike.framework/Resources/lib/modules
 	mkdir -p ${RIBBON_GENERATOR}.app/Contents/Frameworks/Pike.framework/Resources/lib/modules/Public.pmod/Tools.pmod/ConfigFiles.pmod
 	cp -Rf ConfigFiles_build/module.pmod.in/* ${RIBBON_GENERATOR}.app/Contents/Frameworks/Pike.framework/Resources/lib/modules/Public.pmod/Tools.pmod/ConfigFiles.pmod/
 
-webapp: fins dojo phantomjs
+deploy: prereqs
+	mkdir -p "${DEPLOY_DEST}"
+	cp -Rf webapps/Keyboard "${DEPLOY_DEST}"
+	cp -Rf modules/* "${DEPLOY_DEST}/Keyboard/modules"
+	cp -rf CHANGES "${DEPLOY_DEST}/"
+	cp -Rf dojo-release-1.6.1-src/release/dojo "${DEPLOY_DEST}/Keyboard"
+	pike tools/apply_versions.pike version.cfg "${DEPLOY_DEST}/Keyboard"
+
+webapp: fins phantomjs
 	cp -Rf webapps/Keyboard "${RIBBON_GENERATOR}.app/Contents/Resources"
 	cp -Rf modules/* "${RIBBON_GENERATOR}.app/Contents/Resources/Keyboard/modules"
 	cp -Rf CHANGES "${RIBBON_GENERATOR}.app/Contents/Resources"
