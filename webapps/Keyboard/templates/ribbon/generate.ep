@@ -147,6 +147,9 @@ Width Adjustment Mechanisms<p>
 <p>
 <%#input "type":"checkbox", "name": "enable_pneumatic_quads", "id": "enable_pneumatic_quads", "value": "1", "data_supplied": data->load_config%> <label for="enable_pneumatic_quads">Pneumatic Low Quad Mechanism</label> 
 <p>
+<%#select "name": "maximum_quad_units", "id": "maximum_quad_units", "value": "18", "options": ({"18", "9", "15", "12", "11", "10"})%> <label for="maximum_quad_units">Maximum space size when quadding</label> 
+
+<p>
 Minimum Justifying Space Size (3/8 is default)
 <%#select "name": "min_just", "value": "3/8", "options": ({"1/1", "1/2", "1/3", "1/4", "1/5", "1/6", "1/7", "1/8", "1/9", "1/10", "1/11", "1/12", "1/13", "1/14", "1/14", "2/1", "2/2", "2/3", "2/4", "2/5", "2/6", "2/7", "2/8", "2/9", "2/10", "2/11", "2/12", "2/13", "2/14", "2/14", "3/1", "3/2", "3/3", "3/4", "3/5", "3/6", "3/7", "3/8", "3/9", "3/10", "3/11", "3/12", "3/13", "3/14", "3/14"})%>
 <p>

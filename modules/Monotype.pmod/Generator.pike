@@ -36,6 +36,7 @@ int linesonpage;
 object JustifyingSpace;
 
 mapping spaces = ([]);
+mapping quadding_spaces = ([]);
 mapping highspaces = ([]);
 
 array(Line) lines = ({});
@@ -236,6 +237,13 @@ protected void load_spaces(object m)
       ns->set_width = new_width;
       spaces[(int)new_width] = ns;
     }
+  }
+  
+  if(config->maximum_quad_units)
+  {
+    foreach(indices(spaces);;int x)
+      if(x <= config->maximum_quad_units)
+        quadding_spaces[x] = spaces[x];
   }
   
   werror("SPACES: %O\n", spaces);
@@ -1772,34 +1780,40 @@ void quad_out()
 
   if(line_mode == MODE_LEFT || line_mode == MODE_JUSTIFY)
   {
- 	  low_quad_out(left);
+ 	  low_quad_out(left, 0, 1);
   }
   else if(line_mode == MODE_RIGHT)
   {
-    low_quad_out(left, 1);	
+    low_quad_out(left, 1, 1);	
   }
   else if(line_mode == MODE_CENTER)
   {
      float l,r;
      l = left/2;
      r = (left/2) + (left %2);
-	 low_quad_out(r);
-	 low_quad_out(l, 1);
+	 low_quad_out(r, 0, 1);
+	 low_quad_out(l, 1, 1);
   }
 }
 
-float low_quad_out(float amount, int|void atbeginning)
+float low_quad_out(float amount, int|void atbeginning, int|void is_quadding)
 {
 //  werror("low_quad_out(%f, %d, %f)\n", amount, atbeginning, current_line->linelength);
   
   array toadd = ({});
   int ix;
   if(!floatp(amount)) amount = (float)amount;
-  toadd = Monotype.findspace()->simple_find_space((int)floor(amount), spaces);
+  mapping qspaces;
+  if(is_quadding)
+    qspaces = quadding_spaces;
+  else
+    qspaces = spaces;
+    
+  toadd = Monotype.findspace()->simple_find_space((int)floor(amount), qspaces);
   if(!toadd || !sizeof(toadd))
-    toadd = Monotype.IterativeSpaceFinder()->findspaces((int)floor(amount), spaces);
+    toadd = Monotype.IterativeSpaceFinder()->findspaces((int)floor(amount), qspaces);
   if(!toadd || !sizeof(toadd))
-    toadd = simple_find_space((int)floor(amount), spaces);
+    toadd = simple_find_space((int)floor(amount), qspaces);
 
   array list = ({});
 

@@ -99,6 +99,7 @@ werror("EXCTRACT_SETTINGS: %O\n", id->variables);
 		"hyphenate_no_hyphen": (int)id->variables->hyphenate_no_hyphen,
 		"trip_at_end": (int)id->variables->trip_at_end,
 		"page_length": (int)id->variables->page_length,
+		"maximum_quad_units": (int)id->variables->maximum_quad_units,
 		"enable_pneumatic_quads": (int)id->variables->enable_pneumatic_quads,
 		"enable_combined_space": (int)id->variables->enable_combined_space,
 		"min_little": (int)(((id->variables->min_just||"")/"/")[1]), 
