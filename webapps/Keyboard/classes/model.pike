@@ -24,6 +24,7 @@ object get_context(mapping _config)
   }
   else
   {
+
     c = ::get_context(_config, Fins.Model.DEFAULT_MODEL);
     return c;
   }
@@ -41,6 +42,7 @@ void load_model()
     if(functionp(ctx->run_upgrade))
       ctx->run_upgrade();
 
-    ctx->register_types();
+    if(!all_constants()["__defer_full_startup"])
+      ctx->register_types();
   }
 }
