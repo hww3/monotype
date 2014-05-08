@@ -118,7 +118,7 @@ phantomjs:
 	unzip phantomjs-1.9.7-macosx.zip
 dojo:
 	if [ ! -f dojo-release-1.6.1-src.tar.gz ]; then wget http://download.dojotoolkit.org/release-1.6.1/dojo-release-1.6.1-src.tar.gz; fi;
-	tar xzvf dojo-release-1.6.1-src.tar.gz
+	tar xzf dojo-release-1.6.1-src.tar.gz
 	cp tools/monotype.profile.js dojo-release-1.6.1-src/util/buildscripts/profiles
 	cp webapps/Keyboard/static/MatrixEditor.js dojo-release-1.6.1-src/dijit/form
 	cd dojo-release-1.6.1-src/util/buildscripts && ./build.sh action=release profile=monotype version=1.6.1-release
