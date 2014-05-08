@@ -9,6 +9,8 @@ object auth;
 object users;
 object prefs;
 
+object cloud;
+
 object dojo;
 
 protected void create(object application)
@@ -25,6 +27,7 @@ void start()
   auth = load_controller("auth/controller");
   users = load_controller("users");
   prefs = load_controller("prefs");
+  cloud = load_controller("cloud");
 
   before_filter(app->admin_user_filter);
 }
