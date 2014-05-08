@@ -59,13 +59,14 @@ object save_matcase(Monotype.MatCaseLayout mca, object user, int|void is_public)
 	  mca_db["is_public"] = 0;
 	  mca_db["owner"] = user;
 	  mca_db["xml"] = Public.Parser.XML2.render_xml(node);
+	  mca_db["updated"] = Calendar.now()->format_http();  // GMT, hopefully
 	  mca_db->save();
 	}
 	else
 	{
 		werror("saving existing mca %O " + mca->name + "\n", mca_db);
 werror("indices: %O\n", indices(mca_db));
-		mca_db->set_atomic((["is_public": is_public, "xml": Public.Parser.XML2.render_xml(node)]));
+		mca_db->set_atomic((["is_public": is_public, "xml": Public.Parser.XML2.render_xml(node), "updated": Calendar.now()->format_http()]));
 	}
 /*
     file_name = combine_path(getcwd(), config["locations"]["matcases"], mca->name  + ".xml");
