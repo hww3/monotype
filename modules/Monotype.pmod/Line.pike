@@ -513,7 +513,7 @@ import Monotype;
       			    cc = c;
       	      }
       	      if(config->enable_pneumatic_quads)
-                buf->add(sprintf("S %s %d %s [ ]\n", generator->pneumatic_quad_code, me->matrix->row_pos, me->matrix->col_pos));
+                buf->add(sprintf("S %s %d [ ]\n", generator->pneumatic_quad_code, me->matrix->row_pos));
       	      else
                 buf->add(sprintf("S %d %s [ ]\n", me->matrix->row_pos, me->matrix->col_pos));
               werror("_");
