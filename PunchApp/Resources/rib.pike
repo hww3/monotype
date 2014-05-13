@@ -13,27 +13,42 @@ int main(int argc, array argv)
 
   werror("header: %O\n", rib->get_info());
 
-//  f = Stdio.File("/dev/cu.usbmodem12341", "rw");
-f = Stdio.stdout;
-  send_header(rib->get_info());
+  f = Stdio.File("/dev/cu.usbmodem12341", "rw");
+//f = Stdio.stdout;
+//  send_header(rib->get_info());
 
-  wx("AT\r\n");
+  wx("AT\n");
   if(expect_result("OK"))
   {
-    wx("+++++");
+    wx("+++++");   
     if(expect_result("OK"))
     {
       werror("Error: Punch interface out of sync. Please reset and try again.\n");
       exit(1);
     }
-    wx("ATS\r\n");
-    if(expect_result("OK"))
-    {
-      werror("Error: Punch unit not ready. Please reset and try again.\n");
-      exit(1);
-    }
   }
-  wx("ATP\r\n");
+  wx("ATS\n");
+  if(expect_result("OK"))
+  {
+    werror("Error: Punch unit not ready. Please reset and try again.\n");
+    exit(1);
+  }
+
+  wx("ATI\n");
+  if(expect_result("OK"))
+  {
+    werror("Error: Punch unit not ready to punch. Please reset and try again.\n");
+    exit(1);
+  }
+  
+  wx("ATS\n");
+  if(expect_result("OK"))
+  {
+    werror("Error: Punch unit not ready to punch. Please reset and try again.\n");
+    exit(1);
+  }
+  
+  wx("ATP\n");
   if(expect_result("OK"))
   {
     werror("Error: Punch unit not ready to punch. Please reset and try again.\n");
@@ -58,8 +73,10 @@ f = Stdio.stdout;
 
   wx("+++++");
   expect_result("OK");
-  wx("ATS\r\n");
+  wx("ATS\n");
   expect_result("OK");
+
+  f->close();
   return 0;
 }
 
@@ -71,7 +88,7 @@ void send_codes(array codes)
     cw|=code_pos[c];
     code_count++;
     send_code(cw | (1<<31));
-    expect_result("OKP");
+    if(expect_result("OKP")){ werror("Punch fault.\n"); exit(1); };
   }
 }
 
@@ -86,7 +103,7 @@ void send_header(mapping info)
   foreach(codes;;int c)
   {
      send_code(c|(1<<31));
-     expect_result("OKP");
+     if(expect_result("OKP")){ werror("Punch fault.\n"); exit(1); };
   }
   feed_lines(10);
   send_arrow();
@@ -108,7 +125,7 @@ void send_arrow()
   for(int i = 0;  i<16; i++)
   {
     send_code(x|y|(1<<31));
-    expect_result("OKP");
+    if(expect_result("OKP")){ werror("Punch fault.\n"); exit(1); };
     x>>=1;
     y<<=1;
   }
@@ -120,7 +137,7 @@ void feed_lines(int l)
   for(int i = 0; i < l; i++)
   {
     send_code(0|(1<<31));
-    expect_result("OKP");
+    if(expect_result("OKP")){ werror("Punch fault.\n"); exit(1); };
   }
 }
 
@@ -128,7 +145,6 @@ void feed_lines(int l)
 // returns 0 if the expected string is received.
 int expect_result(string res)
 {
-return 0;
   string got = f->read(100,1);
   werror("<< %O\n", got);
   if(got)
@@ -139,17 +155,15 @@ return 0;
 int send_code(int code)
 {
   write(replace(sprintf(">> %032b\n", code), ({"0", "1"}), ({" ", "."})));
-return 0;
-//  return f->write("%4c\r\n", code);
+//return 0;
+  return f->write("%4c\r\n", code);
 }
 
 int wx(mixed ... args)
 {
-
   write(">> ");
   write(@args);
-return 0;
-//  return f->write(@args);
+  return f->write(@args);
 }
 
 void populate_cw()
