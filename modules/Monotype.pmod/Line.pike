@@ -651,9 +651,10 @@ import Monotype;
         
         // if it's a low space and we have the pneumatic attachment, activate it here.
         if(config->enable_pneumatic_quads && (me->is_fs || me->is_js))
-          buf->add(sprintf("%s ", generator->pneumatic_quad_code));
-          
-        buf->add(sprintf("%s %s %s [%s]\n", (string)row_pos, ((col_pos/"")-({""}))*" ", this_combined_space?"S":"", string_to_utf8(ch||""), /* me->get_set_width() */));
+          buf->add(sprintf("%s %s %s [%s]\n", generator->pneumatic_quad_code, (string)row_pos, this_combined_space?"S":"", string_to_utf8(ch||"")));
+        else  
+          buf->add(sprintf("%s %s %s [%s]\n", (string)row_pos, ((col_pos/"")-({""}))*" ", this_combined_space?"S":"", string_to_utf8(ch||""), /* me->get_set_width() */));
+
 	      if(this_combined_space) this_combined_space = 0;
    
     }
