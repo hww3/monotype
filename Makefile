@@ -3,6 +3,7 @@ PUBLIC_OBJECTIVEC=${HOME}/devel/Public_ObjectiveC
 FINS_REPO="https://hg.welliver.org"
 RIBBON_GENERATOR=RibbonGenerator
 CASTER_CONTROL=Caster
+PUNCH=Punch
 PRIVATE_KEY_DIR=${HOME}/SparkleShare/hww3/Development/Sparkle
 DEPLOY_DEST=/srv/delta-home/keyboard-deploy
 
@@ -49,6 +50,8 @@ clean:
 
 Caster.app: ccstub ccapp ccapply_versions
 
+Punch.app: punchstub punchresources punchapply_versions
+
 RibbonGenerator.app: stub framework fins webapp cleanup_app rgapply_versions
 
 cleanup_app:
@@ -61,6 +64,11 @@ ccapply_versions:
 	pike tools/apply_versions.pike version.cfg "${CASTER_CONTROL}.app/Contents/PkgInfo"
 	pike tools/apply_versions.pike version.cfg "${CASTER_CONTROL}.app/Contents/Info.plist"
 
+punchapply_versions:
+	pike tools/apply_versions.pike version.cfg "${PUNCH}.app/Contents/Resources"
+	pike tools/apply_versions.pike version.cfg "${PUNCH}.app/Contents/PkgInfo"
+	pike tools/apply_versions.pike version.cfg "${PUNCH}.app/Contents/Info.plist"
+
 rgapply_versions:
 	pike tools/apply_versions.pike version.cfg "${RIBBON_GENERATOR}.app/Contents/Resources"
 	pike tools/apply_versions.pike version.cfg "${RIBBON_GENERATOR}.app/Contents/PkgInfo"
@@ -72,13 +80,17 @@ ccstub:
 	cp -Rf "${SPARKLE_HOME}/Sparkle.framework" "${CASTER_CONTROL}.app/Contents/Frameworks"
 
 ccapp: 
-		cp -Rf CasterApp/* ${CASTER_CONTROL}.app/Contents/
-		cp -Rf Common/* ${CASTER_CONTROL}.app/Contents/Resources/
+	cp -Rf CasterApp/* ${CASTER_CONTROL}.app/Contents/
+	cp -Rf Common/* ${CASTER_CONTROL}.app/Contents/Resources/
 
-stub: 
-	if [ ! -d RibbonGenerator.app ]; then pike "${PUBLIC_OBJECTIVEC}/mkapp.pike" "${RIBBON_GENERATOR}"; fi
-	cp -Rf "external_modules" "${RIBBON_GENERATOR}.app/Contents/Resources/modules"
-	cp -Rf "${SPARKLE_HOME}/Sparkle.framework" "${RIBBON_GENERATOR}.app/Contents/Frameworks"
+punchresources: 
+	cp -Rf PunchApp/* ${PUNCH}.app/Contents/
+	cp -Rf Common/* ${PUNCH}.app/Contents/Resources/
+
+punchstub: 
+	if [ ! -d Punch.app ]; then pike "${PUBLIC_OBJECTIVEC}/mkapp.pike" "${PUNCH}"; fi
+	cp -Rf "external_modules" "${PUNCH}.app/Contents/Resources/modules"
+	cp -Rf "${SPARKLE_HOME}/Sparkle.framework" "${PUNCH}.app/Contents/Frameworks"
 
 framework: 
 	cp -Rf RibbonGeneratorApp/* "${RIBBON_GENERATOR}.app/Contents/"

@@ -7,6 +7,35 @@ object app;
 object defaults;
 int icc;
 
+object CancelUpdateButton;
+object ConnectButton;
+object ConnectMenuItem;
+object HeaderCheckBox;
+object InterfaceStatusText;
+object JobInfoText;
+object LoadButton;
+object OpenMenuItem;
+object ProgressIndicator;
+object StartButton;
+object StatusText;
+object UpdateFirmwareMenuItem;
+object UpdateFirmwareWindow;
+object UpdateText;
+
+void connectClicked_(object obj);
+void headerCheckBoxClicked_(object obj);
+void loadClicked_(object obj);
+void startClicked_(object obj);
+void updateFirmwareCancel_(object obj);
+void updateFirmwareClicked_(object obj);
+
+void connectClicked_(object obj){ throw(Error.Generic("Not implemented.\n"));}
+void headerCheckBoxClicked_(object obj){}
+void loadClicked_(object obj){}
+void startClicked_(object obj){}
+void updateFirmwareCancel_(object obj){}
+void updateFirmwareClicked_(object obj){}
+
 static void create()
 {
   werror("****\n**** create\n****\n");	
@@ -14,6 +43,7 @@ static void create()
   ::create();
 }
 
+#if 0
 // among other things here, we set default preferences.
 void initialize()
 {
@@ -200,3 +230,4 @@ void setCycleIndicator(int(0..1) status)
     toggleCaster_(state);
   }
 
+#endif /* 0 */

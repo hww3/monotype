@@ -1,9 +1,15 @@
 Stdio.File f;
 
+import EError;
+
 mapping code_pos = ([]);
 
 int code_count;
 string last_result;
+string interface_device;
+
+int isConnected = 0;
+int inCommandMode = 0;
 
 int main(int argc, array argv)
 {
@@ -11,49 +17,38 @@ int main(int argc, array argv)
 
   object rib = ((program)"Ribbon")(argv[1]);
 
-  werror("header: %O\n", rib->get_info());
+  int len;
+  mapping inf = rib->get_info(); 
+  array keys = indices(inf);
+  foreach(keys;;string k)
+    if(sizeof(k) > len) len = sizeof(k);
 
-  f = Stdio.File("/dev/cu.usbmodem12341", "rw");
-//f = Stdio.stdout;
-//  send_header(rib->get_info());
-
-  wx("AT\n");
-  if(expect_result("OK"))
+  foreach(inf; string k; mixed v)
   {
-    wx("+++++");   
-    if(expect_result("OK"))
-    {
-      werror("Error: Punch interface out of sync. Please reset and try again.\n");
-      exit(1);
-    }
-  }
-  wx("ATS\n");
-  if(expect_result("OK"))
-  {
-    werror("Error: Punch unit not ready. Please reset and try again.\n");
-    exit(1);
+    write("%" + len + "s: %s\n", String.capitalize(replace(k, "_", " ")), (string)v);
   }
 
-  wx("ATI\n");
-  if(expect_result("OK"))
-  {
-    werror("Error: Punch unit not ready to punch. Please reset and try again.\n");
-    exit(1);
-  }
-  
-  wx("ATS\n");
-  if(expect_result("OK"))
-  {
-    werror("Error: Punch unit not ready to punch. Please reset and try again.\n");
-    exit(1);
-  }
-  
+  f = find_interface();
+
+  command_mode();
+
+  string version = get_version();
+  string status = get_status();
+
   wx("ATP\n");
   if(expect_result("OK"))
   {
     werror("Error: Punch unit not ready to punch. Please reset and try again.\n");
     exit(1);
   }
+
+  write("\n");
+  write("Version: %O\n", version);
+  write("Status: %O\n", status);
+  write("\n");
+  write("Ready to punch. Hit return to begin.\n");
+  string r = Stdio.stdin.gets();
+  return 0;
 
   sleep(5);
   float codetime = time(2); 
@@ -80,6 +75,26 @@ int main(int argc, array argv)
   return 0;
 }
 
+object find_interface()
+{
+  object f;
+  array x = glob("cu.usbmodem*", get_dir("/dev"));
+  werror("candidates: %s\n", String.implode_nicely(x));
+  foreach(x||({});; string interface)
+  {
+    catch(f = Stdio.File("/dev/" + interface, "rw"));
+
+    if(f && check_interface(f)) 
+    { 
+      interface_device = interface; 
+      isConnected = 1; 
+      return f; 
+    }
+  }
+  
+  throw(Error.Generic("Unable to find interface.\n"));
+}
+
 void send_codes(array codes)
 {
   int cw;
@@ -90,6 +105,67 @@ void send_codes(array codes)
     send_code(cw | (1<<31));
     if(expect_result("OKP")){ werror("Punch fault.\n"); exit(1); };
   }
+}
+
+string get_status()
+{
+  if(!inCommandMode)
+    throw(InvalidModeException("Invalid Mode.\n"));
+  wx("ATS\n");
+  if(expect_result("OK"))
+  {
+    throw(NotReadyException("Unable to retrieve status. Please reset and try again.\n"));
+  }
+
+  string status;
+  sscanf(last_result, "OK %s", status);
+  return status;
+}  	
+
+string get_version()
+{
+  if(!inCommandMode)
+    throw(InvalidModeException("Invalid Mode.\n"));
+  wx("ATI\n");
+  if(expect_result("OK"))
+  {
+    throw(NotReadyException("Unable to retreive version. Please reset and try again.\n"));
+  }
+
+  string ver;
+  sscanf(last_result, "OK %s", ver);
+  ver = (ver/" ")[-1];
+  return ver;
+}
+
+void command_mode()
+{
+  wx("AT\n");
+  if(expect_result("OK")) // if we don't get an OK, we might be in punch mode. try escaping.
+  {
+    wx("+++++");   
+    if(expect_result("OK"))
+    {
+      inCommandMode = 0;
+      throw(InvalidModeException("Unable to enter command mode. Please reset and try again.\n"));
+    }
+  }
+
+  inCommandMode = 1;
+}
+
+int check_interface(object f)
+{
+  wxf(f, "AT\n");
+  if(expect_result(f, "OK")) // if we don't get an OK, we might be in punch mode. try escaping.
+  {
+    wxf(f, "+++++");   
+    if(expect_result(f, "OK"))
+    {
+      return 0;
+    }
+  }
+  return 1;
 }
 
 void send_header(mapping info)
@@ -118,7 +194,6 @@ void send_footer()
 
 void send_arrow()
 {
-  int cw;
   int x = 1<<15;
   int y = 1<<15;
 
@@ -143,7 +218,13 @@ void feed_lines(int l)
 
 
 // returns 0 if the expected string is received.
-int expect_result(string res)
+variant int expect_result(string res)
+{
+  return expect_result(f, res);
+}
+
+// returns 0 if the expected string is received.
+variant int expect_result(object f, string res)
 {
   string got = f->read(100,1);
   werror("<< %O\n", got);
@@ -160,6 +241,11 @@ int send_code(int code)
 }
 
 int wx(mixed ... args)
+{
+  return wxf(f, @args);
+}
+
+int wxf(object f, mixed ... args)
 {
   write(">> ");
   write(@args);
