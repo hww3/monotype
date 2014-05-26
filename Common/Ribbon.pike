@@ -3,6 +3,8 @@ Stdio.FILE file;
 
 function line_changed_func;
 
+string peeked_line;
+
 int current_pos = 0;
 int current_line = 0;
 multiset current_code, last_code;
@@ -123,11 +125,15 @@ void rewind(int where)
 	}
 }
 
-array low_get_next_code()
+array low_get_next_code(void|int peek)
 {
   catch
   {
-    string line = file->gets();
+    string line = peeked_line || file->gets();
+    if(peek)
+      peeked_line = line;
+    else
+      peeked_line = 0;
 //	werror("LINE: %O\n", line);
     catch(line = String.trim_all_whites(utf8_to_string(line)));
     if(!line)
@@ -183,18 +189,23 @@ string find_setting(array code, string pin)
   return 0;
 }
 
-array get_next_code()
+array peek_next_code()
+{
+  return get_next_code(1);
+}
+
+array get_next_code(void|int peek)
 {
   string ws;
   at_line_end = 0;
   last_code = current_code;
-  array code = low_get_next_code();
+  array code = low_get_next_code(peek);
   if(code)
   {
   //	werror("have code.\n");
     current_code = (multiset)code;
     current_pos++;
-    if(current_code && current_code["0075"] && current_code["0005"])
+    if(!peek && current_code && current_code["0075"] && current_code["0005"])
     {
       // werror("have end of line\n");
       current_line++;
@@ -208,15 +219,17 @@ array get_next_code()
   }
     
   // keep track of the current wedge settings, for use by start/stop pump commands
-  if(ws = find_setting(code, "0075"))
+  if(!peek)
   {
-    current_coarse = ws;
+    if(ws = find_setting(code, "0075"))
+    {
+      current_coarse = ws;
+    }
+    else if(ws = find_setting(code, "0005"))
+    {
+      current_fine = ws;
+    }    
   }
-  else if(ws = find_setting(code, "0005"))
-  {
-    current_fine = ws;
-  }    
-    
   return code;
 }
 

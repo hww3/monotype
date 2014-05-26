@@ -11,6 +11,7 @@ object ribbon;
 mapping jobinfo;
 int connected;
 object punchInterface;
+int sending;
 
 // Outlets and actions
 object CancelUpdateButton;
@@ -41,11 +42,12 @@ void connectClicked_(object obj)
   if(connected)
   {
     LoadButton->setEnabled_(0);    
+    OpenMenuItem->setEnabled_(0);
     ribbon = 0;
+    destruct(punchInterface);
     setInterfaceStatus("Not Connected.");
     setStatus("");
     JobInfoText->setStringValue_("No Job Loaded.");
-  	LoadButton->setEnabled_(0);
     StartButton->setEnabled_(0);
   	ConnectButton->setTitle_("Connect");
     connected = !connected;
@@ -61,6 +63,7 @@ void connectSuccess(string interface)
   setInterfaceStatus("Connected on " + interface + ".");
 	ConnectButton->setTitle_("Disconnect");
   LoadButton->setEnabled_(1);
+  OpenMenuItem->setEnabled_(1);
   StartButton->setEnabled_(1);
   connected = !connected;
 }
@@ -70,10 +73,27 @@ void connectFailure(string msg)
   alert("Connect Failed.", "Unable to connect to perforator interface.\n\n" + msg);
 }
 
+void fault(string f)
+{
+  alert("Punch Fault", "The punch interface has reported a fault: " + f);
+}
+
 void attemptConnect()
 {
   punchInterface = PunchInterface.Interface();
+  punchInterface->ui = this;
   punchInterface->connect(connectSuccess, connectFailure);
+}
+
+void punchEnded()
+{
+  StartButton->setTitle_("Start");
+  StartButton->setEnabled_(0);
+  LoadButton->setEnabled_(1);
+  OpenMenuItem->setEnabled_(1);
+  HeaderCheckBox->setEnabled_(1);
+  ProgressIndicator->setDoubleValue_(100.0);
+  setStatus("Ribbon Complete.");
 }
 
 void headerCheckBoxClicked_(object obj){}
@@ -95,13 +115,41 @@ void loadClicked_(object obj)
 
   jobinfo = loadRibbon((string)file->UTF8String() );
   set_job_info();
-
+  punchInterface->new_ribbon(ribbon, !HeaderCheckBox->state());
+  HeaderCheckBox->setEnabled_(0);
+  ProgressIndicator->setDoubleValue_(0.0);
   StartButton->setEnabled_(1);
   line = 0;
+  sending = 0;
   app->mainMenu()->update();
 }
 
-void startClicked_(object obj){}
+void startClicked_(object obj)
+{
+  sending = !sending;
+  
+  if(sending)
+  {
+    if(ribbon && punchInterface)
+    {
+      StartButton->setTitle_("Stop"); 
+      LoadButton->setEnabled_(0);
+      OpenMenuItem->setEnabled_(0);
+      punchInterface->start();
+    }
+  }
+  else
+  {
+    if(ribbon && punchInterface)
+    {
+      StartButton->setTitle_("Start"); 
+      LoadButton->setEnabled_(1);
+      OpenMenuItem->setEnabled_(1);
+      punchInterface->stop();
+    }    
+  }
+}
+  
 void updateFirmwareCancel_(object obj){}
 void updateFirmwareClicked_(object obj){}
 
@@ -125,7 +173,9 @@ void ribbon_line_changed(object ribbon)
 {
   array current_line = ribbon->get_current_line_contents();
   line++;
-  setStatus("Sent line " + (line+1));
+  setStatus("Sent line " + (line));
+  float pct = (line-1) / (float)(jobinfo->line_count);
+  ProgressIndicator->setDoubleValue_(pct*100);
   //setLineContents(reverse(current_line) *"");
 }
 
@@ -148,6 +198,7 @@ void setInterfaceStatus(string s)
 
 void initialize()
 {
+  OpenMenuItem->setEnabled_(0);
 }
 
 #if 0

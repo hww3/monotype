@@ -394,7 +394,7 @@
                     <button id="828">
                         <rect key="frame" x="18" y="25" width="128" height="18"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <buttonCell key="cell" type="check" title="Suppress Header" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="829">
+                        <buttonCell key="cell" type="check" title="Suppress Header" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="829">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
                         </buttonCell>
