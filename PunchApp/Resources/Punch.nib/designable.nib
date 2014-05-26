@@ -63,26 +63,12 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="File" id="81">
                         <items>
-                            <menuItem title="Open…" keyEquivalent="o" id="72">
+                            <menuItem title="Open…" enabled="NO" keyEquivalent="o" id="72">
                                 <connections>
                                     <action selector="loadClicked:" target="821" id="867"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Open Recent" id="124">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <menu key="submenu" title="Open Recent" systemMenu="recentDocuments" id="125">
-                                    <items>
-                                        <menuItem title="Clear Menu" id="126">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="clearRecentDocuments:" target="-1" id="127"/>
-                                            </connections>
-                                        </menuItem>
-                                    </items>
-                                </menu>
-                            </menuItem>
-                            <menuItem title="Connect" id="833">
-                                <modifierMask key="keyEquivalentModifierMask"/>
+                            <menuItem title="Connect" enabled="NO" keyEquivalent="i" id="833">
                                 <connections>
                                     <action selector="connectClicked:" target="821" id="868"/>
                                 </connections>
@@ -487,7 +473,7 @@
                 <outlet property="UpdateText" destination="855" id="860"/>
             </connections>
         </customObject>
-        <window title="Update Firmware" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" visibleAtLaunch="NO" animationBehavior="default" id="851">
+        <window title="Update Firmware" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" oneShot="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="851">
             <windowStyleMask key="styleMask" titled="YES" miniaturizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="187" y="331" width="480" height="147"/>

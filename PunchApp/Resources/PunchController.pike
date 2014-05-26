@@ -8,10 +8,20 @@ object defaults;
 int icc;
 int line;
 object ribbon;
+object ufwp;
+object ufwpf;
+
 mapping jobinfo;
 int connected;
 object punchInterface;
 int sending;
+
+string ufwtext=#"Ready to update Punch Interface firmware.
+
+1. Ensure that the interface is connected to this computer's USB port.
+2. Reset the interface by depressing the 'Reset' button.
+";
+function updateFwCallback_;
 
 // Outlets and actions
 object CancelUpdateButton;
@@ -41,21 +51,26 @@ void connectClicked_(object obj)
 { 
   if(connected)
   {
-    LoadButton->setEnabled_(0);    
-    OpenMenuItem->setEnabled_(0);
-    ribbon = 0;
-    destruct(punchInterface);
-    setInterfaceStatus("Not Connected.");
-    setStatus("");
-    JobInfoText->setStringValue_("No Job Loaded.");
-    StartButton->setEnabled_(0);
-  	ConnectButton->setTitle_("Connect");
-    connected = !connected;
+    disconnect();
   }
   else
   {
     attemptConnect();
   }
+}
+
+void disconnect()
+{ 
+  LoadButton->setEnabled_(0);    
+  OpenMenuItem->setEnabled_(1);
+  ribbon = 0;
+  destruct(punchInterface);
+  setInterfaceStatus("Not Connected.");
+  setStatus("");
+  JobInfoText->setStringValue_("No Job Loaded.");
+  StartButton->setEnabled_(0);
+	ConnectButton->setTitle_("Connect");
+  connected = !connected;
 }
 
 void connectSuccess(string interface)
@@ -121,8 +136,7 @@ void loadClicked_(object obj)
   StartButton->setEnabled_(1);
   line = 0;
   sending = 0;
-  app->mainMenu()->update();
-}
+  }
 
 void startClicked_(object obj)
 {
@@ -150,13 +164,103 @@ void startClicked_(object obj)
   }
 }
   
-void updateFirmwareCancel_(object obj){}
-void updateFirmwareClicked_(object obj){}
+void updateFirmwareCancel_(object obj)
+{
+  if(ufwp)
+  {
+    updateFwCallback_ = lambda(mixed x){};
+    ufwp->kill(9);
+    ufwp = 0;
+  }
+  UpdateFirmwareWindow->close();
+}
+  
+object openPanel;
 
-static void create()
+void updateFirmwareClicked_(object obj)
+{
+  if(!openPanel)
+  {
+    openPanel = Cocoa.NSOpenPanel.openPanel();
+    openPanel->setAllowedFileTypes_(({"pfw"}));
+    openPanel->setAllowsMultipleSelection_(0);
+  }
+  
+  if(!openPanel->runModal()) return 0;
+
+  mixed files = openPanel->URLs();
+  if(!files->count())
+    return 0;
+
+  object file = files->lastObject();
+  file = file->path();
+
+  if(!file_stat((string)file))
+  {
+    alert("Invalid firmware file", "Firmware file is not valid.");
+    return;
+  } 
+  
+  disconnect();
+
+  ufwpf = Stdio.File();
+  object p = ufwpf->pipe();
+  updateFwCallback_ = updateFwCallback__;
+  
+  ufwp = Process.create_process(({combine_path(getcwd(), "hid_bootloader_cli"), "-mmcu=at90usb1286", "-w", (string)file}), (["stdout": p, "stderr": p, "callback": updateFwCallback]));
+ // UpdateFirmwareWindow->setDelegate_(this);
+  call_out(openUpdateWindow, 0.1);
+}
+
+void openUpdateWindow()
+{
+  if(ufwp && !ufwp->status())
+  {
+    UpdateText->setStringValue_(ufwtext);
+    UpdateFirmwareWindow->makeKeyAndOrderFront_(this);    
+  }
+}
+
+void updateFwCallback(object process)
+{
+  updateFwCallback_(process);
+}
+
+void updateFwCallback__(object process)
+{
+  int rc;
+  int status = process->status();
+  if(status == 0) // running
+  {
+    call_out(openUpdateWindow, 0.1);
+    return;
+  }
+  else if(status == 2)
+  {
+    rc = process->wait();
+    if(rc != 0)
+    {
+      updateFirmwareCancel_(this);
+      alert("Update Failed", "Firmware update failed:\n\n" + ufwpf->read(2000, 0));
+    }
+    else
+    {
+      alert("Success!", "Firmware update was successful.");
+      ufwp = 0;
+      call_out(updateFirmwareReconnect, 10.0);
+    }
+  }
+}
+
+void updateFirmwareReconnect()
+{
+  attemptConnect();
+}
+
+static void create()  
 {
   werror("****\n**** create\n****\n");	
-   app = Cocoa.NSApplication.sharedApplication();
+   app = Cocoa.NSApplication.sharedApplication();  
   ::create();
 }
 
@@ -198,7 +302,7 @@ void setInterfaceStatus(string s)
 
 void initialize()
 {
-  OpenMenuItem->setEnabled_(0);
+//  app->mainMenu()->update();  
 }
 
 #if 0
@@ -254,35 +358,6 @@ void toggleCycleSensorType_(object checkbox)
 }
 */
 
-// callback from the start/stop button
-void toggleCaster_(mixed ... args)
-{
-  int state = CasterToggleButton->state();
-werror("!!\n!!\n!!state: %O\n!!\n!!\n", state);
-  LoadJobButton->setEnabled_(!state);
-  LoadJobItem->setEnabled_(!state);
-  if(state) Driver->start();
-  else Driver->stop();
-}
-
-void stopCaster()
-{
-  int state = CasterToggleButton->state();
-  if(state)
-  {
-    CasterToggleButton->setState_(!state);
-    LoadJobButton->setEnabled_(state);
-    LoadJobItem->setEnabled_(state);
-    SkipBeginButton->setEnabled_(1);
-    Driver->stop();
-  }	
-}
-
-// callback from the skip to beginning button
-void backBegin_(object a)
-{
-  Driver->rewindRibbon();
-}
 
 void showPreferences_(object i)
 {
