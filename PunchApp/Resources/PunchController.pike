@@ -6,7 +6,13 @@ inherit Cocoa.NSObject;
 object app;
 object defaults;
 int icc;
+int line;
+object ribbon;
+mapping jobinfo;
+int connected;
+object punchInterface;
 
+// Outlets and actions
 object CancelUpdateButton;
 object ConnectButton;
 object ConnectMenuItem;
@@ -20,6 +26,7 @@ object StartButton;
 object StatusText;
 object UpdateFirmwareMenuItem;
 object UpdateFirmwareWindow;
+object MainWindow;
 object UpdateText;
 
 void connectClicked_(object obj);
@@ -29,9 +36,71 @@ void startClicked_(object obj);
 void updateFirmwareCancel_(object obj);
 void updateFirmwareClicked_(object obj);
 
-void connectClicked_(object obj){ throw(Error.Generic("Not implemented.\n"));}
+void connectClicked_(object obj)
+{ 
+  if(connected)
+  {
+    LoadButton->setEnabled_(0);    
+    ribbon = 0;
+    setInterfaceStatus("Not Connected.");
+    setStatus("");
+    JobInfoText->setStringValue_("No Job Loaded.");
+  	LoadButton->setEnabled_(0);
+    StartButton->setEnabled_(0);
+  	ConnectButton->setTitle_("Connect");
+    connected = !connected;
+  }
+  else
+  {
+    attemptConnect();
+  }
+}
+
+void connectSuccess(string interface)
+{
+  setInterfaceStatus("Connected on " + interface + ".");
+	ConnectButton->setTitle_("Disconnect");
+  LoadButton->setEnabled_(1);
+  StartButton->setEnabled_(1);
+  connected = !connected;
+}
+
+void connectFailure(string msg)
+{
+  alert("Connect Failed.", "Unable to connect to perforator interface.\n\n" + msg);
+}
+
+void attemptConnect()
+{
+  punchInterface = PunchInterface.Interface();
+  punchInterface->connect(connectSuccess, connectFailure);
+}
+
 void headerCheckBoxClicked_(object obj){}
-void loadClicked_(object obj){}
+  
+void loadClicked_(object obj)
+{
+  object openPanel = Cocoa.NSOpenPanel.openPanel();
+
+  openPanel->setAllowsMultipleSelection_(0);
+  openPanel->setAllowedFileTypes_(({"rib"}));
+  if(!openPanel->runModal()) return 0;
+
+  mixed files = openPanel->URLs();
+  if(!files->count())
+    return 0;
+
+  object file = files->lastObject();
+  file = file->path();
+
+  jobinfo = loadRibbon((string)file->UTF8String() );
+  set_job_info();
+
+  StartButton->setEnabled_(1);
+  line = 0;
+  app->mainMenu()->update();
+}
+
 void startClicked_(object obj){}
 void updateFirmwareCancel_(object obj){}
 void updateFirmwareClicked_(object obj){}
@@ -41,6 +110,44 @@ static void create()
   werror("****\n**** create\n****\n");	
    app = Cocoa.NSApplication.sharedApplication();
   ::create();
+}
+
+mapping loadRibbon(string filename)
+{
+   ribbon = ((program)"Ribbon")(filename);
+   ribbon->line_changed_func = ribbon_line_changed;
+   jobinfo = ribbon->get_info();
+   setStatus(sprintf("Loaded %d codes in %d lines.", jobinfo->code_count, jobinfo->line_count));
+   return jobinfo;
+}
+
+void ribbon_line_changed(object ribbon)
+{
+  array current_line = ribbon->get_current_line_contents();
+  line++;
+  setStatus("Sent line " + (line+1));
+  //setLineContents(reverse(current_line) *"");
+}
+
+void set_job_info()
+{
+	JobInfoText->setStringValue_(jobinfo->name);
+	ProgressIndicator->setMinValue_(0.0);
+	ProgressIndicator->setDoubleValue_(0.0);
+}
+
+void setStatus(string s)
+{
+  StatusText->setStringValue_(s);
+} 
+
+void setInterfaceStatus(string s)
+{
+  InterfaceStatusText->setStringValue_(s);
+}
+
+void initialize()
+{
 }
 
 #if 0
@@ -80,32 +187,6 @@ void set_job_info()
 	LineLength->setStringValue_(jobinfo->linelength);
 	Thermometer->setMinValue_(0.0);
 	Thermometer->setDoubleValue_(0.0);
-}
-
-// callback from the load job button
-void loadJob_(object a)
-{
-  object openPanel = Cocoa.NSOpenPanel.openPanel();
-
-  openPanel->setAllowsMultipleSelection_(0);
-  openPanel->setAllowedFileTypes_(({"rib"}));
-  if(!openPanel->runModal()) return 0;
-
-  mixed files = openPanel->URLs();
-  if(!files->count())
-    return 0;
-
-  object file = files->lastObject();
-  file = file->path();
-  werror("fILE:%O\n",(string)( file->__objc_classname));
-  werror("fILE:%O\n",(string)( file->UTF8String() ));
-  jobinfo = Driver->loadRibbon((string)file->UTF8String() );
-  set_job_info();
-
-  CasterToggleButton->setEnabled_(1);
-  SkipBeginButton->setEnabled_(1);
-
-  app->mainMenu()->update();
 }
 
 /*
@@ -163,6 +244,42 @@ void windowWillClose_(object n)
 {
 }
 
+
+void setCycleIndicator(int(0..1) status)
+{
+  CycleIndicator->setIntValue_(status);
+}
+
+  void setLineContents(string s)
+  {
+    LineContentsLabel->setStringValue_(s);
+  }
+
+  void setCurrentLine(int n)
+  {
+    string js = "highlight_line(" + n + ");";
+    object win = LinesWebView->windowScriptObject();
+    win->evaluateWebScript_(js);
+  }
+
+  void setLineStatus(string s)
+  {
+    CurrentLine->setStringValue_(s);
+  }
+
+  void updateThermometer(float percent)
+  {
+    Thermometer->setDoubleValue_(percent);
+  }
+
+  void toggleCaster(int (0..1) state)
+  { 
+    CasterToggleButton->setState_(state);
+    toggleCaster_(state);
+  }
+
+#endif /* 0 */
+
 void _finishedMakingConnections()
 {
   initialize();
@@ -192,42 +309,3 @@ int _alert(string title, string body)
 //  AppKit()->NSRunAlertPanel(title, body, "OK", "", "");
 }	
 
-void setCycleIndicator(int(0..1) status)
-{
-  CycleIndicator->setIntValue_(status);
-}
-
-  void setLineContents(string s)
-  {
-    LineContentsLabel->setStringValue_(s);
-  }
-
-  void setCurrentLine(int n)
-  {
-    string js = "highlight_line(" + n + ");";
-    object win = LinesWebView->windowScriptObject();
-    win->evaluateWebScript_(js);
-  }
-
-  void setLineStatus(string s)
-  {
-    CurrentLine->setStringValue_(s);
-  }
-
-  void setStatus(string s)
-  {
-    Status->setStringValue_(s);
-  }
-
-  void updateThermometer(float percent)
-  {
-    Thermometer->setDoubleValue_(percent);
-  }
-
-  void toggleCaster(int (0..1) state)
-  { 
-    CasterToggleButton->setState_(state);
-    toggleCaster_(state);
-  }
-
-#endif /* 0 */
