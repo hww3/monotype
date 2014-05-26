@@ -15,7 +15,7 @@ DEPLOY_DEST=/srv/delta-home/keyboard-deploy
 #
 #       additionally, Pike.framework must have been built with SQLite enabled.
 
-all: RibbonGenerator.app Caster.app
+all: RibbonGenerator.app Caster.app Punch.app
 
 hash: zip
 	@/bin/echo
@@ -25,6 +25,10 @@ hash: zip
 	@/bin/echo -n "Ribbon Generator Hash: "
 	@ruby "${SPARKLE_HOME}/Extras/Signing Tools/sign_update.rb" ${RIBBON_GENERATOR}-`pike tools/get_value.pike version.cfg ribbonGeneratorVersion`.zip ${PRIVATE_KEY_DIR}/dsa_priv.pem
 	@ls -l ${RIBBON_GENERATOR}-`pike tools/get_value.pike version.cfg ribbonGeneratorVersion`.zip
+	@/bin/echo -n "Punch Hash: "
+	@ruby "${SPARKLE_HOME}/Extras/Signing Tools/sign_update.rb" ${PUNCH}-`pike tools/get_value.pike version.cfg punchVersion`.zip ${PRIVATE_KEY_DIR}/dsa_priv.pem
+	@ls -l ${PUNCH}-`pike tools/get_value.pike version.cfg punchVersion`.zip
+
 	@HASH=`ruby "${SPARKLE_HOME}/Extras/Signing Tools/sign_update.rb" ${RIBBON_GENERATOR}-\`pike tools/get_value.pike version.cfg ribbonGeneratorVersion\`.zip ${PRIVATE_KEY_DIR}/dsa_priv.pem` \
         DATE=`date` \
 	VERSION=`pike tools/get_value.pike version.cfg ribbonGeneratorVersion` \
@@ -36,14 +40,22 @@ hash: zip
 	VERSION=`pike tools/get_value.pike version.cfg casterControlVersion` \
 	SIZE=`ls -l ${CASTER_CONTROL}-\`pike tools/get_value.pike version.cfg casterControlVersion\`.zip | cut -d ' ' -f8` \
 	APP="Caster" \
+	pike tools/appcast.pike appcast.xml;
+	@HASH=`ruby "${SPARKLE_HOME}/Extras/Signing Tools/sign_update.rb" ${PUNCH}-\`pike tools/get_value.pike version.cfg punchVersion\`.zip ${PRIVATE_KEY_DIR}/dsa_priv.pem` \
+        DATE=`date` \
+	VERSION=`pike tools/get_value.pike version.cfg punchVersion` \
+	SIZE=`ls -l ${PUNCH}-\`pike tools/get_value.pike version.cfg punchVersion\`.zip | cut -d ' ' -f8` \
+	APP="Punch" \
 	pike tools/appcast.pike appcast.xml; \
 	
 zip: all
 	zip -ry ${CASTER_CONTROL}-`pike tools/get_value.pike version.cfg casterControlVersion`.zip ${CASTER_CONTROL}.app
 	zip -ry ${RIBBON_GENERATOR}-`pike tools/get_value.pike version.cfg ribbonGeneratorVersion`.zip ${RIBBON_GENERATOR}.app
+	zip -ry ${PUNCH}-`pike tools/get_value.pike version.cfg punchVersion`.zip ${PUNCH}.app
 
 clean:
 	rm -rf ${CASTER_CONTROL}.app
+	rm -rf ${PUNCH}.app
 	rm -rf ${RIBBON_GENERATOR}.app
 	rm -rf Fins_build
 	rm -rf ConfigFiles_build
@@ -78,6 +90,11 @@ ccstub:
 	if [ ! -d Caster.app ]; then pike "${PUBLIC_OBJECTIVEC}/mkapp.pike" "${CASTER_CONTROL}"; fi
 	cp -Rf "external_modules" "${CASTER_CONTROL}.app/Contents/Resources/modules"
 	cp -Rf "${SPARKLE_HOME}/Sparkle.framework" "${CASTER_CONTROL}.app/Contents/Frameworks"
+
+stub: 
+	if [ ! -d RibbonGenerator.app ]; then pike "${PUBLIC_OBJECTIVEC}/mkapp.pike" "${RIBBON_GENERATOR}"; fi
+	cp -Rf "external_modules" "${RIBBON_GENERATOR}.app/Contents/Resources/modules"
+	cp -Rf "${SPARKLE_HOME}/Sparkle.framework" "${RIBBON_GENERATOR}.app/Contents/Frameworks"
 
 ccapp: 
 	cp -Rf CasterApp/* ${CASTER_CONTROL}.app/Contents/
@@ -126,8 +143,8 @@ verify:	testsuite
 	pike -Mmodules -x test_pike testsuite
 
 phantomjs:
-	if [ ! -f phantomjs-1.9.7-macosx.zip ]; then wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.7-macosx.zip; fi;
-	unzip phantomjs-1.9.7-macosx.zip
+	if [ ! -f phantomjs-1.9.7-macosx.zip ]; then wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.7-macosx.zip; \
+	unzip phantomjs-1.9.7-macosx.zip; fi; 
 dojo:
 	if [ ! -f dojo-release-1.6.1-src.tar.gz ]; then wget http://download.dojotoolkit.org/release-1.6.1/dojo-release-1.6.1-src.tar.gz; fi;
 	tar xzf dojo-release-1.6.1-src.tar.gz

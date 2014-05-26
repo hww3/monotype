@@ -79,7 +79,7 @@ void connectSuccess(string interface)
 	ConnectButton->setTitle_("Disconnect");
   LoadButton->setEnabled_(1);
   OpenMenuItem->setEnabled_(1);
-  StartButton->setEnabled_(1);
+  StartButton->setEnabled_(0);
   connected = !connected;
 }
 
