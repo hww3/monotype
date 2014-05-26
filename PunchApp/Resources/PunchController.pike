@@ -10,6 +10,7 @@ int line;
 object ribbon;
 object ufwp;
 object ufwpf;
+mixed reconnect_id; // call_out id for reconnect.
 
 mapping jobinfo;
 int connected;
@@ -61,10 +62,12 @@ void connectClicked_(object obj)
 
 void disconnect()
 { 
+  remove_call_out(reconnect_id);
   LoadButton->setEnabled_(0);    
   OpenMenuItem->setEnabled_(1);
   ribbon = 0;
   destruct(punchInterface);
+  punchInterface = 0;
   setInterfaceStatus("Not Connected.");
   setStatus("");
   JobInfoText->setStringValue_("No Job Loaded.");
@@ -75,7 +78,7 @@ void disconnect()
 
 void connectSuccess(string interface)
 {
-  setInterfaceStatus("Connected on " + interface + ".");
+  setInterfaceStatus("Interface v" + punchInterface->interface_version + " on " + interface + ".");
 	ConnectButton->setTitle_("Disconnect");
   LoadButton->setEnabled_(1);
   OpenMenuItem->setEnabled_(1);
@@ -95,8 +98,11 @@ void fault(string f)
 
 void attemptConnect()
 {
+  remove_call_out(reconnect_id);
   punchInterface = PunchInterface.Interface();
   punchInterface->ui = this;
+  punchInterface->version_callback = setVersionStatus;
+  punchInterface->status_callback = setIntStatus;
   punchInterface->connect(connectSuccess, connectFailure);
 }
 
@@ -247,7 +253,8 @@ void updateFwCallback__(object process)
     {
       alert("Success!", "Firmware update was successful.");
       ufwp = 0;
-      call_out(updateFirmwareReconnect, 10.0);
+      updateFirmwareCancel_(this);
+      reconnect_id = call_out(updateFirmwareReconnect, 10.0);
     }
   }
 }
@@ -294,6 +301,28 @@ void setStatus(string s)
 {
   StatusText->setStringValue_(s);
 } 
+
+void setVersionStatus(string s)
+{
+  setInterfaceStatus("Firmware Version " + s + " on " + punchInterface->interface_device);  
+}
+
+void setIntStatus(string s)
+{
+  if(search(s, "FAULT") != -1)
+  {
+    StartButton->setEnabled_(0);
+  }
+  else if(search(s, "OFFLINE") != -1)
+  {
+    StartButton->setEnabled_(0);    
+  }
+  else if(search(s, "ONLINE") != -1)
+  {
+    StartButton->setEnabled_(1);  
+  }
+  setInterfaceStatus(s);
+}
 
 void setInterfaceStatus(string s)
 {
