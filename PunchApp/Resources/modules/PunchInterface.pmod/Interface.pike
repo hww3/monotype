@@ -616,7 +616,7 @@ variant int expect_result(string res, object f)
   do
   { 
   //  werror("Reading\n");
-   // if(!sizeof(got) && f->peek(0.1) == 0) return 1;
+    if(!sizeof(got) && f->peek(0.2) == 0) return 1;
     
     g = f->read(100,1);
     //werror("g = %O\n", g);
