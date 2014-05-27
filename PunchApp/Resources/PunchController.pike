@@ -64,6 +64,7 @@ void disconnect()
 { 
   remove_call_out(reconnect_id);
   LoadButton->setEnabled_(0);    
+  HeaderCheckBox->setEnabled_(0);
   OpenMenuItem->setEnabled_(1);
   ribbon = 0;
   destruct(punchInterface);
@@ -81,6 +82,7 @@ void connectSuccess(string interface)
   setInterfaceStatus("Interface v" + punchInterface->interface_version + " on " + interface + ".");
 	ConnectButton->setTitle_("Disconnect");
   LoadButton->setEnabled_(1);
+  HeaderCheckBox->setEnabled_(1);
   OpenMenuItem->setEnabled_(1);
   StartButton->setEnabled_(0);
   connected = !connected;
@@ -154,6 +156,7 @@ void startClicked_(object obj)
     {
       StartButton->setTitle_("Stop"); 
       LoadButton->setEnabled_(0);
+      HeaderCheckBox->setEnabled_(0);
       OpenMenuItem->setEnabled_(0);
       punchInterface->start();
     }
@@ -162,8 +165,11 @@ void startClicked_(object obj)
   {
     if(ribbon && punchInterface)
     {
+
       StartButton->setTitle_("Start"); 
+
       LoadButton->setEnabled_(1);
+      HeaderCheckBox->setEnabled_(1);
       OpenMenuItem->setEnabled_(1);
       punchInterface->stop();
     }    
@@ -309,6 +315,8 @@ void setVersionStatus(string s)
 
 void setIntStatus(string s)
 {
+  if(!s) return;
+  
   if(search(s, "FAULT") != -1)
   {
     StartButton->setEnabled_(0);

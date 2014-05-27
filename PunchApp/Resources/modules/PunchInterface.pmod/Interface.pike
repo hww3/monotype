@@ -16,6 +16,7 @@ string interface_device;
 string _interface_status;
 string _interface_version;
 
+mixed prod_read_id;
 mixed status_callout_id;
 
 object ui;
@@ -127,7 +128,8 @@ void punch_mode()
   }
   if(f)
   {
-    f->set_non_blocking();
+    call_out(prod_read, 0.01);    
+    f->set_nonblocking();
     f->set_read_callback(nb_punch_read);
     f->set_write_callback(nb_punch_write);
   }
@@ -135,7 +137,12 @@ void punch_mode()
   inPunchMode = 1;
   send_next_code();
   if(!f)
-    call_out(fake_read, 0.1);
+    prod_read_id = call_out(fake_read, 0.1);
+}
+
+void prod_read()
+{
+  prod_read_id = call_out(prod_read, 0.01);      
 }
 
 void fake_read()
@@ -178,7 +185,7 @@ void got_data()
       if(resp != "OKP")
       {
         last_result = resp;
-        //werror(" NOT OK\n");
+        werror(" NOT OK\n");
         ui->fault(resp);
         started = 0;
         command_mode();
@@ -189,11 +196,18 @@ void got_data()
       }
       else
       {
-        //werror("OK\n");
+        werror("OK %O\n", started);
         // we don't remove codes from the stream until confirmed,
         // that way we can continue from the same position after a fault is cleared.
         if(confirm_current_code() && started)
+        {
+//          werror("sending next code.\n");
           send_next_code();
+        }
+        else if(started) // bit no codes left... so finish things up.
+        {
+          end_ribbon();
+        }
       }
     }
   }
@@ -216,10 +230,22 @@ int confirm_current_code()
   }
   else // nothing left to send
   {
-    ui->punchEnded();
-    command_mode();
-    return 0;
+    end_ribbon();
   }
+}
+
+int end_ribbon()
+{
+  werror("***\n***END OF RUBBON\n***\n");
+  ui->punchEnded();
+  werror("***\n***END OF RUBBON\n***\n");
+  wx("+++++");
+  if(expect_result("OK"))
+    werror("got unexpected result from interface.\n");
+  
+  command_mode();
+  return 0;
+  
 }
 
 void send_next_code()
@@ -233,6 +259,7 @@ void send_next_code()
   }
   else
   {
+    werror("shouldn't have gotten here.\n");
     throw(Error.Generic("shouldn't have gotten here.\n"));
   }
   
@@ -262,13 +289,29 @@ void stop()
   {
     string s;
     f->set_blocking();
-    if(s = f->read(1000, 1))
-      nb_punch_read(1, s);
+    string g, got;
+    got = "";
+    do
+    { 
+    //  werror("Reading\n");
+      if(!sizeof(got) && f->peek(0.1) == 0) break;
+
+      g = f->read(100,1);
+      //werror("g = %O\n", g);
+      if(g)
+        got += g;
+    } while(g!=0 && g!="" && search(g, "\n") ==-1);
+
+    if(sizeof(got))
+      nb_punch_read(1, got);
   } 
   else
   {
     nb_punch_read(1, "OKP\n");
   }
+  wx("+++++");
+  if(expect_result("OK"))
+    werror("got unexpected result from interface.\n");
   command_mode();
   catch(interface_status = get_status());
   
@@ -435,6 +478,12 @@ void command_mode(object|void i)
 {
 //  werror("command_mode: %O\n", i);
   inPunchMode = 0;
+  if(prod_read_id)
+  {
+    remove_call_out(prod_read_id);    
+    prod_read_id = 0;
+  }
+  
   do_command_mode(i || f);
 }
 
@@ -561,7 +610,7 @@ void feed_lines(int l)
 variant int expect_result(string res, object f)
 {
   if(!f) return 0;
-//  werror("Expecting " + res + " on %O\n", f);
+ // werror("Expecting " + res + " on %O\n", f);
   string got = "";
   string g;
   do
@@ -575,7 +624,7 @@ variant int expect_result(string res, object f)
       got += g;
   } while(g!=0 && g!="" && search(g, "\n") ==-1);
   
-  //werror("<< %O\n", got);
+ // werror("<< %O\n", got);
   if(got)
     last_result = got;
     
