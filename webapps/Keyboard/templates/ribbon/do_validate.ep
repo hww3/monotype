@@ -48,10 +48,29 @@ function showCodes(line, url)
 
 <h1>Ribbon Validation</h1>
 <form action="<%#action_url "action": "do_generate" %>">
+<table>
+<tr>
+<td>
+<b>Job Name:</b> <%$settings.jobname%> <b>Generated:</b> <%#describe_datetime "var": data->now%>
+</td>
+</tr>
+<tr>
+<td>
+<b>Matcase:</b> <%$settings.matcase.name%> <b>Stopbar:</b> <%$settings.stopbar.name%> <b>Set:</b> <%$settings.setwidth%>
+</td>
+</tr>
+<tr>
+<td>
+<b>Mould Size:</b> <%$settings.mould%> <b>Line Length:</b> <%$settings.linelengthp%> <%$settings.pointsystemname%>
+</td>
+</tr>
+</table>
 <input type="hidden" name="job_id" value="<%$job_id%>">
 <button type="submit">Generate Ribbon</button>
 <button type="button" onclick="history.back()">Go Back</button>
 <button type="button" onclick="showDialog('Soft Proof Legend', '/static/prooflegend.html'); return 0;">Show Soft Proof Legend</button>
+
 </form>
+<p>
 <p>
 <%$result%>

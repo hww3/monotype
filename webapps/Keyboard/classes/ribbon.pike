@@ -605,6 +605,8 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 };
 werror("render_time: %O\n", render_time);
 
+   v->add("settings", settings);
+   v->add("now", Calendar.now());
     v->add("job_id", job_id);
     v->add("result", b);
 

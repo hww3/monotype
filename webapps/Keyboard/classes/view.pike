@@ -1,5 +1,6 @@
 
 inherit Fins.FinsView;
+inherit Fins.Helpers.Macros.Basic;
 inherit Fins.Helpers.Macros.Pagination;
 
 static void create(object app)
