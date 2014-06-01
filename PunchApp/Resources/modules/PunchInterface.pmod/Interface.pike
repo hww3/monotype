@@ -129,9 +129,10 @@ void punch_mode()
   if(f)
   {
     call_out(prod_read, 0.01);    
-    f->set_nonblocking();
+    f->set_close_callback(nb_punch_close);
     f->set_read_callback(nb_punch_read);
     f->set_write_callback(nb_punch_write);
+    f->set_nonblocking();
   }
   inCommandMode = 0;
   inPunchMode = 1;
@@ -154,6 +155,12 @@ void fake_read()
   //  werror("setting call out\n");
     call_out(fake_read, 0.1);
   }  
+}
+
+int nb_punch_close(mixed id)
+{
+  ui->fault("The interface has disconnected.\n");
+  ui->disconnect();
 }
 
 int nb_punch_read(mixed id, string d)
@@ -273,7 +280,12 @@ int nb_punch_write(mixed id)
     
     if(f)
       r = f->write(outgoing_data);
-      
+    if(r == -1) // error!
+    {
+      int en = f->errno();
+      werror("An error occurred while trying to write to the interface: " + en);
+      throw(Error.Generic("Error occurred while trying to write to the interface: " + en))
+    }
     if(r == sizeof(outgoing_data))
       outgoing_data = "";
     else
@@ -646,6 +658,12 @@ int send_code(int code)
   if(f)
   {
     int c = f->write(d);
+    if(c == -1)
+    {
+      int en = f->errno();
+      werror("An error occurred while trying to write to the interface: " + en);
+      throw(Error.Generic("Error occurred while trying to write to the interface: " + en))      
+    }
     if(c != sizeof(d))
     {
       outgoing_data += d[c..];
@@ -653,18 +671,51 @@ int send_code(int code)
   }
 }
 
+//
+// wx() and wxf() should not be called when already in non-blocking mode.
+//
 int wx(mixed ... args)
 {
   return wxf(f, @args);
 }
 
+// write args to f, taking up to 0.5 seconds to do so.
 int wxf(object f, mixed ... args)
 {
+  int sent;
 //  write("%O >> ", f);
 //  write(@args);
-  
   if(f)
-    return f->write(@args);
+  {
+    int mode = f->mode();
+    int x = 0;
+    string s = sprintf(@args);
+    f->set_nonblocking();
+    do
+    {
+      int b = f->write(s);
+      if(b == -1)
+      {
+        int en = f->errno();
+        werror("An error occurred while trying to write to the interface: " + en);
+        throw(Error.Generic("Error occurred while trying to write to the interface: " + en))        
+      }
+      sent += b;
+      if(b != sizeof(s))
+      {
+        delay(0.1);
+        s = s[b..];
+      }
+      else
+        break;
+      x++;
+    } while(x < 5);
+  }
+  
+  if(!(mode & PROP_NONBLOCK))
+    f->set_blocking();
+  
+  return sent;
 }
 
 void populate_cw()
