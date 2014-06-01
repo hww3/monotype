@@ -1,3 +1,7 @@
+20140529
+- Punch: try not to block when connecting to a non-responsive interface.
+- Punch: detect write errors when communicating with the interface.
+
 20140527
 - Ribbon Generator: Nicer layout of ribbon settings page.
 - Ribbon Generator: Include some job information on soft proof page.
