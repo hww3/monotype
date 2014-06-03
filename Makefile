@@ -124,6 +124,7 @@ fins: framework prereqs
 deploy: prereqs
 	mkdir -p "${DEPLOY_DEST}"
 	cp -Rf webapps/Keyboard "${DEPLOY_DEST}"
+	cp -Rf Fins_build/lib "${DEPLOY_DEST}"
 	cp -Rf modules/* "${DEPLOY_DEST}/Keyboard/modules"
 	cp -rf CHANGES "${DEPLOY_DEST}/"
 	cp -Rf dojo-release-1.6.1-src/release/dojo "${DEPLOY_DEST}/Keyboard"
