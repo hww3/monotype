@@ -634,9 +634,11 @@ int process_setting_buffer(int|void exact)
 //	    phline = Line(m, s, config, this);
 //	   	phline->re_set_line(current_line);
      	
+     	
 		  if(line_mode)
 		  {
 		    quad_out();
+		    can_try_hyphenation = 0;
 		  }
 
 		  i = lastjs||-1; 
@@ -1817,7 +1819,7 @@ float low_quad_out(float amount, int|void atbeginning, int|void is_quadding)
 
   array list = ({});
 
-  if(toadd[0] > toadd[-1])
+    if(sizeof(toadd) && toadd[0] > toadd[-1])
     toadd = reverse(toadd);
 
   foreach(toadd;;int x)
