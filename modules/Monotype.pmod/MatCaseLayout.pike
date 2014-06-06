@@ -48,6 +48,19 @@ void create(int|void size)
 	  maxrow = 16;
 	  break;
   }
+
+  populate_empty();
+}
+
+// fill an empty matcase with positions for each column.
+// this way, if we have a column with nothing in it, there's still
+// a record of it so that calls to get() won't fail.
+static void populate_empty()
+{
+  foreach(validcolumns; string col;)
+  {
+    matcase[col] = ([]);
+  }
 }
 
 void set_name(string _name)
@@ -274,10 +287,12 @@ int load(Node n)
 	  validcolumns += (<"NI", "NL" >);
 	  break;
 	case Monotype.MATCASE_16_17:
-      validcolumns += (<"NI", "NL" >);
+    	  validcolumns += (<"NI", "NL" >);
 	  maxrow = 16;
 	  break;
   }
+
+  populate_empty();
 
   wedge = n->get_attributes()["wedge"];
 
