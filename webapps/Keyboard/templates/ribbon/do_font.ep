@@ -1,0 +1,60 @@
+<style type="text/css">.dijitDialogPaneContent {
+    width: 300px !important;
+    height: 200px !important;
+    max-height: 90%; 
+    overflow: auto; 
+}
+
+.dijitDialog{ 
+}
+</style>
+
+
+
+<script type="text/javascript">
+dojo.require("dijit.dijit");
+dojo.require("dojox.widget.DialogSimple");
+
+var myDialog;
+
+function showDialog(title, url)
+{
+  if(!myDialog)
+    myDialog = new dojox.widget.DialogSimple({
+              title: "Programmatic Dialog Creation",
+
+          });
+
+  myDialog.set('title', title);
+  myDialog.set('href', url);
+//  myDialog.set('style', 'width: 500px');
+  myDialog.show();
+}        
+
+function showCodes(line, url)
+{
+  if(!myDialog)
+    myDialog = new dojox.widget.DialogSimple({
+              title: "Programmatic Dialog Creation",
+
+          });
+
+  myDialog.set('title', 'Display Caster Codes for Line ' + (line +1));
+  myDialog.set('href', url);          
+//  myDialog.set('style', 'width: 300px');
+  myDialog.show();
+}
+</script>
+
+
+1: <%=data["1"]%> <%=data["s1"]%><br/>
+2: <%=data["2"]%> <%=data["s2"]%><br/>
+3: <%=data["3"]%> <%=data["s3"]%><br/>
+4: <%=data["4"]%> <%=data["s4"]%><br/>
+5: <%=data["5"]%> <%=data["s5"]%>
+
+<p>
+Result:
+<p>
+
+<%$result%>

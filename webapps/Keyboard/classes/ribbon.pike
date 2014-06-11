@@ -239,122 +239,7 @@ string job_id = "tricky";
    	}
    	werror("parse_time: %O\n", parse_time);
 
-   	int units;
-           if(g->lines && sizeof(g->lines)) units = g->lines[-1]->units;
-           else if(g->current_line) units = g->current_line->units;
-
-   	b+="<div style=\"clear: left\">";
-   	b+=("<div style=\"position:relative; float:left; width:50px\">Line</div><div style=\"position:relative; float:left; width:" 
-   		+ units + "px\">&nbsp;</div><div></div><div>Just Code / Comments</div>");
-   	b+=("</div>");
-
-   //	foreach(g->lines + (err?({g->current_line}):({})); int i; mixed line)
-     mixed render_time = gauge {
-   	foreach(g->lines; int i; mixed line)
-   	{
-   //	  werror("line: %O\n", line->elements);
-   		int mod;
-   		int setonline;
-   		int last_was_space = 0;
-   		int last_set;
-   //		b+="<span dojoType=\"dojox.widget.DynamicTooltip\" connectId=\"line_" + i + "\" href=\"" + action_url(get_line, ({(string)i}))+ "\" preventCache=\"true\">nevah seen!</span>";
-   		b+="<div style=\"clear: left\" id=\"line_" + i + "\" >";
-   		b+=("<div style=\"position:relative; float:left; width:50px\">" + (i+1) 
-   			+ "/"  + (sizeof(g->lines) - i)+ "</div>");
-   		string tobeadded = "";
-   		int tobeaddedwidth = 0;
-   		int total_set; 
-   		float spill =0.00;
-
-      mixed rendered_line = line->render_line(1);
-//      werror("rendered line: %O\n", rendered_line);
-   		foreach(rendered_line;int col; mixed e)
-   		{
-   	//	  if(e->is_real_js && line->combined_space)
-   	//	    continue;
-   		 if(e->is_real_js)
-   		  {
-   			if(tobeadded != "")
-   			{
-   			  b+= ("<div style=\"align:center; background: grey; position:relative; float:left; width:" + tobeaddedwidth + "px\">" + tobeadded + "</div>");
-   			  tobeadded = "";
-   			  tobeaddedwidth = 0;
-   			}
-   			// need some better work on this.
-   		    int w;
- 		      w = e->calculated_width;
-   		    setonline+=w;
-
-    		// spill is used to even out the display lines, as we're not able to depict fractional units accurately on the screen.
-   		    spill += (e->calculated_width-floor((float)e->calculated_width));
-   		if(spill > 1.0) { w+=1; spill -=1.0; }
-
-   		    total_set += (e->matrix->get_set_width()-max_red);
-   		    b += ("<div style=\"position:relative; float:left; background:" + (!e->is_combined_space?"orange":"red") + "; width:" + (int)(w) + "px\"> &nbsp; </div>");
-     			last_was_space = 1;
-   		  }
-   		  else if(e->is_fs || e->is_js)
-   		  {
-   			if(tobeadded != "")
-   			{
-   			  b+= ("<div style=\"align:center; background: grey; position:relative; float:left; width:" + tobeaddedwidth + "px\">" + tobeadded + "</div>");
-   			  tobeadded = "";
-   			  tobeaddedwidth = 0;
-   			}
-   			// need some better work on this.
-   		    int w = e->get_set_width();
-   		    setonline+=w;
-   		    mod++;
-   		if(mod%2)					    
-   		    b += ("<div style=\"position:relative; float:left; background:pink; width:" + w + "px\">&nbsp;</div>");
-   		else
-   		    b += ("<div style=\"position:relative; float:left; background:lightpink; width:" + w + "px\">&nbsp;</div>");
-   			last_was_space = 1;
-   		  }
-     		  else
-    		  {
-   			total_set += e->get_set_width();
-   			 tobeaddedwidth += e->get_set_width();
-   			 setonline+=e->get_set_width();
-   			string ch = e->character;
-
-   			  if(e->style == "I")
-   			   ch = "<i>" + ch + "</i>";
-   			  if(e->style == "B")
-   			   ch = "<b>" + ch + "</b>";
-   			  if(e->style == "S")
-   			   ch = "<font size=\"-1\">" + ch + "</font>";
-
-
-   			if(e->mat && (float)e->get_set_width() != (float)e->mat->get_set_width())
-   			  ch = "<span style=\"text-decoration: overline; color: blue\">" + ch + "</span>";
-
-   			 if(sizeof(e->character) > 1) 
-   			  tobeadded += ("<u>" + (ch||" &nbsp; ") + "</u>");
-   			 else
-     			   tobeadded += (ch||" &nbsp; ");
-   		  }
-
-   //		  if((total_set-last_set) <= max_red) werror("%d %d whee!\n", i, col);
-   		  last_set = total_set;
-           }		
-
-   			if(tobeadded != "")
-   			{
-   			  b+= ("<div style=\"align:center; background: grey; position:relative; float:left; width:" + tobeaddedwidth + "px\">" + tobeadded + "</div>");
-   			  tobeadded = "";
-   			  tobeaddedwidth = 0;
-   			}
-   		b+=(" &nbsp; " /* +total_set + " " +(setonline) */ + " &lt;== " + line->big + " " + line->little /*+ " " + line->units*/ + "[" + line->line_on_page + "]");
-   		b+=" [<a onClick=\"showCodes(" + i + ", '" + action_url(get_line, ({(string)i})) + "')\">Codes</a>]";
-
-   		if(line->errors && sizeof(line->errors))
-   		  b+= ((array)line->errors * ", ");
-   		b+=("</div>\n");
-   	}
-   };
-   werror("render_time: %O\n", render_time);
-
+    b = render_proof(b, g);
        v->add("job_id", job_id);
        v->add("result", b);
 
@@ -449,11 +334,7 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 	
 	// we don't need this to be shown in the "soft proof".
   m_delete(settings, "trip_at_end");
-  
-	int max_red = 2;
-        if(settings->setwidth > 12.0)	
-	  max_red = 1;
-		
+  		
 	string data;
 	if(id->variables->input_type=="file") data = /*utf8_to_string*/(id->variables["input-file"]);
 	else data = (id->variables->input_text);
@@ -493,117 +374,7 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 	}
 	werror("parse_time: %O\n", parse_time);
 
-	int units;
-        if(g->lines && sizeof(g->lines)) units = g->lines[-1]->units;
-        else if(g->current_line) units = g->current_line->units;
-
-	b+="<div style=\"clear: left\">";
-	b+=("<div style=\"position:relative; float:left; width:50px\">Line</div><div style=\"position:relative; float:left; width:" 
-		+ units + "px\">&nbsp;</div><div></div><div>Just Code / Comments</div>");
-	b+=("</div>");
-
-//	foreach(g->lines + (err?({g->current_line}):({})); int i; mixed line)
-  mixed render_time = gauge {
-	foreach(g->lines; int i; mixed line)
-	{
-//	  werror("line: %O\n", line->elements);
-		int mod;
-		int setonline;
-		int last_was_space = 0;
-		int last_set;
-//		b+="<span dojoType=\"dojox.widget.DynamicTooltip\" connectId=\"line_" + i + "\" href=\"" + action_url(get_line, ({(string)i}))+ "\" preventCache=\"true\">nevah seen!</span>";
-		b+="<div style=\"clear: left\" id=\"line_" + i + "\" >";
-		b+=("<div style=\"position:relative; float:left; width:50px\">" + (i+1) 
-			+ "/"  + (sizeof(g->lines) - i)+ "</div>");
-		string tobeadded = "";
-		int tobeaddedwidth = 0;
-		int total_set; 
-		float spill =0.00;
-
-		foreach(line->render_line(1);int col; mixed e)
-		{
-		 if(e->is_real_js)
-		  {
-			if(tobeadded != "")
-			{
-			  b+= ("<div style=\"align:center; background: grey; position:relative; float:left; width:" + tobeaddedwidth + "px\">" + tobeadded + "</div>");
-			  tobeadded = "";
-			  tobeaddedwidth = 0;
-			}
-			// need some better work on this.
-		    int w;
-	      w = e->calculated_width;
-		    setonline+=w;
-
- 		// spill is used to even out the display lines, as we're not able to depict fractional units accurately on the screen.
-		    spill += (e->calculated_width-floor((float)e->calculated_width));
-		if(spill > 1.0) { w+=1; spill -=1.0; }
-
-		total_set += (e->matrix->get_set_width()-max_red);
-		    b += ("<div style=\"position:relative; float:left; background:" + (!e->is_combined_space?"orange":"red") + "; width:" + (int)(w) + "px\"> &nbsp; </div>");
-  			last_was_space = 1;
-		  }
-		  else if(e->is_fs || e->is_js)
-		  {
-			if(tobeadded != "")
-			{
-			  b+= ("<div style=\"align:center; background: grey; position:relative; float:left; width:" + tobeaddedwidth + "px\">" + tobeadded + "</div>");
-			  tobeadded = "";
-			  tobeaddedwidth = 0;
-			}
-			// need some better work on this.
-		    int w = e->get_set_width();
-		    setonline+=w;
-		    mod++;
-		if(mod%2)					    
-		    b += ("<div style=\"position:relative; float:left; background:pink; width:" + w + "px\">&nbsp;</div>");
-		else
-		    b += ("<div style=\"position:relative; float:left; background:lightpink; width:" + w + "px\">&nbsp;</div>");
-			last_was_space = 1;
-		  }
-  		  else
- 		  {
-			total_set += e->get_set_width();
-			 tobeaddedwidth += e->get_set_width();
-			 setonline+=e->get_set_width();
-			string ch = e->character;
-			
-			  if(e->style == "I")
-			   ch = "<i>" + ch + "</i>";
-			  if(e->style == "B")
-			   ch = "<b>" + ch + "</b>";
-			  if(e->style == "S")
-			   ch = "<font size=\"-1\">" + ch + "</font>";
-
-
-			if(e->mat && (float)e->get_set_width() != (float)e->mat->get_set_width())
-			  ch = "<span style=\"text-decoration: overline; color: blue\">" + ch + "</span>";
-			  
-			 if(sizeof(e->character) > 1) 
-			  tobeadded += ("<u>" + (ch||" &nbsp; ") + "</u>");
-			 else
-  			   tobeadded += (ch||" &nbsp; ");
-		  }
-		
-//		  if((total_set-last_set) <= max_red) werror("%d %d whee!\n", i, col);
-		  last_set = total_set;
-        }		
-		
-			if(tobeadded != "")
-			{
-			  b+= ("<div style=\"align:center; background: grey; position:relative; float:left; width:" + tobeaddedwidth + "px\">" + tobeadded + "</div>");
-			  tobeadded = "";
-			  tobeaddedwidth = 0;
-			}
-		b+=(" &nbsp; " /* +total_set + " " +(setonline) */ + " &lt;== " + line->big + " " + line->little /*+ " " + line->units*/ + "[" + line->line_on_page + "]");
-		b+=" [<a onClick=\"showCodes(" + i + ", '" + action_url(get_line, ({(string)i})) + "')\">Codes</a>]";
-    
-		if(line->errors && sizeof(line->errors))
-		  b+= ((array)line->errors * ", ");
-		b+=("</div>\n");
-	}
-};
-werror("render_time: %O\n", render_time);
+   b = render_proof(b, g);
 
    v->add("settings", settings);
    v->add("now", Calendar.now());
@@ -617,3 +388,259 @@ werror("render_time: %O\n", render_time);
 	return;
 }
 
+String.Buffer render_proof(String.Buffer b, Monotype.Generator g)
+{
+  	int units;
+  	
+  	int max_red = 2;  
+    if(g->config->setwidth > 12.0)	
+  	  max_red = 1;
+  	
+    if(g->lines && sizeof(g->lines)) units = (int)g->lines[-1]->units;
+    else if(g->current_line) units = (int)g->current_line->units;
+
+  	b+="<div style=\"clear: left\">";
+  	b+=("<div style=\"position:relative; float:left; width:50px\">Line</div><div style=\"position:relative; float:left; width:" 
+  		+ units + "px\">&nbsp;</div><div></div><div>Just Code / Comments</div>");
+  	b+=("</div>");
+
+  //	foreach(g->lines + (err?({g->current_line}):({})); int i; mixed line)
+    mixed render_time = gauge {
+  	foreach(g->lines; int i; mixed line)
+  	{
+  //	  werror("line: %O\n", line->elements);
+  		int mod;
+  		int setonline;
+  		int last_was_space = 0;
+  		int last_set;
+  //		b+="<span dojoType=\"dojox.widget.DynamicTooltip\" connectId=\"line_" + i + "\" href=\"" + action_url(get_line, ({(string)i}))+ "\" preventCache=\"true\">nevah seen!</span>";
+  		b+="<div style=\"clear: left\" id=\"line_" + i + "\" >";
+  		b+=("<div style=\"position:relative; float:left; width:50px\">" + (i+1) 
+  			+ "/"  + (sizeof(g->lines) - i)+ "</div>");
+  		string tobeadded = "";
+  		int tobeaddedwidth = 0;
+  		int total_set; 
+  		float spill =0.00;
+
+  		foreach(line->render_line(1);int col; mixed e)
+  		{
+  		 if(e->is_real_js)
+  		  {
+  			  if(tobeadded != "")
+  			  {
+  			    b+= ("<div style=\"align:center; background: grey; position:relative; float:left; width:" + tobeaddedwidth + "px\">" + tobeadded + "</div>");
+  			    tobeadded = "";
+  			    tobeaddedwidth = 0;
+  			  }
+  			// need some better work on this.
+  		    int w;
+  	      w = e->calculated_width;
+  		    setonline+=w;
+
+   		// spill is used to even out the display lines, as we're not able to depict fractional units accurately on the screen.
+  		    spill += (e->calculated_width-floor((float)e->calculated_width));
+  		    if(spill > 1.0) { w+=1; spill -=1.0; }
+
+  		total_set += (e->matrix->get_set_width()-max_red);
+  		    b += ("<div style=\"position:relative; float:left; background:" + (!e->is_combined_space?"orange":"red") + "; width:" + (int)(w) + "px\"> &nbsp; </div>");
+    			last_was_space = 1;
+  		  }
+  		  else if(e->is_fs || e->is_js)
+  		  {
+  			  if(tobeadded != "")
+  			  {
+  			    b+= ("<div style=\"align:center; background: grey; position:relative; float:left; width:" + tobeaddedwidth + "px\">" + tobeadded + "</div>");
+  			    tobeadded = "";
+  			    tobeaddedwidth = 0;
+  			  }
+  			// need some better work on this.
+  		    int w = e->get_set_width();
+  		    setonline+=w;
+  		    mod++;
+
+       		// spill is used to even out the display lines, as we're not able to depict fractional units accurately on the screen.
+      		    spill += (e->get_set_width()-floor((float)e->get_set_width(   )));
+      		    if(spill > 1.0) { w+=1; spill -=1.0; }
+
+  		    if(mod%2)					    
+  		      b += ("<div style=\"position:relative; float:left; background:pink; width:" + w + "px\">&nbsp;</div>");
+  		    else
+  		      b += ("<div style=\"position:relative; float:left; background:lightpink; width:" + w + "px\">&nbsp;</div>");
+  			  last_was_space = 1;
+  		  }
+    		  else
+   		  {
+  			total_set += e->get_set_width();
+  			 tobeaddedwidth += e->get_set_width();
+  			 setonline+=e->get_set_width();
+  			string ch = e->character;
+
+  			  if(e->style == "I")
+  			   ch = "<i>" + ch + "</i>";
+  			  if(e->style == "B")
+  			   ch = "<b>" + ch + "</b>";
+  			  if(e->style == "S")
+  			   ch = "<font size=\"-1\">" + ch + "</font>";
+
+
+  			if(e->mat && (float)e->get_set_width() != (float)e->mat->get_set_width())
+  			  ch = "<span style=\"text-decoration: overline; color: blue\">" + ch + "</span>";
+
+  			 if(sizeof(e->character) > 1) 
+  			  tobeadded += ("<u>" + (ch||" &nbsp; ") + "</u>");
+  			 else
+    			   tobeadded += (ch||" &nbsp; ");
+  		  }
+
+  //		  if((total_set-last_set) <= max_red) werror("%d %d whee!\n", i, col);
+  		  last_set = total_set;
+          }		
+
+  			if(tobeadded != "")
+  			{
+  			  b+= ("<div style=\"align:center; background: grey; position:relative; float:left; width:" + tobeaddedwidth + "px\">" + tobeadded + "</div>");
+  			  tobeadded = "";
+  			  tobeaddedwidth = 0;
+  			}
+  		b+=(" &nbsp; " /* +total_set + " " +(setonline) */ + " &lt;== " + line->big + " " + line->little /*+ " " + line->units*/ + "[" + line->line_on_page + "]");
+  		b+=" [<a onClick=\"showCodes(" + i + ", '" + action_url(get_line, ({(string)i})) + "')\">Codes</a>]";
+
+  		if(line->errors && sizeof(line->errors))
+  		  b+= ((array)line->errors * ", ");
+  		b+=("</div>\n");
+  	}
+  };
+  werror("proof render_time: %O, %O\n", render_time, b);
+  return b;
+}
+
+public mapping extract_font_settings(Request id)
+{
+werror("EXCTRACT_FONT_SETTINGS: %O\n", id->variables);
+  return ([
+		"justification": (int)id->variables->justification,
+		"unit_adding": (int)id->variables->unitadding,
+		"unit_shift": (int)(id->variables->unit_shift),
+		"mould": (int)id->variables->points,
+		"pointsystemname": pointsystems[id->variables->pointsystem||"12.0"],
+		"pointsystem": (float)id->variables->pointsystem,
+		"setwidth": (float)id->variables->set,
+		"linelengthp": (float)id->variables->linelength,
+		"stopbar": app->load_wedge(id->variables->wedge),
+		"matcase": app->load_matcase_by_id(id->variables->mca),
+		"jobname": id->variables->jobname,
+		"trip_at_end": (int)id->variables->trip_at_end,
+		"enable_pneumatic_quads": (int)id->variables->enable_pneumatic_quads,
+    "1" : (int)id->variables->s1,
+    "2" : (int)id->variables->s2,
+    "3" : (int)id->variables->s3,
+    "4" : (int)id->variables->s4,
+    "5" : (int)id->variables->s5,
+    "s1q" : (int)id->variables->s1q,
+    "s2q" : (int)id->variables->s2q,
+    "s3q" : (int)id->variables->s3q,
+    "s4q" : (int)id->variables->s4q,
+    "s5q" : (int)id->variables->s5q,
+		]);
+}
+
+
+public void do_font(Request id, Response response, Template.View v, mixed ... args)
+{
+   mapping settings = extract_font_settings(id);
+   String.Buffer proof = String.Buffer();
+   object g = Monotype.Generator(settings);
+ 	 g->set_hyphenation_rules(id->misc->session_variables->user["Preferences"]["hyphenation_rules"]["value"]);
+   g->parse("");
+ 	 g->process_setting_buffer(1);
+   int i = 0;
+   
+   while(i < 5)
+   {
+     string key = sprintf("%c", '1' + i);
+     if(settings[key])
+     {
+       int gotit = 0;
+       float width = calculate_space_width(i+1, settings->setwidth, settings->mould);
+       v->add(key, width);
+       foreach(settings->matcase->spaces;int w;)
+       {
+         float diff = width - (float)w;
+         werror("looking for %O from %O, diff=%O\n", width, w, diff);
+         if((diff <= 3.0) && (diff >= -2.0)) // we can usually adjust +/- 2 units (at set widths 12 or under).
+         {
+           gotit = 1;
+           int sta = settings["s" + key + "q"];
+           object s = Monotype.Sort(settings->matcase->spaces[w]);
+           s->space_adjust = diff;
+           while(sta)
+           {
+             g->current_line->add(s, 0, 0);
+             if(g->current_line->is_overset())
+             {
+               g->current_line->remove();
+               
+               g->quad_out();
+               if(catch(g->new_line()))
+               {
+                 g->current_line->remove();
+                 g->current_line->add(g->JustifyingSpace,0);
+                 g->quad_out();
+                 g->new_line();
+               }
+               g->current_line->add(s, 0, 0);
+             }
+             sta --;
+           };
+           v->add("s" + key, w);
+           break;
+         }
+       }
+       if(!gotit)
+       {
+//         werror("spaces: %O\n", settings->matcase->spaces);
+         throw(Error.Generic("Unable to find a suitable space for " + width + ". Available: " + String.implode_nicely(indices(settings->matcase->spaces)) + "\n"));
+       }
+     }
+     i++;
+   }
+   g->quad_out();
+   g->new_line();
+   proof = render_proof(proof, g);
+   id->misc->session_variables->generator = g;
+	 
+   v->add("result", proof);
+}
+
+float calculate_space_width(int frac, float set, int mould)
+{
+   float units = 18.0/frac; // in terms of a set == mould size.
+   return units * ((float)mould/set); // now, convert to units of the new set width.
+}
+
+public void font(Request id, Response response, Template.View v, mixed ... args)
+{
+    object user = id->misc->session_variables->user;
+
+    array mcac = app->get_mcas();
+    array mcas = ({});
+
+    foreach(mcac;; object c)
+    {
+      if(c["owner"] == user || c["is_public"])
+        mcas += ({ ({ (string)c["id"], c["name"] }) });
+    }
+
+    array wedgec = app->get_wedges();
+    array wedges = wedgec[*]["name"];
+
+    werror("config: %O\n", id->variables);
+   // werror("wedges: %O\n", wedges);
+
+     //werror("matcases: %O\n", app->get_mcas());
+      v->add("mcas", mcas);
+      v->add("wedges", wedges);
+      v->add("owner", user);
+
+  	return;
+}

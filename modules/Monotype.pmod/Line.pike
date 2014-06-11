@@ -1,7 +1,6 @@
 #charset utf8
 // represents a line in a job.
 // big and little are the calculated justification settings
-// spaces is the number of justification spaces
 // units is the size of each jusifying space.
 
 import Monotype;
@@ -13,7 +12,6 @@ import Monotype;
 
 	int big;
 	int little;
-	int spaces; 
 
   // should justifying spaces be fixed at the "base width" (1 or 2 units less than the js row width)?
   int js_are_fixed = 0;

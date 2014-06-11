@@ -1,0 +1,143 @@
+<script type="text/javascript">
+dojo.require("dijit.dijit");
+dojo.require("dojox.widget.DialogSimple");
+
+var myDialog;
+
+function updateSet()
+{
+  var pica;
+  var setWidth = dojo.byId("set").value;
+  var lineLength = dojo.byId("linelength").value;
+  if(dojo.byId("anglo").checked)
+    pica = 12.0;
+  else if(dojo.byId("cicero").checked)
+     pica = 12.84;
+  else if(dojo.byId("oldenglish").checked)
+     pica = 12.8;
+  
+   lineunits = ~~(18 * (pica||12) * 
+   			(1/setWidth) * lineLength);
+   			
+   dojo.byId("lineunits").innerHTML = "<i>(" + lineunits + " units)</i>";  
+}
+
+function showDialog(title, url)
+{
+  if(!myDialog)
+    myDialog = new dojox.widget.DialogSimple({
+              title: "Programmatic Dialog Creation",
+
+          });
+
+  myDialog.set('title', title);
+  myDialog.set('href', url);
+  myDialog.show();
+}
+
+function getWedge(e)
+{
+  var sel = e.options[e.selectedIndex];
+  sel = sel.value;
+//alert("get wedge: " + sel);
+  getWedgeForMCA(sel, "wedge");
+}
+
+function getWedgeForMCA(mca, id)
+{
+  dojo.xhrGet({url: "/ribbon/get_wedge_for_mca/" + mca, load: function(d){ setWedge(d, id);}});
+}
+
+function enableFile()
+{
+  dojo.byId("input_file").disabled=false;
+  dojo.byId("input_text").disabled=true;
+}
+
+function enableText()
+{
+  dojo.byId("input_file").disabled=true;
+  dojo.byId("input_text").disabled=false;
+}
+
+function setWedge(data, wedgeid)
+{
+  var s = dojo.byId(wedgeid);
+//alert("wedge: " + s);
+  if(!s) return;
+
+  for(var i = 0; i < s.options.length; i++)
+  {
+     if(s.options[i].value == data)
+     {
+		s.selectedIndex = i;
+		break;
+     }
+  }
+}
+
+</script>
+
+<h1>Font Generator</h1>
+<form action="<%#action_url "action": "do_font" %>" method="post" enctype="multipart/form-data">
+<fieldset>
+<legend>Basic Job Settings</legend>
+Job Name <%#input "type": "text", "name": "jobname"%> 
+<br/>
+Matcase
+<%#select "id":"mca", "name":"mca", "options": data->mcas, "onChange":"getWedge(this);"%>
+<br/>
+Stopbar
+<%#select "id": "wedge", "name": "wedge", "options": data->wedges%>
+<br/>
+Set Width
+<%#select "onchange": "updateSet();", "id": "set", "name": "set", "value": "12", "options": ({"4", "5", "6", "6.25", "6.50", "6.75", "7", "7.25", "7.50", "7.75", "8", "8.25", "8.50", "8.75", "9", "9.25", "9.50", "9.75", "10", "10.25", "10.50", "10.75", "11", "11.25", "11.50", "11.75", "12", "12.25", "12.50", "12.75", "13", "13.25", "13.50", "13.75", "14", "14.50", "15", "15.50", "16", "16.50", "17", "17.50", "18", "18.50",  "19", "19.50", "20", "20.50", "21", "22", "23", "24"})%>
+<br/>
+Point Size
+<%#select "name": "points", "id": "points", "value": "12", "options": ({"4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "18", "24"})%>
+<br/>
+Total Cast Line Length (picas/ciceros)
+<%#input "type":"text",  "name": "linelength", "id": "linelength", "size":"5", "value": "30", "onchange": "updateSet();" %> 
+<%#input "type": "radio", "name": "pointsystem", "id": "anglo",  "value": "12.0", "checked":"1" , "onchange": "updateSet();" %> <label for="anglo">UK-Anglo Pica</label> 
+&nbsp;
+<%#input "type": "radio", "name": "pointsystem", "id": "cicero", "value": "12.84" , "onchange": "updateSet();" %> <label for="cicero">Cicero</label>
+&nbsp;
+<%#input "type": "radio", "name": "pointsystem", "id": "oldenglish", "value": "12.8", "onchange": "updateSet();" %>  <label for="oldenglish">Old English Pica</label>
+<span id="lineunits"></span>
+</fieldset>
+<fieldset>
+<legend>Width Adjustment Mechanisms</legend>
+<%#input "type":"checkbox", "name": "unitadding", "id": "unitadding", "value": "1"%> <label for="unitadding">Unit Adding</label> <%#select "name": "unitadding_units", "options": ({"1", "2", "3"})%> Units
+<br/>
+<%#input "type":"checkbox", "name": "unit_shift", "id": "unit_shift", "value":"1"%> <label for="unit_shift">Unit Shift</label> 
+<br/>
+<%#input "type":"checkbox", "name": "justification", "id": "justification", "checked": "1", "data_supplied": data->load_config, "value":"1"%> <label for="justification">Justification Wedges</label>
+</fieldset>
+<fieldset>
+<legend>Quadding and Spacing</legend>
+<%#input "type":"checkbox", "name": "enable_pneumatic_quads", "id": "enable_pneumatic_quads", "value": "1", "data_supplied": data->load_config%> <label for="enable_pneumatic_quads">Pneumatic Low Quad Mechanism</label> 
+</fieldset>
+<fieldset>
+<legend>Hyphenation and Layout</legend>
+<%#input "type": "checkbox", "name": "trip_at_end", "id": "trip_at_end", "checked":"1", "data_supplied": data->load_config, "value":"1"%> <label for="trip_at_end">Trip caster when complete</label>
+</fieldset>
+<fieldset>
+<legend>Job Contents</legend>
+<%#input "type":"checkbox", "name": "s1", "id": "s1", "value": "1"%> <label for="s1">em-quad</label> 
+<%#input "type":"text",  "name": "s1q", "id": "s1q", "size":"5", "value": "20" %> 
+<br/>
+<%#input "type":"checkbox", "name": "s2", "id": "s2", "value": "1"%> <label for="s2">en-quad</label>
+<%#input "type":"text",  "name": "s2q", "id": "s2q", "size":"5", "value": "20" %> 
+<br/>
+<%#input "type":"checkbox", "name": "s3", "id": "s3", "value": "1"%> <label for="s3">3-to-em</label>
+<%#input "type":"text",  "name": "s3q", "id": "s3q", "size":"5", "value": "20" %> 
+<br/>
+<%#input "type":"checkbox", "name": "s4", "id": "s4", "value": "1"%> <label for="s4">4-to-em</label>
+<%#input "type":"text",  "name": "s4q", "id": "s4q", "size":"5", "value": "20" %> 
+<br/>
+<%#input "type":"checkbox", "name": "s5", "id": "s5", "value": "1"%> <label for="s5">5-to-em</label> 
+<%#input "type":"text",  "name": "s5q", "id": "s5q", "size":"5", "value": "20" %> 
+</fieldset>
+<p>
+<input type="submit" value="Preview Ribbon"/>
+</form>

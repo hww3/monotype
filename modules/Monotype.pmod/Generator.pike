@@ -245,6 +245,10 @@ protected void load_spaces(object m)
       if(x <= config->maximum_quad_units)
         quadding_spaces[x] = spaces[x];
   }
+  else 
+  {
+    quadding_spaces = spaces + ([]);
+  }
   
   werror("SPACES: %O\n", spaces);
 }
@@ -1744,7 +1748,7 @@ void quad_out()
 
   // we should add a justifying space to a line that has none so that we can be sure
   // that the line will justify properly.
-  if(!current_line->linespaces)
+  if(!current_line->spaces)
   {
     if(line_mode == MODE_CENTER)
     {
@@ -1811,6 +1815,7 @@ float low_quad_out(float amount, int|void atbeginning, int|void is_quadding)
   else
     qspaces = spaces;
     
+werror("trying to find a solution for %O with %O\n", (int)floor(amount), qspaces);
   toadd = Monotype.findspace()->simple_find_space((int)floor(amount), qspaces);
   if(!toadd || !sizeof(toadd))
     toadd = Monotype.IterativeSpaceFinder()->findspaces((int)floor(amount), qspaces);
@@ -2004,9 +2009,9 @@ werror("new_line()\n");
     werror("WARNING: new_line() called without any content.\n");
     return 0;
   }    
-  if(!current_line->linespaces && (float)current_line->linelength != (float)current_line->lineunits)
+  if(!current_line->linespaces && abs(current_line->linelength - current_line->lineunits) > 1)
   {
-      throw(Error.Generic(sprintf("Off-length line without justifying spaces: need %d units to justify, line has %.1f units. Consider adding a justifying space to line - %s\n", 
+      throw(Error.Generic(sprintf("Off-length line without justifying spaces: need %d units to justify, line has %.2f units. Consider adding a justifying space to line - %s\n", 
 		current_line->lineunits, current_line->linelength, (string)current_line)));
   }
   else if(current_line->linespaces && !current_line->can_justify()) 
