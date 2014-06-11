@@ -284,7 +284,7 @@ int nb_punch_write(mixed id)
     {
       int en = f->errno();
       werror("An error occurred while trying to write to the interface: " + en);
-      throw(Error.Generic("Error occurred while trying to write to the interface: " + en))
+      throw(Error.Generic("Error occurred while trying to write to the interface: " + en));
     }
     if(r == sizeof(outgoing_data))
       outgoing_data = "";
@@ -662,7 +662,7 @@ int send_code(int code)
     {
       int en = f->errno();
       werror("An error occurred while trying to write to the interface: " + en);
-      throw(Error.Generic("Error occurred while trying to write to the interface: " + en))      
+      throw(Error.Generic("Error occurred while trying to write to the interface: " + en));
     }
     if(c != sizeof(d))
     {
@@ -683,11 +683,12 @@ int wx(mixed ... args)
 int wxf(object f, mixed ... args)
 {
   int sent;
+  int mode;
 //  write("%O >> ", f);
 //  write(@args);
   if(f)
   {
-    int mode = f->mode();
+    mode = f->mode();
     int x = 0;
     string s = sprintf(@args);
     f->set_nonblocking();
@@ -698,7 +699,7 @@ int wxf(object f, mixed ... args)
       {
         int en = f->errno();
         werror("An error occurred while trying to write to the interface: " + en);
-        throw(Error.Generic("Error occurred while trying to write to the interface: " + en))        
+        throw(Error.Generic("Error occurred while trying to write to the interface: " + en));
       }
       sent += b;
       if(b != sizeof(s))
@@ -712,7 +713,7 @@ int wxf(object f, mixed ... args)
     } while(x < 5);
   }
   
-  if(!(mode & PROP_NONBLOCK))
+  if(f && !(mode & Stdio.PROP_NONBLOCK))
     f->set_blocking();
   
   return sent;
