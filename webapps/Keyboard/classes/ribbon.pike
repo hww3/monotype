@@ -433,16 +433,16 @@ String.Buffer render_proof(String.Buffer b, Monotype.Generator g)
   			    tobeaddedwidth = 0;
   			  }
   			// need some better work on this.
-  		    int w;
+  		float w;
   	      w = e->calculated_width;
-  		    setonline+=w;
+  		    setonline+=(int)floor(w);
 
    		// spill is used to even out the display lines, as we're not able to depict fractional units accurately on the screen.
   		    spill += (e->calculated_width-floor((float)e->calculated_width));
-  		    if(spill > 1.0) { w+=1; spill -=1.0; }
+  		    if(spill >= 1.0) { w+=1; spill -=1.0; }
 
   		total_set += (e->matrix->get_set_width()-max_red);
-  		    b += ("<div style=\"position:relative; float:left; background:" + (!e->is_combined_space?"orange":"red") + "; width:" + (int)(w) + "px\"> &nbsp; </div>");
+  		    b += ("<div style=\"position:relative; float:left; background:" + (!e->is_combined_space?"orange":"red") + "; width:" + floor(w) + "px\"> &nbsp; </div>");
     			last_was_space = 1;
   		  }
   		  else if(e->is_fs || e->is_js)
@@ -454,18 +454,18 @@ String.Buffer render_proof(String.Buffer b, Monotype.Generator g)
   			    tobeaddedwidth = 0;
   			  }
   			// need some better work on this.
-  		    int w = e->get_set_width();
-  		    setonline+=w;
+  		    float w = e->get_set_width();
+  		    setonline+=(int)floor(w);
   		    mod++;
 
        		// spill is used to even out the display lines, as we're not able to depict fractional units accurately on the screen.
       		    spill += (e->get_set_width()-floor((float)e->get_set_width(   )));
-      		    if(spill > 1.0) { w+=1; spill -=1.0; }
+      		    if(spill >= 1.0) { w+=1; spill -=1.0; }
 
   		    if(mod%2)					    
-  		      b += ("<div style=\"position:relative; float:left; background:pink; width:" + w + "px\">&nbsp;</div>");
+  		      b += ("<div style=\"position:relative; float:left; background:pink; width:" + floor(w) + "px\">&nbsp;</div>");
   		    else
-  		      b += ("<div style=\"position:relative; float:left; background:lightpink; width:" + w + "px\">&nbsp;</div>");
+  		      b += ("<div style=\"position:relative; float:left; background:lightpink; width:" + floor(w) + "px\">&nbsp;</div>");
   			  last_was_space = 1;
   		  }
     		  else
@@ -498,7 +498,7 @@ String.Buffer render_proof(String.Buffer b, Monotype.Generator g)
 
   			if(tobeadded != "")
   			{
-  			  b+= ("<div style=\"align:center; background: grey; position:relative; float:left; width:" + tobeaddedwidth + "px\">" + tobeadded + "</div>");
+  			  b+= ("<div style=\"align:center; background: grey; position:relative; float:left; width:" + (tobeaddedwidth) + "px\">" + tobeadded + "</div>");
   			  tobeadded = "";
   			  tobeaddedwidth = 0;
   			}
@@ -544,72 +544,108 @@ werror("EXCTRACT_FONT_SETTINGS: %O\n", id->variables);
 		]);
 }
 
+public void do_generate_font(Request id, Response response, Template.View v, mixed ... args)
+{
+  // the job settings are stored in a mapping stored in the session object when we validate the file.
+  // we can then retrieve them in the next step, here.
+  id->variables = id->misc->session_variables["font_" + id->variables->job_id];
+  m_delete(id->misc->session_variables, "font_" + id->variables->job_id);
+
+  mapping settings = extract_font_settings(id);
+  werror("%O\n", settings);	
+  String.Buffer proof = String.Buffer();
+
+  Monotype.Generator g = make_font(settings, id);	 
+
+  response->set_data(g->generate_ribbon());
+  response->set_header("content-disposition", "attachment; filename=\"" + 
+    (id->variables->jobname || "untitled_font") + ".rib\"");	
+  response->set_type("application/x-monotype-e-ribbon");
+  response->set_charset("utf-8");
+  id->misc->session_variables->generator = -1;
+  id->misc->session_variables->generator = 0;
+}
 
 public void do_font(Request id, Response response, Template.View v, mixed ... args)
 {
-   mapping settings = extract_font_settings(id);
-   String.Buffer proof = String.Buffer();
-   object g = Monotype.Generator(settings);
- 	 g->set_hyphenation_rules(id->misc->session_variables->user["Preferences"]["hyphenation_rules"]["value"]);
-   g->parse("");
- 	 g->process_setting_buffer(1);
-   int i = 0;
-   
-   while(i < 5)
-   {
-     string key = sprintf("%c", '1' + i);
-     if(settings[key])
-     {
-       int gotit = 0;
-       float width = calculate_space_width(i+1, settings->setwidth, settings->mould);
-       v->add(key, width);
-       foreach(settings->matcase->spaces;int w;)
-       {
-         float diff = width - (float)w;
-         werror("looking for %O from %O, diff=%O\n", width, w, diff);
-         if((diff <= 3.0) && (diff >= -2.0)) // we can usually adjust +/- 2 units (at set widths 12 or under).
-         {
-           gotit = 1;
-           int sta = settings["s" + key + "q"];
-           object s = Monotype.Sort(settings->matcase->spaces[w]);
-           s->space_adjust = diff;
-           while(sta)
-           {
-             g->current_line->add(s, 0, 0);
-             if(g->current_line->is_overset())
-             {
-               g->current_line->remove();
-               
-               g->quad_out();
-               if(catch(g->new_line()))
-               {
-                 g->current_line->remove();
-                 g->current_line->add(g->JustifyingSpace,0);
-                 g->quad_out();
-                 g->new_line();
-               }
-               g->current_line->add(s, 0, 0);
-             }
-             sta --;
-           };
-           v->add("s" + key, w);
-           break;
-         }
-       }
-       if(!gotit)
-       {
-//         werror("spaces: %O\n", settings->matcase->spaces);
-         throw(Error.Generic("Unable to find a suitable space for " + width + ". Available: " + String.implode_nicely(indices(settings->matcase->spaces)) + "\n"));
-       }
-     }
-     i++;
-   }
-   g->quad_out();
-   g->new_line();
-   proof = render_proof(proof, g);
-   id->misc->session_variables->generator = g;
+  object user = id->misc->session_variables->user;
+  response->set_header("Cache-control", "no-cache");
+
+  int job_id = random(9999999);
+  id->misc->session_variables["font_" + job_id] = id->variables;
+
+  mapping settings = extract_font_settings(id);
+  String.Buffer proof = String.Buffer();
+
+  Monotype.Generator g = make_font(settings, id);
+
+  proof = render_proof(proof, g);
+  id->misc->session_variables->generator = g;
 	 
-   v->add("result", proof);
+  v->add("job_id", job_id);
+  v->add("result", proof);
+}
+
+Monotype.Generator make_font(mapping settings, object id)
+{
+  object g = Monotype.Generator(settings);
+  g->set_hyphenation_rules(id->misc->session_variables->user["Preferences"]["hyphenation_rules"]["value"]);
+  g->parse("");
+  g->process_setting_buffer(1);
+  int i = 0;
+   
+  while(i < 5)
+  {
+    string key = sprintf("%c", '1' + i);
+    if(settings[key])
+    {
+      int gotit = 0;
+      float width = calculate_space_width(i+1, settings->setwidth, settings->mould);
+      foreach(settings->matcase->spaces;int w;)
+      {
+        float diff = width - (float)w;
+        werror("looking for %O from %O, diff=%O\n", width, w, diff);
+        if((diff <= 3.0) && (diff >= -2.0)) // we can usually adjust +/- 2 units (at set widths 12 or under).
+        {
+          gotit = 1;
+          int sta = settings["s" + key + "q"];
+          object s = Monotype.Sort(settings->matcase->spaces[w]);
+          s->space_adjust = diff;
+          while(sta)
+          {
+            g->current_line->add(s, 0, 0);
+            if(g->current_line->is_overset())
+            {
+              g->current_line->remove();
+              
+              g->quad_out();
+              if(catch(g->new_line()))
+              {
+                g->current_line->remove();
+                g->current_line->add(g->JustifyingSpace,0);
+                g->quad_out();
+                g->new_line();
+              }
+              g->current_line->add(s, 0, 0);
+            }
+            sta --;
+          };
+	  g->parse(":");
+          g->process_setting_buffer(1);
+          break;
+        }
+      }
+      if(!gotit)
+      {
+//        werror("spaces: %O\n", settings->matcase->spaces);
+        throw(Error.Generic("Unable to find a suitable space for " + width + ". Available: " + String.implode_nicely(indices(settings->matcase->spaces)) + "\n"));
+      }
+    }
+    i++;
+  }
+  g->quad_out();
+  g->new_line();
+  return g;
 }
 
 float calculate_space_width(int frac, float set, int mould)
