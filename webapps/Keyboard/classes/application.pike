@@ -40,7 +40,6 @@ void migrate_mcas()
 
 object save_matcase(Monotype.MatCaseLayout mca, object user, int|void is_public)
 {
-	string file_name;
 	if(!mca) throw(Error.Generic("No MCA provided.\n"));
 	
 	object node = mca->dump();
@@ -443,4 +442,81 @@ array full_alphabet_elements =
     new_string_pref("hyphenation_rules", user, 
          "");
     
+  }
+  
+  
+  object save_font_scheme(object font_scheme)
+  {
+  	string file_name;
+  	if(!font_scheme) throw(Error.Generic("No font scheme provided.\n"));
+
+  	font_scheme["updated"] = Calendar.now()->format_http();
+  	if(font_scheme->is_new_object())
+  	  font_scheme->save();
+    return font_scheme;
+  }
+
+  object load_font_scheme(string font_scheme, object|void user)
+  {
+    object fs;
+    if(user)
+      catch(fs = master()->resolv("Fins.Model.find.font_schemes")((["name": font_scheme, "owner": user]))[0]);
+    else
+      catch(fs = master()->resolv("Fins.Model.find.font_schemes")((["id": (int)font_scheme]))[0]);
+
+    if(fs)
+      return fs;
+    else return 0;
+  }
+
+  object load_font_scheme_by_id(string id, object user)
+  {
+    object fs;
+    if(user)
+      catch(fs = master()->resolv("Fins.Model.find.font_schemes")((["id": (int)id, "owner": user]))[0]);
+    else
+      catch(fs = master()->resolv("Fins.Model.find.font_schemes")((["id": (int)id]))[0]);
+
+    if(fs)
+      return fs;
+    else return 0;
+  }
+
+  int delete_font_scheme(string id, object user)
+  {
+  	object fs;
+  	catch(fs = master()->resolv("Fins.Model.find.font_schemes")((["id": (int)id, "owner": user]))[0]);
+  	if(fs)
+  		return fs->delete();
+  	else return 0;
+  }
+
+  object load_font_scheme_by_name(string font_scheme)
+  {
+  	object fs;
+  	catch(fs = master()->resolv("Fins.Model.find.font_schemes")((["name": font_scheme]))[0]);
+
+  	if(fs)
+    	  return fs;
+  	else return 0;
+  }
+
+  array get_font_schemes()
+  {
+    array m, m2;
+    m = master()->resolv("Fins.Model.find.font_schemes_all")(master()->resolv("Fins.Model.SortCriteria")("name"));
+    m2 = allocate(sizeof(m));
+    foreach(m; int i; object fs)
+      m2[i] = lower_case(fs["name"]);
+    sort(m2, m);
+    return m;
+  //	return map(glob("*.xml", get_dir(config["locations"]["matcases"]) || ({})), lambda(string s){return (s/".xml")[0];});
+  }
+
+  int(0..1) font_scheme_exists(string name, object user)
+  {
+  	array r = master()->resolv("Fins.Model.find.font_schemes")((["name": name, "owner": user]));
+  	if(sizeof(r))	
+  	  return 1;
+  	else return 0;
   }
