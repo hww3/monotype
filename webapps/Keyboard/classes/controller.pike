@@ -4,6 +4,7 @@ inherit "mono_doccontroller";
 object mca;
 object wedge;
 object ribbon;
+object font_scheme;
 
 object auth;
 object users;
@@ -29,6 +30,8 @@ void start()
   prefs = load_controller("prefs");
   cloud = load_controller("cloud");
 
+  font_scheme = load_controller("font_scheme");
+  
   before_filter(app->admin_user_filter);
 }
 

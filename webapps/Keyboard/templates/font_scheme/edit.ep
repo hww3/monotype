@@ -1,0 +1,50 @@
+<script type="text/javascript">
+   dojo.require("dojox.layout.FloatingPane");
+   dojo.require("dijit.form.Button");
+   dojo.require("dojox.collections.ArrayList");
+   dojo.require("dojo.dnd.Source");
+   dojo.require("dojo.dnd.Manager");
+   dojo.require("dijit.TooltipDialog");
+   dojo.require("dijit.TitlePane");
+   dojo.require("dijit.InlineEditBox");
+   dojo.require("dijit.form.Textarea");
+   dojo.require("dijit.form.MatrixEditor");
+
+   var isEditing = false;
+   var canSave = <% if(data->is_owner) {
+%>
+true
+<% } else { %>
+false
+<% } %>;
+<h1>Font Scheme: <b><%=data->font_scheme["name"]%></b> &nbsp;</h1>
+<div>
+  <%#action_link "action": "cancel"%>
+<button href="<%#action_url "action": "cancel"%>">Cancel</button>
+</a>
+&nbsp;
+<%#action_link "action": "save", "args": data->now, "reopen": 1%>
+<button class="SaveButton" href="<%#action_url "action": "save", "args": data->now, "reopen": 1 %>" disabled="true">Save</button>
+</a>
+&nbsp;
+<%#action_link "action": "save", "args": data->now%>
+<button class="SaveButton" href="<%#action_url "action": "save", "args": data->now%>" disabled="true">Save and Close</button>
+</a>
+</div>
+<p>
+
+
+<div style="left:5px; clear:left">
+<%#action_link "action": "cancel"%>
+<button href="<%#action_url "action": "cancel"%>">Cancel</button>
+</a>		
+&nbsp;
+<%#action_link "action": "save", "args": data->now, "reopen": 1 %>
+<button class="SaveButton" href="<%#action_url "action": "save", "args": data->now, "reopen": 1 %>" disabled="true">Save</button>
+</a>
+&nbsp;
+<%#action_link "action": "save", "args": data->now%>
+<button class="SaveButton" href="<%#action_url "action": "save", "args": data->now%>" disabled="true">Save and Close</button>
+</a>
+</div>
+

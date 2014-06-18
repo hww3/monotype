@@ -55,6 +55,14 @@ object load_matcase_string(string ml)
 }
 
 //!
+mapping load_font_scheme_string(string fss)
+{
+  mapping m = Tools.JSON.deserialize(fss);
+  if(!m->definition || !m->name) return 0;
+  return m;
+}
+
+//!
 object load_stopbar_string(string ml)
 {
   object m = master()->resolv("Monotype.Stopbar")();                                            

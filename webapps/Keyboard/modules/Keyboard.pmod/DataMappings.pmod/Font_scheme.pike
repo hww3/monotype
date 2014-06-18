@@ -8,4 +8,5 @@ void post_define(Fins.Model.DataModelContext context)
 {
   // Add any post configuration logic here
   // set_alternate_key("myalternatekey");
+  set_autosave(0);
 }

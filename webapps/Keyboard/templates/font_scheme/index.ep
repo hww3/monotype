@@ -1,0 +1,73 @@
+Select a Font Scheme to edit:
+<p>
+<table>
+<tr>
+<td>
+<%#paginator "var":data->font_schemes, "store":"font_scheme_page", "size":"10"%>
+List size: <%#page_size_selector "paginator": data->font_scheme_page, "size":"10, 25, 50"%>
+<td>
+<%#page_filter "paginator": data->font_scheme_page, "field": "name"%>
+</td>
+</tr>
+<tr>
+<td colspan="2">
+<ul>
+<%werror("page: %O\n", data->font_scheme_page->page); %>
+<% foreach(data->font_scheme_page->page; int i; object font_scheme) { %>
+  <% if(font_scheme["owner"] == data->owner || font_scheme["is_public"]) { %>
+  <li> <%#action_link "action": "edit", "args": (string)font_scheme["id"]%><%=font_scheme["name"] %></a> 
+ [ <%#action_link "action" : "copy", "args": (string)font_scheme["id"]%>Copy</a> 
+ | <%#action_link "action" : "download", "args": (string)font_scheme["id"]%>Download</a>
+ | <%#action_link "action" : "pdfdisplay", "args": (string)font_scheme["id"]%>Display</a>
+<% if(font_scheme["owner"] == data->owner) { %>
+  | 
+  <% if(font_scheme["is_public"]) {%>
+    <%#action_link "action": "unshare", "args": (string)font_scheme["id"]%>Unshare</a> 
+  <% } else { %>
+    <%#action_link "action": "share", "args": (string)font_scheme["id"]%>Share</a> 
+  <% } %>
+
+  | <%#action_link "action": "delete", "args": (string)font_scheme["id"]%>Delete</a><% } %> ]
+<% } %>
+<% } %>
+</ul>
+
+<p/>
+
+</td>
+</tr>
+<tr>
+<td colspan="2">
+
+[ <%if (data->font_scheme_page_prevurl) { %>
+<a href="<%=data->font_scheme_page_prevurl%>">Previous</a>
+<% } else { %>
+Previous
+<% }%>
+]
+&nbsp;
+<%#page_selector "paginator": data->font_scheme_page, "window":"3"%> 
+&nbsp;
+[ <%if(data->font_scheme_page_nexturl) { %>
+<a href="<%=data->font_scheme_page_nexturl%>">Next</a>
+<%}else{%>
+Next
+<%}%>
+]
+
+</td>
+</tr>
+</table>
+
+<p>
+
+<form action="<%#action_url "action": "upload"%>" method="post" enctype="multipart/form-data">
+
+<ul>
+<li> <%#action_link "action": "new"%>New Font Scheme</a>
+<li>Upload Font Scheme file: <input type="file" name="file"> <input type="submit" name="Upload"/>
+</ul>
+</form>
+
+<p>
+
