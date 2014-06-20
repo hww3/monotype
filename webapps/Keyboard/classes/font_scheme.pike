@@ -263,7 +263,7 @@ public void new(Request id, Response response, Template.View view, mixed args)
     data->items = generate_scheme(id->variables->scheme, 
                                      (int)id->variables->A, (int)id->variables->a);
 
-    l["definition"] = Tools.JSON.serialize(data);
+    l["definition"] = Standards.JSON.encode(data, Standards.JSON.HUMAN_READABLE);
 
     l = app->save_font_scheme(l);		
     response->redirect(edit, ({(string)l["id"]}));
@@ -281,14 +281,13 @@ public void cancel(Request id, Response response, Template.View view, mixed args
 public void save(Request id, Response response, Template.View view, mixed args)
 {
   object fs=id->misc->session_variables->fs;
-	mapping json = Tools.JSON.deserialize(id->variables->definition);
+	mapping json = Standards.JSON.decode(id->variables->definition);
 	json->name = fs["name"];
   werror("json: %O\n", json);
-	fs["definition"] = Tools.JSON.serialize(json);
+	fs["definition"] = Standards.JSON.encode(json, Standards.JSON.HUMAN_READABLE);
 //if(catch(fs =
 	app->save_font_scheme(fs);
 	//)
-  werror("fs: %O\n", Tools.JSON.deserialize(fs["definition"]));
 //response->set_data(sprintf("<pre>Request Debug: %O\n\n%O</pre>\n", id->cookies, id->misc));
   if((int)id->variables->reopen)
     response->redirect(edit, ({fs["id"]}));
@@ -432,7 +431,7 @@ public void upload(Request id, Response response, Template.View view, mixed args
   object nfs = Keyboard.Objects.Font_scheme();
   nfs["owner"] = id->misc->session_variables->user;
   nfs["name"] = fs->name;
-  nfs["definition"] = Tools.JSON.serialize(fs);
+  nfs["definition"] = Standards.JSON.encode(fs, Standards.JSON.HUMAN_READABLE);
 	app->save_font_scheme(nfs);
 	
 	response->flash("Font Scheme " + fs->name + " was successfully imported.");

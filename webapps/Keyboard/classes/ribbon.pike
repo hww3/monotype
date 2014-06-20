@@ -525,12 +525,17 @@ werror("EXCTRACT_FONT_SETTINGS: %O\n", id->variables);
 		"pointsystemname": pointsystems[id->variables->pointsystem||"12.0"],
 		"pointsystem": (float)id->variables->pointsystem,
 		"setwidth": (float)id->variables->set,
+                "scheme": id->variables->scheme,
 		"linelengthp": (float)id->variables->linelength,
 		"stopbar": app->load_wedge(id->variables->wedge),
 		"matcase": app->load_matcase_by_id(id->variables->mca),
 		"jobname": id->variables->jobname,
 		"trip_at_end": (int)id->variables->trip_at_end,
 		"enable_pneumatic_quads": (int)id->variables->enable_pneumatic_quads,
+    "upper" : (int)id->variables->upper,
+    "lower" : (int)id->variables->lower,
+    "points" : (int)id->variables->points,
+    "numerals" : (int)id->variables->numerals,
     "1" : (int)id->variables->s1,
     "2" : (int)id->variables->s2,
     "3" : (int)id->variables->s3,
@@ -588,12 +593,33 @@ public void do_font(Request id, Response response, Template.View v, mixed ... ar
 
 Monotype.Generator make_font(mapping settings, object id)
 {
+  units_since_js = 0;
   object g = Monotype.Generator(settings);
   g->set_hyphenation_rules(id->misc->session_variables->user["Preferences"]["hyphenation_rules"]["value"]);
   g->parse("");
   g->process_setting_buffer(1);
   int i = 0;
-   
+
+
+  // make sorts.
+  object fs = app->load_font_scheme_by_id(settings->scheme, id->misc->session_variables->user);
+  mapping scheme = Standards.JSON.decode(fs["definition"]);
+  
+  foreach(({"upper", "lower", "points", "numerals"});; string type)
+  {
+    array sorts = filter(scheme->items, lambda(mixed elem){
+         return (elem->type == type);
+      });
+
+    foreach(sorts;;mapping data)
+    {
+      // TODO add handling for non-roman sorts.
+      object sort = g->create_styled_sort(data->sort, 0.0);
+      add_font_sorts(g, sort, data->quantity);    
+    }
+  }
+
+  // make spaces.   
   while(i < 5)
   {
     string key = sprintf("%c", '1' + i);
@@ -611,27 +637,9 @@ Monotype.Generator make_font(mapping settings, object id)
           int sta = settings["s" + key + "q"];
           object s = Monotype.Sort(settings->matcase->spaces[w]);
           s->space_adjust = diff;
-          while(sta)
-          {
-            g->current_line->add(s, 0, 0);
-            if(g->current_line->is_overset())
-            {
-              g->current_line->remove();
-              
-              g->quad_out();
-              if(catch(g->new_line()))
-              {
-                g->current_line->remove();
-                g->current_line->add(g->JustifyingSpace,0);
-                g->quad_out();
-                g->new_line();
-              }
-              g->current_line->add(s, 0, 0);
-            }
-            sta --;
-          };
-	  g->parse(":");
-          g->process_setting_buffer(1);
+
+          add_font_sorts(g, s, sta, ":");
+
           break;
         }
       }
@@ -643,9 +651,91 @@ Monotype.Generator make_font(mapping settings, object id)
     }
     i++;
   }
+  if(!g->current_line->can_justify())
+    g->current_line->add(g->create_styled_sort(":", 0.0));
   g->quad_out();
   g->new_line();
   return g;
+}
+
+int units_since_js;
+
+void add_font_sorts(Monotype.Generator g, Monotype.Sort sort, int quantity, string|void separator)
+{
+  object errs = ADT.List();
+  object mat = sort->get_mat(errs);
+  
+  if(units_since_js > (g->current_line->lineunits/3))
+  {
+    units_since_js = 0;
+    if(mat->is_fs)
+    {
+      g->current_line->add(g->create_styled_sort(separator, 0.0));
+    }
+    g->current_line->add(g->JustifyingSpace,0);
+    if(mat->is_fs)
+    {
+      g->current_line->add(g->create_styled_sort(separator, 0.0));
+    }
+  }
+
+  while(quantity)
+  {
+    g->current_line->add(sort, 0, 0);
+    if(units_since_js > (g->current_line->lineunits/3) && !g->current_line->linespaces)
+    {
+      units_since_js = 0;
+      if(mat->is_fs)
+      {
+        g->current_line->add(g->create_styled_sort(separator, 0.0));
+      }
+      g->current_line->add(g->JustifyingSpace,0);
+      if(mat->is_fs)
+      {
+        g->current_line->add(g->create_styled_sort(separator, 0.0));
+      }
+    }
+
+    if(g->current_line->is_overset())
+    {
+      g->current_line->remove();
+
+      if(g->current_line->can_justify())
+      {
+        g->new_line();
+        units_since_js = 0;
+      }
+      else
+      {           
+        if(mat->is_fs)
+        {
+          g->current_line->add(g->create_styled_sort(separator, 0.0));
+        }
+        g->quad_out();
+        if(catch(g->new_line()))
+        {
+          g->current_line->remove();
+          quantity++;
+          if(mat->is_fs)
+          {
+            g->current_line->add(g->create_styled_sort(separator, 0.0));
+          }
+          g->current_line->add(g->JustifyingSpace,0);
+          g->quad_out();
+          g->new_line();
+          units_since_js = 0;
+        }
+      }
+      g->current_line->add(sort, 0, 0);
+    }
+    if(mat && !mat->is_fs)
+      units_since_js += (mat->set_width + sort->space_adjust);
+    quantity --;
+  };
+  if(separator)
+  {
+    g->current_line->add(g->create_styled_sort(separator, 0.0));
+  }
 }
 
 float calculate_space_width(int frac, float set, int mould)
@@ -657,6 +747,15 @@ float calculate_space_width(int frac, float set, int mould)
 public void font(Request id, Response response, Template.View v, mixed ... args)
 {
     object user = id->misc->session_variables->user;
+
+    array schemec = app->get_font_schemes();
+    array schemes = ({});
+
+    foreach(schemec;; object c)
+    {
+      if(c["owner"] == user || c["is_public"])
+        schemes += ({ ({ (string)c["id"], c["name"] }) });
+    }
 
     array mcac = app->get_mcas();
     array mcas = ({});
@@ -674,6 +773,7 @@ public void font(Request id, Response response, Template.View v, mixed ... args)
    // werror("wedges: %O\n", wedges);
 
      //werror("matcases: %O\n", app->get_mcas());
+      v->add("schemes", schemes);
       v->add("mcas", mcas);
       v->add("wedges", wedges);
       v->add("owner", user);
