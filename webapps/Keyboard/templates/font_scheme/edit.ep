@@ -69,11 +69,6 @@ function saveScheme(reopen)
     </script>
 </span>
 
-
-<div>
-    This example shows, how to add/remove rows
-</div>
-
 <table dojoType="dojox.grid.DataGrid"
     jsId="grid5"
     store="store3"
@@ -103,7 +98,7 @@ function saveScheme(reopen)
 </table>
 
 <div dojoType="dijit.form.Button">
-    Add Row
+    Add New Sort
     <script type="dojo/method" event="onClick" args="evt">
         var myNewItem = {sort: "sort", quantity: "quantity", type: "upper"};
         store3.newItem(myNewItem);
@@ -111,7 +106,7 @@ function saveScheme(reopen)
 </div>
 
 <div dojoType="dijit.form.Button">
-    Remove Selected Rows
+    Remove Selected Sorts
     <script type="dojo/method" event="onClick" args="evt">
         // Get all selected items from the Grid:
         var items = grid5.selection.getSelected();
