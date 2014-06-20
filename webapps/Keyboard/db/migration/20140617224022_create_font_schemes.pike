@@ -12,7 +12,7 @@ void up()
   tb->add_field("definition", "binary_string", (["length": 1024*32]));
   tb->add_field("is_public", "integer", (["not_null": 1]));
   tb->add_field("updated", "string");
-  tb->go();
+  create_table(tb);
 }
 
 void down()

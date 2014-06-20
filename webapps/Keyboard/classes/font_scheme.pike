@@ -252,15 +252,17 @@ public void cancel(Request id, Response response, Template.View view, mixed args
 
 public void save(Request id, Response response, Template.View view, mixed args)
 {
-object fs;
-	werror("save\n");
-	mapping json = Tools.JSON.deserialize(id->variables->scheme);
+  object fs=id->misc->session_variables->fs;
+	mapping json = Tools.JSON.deserialize(id->variables->definition);
+	json->name = fs["name"];
+  werror("json: %O\n", json);
 	fs["definition"] = Tools.JSON.serialize(json);
-if(catch(fs =
-	app->save_font_scheme(id->misc->session_variables->fs)))
-response->set_data(sprintf("<pre>Request Debug: %O\n\n%O</pre>\n", id->cookies, id->misc));
-werror("fs: %O\n", fs["id"]);
-  if(id->variables->reopen)
+//if(catch(fs =
+	app->save_font_scheme(fs);
+	//)
+  werror("fs: %O\n", Tools.JSON.deserialize(fs["definition"]));
+//response->set_data(sprintf("<pre>Request Debug: %O\n\n%O</pre>\n", id->cookies, id->misc));
+  if((int)id->variables->reopen)
     response->redirect(edit, ({fs["id"]}));
   else
     response->redirect(index);
@@ -303,7 +305,7 @@ int processFSRequest(Request id, Response response, Template.View view, string f
 
   view->add("now", (string)time());
 
-  werror("view: %O %O\n", view, fs);
+  werror("view: %O %O %O\n", view, id->misc->session_variables->user, fs);
   
   if(fs && fs["owner"] != id->misc->session_variables->user && !fs["is_public"])
   {

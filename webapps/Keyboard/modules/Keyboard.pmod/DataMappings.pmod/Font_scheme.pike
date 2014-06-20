@@ -8,5 +8,6 @@ void post_define(Fins.Model.DataModelContext context)
 {
   // Add any post configuration logic here
   // set_alternate_key("myalternatekey");
+  belongs_to(context, "User", "owner", "owner_id");
   set_autosave(0);
 }

@@ -451,7 +451,7 @@ array full_alphabet_elements =
   	if(!font_scheme) throw(Error.Generic("No font scheme provided.\n"));
 
   	font_scheme["updated"] = Calendar.now()->format_http();
-  	if(font_scheme->is_new_object())
+//  	if(font_scheme->is_new_object())
   	  font_scheme->save();
     return font_scheme;
   }

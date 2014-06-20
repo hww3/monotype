@@ -21,7 +21,7 @@
 
 <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
 
-<% if(data->controller == "/mca" || data->controller == "/ribbon") { %>
+<% if(data->controller == "/mca" || data->controller == "/ribbon" || data->controller == "/font_scheme") { %>
 <script type="text/javascript" src="/dojo/dojo/dojo.js" djConfig="parseOnLoad:true, isDebug:false"></script>
 <script type="text/javascript" src="/dojo/dijit/dijit.js"></script>
 <% } %>
