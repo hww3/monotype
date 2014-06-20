@@ -9,7 +9,10 @@ mapping schemes = (["blank": gen_blank, "atf": gen_atf, "monotype": gen_monotype
 
 array generate_scheme(string scheme, int A, int a)
 {
-  return schemes[scheme](A, a);
+  werror("generating scheme %O for %O/%O\n", scheme, A, a);
+mixed schemea = schemes[scheme](A, a);
+werror("scheme: %O\n", schemea);
+return schemea;
 }
 
 array gen_blank(int A, int a)
@@ -20,7 +23,7 @@ array gen_blank(int A, int a)
 
 array gen_atf(int A, int a)
 {
-  string fs = Stdio.read_file("config/atf_scheme.json");
+  string fs = Stdio.read_file(combine_path(app->config->app_dir, "config/atf_scheme.json"));
   mapping scheme;
   catch(scheme = Standards.JSON.decode(fs));
   array x = ({});
@@ -28,20 +31,17 @@ array gen_atf(int A, int a)
 
   foreach(scheme; string sort; mapping data)
   {
-    
     int base;
-    if(type == "upper") base = A;
+    if(data->type == "upper") base = A;
     else base = a;
     float factor = base/10.0;
-    foreach(sorts;;mapping data)
-    {
       int bq, q, idx;
       string t;
       switch(data->type)
       {
         case "upper":
           bq = A;
-          t = "A"
+          t = "A";
           break;
         case "lower":
           bq = a;
@@ -60,15 +60,16 @@ array gen_atf(int A, int a)
       if(idx == -1)
       {
         q = data->frequency[-1];
-        q = (int)ceil(q * (bq/(float)scheme[t][-1]));
+        q = (int)ceil(q * (bq/(float)scheme[t]->frequency[-1]));
       }
       else
       {
         q = data->frequency[idx];
       }
-      x+=({(["sort": s[0], "quantity": q, "type": data->type])});
+      x+=({(["sort": sort, "quantity": q, "type": data->type])});
     }
-  }
+
+  werror("x: %O\n", x);
   return x;
 }
 
@@ -95,7 +96,6 @@ public void index(Request id, Response response, Template.View view, mixed args)
   view->add("owner", owner);
   view->add("font_schemes", m);
 }
-
 
 public void do_delete(Request id, Response response, Template.View view, mixed ... args)
 {
@@ -190,7 +190,7 @@ public void delete(Request id, Response response, Template.View view, mixed ... 
   }
   
 werror("delete()\n");
-  fs = app->load_font_schemee_by_id(args[0], id->misc->session_variables->user);
+  fs = app->load_font_scheme_by_id(args[0], id->misc->session_variables->user);
 werror("delete(%O)\n", fs);
 
   if(!fs)
