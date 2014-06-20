@@ -2,7 +2,14 @@
 <p>
 <form>
 
-Scheme Name: <input type="text" name="name"/>
+Scheme Name: <input type="text" name="name"/><br/>
+Scheme Template: <select name="scheme">
+<option value="blank">Blank
+<option value="atf">ATF
+<option value="monotype">Monotype
+</select><br/>
+A Qty: <input type="text" name="A">
+a Qty: <input type="text" name="a">
 <p>
 
 <button type="submit">Create</button>

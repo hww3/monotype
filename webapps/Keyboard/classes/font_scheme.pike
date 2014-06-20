@@ -5,6 +5,51 @@ inherit "mono_doccontroller";
 
 int __quiet = 1;
 
+mapping schemes = (["blank": gen_blank, "atf": gen_atf, "monotype": gen_monotype]);
+
+array generate_scheme(string scheme, int A, int a)
+{
+  return schemes[scheme](A, a);
+}
+
+array gen_blank(int A, int a)
+{
+  array x = ({});
+  return x;
+}
+
+mapping atf_sorts = 
+([
+  "upper": ({ ({"A", 10}), ({"B", 5}) }),
+  "lower": ({ ({"a", 10}), ({"b", 5}) }),
+  "points": ({ ({".", 7}), ({",", 6}) }),
+]);
+
+array gen_atf(int A, int a)
+{
+  array x = ({});
+  foreach(atf_sorts; string type; array sorts)
+  {
+    int base;
+    if(type == "upper") base = A;
+    else base = a;
+    float factor = base/10.0;
+    foreach(sorts;;array s)
+    {
+      int q = (int)ceil(s[1]*factor);
+      if(q < 2) q = 2;
+      x+=({(["sort": s[0], "quantity": q, "type": type])});
+    }
+  }
+  return x;
+}
+
+array gen_monotype(int A, int a)
+{
+  array x = ({});
+  return x;
+}
+
 void start()
 {
   before_filter(app->admin_user_filter);
@@ -76,8 +121,6 @@ public void unshare(Request id, Response response, Template.View view, mixed ...
   }
 }
 
-
-
 public void share(Request id, Response response, Template.View view, mixed ... args)
 {
   object fs;
@@ -105,7 +148,6 @@ werror("share(%O)\n", fs);
     response->redirect(index);
   }
 }
-
 
 // TODO: this really should prompt for confirmation, rather than just doing the deed.
 public void delete(Request id, Response response, Template.View view, mixed ... args)
@@ -163,10 +205,14 @@ public void copy(Request id, Response response, Template.View view, mixed ... ar
 
 public void new(Request id, Response response, Template.View view, mixed args)
 {
-  if(id->variables->size)
+  if(id->variables->scheme)
   {
     id->variables->name = String.trim_whites(id->variables->name);
-
+    if(!schemes[id->variables->scheme])
+    {
+      response->flash("No Font Scheme pattern specified.");
+      return;
+    }
     if(!sizeof(id->variables->name))
     {
       response->flash("No Font Scheme name specified.");
@@ -179,12 +225,19 @@ public void new(Request id, Response response, Template.View view, mixed args)
       return;
     }
 		
-		object l = Keyboard.Objects.Font_scheme();
+    object l = Keyboard.Objects.Font_scheme();
     l["name"] = id->variables->name;
     l["owner"] = id->misc->session_variables->user;
     l["is_public"] = (int)id->variables->is_public;
-    l = app->save_font_scheme(l);
-		
+
+    mapping data = ([]);
+    data->name = id->variables->name;
+    data->items = generate_scheme(id->variables->scheme, 
+                                     (int)id->variables->A, (int)id->variables->a);
+
+    l["definition"] = Tools.JSON.serialize(data);
+
+    l = app->save_font_scheme(l);		
     response->redirect(edit, ({(string)l["id"]}));
   }
 }
@@ -213,6 +266,22 @@ werror("fs: %O\n", fs["id"]);
     response->redirect(index);
   id->misc->session_variables->fs = 0;
   response->flash("Your changes were saved.");
+}
+
+public void fetch(Request id, Response response, Template.View view, mixed ... args)
+{
+  object nw;
+
+  nw = app->load_font_scheme((int)args[0]);
+  if(nw && nw["owner"] == id->misc->session_variables->user)
+  {
+    response->set_type("application/json");
+    response->set_data(nw["definition"]);
+  }
+  else
+  {
+    response->set_data("foo: " + args[0] + "!");
+  }
 }
 
 public void edit(Request id, Response response, Template.View view, mixed ... args)
@@ -252,6 +321,7 @@ else
   view->add("is_owner", 0);
 
   view->add("fs", fs);
+  view->add("scheme_id", fs["id"]);
 
   return 1;
 }
