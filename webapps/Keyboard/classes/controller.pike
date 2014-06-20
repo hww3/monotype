@@ -29,13 +29,10 @@ void start()
   users = load_controller("users");
   prefs = load_controller("prefs");
   cloud = load_controller("cloud");
-
   font_scheme = load_controller("font_scheme");
   
   before_filter(app->admin_user_filter);
 }
-
-
 
 void index(object id, object response, mixed ... args)
 {
