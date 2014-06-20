@@ -86,7 +86,7 @@ function saveScheme(reopen)
             <th width="auto"
                 field="type"
                 cellType="dojox.grid.cells.Select"
-                options="upper,lower,points"
+                options="upper,lower,numerals,points"
                 editable="true">Type</th>
         </tr>
     </thead>

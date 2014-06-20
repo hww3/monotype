@@ -18,27 +18,55 @@ array gen_blank(int A, int a)
   return x;
 }
 
-mapping atf_sorts = 
-([
-  "upper": ({ ({"A", 10}), ({"B", 5}) }),
-  "lower": ({ ({"a", 10}), ({"b", 5}) }),
-  "points": ({ ({".", 7}), ({",", 6}) }),
-]);
-
 array gen_atf(int A, int a)
 {
+  string fs = Stdio.read_file("config/atf_scheme.json");
+  mapping scheme;
+  catch(scheme = Standards.JSON.decode(fs));
   array x = ({});
-  foreach(atf_sorts; string type; array sorts)
+  if(!scheme) scheme = ([]);
+
+  foreach(scheme; string sort; mapping data)
   {
+    
     int base;
     if(type == "upper") base = A;
     else base = a;
     float factor = base/10.0;
-    foreach(sorts;;array s)
+    foreach(sorts;;mapping data)
     {
-      int q = (int)ceil(s[1]*factor);
-      if(q < 2) q = 2;
-      x+=({(["sort": s[0], "quantity": q, "type": type])});
+      int bq, q, idx;
+      string t;
+      switch(data->type)
+      {
+        case "upper":
+          bq = A;
+          t = "A"
+          break;
+        case "lower":
+          bq = a;
+          t = "a";
+          break;
+        case "points":
+          if(A<a) bq = a, t = "a";
+          else bq = A, t = "A";
+          break;
+        case "numerals":
+          if(A>a) bq = a, t = "a";
+          else bq = A, t = "A";
+          break;
+      } 
+      idx = search(scheme[t]->frequency, bq);
+      if(idx == -1)
+      {
+        q = data->frequency[-1];
+        q = (int)ceil(q * (bq/(float)scheme[t][-1]));
+      }
+      else
+      {
+        q = data->frequency[idx];
+      }
+      x+=({(["sort": s[0], "quantity": q, "type": data->type])});
     }
   }
   return x;
