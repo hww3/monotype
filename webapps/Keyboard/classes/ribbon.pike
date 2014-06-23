@@ -536,6 +536,10 @@ werror("EXCTRACT_FONT_SETTINGS: %O\n", id->variables);
     "lower" : (int)id->variables->lower,
     "points" : (int)id->variables->points,
     "numerals" : (int)id->variables->numerals,
+    "roman": (int)id->variables->roman,
+    "italic": (int)id->variables->italic,
+    "smallcaps": (int)id->variables->smallcaps,
+    "bold": (int)id->variables->bold,
     "1" : (int)id->variables->s1,
     "2" : (int)id->variables->s2,
     "3" : (int)id->variables->s3,
@@ -589,6 +593,10 @@ public void do_font(Request id, Response response, Template.View v, mixed ... ar
 	 
   v->add("job_id", job_id);
   v->add("result", proof);
+  v->add("settings", settings);
+  v->add("now", Calendar.now());
+
+  response->set_charset("utf-8");
 }
 
 Monotype.Generator make_font(mapping settings, object id)
@@ -605,27 +613,51 @@ Monotype.Generator make_font(mapping settings, object id)
   object fs = app->load_font_scheme_by_id(settings->scheme, id->misc->session_variables->user);
   mapping scheme = Standards.JSON.decode(fs["definition"]);
   array parts = ({});  
+  array alphabets = ({});
 
   foreach(({"upper", "lower", "points", "numerals"});;string part)
     if((int)id->variables[part])
       parts += ({part});
 
-  foreach(parts;; string type)
+  foreach(({"roman", "italic", "bold", "smallcaps"});;string alphabet)
+    if((int)id->variables[alphabet])
+      alphabets += ({alphabet});
+
+  foreach(alphabets;; string alphabet_type)
   {
-    array sorts = filter(scheme->items, lambda(mixed elem){
-         return (elem->type == type);
-      });
-
-
-    sort(sorts->sort, sorts);
-
-    werror("sorts: %O\n", sorts);
-
-    foreach(sorts;;mapping data)
+    object template = g->create_styled_sort("X", 0.0);
+    
+    switch(alphabet_type)
     {
-      // TODO add handling for non-roman sorts.
-      object sort = g->create_styled_sort(data->sort, 0.0);
-      add_font_sorts(g, sort, data->quantity);    
+      case "roman":
+        template->set_modifier(Monotype.MODIFIER_ROMAN);
+        break;
+      case "bold":
+        template->set_modifier(Monotype.MODIFIER_BOLD);
+        break;
+      case "italic":
+        template->set_modifier(Monotype.MODIFIER_ITALICS);
+        break;
+      case "smallcaps":
+        template->set_modifier(Monotype.MODIFIER_SMALLCAPS);
+        break;
+    }
+
+    foreach(parts;; string type)
+    {
+      array sorts = filter(scheme->items, lambda(mixed elem){
+         return (elem->type == type);
+        });
+
+      sort(sorts->sort, sorts); 
+      werror("sorts: %O\n", sorts);
+
+      foreach(sorts;;mapping data)
+      {
+        // TODO add handling for non-roman sorts.
+        object sort = g->create_styled_sort(data->sort, 0.0, template);
+        add_font_sorts(g, sort, data->quantity);    
+      }
     }
   }
 

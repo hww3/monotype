@@ -48,11 +48,24 @@ object(this_program) clone(string sort)
   return s;  
 }
 
+
+// TODO: should this clear any existing modifier? Probably yes.
 protected void create_modifier(int isitalics, int isbold, int issmallcaps)
 {
+  modifier = 0;
   if(isitalics) modifier|=Monotype.MODIFIER_ITALICS;
-	if(isbold) modifier|=Monotype.MODIFIER_BOLD;
-	if(issmallcaps) modifier|=Monotype.MODIFIER_SMALLCAPS;
+  if(isbold) modifier|=Monotype.MODIFIER_BOLD;
+  if(issmallcaps) modifier|=Monotype.MODIFIER_SMALLCAPS;
+}
+
+//! sets the alphabet modifier for this sort.
+//!
+//! @param modifier
+//!    one of @[Monotype.MODIFIER_ITALICS], @[Monotype.MODIFIER_BOLD]
+//!    or @[Monotype.MODIFIER_SMALLCAPS].
+void set_modifier(int _modifier)
+{
+  modifier = _modifier;
 }
 
 string get_modifier()

@@ -97,7 +97,7 @@ Set Width
 <%#select "onchange": "updateSet();", "id": "set", "name": "set", "value": "12", "options": ({"4", "5", "6", "6.25", "6.50", "6.75", "7", "7.25", "7.50", "7.75", "8", "8.25", "8.50", "8.75", "9", "9.25", "9.50", "9.75", "10", "10.25", "10.50", "10.75", "11", "11.25", "11.50", "11.75", "12", "12.25", "12.50", "12.75", "13", "13.25", "13.50", "13.75", "14", "14.50", "15", "15.50", "16", "16.50", "17", "17.50", "18", "18.50",  "19", "19.50", "20", "20.50", "21", "22", "23", "24"})%>
 <br/>
 Point Size
-<%#select "name": "points", "id": "points", "value": "12", "options": ({"4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "18", "24"})%>
+<%#select "name": "pointsize", "id": "pointsize", "value": "12", "options": ({"4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "18", "24"})%>
 <br/>
 Total Cast Line Length (picas/ciceros)
 <%#input "type":"text",  "name": "linelength", "id": "linelength", "size":"5", "value": "30", "onchange": "updateSet();" %> 
@@ -126,15 +126,34 @@ Total Cast Line Length (picas/ciceros)
 </fieldset>
 <fieldset>
 <legend>Job Contents</legend>
+<table>
+<tr>
+<td valign="top">
+<b>Alphabets</b><br/>
 <p>
-<%#input "type":"checkbox", "name": "upper", "id": "upper", "value": "1"%> <label for="upper">upper-case</label> 
+<%#input "type":"checkbox", "name": "roman", "id": "roman", "value": "1", "checked": "1"%> <label for="roman">roman</label> 
 <br/>
-<%#input "type":"checkbox", "name": "lower", "id": "lower", "value": "1"%> <label for="lower">lower-case</label> 
+<%#input "type":"checkbox", "name": "italic", "id": "italic", "value": "1"%> <label for="italic">italic</label> 
 <br/>
-<%#input "type":"checkbox", "name": "points", "id": "points2", "value": "1"%> <label for="points2">points</label> 
+<%#input "type":"checkbox", "name": "bold", "id": "bold", "value": "1"%> <label for="bold">bold</label> 
 <br/>
-<%#input "type":"checkbox", "name": "numerals", "id": "numerals", "value": "1"%> <label for="numerals">numerals</label> 
+<%#input "type":"checkbox", "name": "smallcaps", "id": "smallcaps", "value": "1"%> <label for="smallcaps">small caps</label> 
 </p>
+</td>
+<td valign="top">
+<b>Components</b><br/>
+<p>
+<%#input "type":"checkbox", "name": "upper", "id": "upper", "value": "1", "checked": "1"%> <label for="upper">upper-case</label> 
+<br/>
+<%#input "type":"checkbox", "name": "lower", "id": "lower", "value": "1", "checked": "1"%> <label for="lower">lower-case</label> 
+<br/>
+<%#input "type":"checkbox", "name": "points", "id": "points", "value": "1", "checked": "1"%> <label for="points2">points</label> 
+<br/>
+<%#input "type":"checkbox", "name": "numerals", "id": "numerals", "value": "1", "checked": "1"%> <label for="numerals">numerals</label> 
+</p>
+</td>
+<td valign="top">
+<b>Spacing</b><br/>
 <p>
 <%#input "type":"checkbox", "name": "s1", "id": "s1", "value": "1"%> <label for="s1">em-quad</label> 
 <%#input "type":"text",  "name": "s1q", "id": "s1q", "size":"5", "value": "20" %> 
@@ -151,6 +170,9 @@ Total Cast Line Length (picas/ciceros)
 <%#input "type":"checkbox", "name": "s5", "id": "s5", "value": "1"%> <label for="s5">5-to-em</label> 
 <%#input "type":"text",  "name": "s5q", "id": "s5q", "size":"5", "value": "20" %> 
 </p>
+</td>
+</tr>
+</table>
 </fieldset>
-<input type="submit" value="Preview Ribbon"/>
+<button type="submit">Preview Ribbon</button>
 </form>

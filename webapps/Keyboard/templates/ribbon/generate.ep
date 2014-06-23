@@ -193,5 +193,5 @@ else
 </script>
 </fieldset>
 <p>
-<input type="submit" value="Preview Ribbon"/>
+<button type="submit">Preview Ribbon</button>
 </form>
