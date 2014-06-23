@@ -126,6 +126,7 @@ Total Cast Line Length (picas/ciceros)
 </fieldset>
 <fieldset>
 <legend>Job Contents</legend>
+<p>
 <%#input "type":"checkbox", "name": "upper", "id": "upper", "value": "1"%> <label for="upper">upper-case</label> 
 <br/>
 <%#input "type":"checkbox", "name": "lower", "id": "lower", "value": "1"%> <label for="lower">lower-case</label> 
@@ -133,8 +134,8 @@ Total Cast Line Length (picas/ciceros)
 <%#input "type":"checkbox", "name": "points", "id": "points", "value": "1"%> <label for="points">points</label> 
 <br/>
 <%#input "type":"checkbox", "name": "numerals", "id": "numerals", "value": "1"%> <label for="numerals">numerals</label> 
-<p/>
-
+</p>
+<p>
 <%#input "type":"checkbox", "name": "s1", "id": "s1", "value": "1"%> <label for="s1">em-quad</label> 
 <%#input "type":"text",  "name": "s1q", "id": "s1q", "size":"5", "value": "20" %> 
 <br/>
@@ -149,7 +150,7 @@ Total Cast Line Length (picas/ciceros)
 <br/>
 <%#input "type":"checkbox", "name": "s5", "id": "s5", "value": "1"%> <label for="s5">5-to-em</label> 
 <%#input "type":"text",  "name": "s5q", "id": "s5q", "size":"5", "value": "20" %> 
+</p>
 </fieldset>
-<p>
 <input type="submit" value="Preview Ribbon"/>
 </form>
