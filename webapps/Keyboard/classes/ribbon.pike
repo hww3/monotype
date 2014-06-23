@@ -506,42 +506,12 @@ String.Buffer render_proof(String.Buffer b, Monotype.Generator g)
   		b+=" [<a onClick=\"showCodes(" + i + ", '" + action_url(get_line, ({(string)i})) + "')\">Codes</a>]";
 
   		if(line->errors && sizeof(line->errors))
-  		  b+= (dedupe((array)line->errors) * ", ");
+  		  b+= (Tools.Array.consolidate((array)line->errors) * ", ");
   		b+=("</div>\n");
   	}
   };
   werror("proof render_time: %O, %O\n", render_time, b);
   return b;
-}
-
-array dedupe(array items, string|void template)
-{
-  array out = ({});
-  string last;
-  int count;
-  foreach(items;; string i)
-  {
-    if(last && last == i)
-      count++;
-    else if(last && last != i)
-    {
-      out += ({(last + "(" + count + " times)")});
-      last = i;
-      count = 1;
-    }
-    else
-    {
-      last = i;
-    }
-  }
-  if(last)
-  {
-    string msg = last;
-    if(count>1)
-      msg += ("(" + count + " times)");
-    out+=({msg});
-  }
-  return out;  
 }
 
 public mapping extract_font_settings(Request id)
