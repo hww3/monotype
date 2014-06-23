@@ -131,7 +131,7 @@ Total Cast Line Length (picas/ciceros)
 <br/>
 <%#input "type":"checkbox", "name": "lower", "id": "lower", "value": "1"%> <label for="lower">lower-case</label> 
 <br/>
-<%#input "type":"checkbox", "name": "points", "id": "points", "value": "1"%> <label for="points">points</label> 
+<%#input "type":"checkbox", "name": "points", "id": "points2", "value": "1"%> <label for="points2">points</label> 
 <br/>
 <%#input "type":"checkbox", "name": "numerals", "id": "numerals", "value": "1"%> <label for="numerals">numerals</label> 
 </p>
