@@ -1,0 +1,83 @@
+test_do(add_constant("dictdir", combine_path(getcwd(), "test/dicts")));
+test_do(add_constant("test_mca", Monotype.load_matcase(combine_path(getcwd(), "test/matcases", "garamond"))));
+test_do(add_constant("test_stopbar", Monotype.load_stopbar(combine_path(getcwd(), "test/wedges", "s5"))));
+
+test_do(add_constant("settings", ([
+     "allow_lowercase_smallcaps": 0,
+     "allow_punctuation_substitution": 0,
+     "enable_combined_space": 1,
+     "hyphenate": 1,
+     "hyphenate_no_hyphen": 0,
+     "jobname": "",
+     "justification": 1,
+     "lang": "en_US",
+     "linelengthp": 10.0,
+     "min_big": 3,
+     "min_little": 8,
+     "mould": 12,
+     "page_length": 42,
+     "pointsystem": 12.0,
+     "setwidth": 12.0,
+     "unit_adding": 0,
+     "unit_shift": 0,
+     "unnatural_word_breaks": 0,
+     "dict_dir": dictdir,
+     "matcase": test_mca,
+     "stopbar": test_stopbar,
+   ])))
+   
+test_any([[
+  object g = Monotype.Generator(settings + (["linelengthp": 50.0]));
+  g->parse(
+  #"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis a neque sagittis, sodales elit eget, feugiat ligula. Praesent sed risus vel odio rutrum consequat. Nulla consectetur tristique lobortis. Quisque consequat mattis metus, at adipiscing tellus dictum non. Sed porttitor malesuada varius. Mauris vel commodo enim, eu consequat dolor. Proin magna lorem, fermentum pretium felis non, elementum mattis lorem. In ultrices urna sit amet dui elementum, pellentesque porttitor risus eleifend. Maecenas scelerisque lorem arcu, quis ornare justo volutpat vel. Cras commodo interdum ante id eleifend. Mauris cursus auctor turpis non bibendum. Sed vehicula erat a augue pharetra pellentesque. Praesent ac urna pellentesque, sollicitudin turpis sed, vestibulum nunc. Ut rutrum suscipit augue, id ultricies metus molestie vitae. Duis pretium mattis fermentum.
+<qo>
+"
+  );
+  float half = (float)g->config->lineunits/2;
+  float currentpos = 0.0;
+//  g->generate_ribbon();
+  
+  foreach(g->lines;;object l)
+  { 
+  int hit;
+  currentpos = 0.0;
+    foreach(l->render_line();int x; object s)
+  {
+    float w;
+    if(s->is_real_js)
+    {
+      w = (s->matrix->get_set_width() - 2) + s->calculated_width;
+    }
+    else
+    {
+      w = s->get_set_width();
+    }
+    
+    if(!hit && (currentpos + w) > half)
+    {
+        hit = 1;
+        werror("half: %O\n", (half+9)-currentpos);
+    } 
+    currentpos += w;
+ }
+  werror("g: %O => %O %O/%O\n", g->config->lineunits, currentpos, l->big, l->little);
+  
+}  
+  return 1;
+]], 1);
+
+test_any([[
+  object g = Monotype.ShapeGenerator(settings + (["linelengthp": 50.0, "unnatural_word_breaks": 1]), "Q");
+  array words = ({});
+  int x = 0;
+  do{
+    int len = random(4);
+    string word = "";
+    for(int i = 0; i < len; i++)
+      word += sprintf("%c", 'a' + random(26));
+    words += ({word});
+  }while(x++ < 500);
+  string t = words * " ";
+  g->parse(t + "<p>");
+  return 1;
+]], 1);
