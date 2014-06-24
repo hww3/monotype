@@ -1,3 +1,10 @@
+
+test_true(objectp(Monotype));
+test_true(programp(Monotype.Generator));
+
+test_true(objectp(Monotype.load_stopbar(combine_path(getcwd(), "test/wedges", "s5"))));
+test_true(objectp(Monotype.load_matcase(combine_path(getcwd(), "test/matcases", "garamond"))))
+
 test_do(add_constant("dictdir", combine_path(getcwd(), "test/dicts")));
 test_do(add_constant("test_mca", Monotype.load_matcase(combine_path(getcwd(), "test/matcases", "garamond"))));
 test_do(add_constant("test_stopbar", Monotype.load_stopbar(combine_path(getcwd(), "test/wedges", "s5"))));
@@ -27,57 +34,146 @@ test_do(add_constant("settings", ([
    ])))
    
 test_any([[
-  object g = Monotype.Generator(settings + (["linelengthp": 50.0]));
-  g->parse(
-  #"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis a neque sagittis, sodales elit eget, feugiat ligula. Praesent sed risus vel odio rutrum consequat. Nulla consectetur tristique lobortis. Quisque consequat mattis metus, at adipiscing tellus dictum non. Sed porttitor malesuada varius. Mauris vel commodo enim, eu consequat dolor. Proin magna lorem, fermentum pretium felis non, elementum mattis lorem. In ultrices urna sit amet dui elementum, pellentesque porttitor risus eleifend. Maecenas scelerisque lorem arcu, quis ornare justo volutpat vel. Cras commodo interdum ante id eleifend. Mauris cursus auctor turpis non bibendum. Sed vehicula erat a augue pharetra pellentesque. Praesent ac urna pellentesque, sollicitudin turpis sed, vestibulum nunc. Ut rutrum suscipit augue, id ultricies metus molestie vitae. Duis pretium mattis fermentum.
-<qo>
-"
-  );
-  float half = (float)g->config->lineunits/2;
-  float currentpos = 0.0;
-//  g->generate_ribbon();
-  
-  foreach(g->lines;;object l)
-  { 
-  int hit;
-  currentpos = 0.0;
-    foreach(l->render_line();int x; object s)
-  {
-    float w;
-    if(s->is_real_js)
-    {
-      w = (s->matrix->get_set_width() - 2) + s->calculated_width;
-    }
-    else
-    {
-      w = s->get_set_width();
-    }
-    
-    if(!hit && (currentpos + w) > half)
-    {
-        hit = 1;
-        werror("half: %O\n", (half+9)-currentpos);
-    } 
-    currentpos += w;
- }
-  werror("g: %O => %O %O/%O\n", g->config->lineunits, currentpos, l->big, l->little);
-  
-}  
-  return 1;
+  // <qo> should give appropriately sized spaces.
+  object g = Monotype.Generator(settings);
+  g->parse("Mary had a little lamb<qo>\n");
+  g->generate_ribbon();
+
+  return ((g->lines[0]->little == 8) && (g->lines[0]->big == 3) && !sizeof(g->lines[0]->errors));
 ]], 1);
 
 test_any([[
-  object g = Monotype.ShapeGenerator(settings + (["linelengthp": 50.0, "unnatural_word_breaks": 1]), "Q");
-  array words = ({});
-  int x = 0;
-  do{
-    int len = random(4);
-    string word = "";
-    for(int i = 0; i < len; i++)
-      word += sprintf("%c", 'a' + random(26));
-    words += ({word});
-  }while(x++ < 500);
-  string t = words * " ";
-  g->parse(t + "<p>");
-  return 1;
+  // <qo> should give appropriately sized spaces.
+
+  object g = Monotype.Generator(settings  + (["min_big": 2, "min_little": 5]));
+  g->parse("Mary had a little lamb<qo>\n");
+
+  return ((g->lines[0]->little == 5) && (g->lines[0]->big == 2) && !sizeof(g->lines[0]->errors));
 ]], 1);
+
+test_any([[
+  // <qo> should always work.
+  object g = Monotype.Generator(settings + (["linelengthp": 30.0]));
+  g->parse("Mary had a little lamb<qo>\n");
+
+  return ((g->lines[0]->little == 8) && (g->lines[0]->big == 3) && !sizeof(g->lines[0]->errors));
+]], 1);
+
+test_any([[
+  // <p> with no justifying space should yield a minimum justification code.
+  object g = Monotype.Generator(settings + (["linelengthp": 30.0]));
+  g->parse("Mary<p>\n");
+
+  return ((g->lines[0]->little == 8) && (g->lines[0]->big == 3) && !sizeof(g->lines[0]->errors));
+]], 1);
+
+test_any([[
+  // <p> with at least one space should yield the minimum allowable code per settings.
+  object g = Monotype.Generator(settings + (["linelengthp": 30.0]));
+  g->parse("Mary had<p>\n");
+
+  return ((g->lines[0]->little == 8) && (g->lines[0]->big == 3) && !sizeof(g->lines[0]->errors));
+]], 1);
+
+test_any([[
+  // <p> behaves differently from <qo> when within justifying range
+  // note the return code of this test.
+  object g = Monotype.Generator(settings);
+  g->parse("Mary had ");
+  g->parse("a little lamb<p>\n");
+
+  return ((g->lines[0]->little == 8) && (g->lines[0]->big == 3) && !sizeof(g->lines[0]->errors));
+]], 0);
+
+
+test_any([[
+  // we can make spaces of any size we want.
+  object g = Monotype.Generator(settings);
+  g->parse("<S32><p>\n");
+  return sizeof(g->lines[0]->errors);
+ ]], 0);
+
+test_any([[
+  // we can make spaces of any size we want, if it's possible given the spaces.
+  object g = Monotype.Generator(settings);
+  g->parse("<S2><p>\n");
+  return sizeof(g->lines[0]->errors);
+]], 1);
+
+test_any([[
+  // we should be able to use utf8.
+  object g = Monotype.Generator(settings);
+  g->parse(utf8_to_string("A’e<p>\n"));
+  g->generate_ribbon();
+  return sizeof(g->lines[0]->errors);
+]], 0);
+
+test_any([[
+  // we should get a complaint when a non-available sort is used.
+  object g = Monotype.Generator(settings);
+  g->parse("A\u2011<p>\n");
+  g->generate_ribbon();
+  return sizeof(g->lines[0]->errors);
+]], 1);
+
+test_any([[
+  // we shouldn't drop utf8 sorts.
+  object g = Monotype.Generator(settings);
+  g->parse("c<p>\n");
+  string w = g->generate_ribbon();
+  
+  object f = Monotype.Generator(settings);
+  f->parse("\u2013s<p>\n");
+  string x = f->generate_ribbon();
+  return w && x && sizeof(x/"\n") == sizeof(w/"\n");
+]], 1);
+
+test_any([[
+  // test that a hyperextension of mould is flagged.
+  object g = Monotype.Generator(settings);
+  mixed e = catch {
+    g->parse("<l4>W</l4><p>\n");
+    g->generate_ribbon();
+  };
+  if(e) return 1;
+  else return 0;  
+]], 1);
+
+test_any([[
+  // test simple tablature:
+  object g = Monotype.Generator(settings);
+    g->parse("Mary had a little ");
+    g->parse("lamb<p>\n");
+    g->parse("<center>little lamb<p></center>\n");
+    g->parse("Bq dq s<p>\n");
+  
+    werror("lines: %O\n", g->lines);
+
+    object g1 = Monotype.Generator(settings + (["linelengthp": 40.0]));
+    g1->process_setting_buffer(1);
+    g1->parse("Foo bar yeah! ");
+    g1->process_setting_buffer(1);
+    g1->add_column(g->lines[0]);
+    g1->low_quad_out(18.0);
+    g1->add_column(g->lines[1]);
+    g1->low_quad_out(18.0);
+    g1->add_column(g->lines[2]);
+    g1->new_paragraph();
+werror("lines: %O\n", g1->lines[0]->elements);
+    
+    werror(g1->generate_ribbon());
+    return 1;
+]], 1);
+
+
+
+test_any([[
+// need to test simple tablature:
+// can add space and arrive at a given unit.
+// error when adding space past the requested unit.
+
+// need to test combined spaces
+
+// need to test trip caster
+  return 0; 
+]], 0);
