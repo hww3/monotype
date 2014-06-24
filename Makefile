@@ -139,7 +139,7 @@ webapp: fins phantomjs
 	cp -Rf phantomjs-1.9.7-macosx/bin/phantomjs "${RIBBON_GENERATOR}.app/Contents/Resources/Keyboard/bin"
 
 testsuite: testsuite.in
-	/usr/local/pike/8.0.1/include/pike/mktestsuite testsuite.in > testsuite
+	`pike -x module --query=src_path`/mktestsuite testsuite.in > testsuite
 
 verify:	testsuite
 	pike -Mmodules -x test_pike testsuite

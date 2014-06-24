@@ -58,7 +58,7 @@ object load_matcase_string(string ml)
 //!
 mapping load_font_scheme_string(string fss)
 {
-  mapping m = Tools.JSON.deserialize(fss);
+  mapping m = Standards.JSON.decode(fss);
   if(!m->definition || !m->name) return 0;
   return m;
 }
