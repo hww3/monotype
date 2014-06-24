@@ -1,20 +1,23 @@
 #charset utf8
-// represents a line in a job.
-// big and little are the calculated justification settings
-// units is the size of each jusifying space.
+
+//! represents a line in a job.
 
 import Monotype;
 
-  object generator;
-  
-	array elements = ({}); 
-	object errors = ADT.List();
+object generator;
 
-	int big;
-	int little;
+array elements = ({}); 
+object errors = ADT.List();
 
-  // should justifying spaces be fixed at the "base width" (1 or 2 units less than the js row width)?
-  int js_are_fixed = 0;
+
+//! the calculated justification setting for the 0075 wedge
+int big;
+
+//! the calculated justification setting for the 0005 wedge
+int little;
+
+// should justifying spaces be fixed at the "base width" (1 or 2 units less than the js row width)?
+int js_are_fixed = 0;
   
   int finalized;
   
@@ -30,40 +33,37 @@ import Monotype;
 	int min_little, _min_little;
 	int min_big, _min_big;	
 
-  // determines whether a line ends with a galley trip justification code.
-  int double_justification = 0;
+//! determines whether a line ends with a galley trip justification code.
+int double_justification = 0;
   
-  int non_spaces;
+int non_spaces;
   
-	// set to true if the line has been broken using hyphenation.
-	int is_broken;
+//! set to true if the line has been broken using hyphenation.
+int is_broken;
 	
-	// the calculated size of each justifying space, in units.
-	float units;
+//! the calculated size of each justifying space, in units.
+float units;
 	
-	// the number of justifying spaces on this line.
-	int linespaces; 
+//! the number of justifying spaces on this line.
+int linespaces; 
 	
-	// the current number of units set on this line.
-	float linelength; 
+//! the current number of units set on this line.
+float linelength; 
 	
-	// the total length of the line in units of set.
-	int lineunits; 
+//! the total length of the line in units of set.
+int lineunits; 
 	
-	// the set width of the current face/wedge.	
-	float setwidth;
+//! the set width of the current face/wedge.	
+float setwidth;
 	
-	object m, s; // matcase and stopbar objects
-  mapping config;
+object m, s; // matcase and stopbar objects
+mapping config;
 	
-	int max_ls_adjustment = 2;
+int max_ls_adjustment = 2;
 
+int cc, cf, c, f; // the current justification wedge settings
 
-  int cc, cf, c, f; // the current justification wedge settings
-
-  ADT.Stack cjc = ADT.Stack();
-
-  
+ADT.Stack cjc = ADT.Stack();  
 
   void set_fixed_js(int x)
   {
@@ -137,62 +137,106 @@ import Monotype;
 		  min_space_units = m->elements["JS"]->get_set_width() - max_reduction_units;
 	}
 	
-	int hyphenation_disabled()
-	{
-	  if(!sizeof(elements)) // can't hyphenate an empty line...
-	    return 1;
-	  else return elements[-1]->hyphenation_disabled;
-	}
-	
-	// remove a sort from the line; recalculate the justification
-	object remove()
-	{
-	  object r;
-	  if(!sizeof(elements))
-	    return 0;
-  	  r = elements[-1];
-	//	werror("calling remove()\n");
+int hyphenation_disabled()
+{
+  if(!sizeof(elements)) // can't hyphenate an empty line...
+    return 1;
+  else return elements[-1]->hyphenation_disabled;
+}
+
+//! remove a sort from the line; recalculate the justification
+object remove()
+{
+  object r;
+  if(!sizeof(elements))
+    return 0;
+  r = elements[-1];
+//	werror("calling remove()\n");
 //	   displayline = displayline[..sizeof(displayline)-2];
-	   if(r->is_real_js)
-	   {
-		 linespaces--;
-	     linelength -= (min_space_units);
-	   }
-	   else
-	     linelength -= r->get_set_width();
+  if(r->is_real_js)
+  {
+    linespaces--;
+    linelength -= (min_space_units);
+  }
+  else
+    linelength -= r->get_set_width();
 
-	   elements = elements[0..sizeof(elements)-2];	
+  elements = elements[0..sizeof(elements)-2];	
 
-	   [big, little] = calculate_justification();
+  [big, little] = calculate_justification();
 
-	   return r;
-	}
-	array calculate_justification(int|float|void mylinelength)
-	{
-	  float justspace;
+  return r;
+}
 
-	  justspace = calc_justspace(0, mylinelength);
-	  if(!mylinelength)
- 	    units = justspace;
+array calculate_justification(int|float|void mylinelength)
+{
+  float justspace;
+
+  justspace = calc_justspace(0, mylinelength);
+  if(!mylinelength)
+    units = justspace;
 //	werror("justspace: %f\n", justspace);
-	  return low_calculate_justification(justspace);
-	}
+  return low_calculate_justification(justspace);
+}
 
-	float calc_justspace(int|void verbose, int|float|void mylinelength)
-	{
-	  float justspace = 0.00;
+float calc_justspace(int|void verbose, int|float|void mylinelength)
+{
+  float justspace = 0.00;
 
-	  if(linespaces && !js_are_fixed)
-	  {
-		// algorithm from page 14
-		justspace = (((float)(lineunits)-get_line_length(mylinelength))/linespaces); // in units of set.
-	  //  justspace = ((float)(lineunits-get_line_length(mylinelength))/linespaces); // in units of set.
-	//	if(verbose)
-	//	werror("%f = (%O - %O) / %d\n", justspace, lineunits, linelength, linespaces);
-	  }
+  if(linespaces && !js_are_fixed)
+  {
+	// algorithm from page 14
+	justspace = (((float)(lineunits)-get_line_length(mylinelength))/linespaces); // in units of set.
+  //  justspace = ((float)(lineunits-get_line_length(mylinelength))/linespaces); // in units of set.
+//	if(verbose)
+//	werror("%f = (%O - %O) / %d\n", justspace, lineunits, linelength, linespaces);
+  }
 
-	  return justspace;
-	}
+  return justspace;
+}
+
+class PosFinder
+{
+  float current_pos = 0.0;
+
+//! calculate the position that each sort /ends/.
+//! 
+//! @returns an array containing floats or arrays (for sub-lines) indicating
+//!   the unit position that the given element occupies.
+array calculate_positions(Line line)
+{
+  array elements = line->elements;
+  array pos = allocate(sizeof(elements));
+  ADT.List errs = ADT.List();
+
+  float spacewidth; 
+  spacewidth = line->calc_justspace(0);
+
+  foreach(elements; int x; mixed elem)
+  {
+    if(Program.implements(object_program(elem), Line))
+    {
+      pos[x] = calculate_positions(elem);
+    }
+    else if(elem->is_real_js)
+    {
+      current_pos += spacewidth;
+    }
+    else
+    {
+      object mat = elem->get_mat(errs);
+      if(mat)
+      {
+        current_pos+=(mat->get_set_width() + elem->space_adjust);      
+        pos[x] = current_pos;
+      }
+    }
+  }
+
+  return pos;
+}
+
+}
 
 //
 //
@@ -205,6 +249,10 @@ import Monotype;
 //  TODO
 //
 //
+
+//! calculate the length (in units of set) of items placed in the line.
+//! this calculation takes into account any consideration for hanging 
+//! punctuation.
 	float get_line_length(float|int|void mylinelength)
 	{
 	  float ll = (float)(mylinelength||linelength);
@@ -282,33 +330,33 @@ import Monotype;
     }
     else if(activator->is_real_js)
     {
-	    if(atbeginning)
-	    {
-		    elements = ({activator}) + elements;
-	    }
-	    else
-	    {
-	      elements += ({activator});		
-	    }
-	    if(!stealth)
-	      linelength += (min_space_units);
+      if(atbeginning)
+      {
+        elements = ({activator}) + elements;
+      }
+      else
+      {
+        elements += ({activator});		
+      }
+      if(!stealth)
+        linelength += (min_space_units);
       linespaces ++;
-	    return;
+      return;
     }
     else if(mat = activator->get_mat(errors))
-	  {
+    {
 //	    werror("have mat: %O width %O, adjust %O\n", mat, mat->get_set_width(), activator->space_adjust);
-	    if(!stealth)
- 	  	  linelength+=(mat->get_set_width() + activator->space_adjust);
+      if(!stealth)
+        linelength+=(mat->get_set_width() + activator->space_adjust);
 // 	  	 werror("activator: %O\n", activator);
-  		if(atbeginning)
-  	  {
-  		  elements = ({activator}) + elements;
-  		}
-  	  else
-  	  {
-  		  elements += ({activator});		
-  	  }    
+      if(atbeginning)
+      {
+        elements = ({activator}) + elements;
+      }
+      else
+      {
+        elements += ({activator});		
+      }    
     }
     else
     {
@@ -316,11 +364,9 @@ import Monotype;
     }
     
   //  werror("is now: %O\n", linelength);
-    
-
-	  if(!stealth)
-	    [big, little] = calculate_justification();
-	}
+    if(!stealth)
+      [big, little] = calculate_justification();
+  }
 
   // can we add n units to the line and still meet the justification requirements?
   int can_add(float units)
