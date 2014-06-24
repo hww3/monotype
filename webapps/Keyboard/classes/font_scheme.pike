@@ -32,7 +32,7 @@ array gen_atf(int A, int a)
   foreach(scheme; string sort; mapping data)
   {
     int base;
-    if(data->type == "upper") base = A;
+    if(data->type == "upper" || data->type == "others") base = A;
     else base = a;
     float factor = base/10.0;
       int bq, q, idx;
@@ -40,6 +40,7 @@ array gen_atf(int A, int a)
       switch(data->type)
       {
         case "upper":
+        case "others":
           bq = A;
           t = "A";
           break;

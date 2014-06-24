@@ -536,6 +536,7 @@ werror("EXCTRACT_FONT_SETTINGS: %O\n", id->variables);
     "lower" : (int)id->variables->lower,
     "points" : (int)id->variables->points,
     "numerals" : (int)id->variables->numerals,
+    "others" : (int)id->variables->others,
     "roman": (int)id->variables->roman,
     "italic": (int)id->variables->italic,
     "smallcaps": (int)id->variables->smallcaps,
@@ -615,7 +616,7 @@ Monotype.Generator make_font(mapping settings, object id)
   array parts = ({});  
   array alphabets = ({});
 
-  foreach(({"upper", "lower", "points", "numerals"});;string part)
+  foreach(({"upper", "lower", "points", "numerals", "others"});;string part)
     if((int)id->variables[part])
       parts += ({part});
 
