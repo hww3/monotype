@@ -392,7 +392,7 @@ array calculate_positions(Line line)
     overset = overset || (linespaces && ((mbig*15)+mlittle)<((min_big*15)+min_little));
     if(overset)
     {
-      werror("overset: # %d => line length: %d, units in line: %.1f, to add: %.1f, linespaces: %d, just: %d/%d min: %d/%d\n", line_number, lineunits,  get_line_length(mylinelength), (float)mylinelength, linespaces, mbig, mlittle, min_big, min_little);
+//      werror("overset: # %d => line length: %d, units in line: %.1f, to add: %.1f, linespaces: %d, just: %d/%d min: %d/%d\n", line_number, lineunits,  get_line_length(mylinelength), (float)mylinelength, linespaces, mbig, mlittle, min_big, min_little);
     }
 
     if(!mylinelength)
@@ -439,13 +439,13 @@ array calculate_positions(Line line)
 	      {
 	        e2->is_combined_space = 1;
   	      e2->calculated_width = units;
-	        werror("combinedspace width: %O\n", units);
+//	        werror("combinedspace width: %O\n", units);
         }
         else
         {
 	        e2->is_combined_space = 0;
   	      e2->calculated_width = min_space_units + units;
-          werror("space width: %O\n", min_space_units + units);
+//          werror("space width: %O\n", min_space_units + units);
         }
 	      x += ({e2});
 	    }
@@ -583,7 +583,7 @@ array calculate_positions(Line line)
     	//		werror("need wedge width for row %d\n", me->row_pos!=16?me->row_pos:15);
       	 		  wedgewidth = s->get(me->row_pos!=16?me->row_pos:15);
 
-      	        werror("want %f, wedge provides %f\n", me->get_set_width(), (float)wedgewidth);
+//      	        werror("want %f, wedge provides %f\n", me->get_set_width(), (float)wedgewidth);
       	      if(me->row_pos == 16 || ((float)wedgewidth != me->get_set_width())) // we need to adjust the justification wedges
       	      {
       	        int nf, nc;

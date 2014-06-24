@@ -87,7 +87,7 @@ object space_regex;
 void create(mapping settings)
 {	
 
-	werror("Monotype.Generator(%O)\n", settings);
+//	werror("Monotype.Generator(%O)\n", settings);
   int lineunits;
   
   if(settings->linelengthp && settings->lineunits)
@@ -250,7 +250,7 @@ protected void load_spaces(object m)
     quadding_spaces = spaces + ([]);
   }
   
-  werror("SPACES: %O\n", spaces);
+//  werror("SPACES: %O\n", spaces);
 }
 
 protected void load_ligatures(object m)
@@ -1748,7 +1748,7 @@ void quad_out()
 
   // we should add a justifying space to a line that has none so that we can be sure
   // that the line will justify properly.
-  if(!current_line->spaces)
+  if(!current_line->linespaces)
   {
     if(line_mode == MODE_CENTER)
     {
@@ -1815,7 +1815,7 @@ float low_quad_out(float amount, int|void atbeginning, int|void is_quadding)
   else
     qspaces = spaces;
     
-werror("trying to find a solution for %O with %O\n", (int)floor(amount), qspaces);
+//werror("trying to find a solution for %O with %O\n", (int)floor(amount), qspaces);
   toadd = Monotype.findspace()->simple_find_space((int)floor(amount), qspaces);
   if(!toadd || !sizeof(toadd))
     toadd = Monotype.IterativeSpaceFinder()->findspaces((int)floor(amount), qspaces);
@@ -2003,7 +2003,6 @@ string generate_ribbon()
 // add the current line to the job, if it's justifyable.
 void new_line(int|void newpara)
 {
-werror("new_line()\n");
   if(!((float)current_line->linelength > 0.0))
   {
     werror("WARNING: new_line() called without any content.\n");

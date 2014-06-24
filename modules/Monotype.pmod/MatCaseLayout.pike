@@ -156,7 +156,7 @@ void set(string column, int row, Matrix mat)
     elements[key] = mat;
     if(mat->style =="R" && mat->character == "0")
     { 
-      werror(string_to_utf8(sprintf("loaded %s: %O\n", key, (mapping)mat)));
+//      werror(string_to_utf8(sprintf("loaded %s: %O\n", key, (mapping)mat)));
     }
   }
 }
