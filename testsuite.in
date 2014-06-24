@@ -129,14 +129,16 @@ test_any([[
 ]], 1);
 
 test_any([[
+  // this test is obe as overextension of mould is now a warning.
   // test that a hyperextension of mould is flagged.
   object g = Monotype.Generator(settings);
   mixed e = catch {
     g->parse("<l4>W</l4><p>\n");
     g->generate_ribbon();
   };
-  if(e) return 1;
-  else return 0;  
+  return 1;
+//  if(e) return 1;
+//  else return 0;  
 ]], 1);
 
 test_any([[
