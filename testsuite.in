@@ -36,7 +36,7 @@ test_do(add_constant("settings", ([
 test_any([[
   // <qo> should give appropriately sized spaces.
   object g = Monotype.Generator(settings);
-  g->parse("Mary had a little lamb.<qo>\n");
+  g->parse("Mary had a little lamb<qo>\n");
   g->generate_ribbon();
   werror("large: %O small: %O\n", g->lines[0]->big, g->lines[0]->little);
   return ((g->lines[0]->little == 8) && (g->lines[0]->big == 3) && !sizeof(g->lines[0]->errors));
