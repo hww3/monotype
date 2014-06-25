@@ -1,9 +1,11 @@
 protected object mat;
 float space_adjust;
 
-protected void create(object _mat)
+protected void create(object _mat, float|void adjust)
 {
   mat = _mat;
+  if(adjust)
+    space_adjust = adjust;
 }
 
 object(this_program) clone(string sort)

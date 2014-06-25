@@ -1586,9 +1586,14 @@ werror("splitting unnaturally.\n");
 
 void new_paragraph(int|void quad)
 {
+  werror("quad? %O can justify? %O\n", quad, current_line->can_justify());
   if(!quad && current_line->can_justify()) /* do not quad out */ ; 
   else
+  {werror("quadding.\n");
     quad_out();
+   werror("yeah!\n");
+  }
+  werror("quad? %O can justify? %O\n", quad, current_line->can_justify());
   new_line(1);  
 }
 
@@ -1795,8 +1800,8 @@ void quad_out()
   else if(line_mode == MODE_CENTER)
   {
      float l,r;
-     l = left/2;
-     r = (left/2) + (left %2);
+     l = floor(left/2);
+     r = floor((left/2) + (left %2));
 	 low_quad_out(r, 0, 1);
 	 low_quad_out(l, 1, 1);
   }
@@ -1807,7 +1812,9 @@ float low_quad_out(float amount, int|void atbeginning, int|void is_quadding)
 //  werror("low_quad_out(%f, %d, %f)\n", amount, atbeginning, current_line->linelength);
   
   array toadd = ({});
-  int ix;
+  float ix;
+  float leftover;
+
   if(!floatp(amount)) amount = (float)amount;
   mapping qspaces;
   if(is_quadding)
@@ -1833,29 +1840,62 @@ float low_quad_out(float amount, int|void atbeginning, int|void is_quadding)
     else list += ({x});
   }
 
+  float tl = (float)Array.sum(list);
+  if(tl != amount)
+    leftover = amount - tl;
+
   foreach(list;int z;int i)
   {
-    ix+=i;
-    
-    current_line->add(Sort(spaces[i]), atbeginning, 0);	
-//   werror("line at %f\n", current_line->linelength);
-	if(current_line->is_overset())
-	{
-      werror("overset. added %.2f, at %d\n", current_line->linelength, ix);
-      current_line->remove();ix-=i;
-      if(current_line->can_justify())
-        break;
-      else
+    float adjust = 0;
+    if(leftover > 0.0)
+    {
+      if(i < 16)
       {
-        werror("what's smaller than %d?\n", i);
-        array whatsleft = ({});
-        // generate an array of available spaces smaller than the one that didn't fit.
-        foreach(spaces; mixed u ;)
+        if(leftover > 3)
         {
-          if(u < i)
-            whatsleft += ({u});
+          adjust = 3.0;
+          leftover -= 3.0; 
         }
-        whatsleft = reverse(sort(whatsleft));
+        else
+        {
+          adjust = leftover, leftover = 0.0;
+        }
+      }
+      else if(i >= 16)
+      {
+        if(leftover > 1.0)
+        {
+          adjust = 1.0;
+          leftover -= 1.0; 
+        }
+        else
+        {
+          adjust = leftover, leftover = 0.0;
+        }
+      }
+    }
+    ix+=(i + adjust);
+    
+    current_line->add(Sort(spaces[i], adjust), atbeginning, 0);	
+//   werror("line at %f\n", current_line->linelength);
+      if(current_line->is_overset())
+      {
+        werror("overset. added %.2f, at %f\n", current_line->linelength, ix);
+        current_line->remove();
+        ix-=(i + adjust);
+        if(current_line->can_justify())
+          break;
+        else
+        {
+          werror("what's smaller than %d?\n", i);
+          array whatsleft = ({});
+          // generate an array of available spaces smaller than the one that didn't fit.
+          foreach(spaces; mixed u ;)
+          {
+           if(u < i)
+             whatsleft += ({u});
+          }
+          whatsleft = reverse(sort(whatsleft));
 				
         // ok, the plan is to take each space, starting with the biggest and try to add as many
         // of each as possible without going over.
@@ -1884,8 +1924,8 @@ float low_quad_out(float amount, int|void atbeginning, int|void is_quadding)
       }
     }
   }
-
-  werror("asked to add %.1f units of space; added %d.\n", amount, ix);
+  if((float)ix != (float)amount)
+    werror("asked to add %.1f units of space; only added %O.\n", amount, ix);
   return (float)ix;
 }
 
@@ -1899,8 +1939,7 @@ array simple_find_space(int amount, mapping spaces)
 
 	array toadd = ({});
 
-
-  foreach(reverse(indices(spaces)); int i; int space)
+  foreach(reverse(sort(indices(spaces))); int i; int space)
   {
    while(left > space)
    {

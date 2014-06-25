@@ -205,7 +205,7 @@ test_any([[
       array x = q->calculate_positions(line);
       float lastpos;
       int broken = 0;
-//werror("pos: %O\n", x);
+
       foreach(x;int x1;float p)
       {
         if(p<=halfpoint + 9) // split the offset (really should be calculated for each MCA) to get equally sized halves.
@@ -227,7 +227,7 @@ test_any([[
           toaddb = (halfpoint + 14) - back;
 //          werror("%O/%O: %O on first half, %O on second; adding %O and %O.\n", line->big, line->little, front, back, toaddf, toaddb);
 
-  object f = Monotype.Generator(settings + (["min_little": 7, "min_big": 1, "linelengthp": 0, "lineunits": front]));
+  object f = Monotype.Generator(settings + (["min_little": 7, "min_big": 1, "linelengthp": 0, "lineunits": front + toaddf]));
   f->make_new_line();  
 
   int q;
@@ -236,8 +236,8 @@ test_any([[
     f->current_line->add(line->elements[q]);
 //    werror("%O ", line->elements[q]);
   }
-//    f->low_quad_out(toaddf); 
-  object b = Monotype.Generator(settings + (["min_little": 7, "min_big": 1, "linelengthp": 0, "lineunits": back]));
+    f->low_quad_out(toaddf); 
+  object b = Monotype.Generator(settings + (["min_little": 7, "min_big": 1, "linelengthp": 0, "lineunits": back + toaddb]));
   b->make_new_line();   
 
   for(q = x1; q < sizeof(line->elements); q++)
@@ -245,13 +245,7 @@ test_any([[
     b->current_line->add(line->elements[q]); 
 //    werror("%O ", line->elements[q]);
   }
-//  b->low_quad_out(toaddb); 
-  object q1 = Monotype.PositionFinder();
-  array x1 = q1->calculate_positions(f->current_line);
-
-
-  object q2 = Monotype.PositionFinder();
-  array x2 = q2->calculate_positions(b->current_line);
+  b->low_quad_out(toaddb); 
   string code = sprintf("%O/%O", line->big, line->little);
   string fcode = sprintf("%O/%O", f->current_line->big, f->current_line->little);
   string bcode = sprintf("%O/%O", b->current_line->big, b->current_line->little);
