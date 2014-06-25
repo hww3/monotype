@@ -13,7 +13,7 @@ array calculate_positions(Monotype.Line line)
 
   float spacewidth; 
   spacewidth = line->calc_justspace(1) + line->min_space_units;
-  werror("spacewidth: %O\n", spacewidth);
+//  werror("spacewidth: %O\n", spacewidth);
   foreach(elements; int x; mixed elem)
   {
     if(Program.implements(object_program(elem), Monotype.Line))

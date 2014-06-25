@@ -51,7 +51,7 @@ int linespaces;
 float linelength; 
 	
 //! the total length of the line in units of set.
-int lineunits; 
+float lineunits; 
 	
 //! the set width of the current face/wedge.	
 float setwidth;
@@ -120,7 +120,7 @@ ADT.Stack cjc = ADT.Stack();
 		min_big = _min_big;
 		
 		setwidth = config->setwidth;
-		lineunits = config->lineunits;		
+		lineunits = (float)config->lineunits;		
 		if(!m->elements["JS"])
 		  throw(Error.Generic("MCA " + m->name + " has no Justifying Space.\n"));
 //		min_space_units = 4; // per page 15
@@ -171,7 +171,6 @@ object remove()
 array calculate_justification(int|float|void mylinelength)
 {
   float justspace;
-
   justspace = calc_justspace(0, mylinelength);
   if(!mylinelength)
     units = justspace;
@@ -187,10 +186,8 @@ float calc_justspace(int|void verbose, int|float|void mylinelength)
   {
 	// algorithm from page 14
 	justspace = (((float)(lineunits)-get_line_length(mylinelength))/linespaces); // in units of set.
-  //  justspace = ((float)(lineunits-get_line_length(mylinelength))/linespaces); // in units of set.
-//	if(verbose)
-//	werror("%f = (%O - %O) / %d\n", justspace, lineunits, linelength, linespaces);
   }
+//  werror("%f = (%O - %O) / %d\n", justspace, lineunits, get_line_length(mylinelength), linespaces);
 
   return justspace;
 }
@@ -341,6 +338,8 @@ array calculate_positions(Line line)
       if(!stealth)
         linelength += (min_space_units);
       linespaces ++;
+    if(!stealth)
+      [big, little] = calculate_justification();
       return;
     }
     else if(mat = activator->get_mat(errors))
@@ -392,7 +391,7 @@ array calculate_positions(Line line)
     overset = overset || (linespaces && ((mbig*15)+mlittle)<((min_big*15)+min_little));
     if(overset)
     {
-//      werror("overset: # %d => line length: %d, units in line: %.1f, to add: %.1f, linespaces: %d, just: %d/%d min: %d/%d\n", line_number, lineunits,  get_line_length(mylinelength), (float)mylinelength, linespaces, mbig, mlittle, min_big, min_little);
+//      werror("overset: # %d => line length: %O, units in line: %.1f, to add: %.1f, linespaces: %d, just: %d/%d min: %d/%d\n", line_number, lineunits,  get_line_length(mylinelength), (float)mylinelength, linespaces, mbig, mlittle, min_big, min_little);
     }
 
     if(!mylinelength)

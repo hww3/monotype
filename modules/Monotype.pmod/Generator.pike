@@ -88,14 +88,14 @@ void create(mapping settings)
 {	
 
 //	werror("Monotype.Generator(%O)\n", settings);
-  int lineunits;
+  float lineunits;
   
   if(settings->linelengthp && settings->lineunits)
   {
-    throw(Error.Generic("Line lenth must be specified in picas or units, but not both.\n"));
+    throw(Error.Generic("Line length must be specified in picas or units, but not both.\n"));
   }
   else if(settings->linelengthp)
-    lineunits = (int)(18 * (settings->pointsystem||12) * 
+    lineunits = round(18 * (settings->pointsystem||12) * 
 			(1/settings->setwidth) * settings->linelengthp);
   else if(settings->lineunits)
     lineunits = settings->lineunits;
@@ -108,7 +108,7 @@ void create(mapping settings)
   if(settings->stopbar)
     set_stopbar(settings->stopbar);
   
-    werror ("line should be %d units.\n", lineunits);
+//    werror ("line should be %O units.\n", lineunits);
 
   if(config->pad_margins)
   {
@@ -207,7 +207,7 @@ protected void load_hyphenator()
     if(config->lang) lang = config->lang;
     if(config->hyphenate)
     {
-      werror("loading hyphenator " + dicts[lang] + "\n");
+//      werror("loading hyphenator " + dicts[lang] + "\n");
       hyphenator = Public.Tools.Language.Hyphenate.Hyphenate(combine_path(config->dict_dir, dicts[lang]));
     }
   #else
@@ -1247,8 +1247,8 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	else if(Regexp.SimpleRegexp("<[sS][tT][0-9]*>")->match(data))
 	{
 		process_setting_buffer();
-		int toset = (int)(data[3..sizeof(data)-2]);
-		werror("requesting space to %d\n", toset);
+		float toset = (float)(data[3..sizeof(data)-2]);
+		werror("requesting space to %O\n", toset);
 		if(toset > current_line->lineunits)
 		{
 			current_line->errors->append(sprintf("Cannot add space beyond end of line. Requested %f, trimming to %O\n", (float)toset, current_line->lineunits));		  
@@ -1265,9 +1265,9 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	  float toadd = toset - current_line->linelength;
 	  if(toadd < 0.0) toadd = 0.0;
 	  current_line->set_fixed_js(1);
-	  werror("spacing to %d/%f/%f/%d\n", toset, toadd, current_line->linelength, current_line->lineunits);
+	  werror("spacing to %O/%f/%f/%O\n", toset, toadd, current_line->linelength, current_line->lineunits);
     float added = low_quad_out((float)toadd);
-	  werror("/spacing to %d/%f/%f/%d\n", toset, toadd, current_line->linelength, current_line->lineunits);
+	  werror("/spacing to %O/%f/%f/%O\n", toset, toadd, current_line->linelength, current_line->lineunits);
 		if((float)toadd - (float)added >= 1.0)
 		{
 			current_line->errors->append(sprintf("Fixed space (want %f units, got %f) won't fit on line... dropping.\n", (float)toadd, added));
@@ -1707,7 +1707,7 @@ int calc_lineunits()
     col = (lop) / config->page_length[ps];
   }
   
-//  werror("current column number: %d\n", col);
+  werror("current column number: %d\n", col);
   config->lineunits = config->widths[col];
   return col;
 }
@@ -2010,7 +2010,7 @@ void new_line(int|void newpara)
   }    
   if(!current_line->linespaces && abs(current_line->linelength - current_line->lineunits) > 1)
   {
-      throw(Error.Generic(sprintf("Off-length line without justifying spaces: need %d units to justify, line has %.2f units. Consider adding a justifying space to line - %s\n", 
+      throw(Error.Generic(sprintf("Off-length line without justifying spaces: need %O units to justify, line has %.2f units. Consider adding a justifying space to line - %s\n", 
 		current_line->lineunits, current_line->linelength, (string)current_line)));
   }
   else if(current_line->linespaces && !current_line->can_justify()) 

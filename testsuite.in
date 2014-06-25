@@ -183,14 +183,14 @@ test_any([[
 
 test_any([[
   // test simple tablature:
-  object g = Monotype.Generator(settings + (["min_little": 7, "min_big": 1, "linelengthp": 36.0]));
+  object g = Monotype.Generator(settings + (["min_little": 7, "min_big": 1, "linelengthp": 30.0]));
     string s = Stdio.read_file("CHANGES");
     s = replace(s, "\n", "<p>\n");
     g->parse(s + "<qo>");
-    g->parse("Mary had a little ");
-    g->parse("lamb<p>\n");
+//    g->parse("Mary had a little ");
+//    g->parse("lamb<p>\n");
     g->parse("<center>little lamb<p></center>\n");
-    g->parse("Bq dq s<p>\n");
+//    g->parse("Bq dq s<p>\n");
   
     werror("lines: %O\n", g->lines);
 
@@ -205,6 +205,7 @@ test_any([[
       array x = q->calculate_positions(line);
       float lastpos;
       int broken = 0;
+//werror("pos: %O\n", x);
       foreach(x;int x1;float p)
       {
         if(p<=halfpoint + 9) // split the offset (really should be calculated for each MCA) to get equally sized halves.
@@ -224,24 +225,51 @@ test_any([[
           float toaddf, toaddb;
           toaddf = (halfpoint + 14) - front;
           toaddb = (halfpoint + 14) - back;
-          werror("%O/%O: %O on first half, %O on second; adding %O and %O.\n", line->big, line->little, front, back, toaddf, toaddb);
+//          werror("%O/%O: %O on first half, %O on second; adding %O and %O.\n", line->big, line->little, front, back, toaddf, toaddb);
 
-  object f = Monotype.Generator(settings + (["min_little": 7, "min_big": 1, "linelengthp": 0, "lineunits": halfpoint+14]));
+  object f = Monotype.Generator(settings + (["min_little": 7, "min_big": 1, "linelengthp": 0, "lineunits": front]));
   f->make_new_line();  
 
   int q;
   for(q = 0; q < x1; q++)
+  {
     f->current_line->add(line->elements[q]);
-  f->low_quad_out(toaddf); 
-
-  object b = Monotype.Generator(settings + (["min_little": 7, "min_big": 1, "linelengthp": 0, "lineunits": halfpoint+14]));
+//    werror("%O ", line->elements[q]);
+  }
+//    f->low_quad_out(toaddf); 
+  object b = Monotype.Generator(settings + (["min_little": 7, "min_big": 1, "linelengthp": 0, "lineunits": back]));
   b->make_new_line();   
 
   for(q = x1; q < sizeof(line->elements); q++)
+  {
     b->current_line->add(line->elements[q]); 
-  b->low_quad_out(toaddb); 
+//    werror("%O ", line->elements[q]);
+  }
+//  b->low_quad_out(toaddb); 
+  object q1 = Monotype.PositionFinder();
+  array x1 = q1->calculate_positions(f->current_line);
 
-  werror("%O/%O, %O/%O\n", f->current_line->big, f->current_line->little, b->current_line->big, b->current_line->little); 
+
+  object q2 = Monotype.PositionFinder();
+  array x2 = q2->calculate_positions(b->current_line);
+  string code = sprintf("%O/%O", line->big, line->little);
+  string fcode = sprintf("%O/%O", f->current_line->big, f->current_line->little);
+  string bcode = sprintf("%O/%O", b->current_line->big, b->current_line->little);
+  if(f->current_line->linespaces && fcode != code)
+{    werror("%O: %O (%O), %O, (%O)\n", code, fcode, f->current_line->linespaces, bcode, b->current_line->linespaces); 
+     werror("%O\n", line->elements);
+     werror("%O\n", f->current_line->elements);
+     werror("%O\n", b->current_line->elements);
+     werror("%O\n", line->linelength);
+     werror("%O %O %O %O\n", f->current_line->lineunits, f->current_line->linespaces, f->current_line->linelength, f->current_line->calculate_justification());
+     werror("%O %O %O %O\n", b->current_line->lineunits, b->current_line->linespaces, b->current_line->linelength, b->current_line->calculate_justification());
+return 0;
+}
+  else if(b->current_line->linespaces && bcode != code)
+    werror("%O: %O (%O), %O, (%O)\n", code, fcode, f->current_line->linespaces, bcode, b->current_line->linespaces);
+
+//werror("front: %O\n", x1);
+//werror("back: %O\n", x2);
         }
       }
 //      werror("%O/%Opos: %O\n", line->big, line->little, q->calculate_positions(line));
