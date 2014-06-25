@@ -11,10 +11,10 @@ array(int) findspaces(int tofind, mapping spaces)
         // so we minimize error by mixing it with 9 unit spaces when possible.
         if(sm[18] && sm[9])  
           sv += ({27}); 
-werror("iterative find: %d with %O\n", tofind, sv);
+// werror("iterative find: %d with %O\n", tofind, sv);
   dofind(tofind, sv, ({}));
 solutions = Array.sort_array(solutions,lambda(array a, array b){return sizeof(a)>sizeof(b);});
-werror("found %d solutions\n", sizeof(solutions));
+// werror("found %d solutions\n", sizeof(solutions));
 array rs = ({});
 if(!sizeof(solutions)) return 0;
 rs += ({solutions[0]});

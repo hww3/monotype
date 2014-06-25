@@ -149,7 +149,7 @@ test_any([[
     g->parse("<center>little lamb<p></center>\n");
     g->parse("Bq dq s<p>\n");
   
-    werror("lines: %O\n", g->lines);
+    //werror("lines: %O\n", g->lines);
 
     object g1 = Monotype.Generator(settings + (["linelengthp": 40.0]));
     g1->process_setting_buffer(1);
@@ -161,7 +161,7 @@ test_any([[
     g1->low_quad_out(18.0);
     g1->add_column(g->lines[2]);
     g1->new_paragraph();
-werror("lines: %O\n", g1->lines[0]->elements);
+// werror("lines: %O\n", g1->lines[0]->elements);
     
     werror(g1->generate_ribbon());
     return 1;
@@ -192,7 +192,7 @@ test_any([[
     g->parse("<center>little lamb<p></center>\n");
 //    g->parse("Bq dq s<p>\n");
   
-    werror("lines: %O\n", g->lines);
+    // werror("lines: %O\n", g->lines);
 
     int fullpoint = g->lines[0]->lineunits;
     int halfpoint = (int)ceil((float)fullpoint/2);
@@ -225,7 +225,6 @@ test_any([[
           float toaddf, toaddb;
           toaddf = (halfpoint + 14) - front;
           toaddb = (halfpoint + 14) - back;
-//          werror("%O/%O: %O on first half, %O on second; adding %O and %O.\n", line->big, line->little, front, back, toaddf, toaddb);
 
   object f = Monotype.Generator(settings + (["min_little": 7, "min_big": 1, "linelengthp": 0, "lineunits": front + toaddf]));
   f->make_new_line();  
@@ -234,7 +233,6 @@ test_any([[
   for(q = 0; q < x1; q++)
   {
     f->current_line->add(line->elements[q]);
-//    werror("%O ", line->elements[q]);
   }
     f->low_quad_out(toaddf); 
   object b = Monotype.Generator(settings + (["min_little": 7, "min_big": 1, "linelengthp": 0, "lineunits": back + toaddb]));
@@ -243,33 +241,38 @@ test_any([[
   for(q = x1; q < sizeof(line->elements); q++)
   {
     b->current_line->add(line->elements[q]); 
-//    werror("%O ", line->elements[q]);
   }
   b->low_quad_out(toaddb); 
   string code = sprintf("%O/%O", line->big, line->little);
   string fcode = sprintf("%O/%O", f->current_line->big, f->current_line->little);
   string bcode = sprintf("%O/%O", b->current_line->big, b->current_line->little);
   if(f->current_line->linespaces && fcode != code)
-{    werror("%O: %O (%O), %O, (%O)\n", code, fcode, f->current_line->linespaces, bcode, b->current_line->linespaces); 
+{
+     werror("%O: %O (%O), %O, (%O)\n", code, fcode, f->current_line->linespaces, bcode, b->current_line->linespaces); 
      werror("%O\n", line->elements);
      werror("%O\n", f->current_line->elements);
      werror("%O\n", b->current_line->elements);
      werror("%O\n", line->linelength);
      werror("%O %O %O %O\n", f->current_line->lineunits, f->current_line->linespaces, f->current_line->linelength, f->current_line->calculate_justification());
      werror("%O %O %O %O\n", b->current_line->lineunits, b->current_line->linespaces, b->current_line->linelength, b->current_line->calculate_justification());
-return 0;
+     return 1;
 }
   else if(b->current_line->linespaces && bcode != code)
-    werror("%O: %O (%O), %O, (%O)\n", code, fcode, f->current_line->linespaces, bcode, b->current_line->linespaces);
-
-//werror("front: %O\n", x1);
-//werror("back: %O\n", x2);
+{
+     werror("%O: %O (%O), %O, (%O)\n", code, fcode, f->current_line->linespaces, bcode, b->current_line->linespaces); 
+     werror("%O\n", line->elements);
+     werror("%O\n", f->current_line->elements);
+     werror("%O\n", b->current_line->elements);
+     werror("%O\n", line->linelength);
+     werror("%O %O %O %O\n", f->current_line->lineunits, f->current_line->linespaces, f->current_line->linelength, f->current_line->calculate_justification());
+     werror("%O %O %O %O\n", b->current_line->lineunits, b->current_line->linespaces, b->current_line->linelength, b->current_line->calculate_justification());
+     return 1;
+}
         }
       }
-//      werror("%O/%Opos: %O\n", line->big, line->little, q->calculate_positions(line));
     }
-    werror("fullest first half: %O, fullest last half: %O\n", maxf, maxl);
-    werror("smallest first half: %O, smallest last half: %O\n", minf, minl);
-    werror("first half difference: %O, last half difference: %O\n", maxf-minf, maxl-minl);
+//    werror("fullest first half: %O, fullest last half: %O\n", maxf, maxl);
+//    werror("smallest first half: %O, smallest last half: %O\n", minf, minl);
+//    werror("first half difference: %O, last half difference: %O\n", maxf-minf, maxl-minl);
     return 0;
 ]], 0);
