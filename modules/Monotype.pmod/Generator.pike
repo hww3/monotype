@@ -87,22 +87,21 @@ object space_regex;
 void create(mapping settings)
 {	
 
-	werror("Monotype.Generator(%O)\n", settings);
-  int lineunits;
+//	werror("Monotype.Generator(%O)\n", settings);
+  float lineunits;
   
   if(settings->linelengthp && settings->lineunits)
   {
-    throw(Error.Generic("Line lenth must be specified in picas or units, but not both.\n"));
+    throw(Error.Generic("Line length must be specified in picas or units, but not both.\n"));
   }
   else if(settings->linelengthp)
-    lineunits = (int)(18 * (settings->pointsystem||12) * 
+    lineunits = round(18 * (settings->pointsystem||12) * 
 			(1/settings->setwidth) * settings->linelengthp);
   else if(settings->lineunits)
   {
-    lineunits = settings->lineunits;
-    // calculate length in picas for completeness.
     settings->linelengthp = lineunits/(18 * (settings->pointsystem||12) *
-                        (1/settings->setwidth));
+                         (1/settings->setwidth));
+    lineunits = settings->lineunits;
   }    
   config = settings;
   config->lineunits = lineunits;
@@ -112,7 +111,7 @@ void create(mapping settings)
   if(settings->stopbar)
     set_stopbar(settings->stopbar);
   
-    werror ("line should be %O units.\n", lineunits);
+//    werror ("line should be %O units.\n", lineunits);
 
   if(config->pad_margins)
   {
@@ -211,7 +210,7 @@ protected void load_hyphenator()
     if(config->lang) lang = config->lang;
     if(config->hyphenate)
     {
-      werror("loading hyphenator " + dicts[lang] + "\n");
+//      werror("loading hyphenator " + dicts[lang] + "\n");
       hyphenator = Public.Tools.Language.Hyphenate.Hyphenate(combine_path(config->dict_dir, dicts[lang]));
     }
   #else
@@ -254,7 +253,7 @@ protected void load_spaces(object m)
     quadding_spaces = spaces + ([]);
   }
   
-  werror("SPACES: %O\n", spaces);
+//  werror("SPACES: %O\n", spaces);
 }
 
 protected void load_ligatures(object m)
@@ -1251,8 +1250,8 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	else if(Regexp.SimpleRegexp("<[sS][tT][0-9]*>")->match(data))
 	{
 		process_setting_buffer();
-		int toset = (int)(data[3..sizeof(data)-2]);
-		werror("requesting space to %d\n", toset);
+		float toset = (float)(data[3..sizeof(data)-2]);
+		werror("requesting space to %O\n", toset);
 		if(toset > current_line->lineunits)
 		{
 			current_line->errors->append(sprintf("Cannot add space beyond end of line. Requested %f, trimming to %O\n", (float)toset, current_line->lineunits));		  
@@ -1269,9 +1268,9 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	  float toadd = toset - current_line->linelength;
 	  if(toadd < 0.0) toadd = 0.0;
 	  current_line->set_fixed_js(1);
-	  werror("spacing to %d/%f/%f/%d\n", toset, toadd, current_line->linelength, current_line->lineunits);
+	  werror("spacing to %O/%f/%f/%O\n", toset, toadd, current_line->linelength, current_line->lineunits);
     float added = low_quad_out((float)toadd);
-	  werror("/spacing to %d/%f/%f/%d\n", toset, toadd, current_line->linelength, current_line->lineunits);
+	  werror("/spacing to %O/%f/%f/%O\n", toset, toadd, current_line->linelength, current_line->lineunits);
 		if((float)toadd - (float)added >= 1.0)
 		{
 			current_line->errors->append(sprintf("Fixed space (want %f units, got %f) won't fit on line... dropping.\n", (float)toadd, added));
@@ -1590,9 +1589,14 @@ werror("splitting unnaturally.\n");
 
 void new_paragraph(int|void quad)
 {
+  werror("quad? %O can justify? %O\n", quad, current_line->can_justify());
   if(!quad && current_line->can_justify()) /* do not quad out */ ; 
   else
+  {werror("quadding.\n");
     quad_out();
+   werror("yeah!\n");
+  }
+  werror("quad? %O can justify? %O\n", quad, current_line->can_justify());
   new_line(1);  
 }
 
@@ -1711,7 +1715,7 @@ int calc_lineunits()
     col = (lop) / config->page_length[ps];
   }
   
-//  werror("current column number: %d\n", col);
+  werror("current column number: %d\n", col);
   config->lineunits = config->widths[col];
   return col;
 }
@@ -1752,7 +1756,7 @@ void quad_out()
 
   // we should add a justifying space to a line that has none so that we can be sure
   // that the line will justify properly.
-  if(!current_line->spaces)
+  if(!current_line->linespaces)
   {
     if(line_mode == MODE_CENTER)
     {
@@ -1799,8 +1803,8 @@ void quad_out()
   else if(line_mode == MODE_CENTER)
   {
      float l,r;
-     l = left/2;
-     r = (left/2) + (left %2);
+     l = floor(left/2);
+     r = floor((left/2) + (left %2));
 	 low_quad_out(r, 0, 1);
 	 low_quad_out(l, 1, 1);
   }
@@ -1811,7 +1815,9 @@ float low_quad_out(float amount, int|void atbeginning, int|void is_quadding)
 //  werror("low_quad_out(%f, %d, %f)\n", amount, atbeginning, current_line->linelength);
   
   array toadd = ({});
-  int ix;
+  float ix;
+  float leftover;
+
   if(!floatp(amount)) amount = (float)amount;
   mapping qspaces;
   if(is_quadding)
@@ -1819,7 +1825,7 @@ float low_quad_out(float amount, int|void atbeginning, int|void is_quadding)
   else
     qspaces = spaces;
     
-werror("trying to find a solution for %O with %O\n", (int)floor(amount), qspaces);
+//werror("trying to find a solution for %O with %O\n", (int)floor(amount), qspaces);
   toadd = Monotype.findspace()->simple_find_space((int)floor(amount), qspaces);
   if(!toadd || !sizeof(toadd))
     toadd = Monotype.IterativeSpaceFinder()->findspaces((int)floor(amount), qspaces);
@@ -1837,29 +1843,62 @@ werror("trying to find a solution for %O with %O\n", (int)floor(amount), qspaces
     else list += ({x});
   }
 
+  float tl = (float)Array.sum(list);
+  if(tl != amount)
+    leftover = amount - tl;
+
   foreach(list;int z;int i)
   {
-    ix+=i;
-    
-    current_line->add(Sort(spaces[i]), atbeginning, 0);	
-//   werror("line at %f\n", current_line->linelength);
-	if(current_line->is_overset())
-	{
-      werror("overset. added %.2f, at %d\n", current_line->linelength, ix);
-      current_line->remove();ix-=i;
-      if(current_line->can_justify())
-        break;
-      else
+    float adjust = 0;
+    if(leftover > 0.0)
+    {
+      if(i < 16)
       {
-        werror("what's smaller than %d?\n", i);
-        array whatsleft = ({});
-        // generate an array of available spaces smaller than the one that didn't fit.
-        foreach(spaces; mixed u ;)
+        if(leftover > 3)
         {
-          if(u < i)
-            whatsleft += ({u});
+          adjust = 3.0;
+          leftover -= 3.0; 
         }
-        whatsleft = reverse(sort(whatsleft));
+        else
+        {
+          adjust = leftover, leftover = 0.0;
+        }
+      }
+      else if(i >= 16)
+      {
+        if(leftover > 1.0)
+        {
+          adjust = 1.0;
+          leftover -= 1.0; 
+        }
+        else
+        {
+          adjust = leftover, leftover = 0.0;
+        }
+      }
+    }
+    ix+=(i + adjust);
+    
+    current_line->add(Sort(spaces[i], adjust), atbeginning, 0);	
+//   werror("line at %f\n", current_line->linelength);
+      if(current_line->is_overset())
+      {
+        werror("overset. added %.2f, at %f\n", current_line->linelength, ix);
+        current_line->remove();
+        ix-=(i + adjust);
+        if(current_line->can_justify())
+          break;
+        else
+        {
+          werror("what's smaller than %d?\n", i);
+          array whatsleft = ({});
+          // generate an array of available spaces smaller than the one that didn't fit.
+          foreach(spaces; mixed u ;)
+          {
+           if(u < i)
+             whatsleft += ({u});
+          }
+          whatsleft = reverse(sort(whatsleft));
 				
         // ok, the plan is to take each space, starting with the biggest and try to add as many
         // of each as possible without going over.
@@ -1888,8 +1927,8 @@ werror("trying to find a solution for %O with %O\n", (int)floor(amount), qspaces
       }
     }
   }
-
-  werror("asked to add %.1f units of space; added %d.\n", amount, ix);
+  if((float)ix != (float)amount)
+    werror("asked to add %.1f units of space; only added %O.\n", amount, ix);
   return (float)ix;
 }
 
@@ -1903,8 +1942,7 @@ array simple_find_space(int amount, mapping spaces)
 
 	array toadd = ({});
 
-
-  foreach(reverse(indices(spaces)); int i; int space)
+  foreach(reverse(sort(indices(spaces))); int i; int space)
   {
    while(left > space)
    {
@@ -2007,7 +2045,6 @@ string generate_ribbon()
 // add the current line to the job, if it's justifyable.
 void new_line(int|void newpara)
 {
-werror("new_line()\n");
   if(!((float)current_line->linelength > 0.0))
   {
     werror("WARNING: new_line() called without any content.\n");
@@ -2015,7 +2052,7 @@ werror("new_line()\n");
   }    
   if(!current_line->linespaces && abs(current_line->linelength - current_line->lineunits) > 1)
   {
-      throw(Error.Generic(sprintf("Off-length line without justifying spaces: need %d units to justify, line has %.2f units. Consider adding a justifying space to line - %s\n", 
+      throw(Error.Generic(sprintf("Off-length line without justifying spaces: need %O units to justify, line has %.2f units. Consider adding a justifying space to line - %s\n", 
 		current_line->lineunits, current_line->linelength, (string)current_line)));
   }
   else if(current_line->linespaces && !current_line->can_justify()) 
