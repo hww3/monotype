@@ -132,6 +132,12 @@ public void do_generate(Request id, Response response, Template.View v, mixed ..
 	object g = Monotype.Generator(settings);
 	g->set_hyphenation_rules(id->misc->session_variables->user["Preferences"]["hyphenation_rules"]["value"]);
 	g->parse(data);
+        if(settings->linelengthp > 40.0)
+        {
+//          err = Error.mkerror(catch(
+g = Monotype.split_column(g);
+//));
+        }
 
     response->set_data(g->generate_ribbon());
     response->set_header("content-disposition", "attachment; filename=\"" + 
@@ -351,11 +357,15 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
   
   parse_time
    = gauge {
-  	g = Monotype.Generator(settings);
-  	g->set_hyphenation_rules(id->misc->session_variables->user["Preferences"]["hyphenation_rules"]["value"]);
-	  err = Error.mkerror(catch(g->parse(data)));
-	  id->misc->session_variables->generator = g;
-	  b = String.Buffer();
+        g = Monotype.Generator(settings);
+        g->set_hyphenation_rules(id->misc->session_variables->user["Preferences"]["hyphenation_rules"]["value"]);
+        err = Error.mkerror(catch(g->parse(data)));
+        if(!err && settings->linelengthp > 40.0)
+        {
+	  g = Monotype.split_column(g);
+        }
+        id->misc->session_variables->generator = g;
+        b = String.Buffer();
   };
  
 	if(err)
@@ -374,6 +384,7 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 	}
 	werror("parse_time: %O\n", parse_time);
 
+werror("lines: %O\n", g->lines);
    b = render_proof(b, g);
 
    v->add("settings", g->config);

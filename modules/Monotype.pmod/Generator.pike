@@ -101,7 +101,7 @@ void create(mapping settings)
   {
     lineunits = settings->lineunits;
     // calculate length in picas for completeness.
-    linelengthp = lineunits/(18 * (settings->pointsystem||12) *
+    settings->linelengthp = lineunits/(18 * (settings->pointsystem||12) *
                         (1/settings->setwidth));
   }    
   config = settings;
@@ -112,7 +112,7 @@ void create(mapping settings)
   if(settings->stopbar)
     set_stopbar(settings->stopbar);
   
-    werror ("line should be %d units.\n", lineunits);
+    werror ("line should be %O units.\n", lineunits);
 
   if(config->pad_margins)
   {
