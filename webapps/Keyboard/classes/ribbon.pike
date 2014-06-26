@@ -376,7 +376,7 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 
    b = render_proof(b, g);
 
-   v->add("settings", settings);
+   v->add("settings", g->config);
    v->add("now", Calendar.now());
     v->add("job_id", job_id);
     v->add("result", b);
@@ -594,7 +594,7 @@ public void do_font(Request id, Response response, Template.View v, mixed ... ar
 	 
   v->add("job_id", job_id);
   v->add("result", proof);
-  v->add("settings", settings);
+  v->add("settings", g->config);
   v->add("now", Calendar.now());
 
   response->set_charset("utf-8");
