@@ -58,7 +58,7 @@ object load_matcase_string(string ml)
 //!
 mapping load_font_scheme_string(string fss)
 {
-  mapping m = Tools.JSON.deserialize(fss);
+  mapping m = Standards.JSON.decode(fss);
   if(!m->definition || !m->name) return 0;
   return m;
 }
@@ -78,7 +78,7 @@ Monotype.Generator split_column(Monotype.Generator g)
   // TODO: turn off any page length related settings in the generator.
 
   // first, calculate the split location.
-  int fullpoint = g->lines[0]->lineunits;
+  float fullpoint = g->lines[0]->lineunits;
   int halfpoint = (int)ceil((float)fullpoint/2);
   float maxf, maxl;
   float minf = (float)fullpoint, minl = (float)fullpoint;
