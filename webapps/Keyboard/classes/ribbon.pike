@@ -132,11 +132,9 @@ public void do_generate(Request id, Response response, Template.View v, mixed ..
 	object g = Monotype.Generator(settings);
 	g->set_hyphenation_rules(id->misc->session_variables->user["Preferences"]["hyphenation_rules"]["value"]);
 	g->parse(data);
-        if(settings->linelengthp > 40.0)
+        if(settings->linelengthp > 90.0)
         {
-//          err = Error.mkerror(catch(
-g = Monotype.split_column(g);
-//));
+          g = Monotype.split_column(g);
         }
 
     response->set_data(g->generate_ribbon());
@@ -384,7 +382,6 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 	}
 	werror("parse_time: %O\n", parse_time);
 
-werror("lines: %O\n", g->lines);
    b = render_proof(b, g);
 
    v->add("settings", g->config);
@@ -419,7 +416,10 @@ String.Buffer render_proof(String.Buffer b, Monotype.Generator g)
     mixed render_time = gauge {
   	foreach(g->lines; int i; mixed line)
   	{
-  //	  werror("line: %O\n", line->elements);
+          if(!objectp(line))
+          {
+  	  werror("line %O: %O\n", i, line);
+          }
   		int mod;
   		int setonline;
   		int last_was_space = 0;

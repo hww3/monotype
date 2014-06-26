@@ -125,6 +125,8 @@ Monotype.Generator split_column(Monotype.Generator g)
         toaddf = (halfpoint + pad) - front;
         toaddb = (halfpoint + pad) - back;
 
+        if(f->current_line)
+          f->lines += ({ f->current_line });
         f->make_new_line();  
 
         int q;
@@ -134,34 +136,52 @@ Monotype.Generator split_column(Monotype.Generator g)
         }
         f->low_quad_out(toaddf); 
 
+        if(b->current_line)
+          b->lines += ({ b->current_line });
         b->make_new_line();   
 
         for(q = x1; q < sizeof(line->elements); q++)
         {
           b->current_line->add(line->elements[q]); 
         }
-        b->low_quad_out(toaddb); 
+        b->low_quad_out(toaddb, 1); 
 
         string code = sprintf("%O/%O", line->big, line->little);
         string fcode = sprintf("%O/%O", f->current_line->big, f->current_line->little);
         string bcode = sprintf("%O/%O", b->current_line->big, b->current_line->little);
-  
+
+        if(!f->current_line->linespaces)
+        { 
+          f->quad_out();
+        }
+
+        if(!b->current_line->linespaces)
+        { 
+          b->quad_out();
+        }
+
         if(f->current_line->linespaces && fcode != code)
         {
           display_error(f, b, line, code, bcode, fcode);
-          line->errors->append("Expected justification code " + code + ", got " + fcode);
+          f->current_line->errors->append("Expected justification code " + code + ", got " + fcode);
         }
         else if(b->current_line->linespaces && bcode != code)
         {
           display_error(f, b, line, code, bcode, fcode);
-          line->errors->append("Expected justification code " + code + ", got " + bcode);
+          b->current_line->errors->append("Expected justification code " + code + ", got " + bcode);
         }
+        //werror("sizeof f: %O\n", f->lines);
       }
     }
   }
+  if(f->current_line)
+   f->lines += ({ f->current_line });
   f->make_new_line();  
+
+  if(b->current_line)
+   b->lines += ({ b->current_line });
   b->make_new_line();  
-//  f->lines += b->lines;
+  f->lines += b->lines;
   return f;
 }
 
