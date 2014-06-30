@@ -287,28 +287,32 @@ array calculate_positions(Line line)
 
 	// calculates the large (0.0075) and small (0.0005) justification settings
 	// required to add units to the current sort.
-	array calculate_wordspacing_code(float units)
-	{
-		// algorithm from page 25
-		int steps = (int)round((0.0007685 * setwidth * units) / 0.0005);
-		steps += 53; // 53 is 3/8 code.
-		// TODO: check to see if we are opening too wide for the mould.
-		array x = ({steps/15, steps%15});
-		if(x[1] == 0)
-		{
-		  x[0]--;
-		  x[1]=15;
-		}
-		if(x[0] > 15 || x[0] < 1) throw(Error.Generic(sprintf("Bad Justification code %d/%d\n", x[0], x[1])));
-		if(x[1] > 15 || x[1] < 1) throw(Error.Generic(sprintf("Bad Justification code %d/%d\n", x[0], x[1])));
-		
-		return x;
-	}
+  array calculate_wordspacing_code(float units)
+  {
+    // algorithm from page 25
+    if(setwidth > 12.0 && units < -1.0)
+      throw(Error.Generic("Unable to reduce width more than 1 unit when set width is greater than 12.\n"));
 
-	// add a sort to the current line
-	void add(Sort|RealJS|Line activator, int|void atbeginning, int|void stealth)
-	{
-	  object mat;
+    int steps = (int)round((0.0007685 * setwidth * units) / 0.0005);
+    steps += 53; // 53 is 3/8 code.
+    // TODO: check to see if we are opening too wide for the mould.
+    array x = ({steps/15, steps%15});
+    if(x[1] == 0)
+    {
+      x[0]--;
+      x[1]=15;
+    }
+
+    if((x[0] > 15 || x[0] < 1) || (x[1] > 15 || x[1] < 1)) 
+      throw(Error.Generic(sprintf("Cannot adjust width by %.1f units; justification code would be %d/%d\n", units, x[0], x[1])));
+
+    return x;
+  }
+
+  // add a sort to the current line
+  void add(Sort|RealJS|Line activator, int|void atbeginning, int|void stealth)
+  {
+    object mat;
 
 //werror("Line.add(%O, %O) => %f, %O\n", activator, atbeginning, linelength, min_space_units);
 // justifying space
