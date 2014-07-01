@@ -716,9 +716,11 @@ int units_since_js;
 
 void add_font_sorts(Monotype.Generator g, Monotype.Sort sort, int quantity, string|void separator)
 {
-  object errs = ADT.List();
+  object errs = g->current_line->errors||ADT.List();
   object mat = sort->get_mat(errs);
   
+  if(!mat) return;
+
   if(units_since_js > (g->current_line->lineunits/3))
   {
     units_since_js = 0;
