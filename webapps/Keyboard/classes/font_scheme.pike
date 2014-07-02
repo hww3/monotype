@@ -70,7 +70,6 @@ array gen_atf(int A, int a)
       x+=({(["sort": sort, "quantity": q, "type": data->type])});
     }
 
-  werror("x: %O\n", x);
   return x;
 }
 
@@ -284,7 +283,6 @@ public void save(Request id, Response response, Template.View view, mixed args)
   object fs=id->misc->session_variables->fs;
 	mapping json = Standards.JSON.decode(id->variables->definition);
 	json->name = fs["name"];
-  werror("json: %O\n", json);
 	fs["definition"] = Standards.JSON.encode(json, Standards.JSON.HUMAN_READABLE);
 //if(catch(fs =
 	app->save_font_scheme(fs);
