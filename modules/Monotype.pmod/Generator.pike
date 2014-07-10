@@ -87,7 +87,7 @@ object space_regex;
 void create(mapping settings)
 {	
 
-//	werror("Monotype.Generator(%O)\n", settings);
+  werror("Monotype.Generator(%O)\n", settings);
   float lineunits;
   
   if(settings->linelengthp && settings->lineunits)
@@ -151,9 +151,13 @@ void create(mapping settings)
     space_regex = Regexp.PCRE.Widestring("\\h");  
 }
 
-this_program clone(mapping overrides, void|int include_headfoot)
+this_program clone(void|mapping overrides, void|int include_headfoot)
 {
-  object c = this_program(config + overrides);
+  mapping cfg = config - (<"linelengthp", "lineunits">);
+  if(overrides) cfg = cfg + overrides;
+  if(!(cfg->linelengthp && cfg->lineunits))
+    cfg->lineunits = config->lineunits;
+  object c = this_program(cfg);
   
   if(include_headfoot)
   {
@@ -1412,11 +1416,11 @@ mixed i_parse_tags(object parser, string data, mapping extra)
 	    gutter = (config->lineunits - tot) / (count-1);
 	  }
 	  
-	  werror("columns lineunits = %d, count = %d, width = %O, gutter = %d", config->lineunits, count,  widths, gutter);
+	  werror("columns lineunits = %O, count = %d, width = %O, gutter = %O", config->lineunits, count,  widths, gutter);
 	  werror("STARTING COLUMNS\n");
 	  // the page length array is the number of lines left on the current page to spread columns across, followed by full length pages.
 
-	  column_parser = clone(([]), 1);
+	  column_parser = clone(0, 1);
 
 	  column_parser->break_page();
 
@@ -1883,7 +1887,7 @@ float low_quad_out(float amount, int|void atbeginning, int|void is_quadding)
 //   werror("line at %f\n", current_line->linelength);
       if(current_line->is_overset())
       {
-        werror("overset. added %.2f, at %f\n", current_line->linelength, ix);
+        werror("overset. added %.2f, at %f\n", current_line->linelength, (float)ix);
         current_line->remove();
         ix-=(i + adjust);
         if(current_line->can_justify())
