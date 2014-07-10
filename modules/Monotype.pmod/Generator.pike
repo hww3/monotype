@@ -882,6 +882,7 @@ string column_data = "";
 object column_parser;
 array column_set = ({});
 int cs_gutter;
+int cs_height;
 
 // TODO: this is just aweful. we need to come up with something a little more robust.
 mixed i_parse_tags(object parser, string data, mapping extra)
@@ -1032,7 +1033,7 @@ mixed i_parse_tags(object parser, string data, mapping extra)
          if(!width)
           throw(Error.Generic("Invalid column width specified.\n"));
           
-         object cp = clone((["widths": ({width}), "gutter": cs_gutter, "column_strategy": COLUMN_STRATEGY_FILL, "pad_margins": 0, "page_length": ({config->page_length, config->page_length}) ]));
+         object cp = clone((["widths": ({width}), "height": cs_height, "gutter": cs_gutter, "column_strategy": COLUMN_STRATEGY_FILL, "pad_margins": 0, "page_length": ({config->page_length, config->page_length}) ]));
       	 column_data = "";
          column_set += ({cp});
          return 0;
@@ -1330,8 +1331,13 @@ mixed i_parse_tags(object parser, string data, mapping extra)
     int g = (int)atts->gutter;
       
     if(g != 0 && g < minspace)
-      throw(Error.Generic("gutter " + g + " is too small.\n"));
-        
+      throw(Error.Generic("columnset gutter " + g + " is too small.\n"));
+
+    if(has_index(atts, "height") && atts->height < 1)
+      throw(Error.Generic("columnset height must be a positive number.\n");
+    else
+      cs_height = h;    
+
     cs_gutter = g;
     in_columnset = 1;
     return 0;  
