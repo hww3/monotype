@@ -38,8 +38,8 @@ object JustifyingSpace;
 mapping spaces = ([]);
 mapping quadding_spaces = ([]);
 mapping highspaces = ([]);
-
-array(Line) lines = ({});
+ 
+array(Line) _lines = ({});
 array(Page) pages = ({});
 array ligatures = ({});
 mapping ligature_replacements_from = ([]);
@@ -76,6 +76,23 @@ string last = "";
 array data_to_set = ({});
 
 object space_regex;
+
+mixed `->lines()
+{
+  return _lines;  
+}
+
+mixed `->lines=(mixed l)
+{
+  int height = config->height;
+  if(height && l && sizeof(l) > height)
+  {
+    _lines = l[0..(height-1)];
+  }
+  else _lines = l;
+  return l;
+}
+
 /*
   Settings (partial):
     setwidth
@@ -1333,10 +1350,10 @@ mixed i_parse_tags(object parser, string data, mapping extra)
     if(g != 0 && g < minspace)
       throw(Error.Generic("columnset gutter " + g + " is too small.\n"));
 
-    if(has_index(atts, "height") && atts->height < 1)
-      throw(Error.Generic("columnset height must be a positive number.\n");
+    if(has_index(atts, "height") && (int)atts->height < 1)
+      throw(Error.Generic("columnset height must be a positive number.\n"));
     else
-      cs_height = h;    
+      cs_height = (int)atts->height;    
 
     cs_gutter = g;
     in_columnset = 1;
