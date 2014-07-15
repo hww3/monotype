@@ -136,10 +136,9 @@ test_any([[
     g->parse("<l4>W</l4><p>\n");
     g->generate_ribbon();
   };
-  return 1;
-//  if(e) return 1;
-//  else return 0;  
-]], 1);
+  if(e) return 1;
+  else return 0;  
+]], 0);
 
 test_any([[
   // test simple tablature:
@@ -167,22 +166,8 @@ test_any([[
     return 1;
 ]], 1);
 
-
-
 test_any([[
-// need to test simple tablature:
-// can add space and arrive at a given unit.
-// error when adding space past the requested unit.
-
-// need to test combined spaces
-
-// need to test trip caster
-  return 0; 
-]], 0);
-
-
-test_any([[
-  // test simple tablature:
+  // test wide setting (splitting):
   object g = Monotype.Generator(settings + (["min_little": 7, "min_big": 1, "linelengthp": 30.0]));
     string s = Stdio.read_file("CHANGES");
     s = replace(s, "\n", "<p>\n");
@@ -271,8 +256,19 @@ test_any([[
         }
       }
     }
-//    werror("fullest first half: %O, fullest last half: %O\n", maxf, maxl);
-//    werror("smallest first half: %O, smallest last half: %O\n", minf, minl);
-//    werror("first half difference: %O, last half difference: %O\n", maxf-minf, maxl-minl);
+    werror("fullest first half: %O, fullest last half: %O\n", maxf, maxl);
+    werror("smallest first half: %O, smallest last half: %O\n", minf, minl);
+    werror("first half difference: %O, last half difference: %O\n", maxf-minf, maxl-minl);
     return 0;
+]], 0);
+
+test_any([[
+// need to test simple tablature:
+// can add space and arrive at a given unit.
+// error when adding space past the requested unit.
+
+// need to test combined spaces
+
+// need to test trip caster
+  return 0; 
 ]], 0);
