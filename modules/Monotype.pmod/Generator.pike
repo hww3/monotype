@@ -104,7 +104,7 @@ mixed `->lines=(mixed l)
 void create(mapping settings)
 {	
 
-  werror("Monotype.Generator(%O)\n", settings);
+//  werror("Monotype.Generator(%O)\n", settings);
   float lineunits;
   
   if(settings->linelengthp && settings->lineunits)
@@ -447,7 +447,7 @@ void insert_header(int|void newpara)
 	{
 		in_do_header = 1;
 		current_line->errors->append("* New Page Begins -");
-		werror("parsing header: %O\n", header_code);
+	//	werror("parsing header: %O\n", header_code);
 		array _data_to_set = data_to_set;
 		data_to_set = ({});
 		object parser = Parser.HTML();
@@ -475,7 +475,7 @@ void insert_footer()
 	if(!in_do_footer && sizeof(footer_code))
 	{
 		in_do_footer = 1;
-		werror("parsing footer: %O\n", footer_code);
+	//	werror("parsing footer: %O\n", footer_code);
 		array _data_to_set = data_to_set;
 		data_to_set = ({});
 		object parser = Parser.HTML();
