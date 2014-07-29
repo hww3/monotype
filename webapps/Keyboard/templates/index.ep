@@ -7,5 +7,5 @@
 <li><%#action_link "action": "users"%>User Management</a>
 <% } %>
 <p>
-<li><%#action_link "action": "info"%>Application Info</a>
+<li><%#action_link "action": "app_info"%>Application Info</a>
 </ul>

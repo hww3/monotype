@@ -38,7 +38,13 @@ void index(object id, object response, mixed ... args)
 {
 }
 
+constant _no_auth_info = 1;
 void info(object id, object response, object v, mixed ... args)
+{
+  response->redirect("http://bill.welliver.org/dist/monotype/info", args);
+}
+
+void app_info(object id, object response, object v, mixed ... args)
 {
 #if constant(Public.Tools.Language.Hyphenate)
   v->add("hyphenation", 1);
