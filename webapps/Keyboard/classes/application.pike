@@ -379,7 +379,7 @@ object get_sys_pref(string pref, object user)
   Keyboard.Objects.Preference p;
   mixed err = catch(p = Fins.DataSource["_default"]->find->preferences((["name": pref, "User": user])));
   if((err = Error.mkerror(err)) && !err->_is_recordnotfound_error) throw(err);
-werror("prefs for %s %O: %O\n", pref, user, p);
+//werror("prefs for %s %O: %O\n", pref, user, p);
   if(sizeof(p))
     return p[0];
   else return 0;
