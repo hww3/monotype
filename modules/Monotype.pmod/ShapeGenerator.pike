@@ -41,7 +41,7 @@ if(current_line)
   }    
   if(!current_line->linespaces && (float)current_line->linelength != (float)current_line->lineunits)
   {
-      throw(Error.Generic(sprintf("Off-length line without justifying spaces: need %d units to justify, line has %.1f units. Consider adding a justifying space to line - %s\n", 
+      throw(Error.Generic(sprintf("Off-length line without justifying spaces: need %O units to justify, line has %O units. Consider adding a justifying space to line - %s\n", 
 		current_line->lineunits, current_line->linelength, (string)current_line)));
   }
   else if(current_line->linespaces && !current_line->can_justify()) 
