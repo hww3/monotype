@@ -358,7 +358,7 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
         g = Monotype.Generator(settings);
         g->set_hyphenation_rules(id->misc->session_variables->user["Preferences"]["hyphenation_rules"]["value"]);
         err = Error.mkerror(catch(g->parse(data)));
-        if(!err && settings->linelengthp > 40.0)
+        if(!err && settings->linelengthp > 90.0)
         {
 	  g = Monotype.split_column(g);
         }
@@ -668,7 +668,7 @@ Monotype.Generator make_font(mapping settings, object id)
       {
         // TODO add handling for non-roman sorts.
         object sort = g->create_styled_sort(data->sort, 0.0, template);
-        add_font_sorts(g, sort, data->quantity);    
+        add_font_sorts(g, sort, (int)data->quantity);    
       }
     }
   }
@@ -692,7 +692,7 @@ Monotype.Generator make_font(mapping settings, object id)
           object s = Monotype.Sort(settings->matcase->spaces[w]);
           s->space_adjust = diff;
 
-          add_font_sorts(g, s, sta, ":");
+          add_font_sorts(g, s, (int)sta, ":");
 
           break;
         }

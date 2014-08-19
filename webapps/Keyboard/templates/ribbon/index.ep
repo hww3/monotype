@@ -1,6 +1,7 @@
 <h1>Ribbon Generator</h1>
 <ul>
 <li> <%#action_link "action": "generate"%>Generate Ribbon</a>
+<li> <%#action_link "action": "font"%>Generate Font</a>
 </ul>
 
 <p>

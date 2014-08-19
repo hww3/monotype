@@ -282,6 +282,11 @@ public void save(Request id, Response response, Template.View view, mixed args)
 {
   object fs=id->misc->session_variables->fs;
 	mapping json = Standards.JSON.decode(id->variables->definition);
+werror("JSON: %O\n", json);
+  foreach(json->items?json->items:({});;mapping q)
+  {
+    q->quantity = (int)q->quantity;
+  }
 	json->name = fs["name"];
 	fs["definition"] = Standards.JSON.encode(json, Standards.JSON.HUMAN_READABLE);
 //if(catch(fs =
@@ -335,8 +340,8 @@ int processFSRequest(Request id, Response response, Template.View view, string f
   
   if(fs && fs["owner"] != id->misc->session_variables->user && !fs["is_public"])
   {
-		throw(Error.Generic("Unable to view this Font Scheme."));
-		return 0;
+	throw(Error.Generic("Unable to view this Font Scheme."));
+	return 0;
   }
 
   werror("**** name: %O fs: %O\n", fsid, fs);

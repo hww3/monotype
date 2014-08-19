@@ -1742,8 +1742,8 @@ int calc_lineunits()
     col = (lop) / config->page_length[ps];
   }
   
-  werror("current column number: %d\n", col);
-  config->lineunits = config->widths[col];
+  werror("current column number: %d %O\n", col, config->widths);
+  config->lineunits = config->widths[col-1];
   return col;
 }
 
