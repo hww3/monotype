@@ -209,6 +209,7 @@ class newline()
   }
   
 }
+#if constant(Image.FreeType) && constant(Image.FreeType.Face)
 // render some text as text
 array render(string text)
 {
@@ -234,6 +235,12 @@ array render(string text)
   return pd;
  }
  
+#else
+array render(string text)
+{
+  return ({});
+}
+#endif /* freetype */
   
   // remove empty lines at the top of the array. 
  array clean(array d)
