@@ -624,7 +624,7 @@ Monotype.Generator make_font(mapping settings, object id)
   mapping pairs = ([]);
   foreach(settings->pairs/"\n" - ({""});; string pair)
   {
-    array x = (String.trim_whites(pair)/" ") - ({""});
+    array x = (String.trim_all_whites(pair)/" ") - ({""});
     if(sizeof(x)!= 2) throw(Error.Generic("Kerned pair line '" + pair + "' must contain exactly 2 sorts.\n"));
     pairs[x[0]] = x[1];
     pairs[x[1]] = x[0];
@@ -670,14 +670,47 @@ Monotype.Generator make_font(mapping settings, object id)
          return (elem->type == type);
         });
 
+        multiset done = (<>);
       sort(sorts->sort, sorts); 
       werror("sorts: %O\n", sorts);
 
       foreach(sorts;;mapping data)
       {
-        // TODO add handling for non-roman sorts.
+        if(done[data->sort]) continue;
+        string pair = pairs[data->sort];
+        if(pair && done[pair]) continue; // no need to do it if it's already added.
         object sort = g->create_styled_sort(data->sort, 0.0, template);
-        add_font_sorts(g, sort, (int)data->quantity);    
+        
+        if(pair)
+        {
+          mapping pdata;
+          object psort = g->create_styled_sort(pair, 0.0, template);
+
+          // find the part of the pair with the greater quantity.
+          foreach(scheme->items;; mapping s)
+          {
+            werror("is %O like %O?\n", pair, s);
+            if(s->sort == pair)
+            {
+              pdata = s;
+            }
+          }
+          int qty = (data->quantity > pdata->quantity) ? data->quantity : pdata->quantity;
+
+          for(int z = 0; z < qty; z++)
+          {
+            add_font_sorts(g, sort, 1);
+            add_font_sorts(g, psort, 1);
+          }
+
+          if(pair) done[pair] = 1;          
+        }
+        else
+        {
+          // TODO add handling for non-roman sorts. isn't this already done?
+          add_font_sorts(g, sort, (int)data->quantity);              
+        }
+        done[data->sort] = 1;
       }
     }
   }
