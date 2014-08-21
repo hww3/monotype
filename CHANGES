@@ -1,3 +1,6 @@
+20140820
+- Font Schemes: support for casting kerning pairs together for support.
+
 20140623
 - Ribbon Generator: Support for generating standardized font schemes.
 - Ribbon Generator: Support for generating font ribbons using font schemes.

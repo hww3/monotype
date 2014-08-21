@@ -66,6 +66,7 @@ Next
 <ul>
 <li> <%#action_link "action": "new"%>New MCA</a>
 <li>Upload MCA file: <input type="file" name="file"> <input type="submit" name="Upload"/>
+<li> <%#action_link "action": "downloadzip"%>Download MCAs in ZIP</a>
 </ul>
 </form>
 

@@ -569,6 +569,29 @@ public void download(Request id, Response response, Template.View view, mixed ..
    
 }
 
+
+public void downloadzip(Request id, Response response, Template.View view, mixed ... args)
+{
+	object mca;
+  string name, data;
+  
+   array mcas = id->misc->session_variables->user["mcas"];
+   Tools.Zip z = Tools.Zip();
+
+   foreach((array)mcas;; mca)
+   {
+     data = mca["xml"];
+     name = mca["name"];
+     z->add_file("all_mcas" + "/" + name + ".xml", data);     
+   }
+   
+
+     response->set_data(z->generate());
+     response->set_type("application/zip");
+     response->set_header("Content-Disposition", sprintf("attachment; filename=\"%s\"", "all_mcas.zip"));
+}
+
+
 public void upload(Request id, Response response, Template.View view, mixed args)
 {
    object mca;
