@@ -551,6 +551,7 @@ werror("EXCTRACT_FONT_SETTINGS: %O\n", id->variables);
     "roman": (int)id->variables->roman,
     "italic": (int)id->variables->italic,
     "smallcaps": (int)id->variables->smallcaps,
+    "pairs": id->variables->pairs,
     "bold": (int)id->variables->bold,
     "1" : (int)id->variables->s1,
     "2" : (int)id->variables->s2,
@@ -620,6 +621,14 @@ Monotype.Generator make_font(mapping settings, object id)
   g->process_setting_buffer(1);
   int i = 0;
 
+  mapping pairs = ([]);
+  foreach(settings->pairs/"\n" - ({""});; string pair)
+  {
+    array x = (String.trim_whites(pair)/" ") - ({""});
+    if(sizeof(x)!= 2) throw(Error.Generic("Kerned pair line '" + pair + "' must contain exactly 2 sorts.\n"));
+    pairs[x[0]] = x[1];
+    pairs[x[1]] = x[0];
+  }
 
   // make sorts.
   object fs = app->load_font_scheme_by_id(settings->scheme, id->misc->session_variables->user);
