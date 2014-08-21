@@ -592,16 +592,83 @@ public void downloadzip(Request id, Response response, Template.View view, mixed
 }
 
 
-public void upload(Request id, Response response, Template.View view, mixed args)
+
+public void uploadzip(Request id, Response response, Template.View view, mixed args)
+{
+   object msgs = ADT.List();
+   
+     object z;
+     if(catch(z = Filesystem.Zip("mcas.zip", 0, Stdio.FakeFile(id->variables->file))))
+     {
+        response->flash("Invalid MCA or Zip file."); 
+      	response->redirect(index);
+     }
+     
+     low_unzip(z, msgs, id->misc->session_variables->user);
+    
+  response->flash((array)msgs * "<br/>");
+	response->redirect(index);
+	return;	
+}
+
+
+void low_unzip(object z, object msgs, object user)
+{
+  string cwd = z->cwd();
+  
+  foreach(z->get_dir();; string fn)
+  {
+    string s;
+    object mca;
+    werror("cwd: %O filename: %O\n", cwd, fn);
+    if(z->stat(fn)->isdir)
+    {
+      low_unzip(z->cd(fn), msgs, user);
+    }
+    else
+    {
+      string file = z->open(fn)->read();      
+werror("got some data: %O\n", file);
+       mixed e = catch(mca = Monotype.load_matcase_string(file));
+       if(e)
+    	 {
+    		 msgs->append("Unable to read the Matcase '" + fn + "'. Are you sure you uploaded an MCA definition file?");
+    		 continue;
+    	  }
+
+    	  if(mca->name)
+    	  {
+    		 object nw;
+
+    		  object e = catch(nw = app->load_matcase(mca->name, user));
+
+    	  	if(nw)
+      		{
+    			  msgs->append("You already have an MCA named " + mca->name +". Please delete the existing definition and retry.");
+    			  continue;
+    		  }
+    	  }
+    	  else
+      	{
+    		  msgs->append("No matcase name specified. Are you sure you uploaded an MCA definition file?");
+          continue;
+      	}
+
+    	  app->save_matcase(mca, user, 0);
+      	msgs->append("Matcase Arrangement " + mca->name + " was successfully imported.");
+    }
+  }
+}
+
+public void upload(Request id, Response response, Template.View view, mixed... args)
 {
    object mca;
 
    mixed e = catch(mca = Monotype.load_matcase_string(id->variables->file));
    if(e)
 	{
-		response->flash("Unable to read the Matcase. Are you sure you uploaded an MCA definition file?");
-		response->redirect(index);
-		return;
+	  uploadzip(id, response, view, @args);
+	  return;
 	}
 	
 	if(mca->name)
