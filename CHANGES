@@ -1,6 +1,7 @@
 20140820
 - Font Schemes: support for casting kerning pairs together for support.
 - MCA Editor: added ability to download all MCAs in a ZIP file.
+- MCA Editor: added ability to import a ZIP file with MCAs.
 
 20140623
 - Ribbon Generator: Support for generating standardized font schemes.
