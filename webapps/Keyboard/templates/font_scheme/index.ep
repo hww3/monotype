@@ -18,6 +18,7 @@ List size: <%#page_size_selector "paginator": data->font_scheme_page, "size":"10
   <li> <%#action_link "action": "edit", "args": (string)font_scheme["id"]%><%=font_scheme["name"] %></a> 
  [ <%#action_link "action" : "copy", "args": (string)font_scheme["id"]%>Copy</a> 
  | <%#action_link "action" : "download", "args": (string)font_scheme["id"]%>Download</a>
+ | <%#action_link "action" : "pdfdisplay", "args": (string)font_scheme["id"]%>Display</a>
 <% if(font_scheme["owner"] == data->owner) { %>
   | 
   <% if(font_scheme["is_public"]) {%>

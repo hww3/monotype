@@ -1,0 +1,101 @@
+		
+<%
+  array subtext_symbols = ({
+    "*",
+    "†",
+    "‡",
+    "⁑",
+    "⁂",
+    "⚉",
+    "**",
+    "††",
+    "‡‡",
+    "⁑⁑",
+    "⚉",
+    "***",
+    "†††",
+    "‡‡‡",
+    "⁑⁑⁑",
+    "⚉⚉⚉",
+  });
+  
+  array subtexts = ({});
+%>
+<h1>Font Scheme: <b><%=data->fs["name"]%></b></h1>
+
+<p>
+	<style>
+	div.cell {
+		font-size: 10pt; width:30px; height:30px; 
+border-width:1px; border-style: solid; position:relative; float:left; 
+line-height: 11.5pt;
+	}
+	input.mine { border-width:1px; border-style: solid; border-color: background-color: #dddddd; }
+	td {padding-left: 20px; padding-right: 20px; padding-top: 8px; padding-top: 8px;}
+    table { 
+        border-collapse: collapse; 
+    }
+    
+    tr.border_bottom td {
+      border-bottom: 1pt solid black;
+    }
+	</style>
+
+<style type="text/css">
+.dijitArrowButton {
+  display: block;
+}
+</style>
+<div style="border:3px; margin-left: auto;
+    margin-right: auto;
+    width: 650px;">
+<div style="clear: left;">
+
+<table>
+<tr>
+<%
+  foreach(({"upper", "lower", "numerals", "points", "other"});;string type)
+  {
+%>
+<td valign="top" cellpadding="20">
+<h2><%=type%></h2>
+<table>
+<%
+  array i = ({});
+  array j = ({});
+  foreach(data->definition->items;;mapping item)
+  {
+    if(item->type == type)
+    {
+      i += ({item->sort});
+      j += ({item});
+     }
+   }
+   i = sort(i, j);
+   foreach(j;; mapping sort)
+   {
+%>
+<tr class="border_bottom">
+       <td> <%=sort->sort%> </td> <td> <%=sort->quantity%><br/> </td>
+</tr>
+<%
+    }
+  
+%>
+</table>
+</td>
+<%
+  }
+%>
+</tr>
+</table>
+<p>
+&nbsp;
+<p>
+&nbsp;
+<p>
+prepared by <%=data->fs["owner"]["name"]%> on <%#format_date "var": Calendar.now() %>
+
+    </div>
+
+</div>

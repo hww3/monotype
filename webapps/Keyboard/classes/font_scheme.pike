@@ -97,6 +97,41 @@ public void index(Request id, Response response, Template.View view, mixed args)
   view->add("font_schemes", m);
 }
 
+public void pdfdisplay(Request id, Response response, Template.View view, mixed ... args)
+{
+  object t = this->view->get_view("font_scheme/display");
+  object resp = Fins.Response(id);
+  display(id, resp, t, @args);
+  string fn = sprintf("/tmp/%d_%d_%s", getpid(), time(), args[0]);
+  Stdio.write_file(fn + ".html", string_to_utf8(t->render()));
+  string command = combine_path(app->config->app_dir, "bin/phantomjs") + " " + combine_path(app->config->app_dir, "bin/render.js") + " " + fn + ".html " +fn + ".pdf Letter 0.80";
+  Log.info(command);
+  string result = Process.popen(command);
+  Log.info("result: %O", result);
+  response->set_data(Stdio.read_file(fn + ".pdf"));
+  response->set_type("application/pdf");
+  
+ //  object mca = app->load_matcase(args[0]);
+ // response->set_header("content-disposition", "attachment; filename=\"" + 
+ //      mca["name"] + ".pdf\"");
+  rm(fn + ".pdf");
+  rm(fn + ".html");
+}
+
+public void display(Request id, Response response, Template.View view, mixed ... args)
+{
+  if(!sizeof(args))
+  {
+    response->set_data("You must provide a font scheme to display.");
+    return;
+  }
+  mixed mcaid = args[0];
+
+  view->set_layout("font_scheme/display_layout");
+  processFSRequest(id, response, view, mcaid);
+}
+
+
 public void do_delete(Request id, Response response, Template.View view, mixed ... args)
 {
   object fs;
@@ -352,6 +387,7 @@ if(fs && fs["owner"] == id->misc->session_variables->user)
   view->add("is_owner", 1);
 else
   view->add("is_owner", 0);
+  view->add("definition", Standards.JSON.decode(fs["definition"]));
 
   view->add("fs", fs);
   view->add("scheme_id", fs["id"]);
