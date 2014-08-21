@@ -209,7 +209,7 @@ class newline()
   }
   
 }
-#if constant(Image.FreeType) && constant(Image.FreeType.Face)
+#if 0 && constant(Image.FreeType) && constant(Image.FreeType.Face)
 // render some text as text
 array render(string text)
 {
