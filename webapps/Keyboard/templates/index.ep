@@ -3,6 +3,9 @@
 <ul>
 <li><%#action_link "action": "changes"%>Change Log</a>
 <p>
+<%if(data->is_desktop){%>
+<li><%#action_link "action": "sync"%>MCA Sync</a>
+<%}%>
 <%if(!data->is_desktop && data->user["is_admin"]){ %>
 <li><%#action_link "action": "users"%>User Management</a>
 <% } %>
