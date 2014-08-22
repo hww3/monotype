@@ -1,0 +1,74 @@
+<%#action_form "action": "dosync", "method": "post"%>
+<h1>Sync Planning</h1>
+<table>
+<tr>
+<td valign="top">
+<h2>New in Cloud</h2>
+
+<input type="checkbox" value="1" name="cloudnew">
+Download these MCAs from the cloud and add them to your standalone RibbonGenerator.
+<br/>
+<ul>
+<%foreach(data->cloudnew;; mixed mca) {
+%>
+   <li><%=mca["name"]%>
+<%
+}
+%>
+</ul>
+<h2>Updated in Cloud</h2>
+<input type="checkbox" value="1" name="cloudupdated">
+Download these MCAs from the cloud and update the corresponding MCAs already loaded into your standalone RibbonGenerator.
+<br>
+<i>Note:</i> This will replace any changes you might have made in the standalone generator that aren't reflected in the Cloud.
+<br/>
+
+<ul>
+<%foreach(data->cloudupdated;; mixed mca) {
+%>
+   <li><%=mca["name"]%>
+<%
+}
+%>
+</ul>
+
+</td>
+<td valign="top">
+<h2>New for Cloud</h2>
+<input type="checkbox" value="1" name="mynew">
+These MCAs don't exist in the Cloud yet, so we'll upload them.
+<br/>
+
+<ul>
+<%foreach(data->mynew;; mixed mca) {
+%>
+   <li><%=mca["name"]%>
+<%
+}
+%>
+</ul>
+
+<h2>Updated for Cloud</h2>
+<input type="checkbox" value="1" name="myupdated">
+These MCAs have been updated more recently in the standalone Ribbon Generator than the cloud. We'll upload them to the Cloud.
+<br>
+<i>Note:</i> This will replace any changes you might have made in the Cloud generator that weren't also made in the standalone generator.
+<br/>
+
+<ul>
+<%foreach(data->myupdated;; mixed mca) {
+%>
+   <li><%=mca["name"]%>
+<%
+}
+%>
+</ul>
+
+</td>
+</tr>
+</table>
+<%#action_link "action": "dosync", "args": data->now%>
+<button class="SaveButton" href="<%#action_url "action": "dosync", "args": data->now%>">Start Sync</button>
+</a>
+
+</form>

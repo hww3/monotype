@@ -1,0 +1,11 @@
+<%#action_form "action": "connect", "method": "post"%>
+<h1>MCA Sync</h1>
+<h2>Connect to Ribbon Generator</h2>
+<%#input "type": "text", "size": "40", "name": "username"%> Email
+<br/>
+<input type="password" name="password" size="40"> Password
+<br/>
+<%#action_link "action": "connect", "args": data->now%>
+<button class="SaveButton" href="<%#action_url "action": "connect", "args": data->now%>">Connect</button>
+</a>
+</form>

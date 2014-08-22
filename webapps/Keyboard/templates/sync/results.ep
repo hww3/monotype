@@ -1,0 +1,8 @@
+<h1>Sync Complete.</h1>
+<%#action_form "action": "index", "controller": "/", "method": "post"%>
+
+<%#action_link "action": "index", "controller": "/", "args": data->now%>
+<button class="SaveButton" href="<%#action_url "action": "index", "controller": "/", "args": data->now%>">Home</button>
+</a>
+
+</form>
