@@ -11,6 +11,7 @@ object users;
 object prefs;
 
 object cloud;
+object sync;
 
 object dojo;
 
@@ -29,6 +30,7 @@ void start()
   users = load_controller("users");
   prefs = load_controller("prefs");
   cloud = load_controller("cloud");
+  sync = load_controller("sync");
   font_scheme = load_controller("font_scheme");
   
   before_filter(app->admin_user_filter);

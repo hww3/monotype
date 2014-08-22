@@ -50,6 +50,16 @@ mapping get_mca(object id, mixed session, int mca_id)
   ]);  
 }
 
+int put_mca(object id, mixed session, string mcaxml, string updated)
+{
+  CHECKUSER(session);
+  
+  object mcao = Monotype.load_matcase_string(mcaxml);
+  app->save_matcase(mcao, id->misc->session_variables->user, -1, Calendar.dwim_time(updated));
+  return 1;  
+}
+
+
 protected int|object check_user(string user, string password)
 {
   array r = Fins.Model.find.users((["username": user,
