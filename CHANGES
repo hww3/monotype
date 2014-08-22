@@ -1,3 +1,7 @@
+20140821
+- Ribbon Generator: added MCA sync utility that can sync MCAs between
+   the standalone and cloud ribbon generators. (beta)
+
 20140820
 - Font Schemes: support for casting kerning pairs together for support.
 - MCA Editor: added ability to download all MCAs in a ZIP file.
