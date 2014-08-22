@@ -55,7 +55,7 @@ int put_mca(object id, mixed session, string mcaxml, string updated)
   CHECKUSER(session);
   
   object mcao = Monotype.load_matcase_string(mcaxml);
-  app->save_matcase(mcao, id->misc->session_variables->user, -1, Calendar.dwim_time(updated));
+  app->save_matcase(mcao, session, -1, Calendar.dwim_time(updated));
   return 1;  
 }
 
