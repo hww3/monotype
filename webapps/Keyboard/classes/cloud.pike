@@ -26,10 +26,15 @@ string login(object id, string user, string password)
   else return 0;
 }
 
-mapping list_mcas(object id, mixed session)
+array list_mcas(object id, mixed session)
 {
   CHECKUSER(session);
-  return mkmapping(session["mcas"]["name"], session["mcas"]["id"]);
+  array x = allocate(sizeof(session["mcas"]));
+  foreach(session["mcas"]; int i; object mca)
+  {
+    x[i] = (["id": mca["id"], "name": mca["name"], "updated": mca["updated"]]);
+  }
+  return x;
 }
 
 mapping get_mca(object id, mixed session, int mca_id)
