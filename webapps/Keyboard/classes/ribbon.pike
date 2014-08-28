@@ -543,10 +543,12 @@ werror("EXCTRACT_FONT_SETTINGS: %O\n", id->variables);
 		"jobname": id->variables->jobname,
 		"trip_at_end": (int)id->variables->trip_at_end,
 		"enable_pneumatic_quads": (int)id->variables->enable_pneumatic_quads,
+		"quantity": (int)id->variables->quantity,
+		"clean_mats": (int)id->variables->clean_mats,
     "upper" : (int)id->variables->upper,
     "lower" : (int)id->variables->lower,
     "points" : (int)id->variables->points,
-    "numerals" : (int)id->variables->numerals,
+    "numerals" : (int)id->variables->numerals,    
     "others" : (int)id->variables->others,
     "roman": (int)id->variables->roman,
     "italic": (int)id->variables->italic,
@@ -644,10 +646,67 @@ Monotype.Generator make_font(mapping settings, object id)
     if((int)id->variables[alphabet])
       alphabets += ({alphabet});
 
+  if(settings->clean_mats)
+  {
+    add_all_sorts(g, alphabets, parts, pairs, scheme, 2);
+    g->quad_out();
+    g->new_line();
+  }
+
+  // lather, rinse, repeat.
+  for(int fq = 0; fq < settings->quantity; fq++)
+  {
+    add_all_sorts(g, alphabets, parts, pairs, scheme);  
+
+    // make spaces.   
+    while(i < 5)
+    {
+      string key = sprintf("%c", '1' + i);
+      if(settings[key])
+      {
+        int gotit = 0;
+        float width = calculate_space_width(i+1, settings->setwidth, settings->mould);
+        foreach(settings->matcase->spaces;int w;)
+        {
+          float diff = width - (float)w;
+          werror("looking for %O from %O, diff=%O\n", width, w, diff);
+          if((diff <= 3.0) && (diff >= -2.0)) // we can usually adjust +/- 2 units (at set widths 12 or under).
+          {
+            gotit = 1;
+            int sta = settings["s" + key + "q"];
+            object s = Monotype.Sort(settings->matcase->spaces[w]);
+            s->space_adjust = diff;
+
+            add_font_sorts(g, s, (int)sta, ":");
+
+            break;
+          }
+        }
+        if(!gotit)
+        {
+  //        werror("spaces: %O\n", settings->matcase->spaces);
+          throw(Error.Generic("Unable to find a suitable space for " + width + ". Available: " + String.implode_nicely(indices(settings->matcase->spaces)) + "\n"));
+        }
+      }
+      i++;
+    }
+    if(!g->current_line->can_justify())
+      g->current_line->add(g->create_styled_sort(":", 0.0));
+    g->quad_out();
+    g->new_line();
+    
+    werror("**** %O of %O\n", i, settings->quantity);
+  }
+
+  return g;
+}
+
+void add_all_sorts(object g, array alphabets, array parts, mapping pairs, mapping scheme, int|void override_quantity)
+{
   foreach(alphabets;; string alphabet_type)
   {
     object template = g->create_styled_sort("X", 0.0);
-    
+
     switch(alphabet_type)
     {
       case "roman":
@@ -672,7 +731,7 @@ Monotype.Generator make_font(mapping settings, object id)
 
         multiset done = (<>);
       sort(sorts->sort, sorts); 
-      werror("sorts: %O\n", sorts);
+      //werror("sorts: %O\n", sorts);
 
       foreach(sorts;;mapping data)
       {
@@ -680,7 +739,7 @@ Monotype.Generator make_font(mapping settings, object id)
         string pair = pairs[data->sort];
         if(pair && done[pair]) continue; // no need to do it if it's already added.
         object sort = g->create_styled_sort(data->sort, 0.0, template);
-        
+
         if(pair)
         {
           mapping pdata;
@@ -689,13 +748,15 @@ Monotype.Generator make_font(mapping settings, object id)
           // find the part of the pair with the greater quantity.
           foreach(scheme->items;; mapping s)
           {
-            werror("is %O like %O?\n", pair, s);
+//            werror("is %O like %O?\n", pair, s);
             if(s->sort == pair)
             {
               pdata = s;
             }
           }
           int qty = (data->quantity > pdata->quantity) ? data->quantity : pdata->quantity;
+
+          qty = override_quantity? override_quantity:qty;
 
           for(int z = 0; z < qty; z++)
           {
@@ -708,50 +769,16 @@ Monotype.Generator make_font(mapping settings, object id)
         else
         {
           // TODO add handling for non-roman sorts. isn't this already done?
-          add_font_sorts(g, sort, (int)data->quantity);              
+          int qty = (int)data->quantity;
+
+          qty = override_quantity? override_quantity:qty;
+          add_font_sorts(g, sort, qty);              
         }
         done[data->sort] = 1;
       }
     }
   }
-
-  // make spaces.   
-  while(i < 5)
-  {
-    string key = sprintf("%c", '1' + i);
-    if(settings[key])
-    {
-      int gotit = 0;
-      float width = calculate_space_width(i+1, settings->setwidth, settings->mould);
-      foreach(settings->matcase->spaces;int w;)
-      {
-        float diff = width - (float)w;
-        werror("looking for %O from %O, diff=%O\n", width, w, diff);
-        if((diff <= 3.0) && (diff >= -2.0)) // we can usually adjust +/- 2 units (at set widths 12 or under).
-        {
-          gotit = 1;
-          int sta = settings["s" + key + "q"];
-          object s = Monotype.Sort(settings->matcase->spaces[w]);
-          s->space_adjust = diff;
-
-          add_font_sorts(g, s, (int)sta, ":");
-
-          break;
-        }
-      }
-      if(!gotit)
-      {
-//        werror("spaces: %O\n", settings->matcase->spaces);
-        throw(Error.Generic("Unable to find a suitable space for " + width + ". Available: " + String.implode_nicely(indices(settings->matcase->spaces)) + "\n"));
-      }
-    }
-    i++;
-  }
-  if(!g->current_line->can_justify())
-    g->current_line->add(g->create_styled_sort(":", 0.0));
-  g->quad_out();
-  g->new_line();
-  return g;
+  
 }
 
 int units_since_js;

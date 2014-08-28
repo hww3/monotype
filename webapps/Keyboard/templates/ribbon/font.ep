@@ -107,6 +107,9 @@ Total Cast Line Length (picas/ciceros)
 &nbsp;
 <%#input "type": "radio", "name": "pointsystem", "id": "oldenglish", "value": "12.8", "onchange": "updateSet();" %>  <label for="oldenglish">Old English Pica</label>
 <span id="lineunits"></span>
+<br/>
+Quantity <%#input "type": "text", "name": "quantity", "value": "1"%> 
+<br/>
 </fieldset>
 <fieldset>
 <legend>Width Adjustment Mechanisms</legend>
@@ -124,7 +127,10 @@ Total Cast Line Length (picas/ciceros)
 <legend>Hyphenation and Layout</legend>
 <%#input "type": "checkbox", "name": "trip_at_end", "id": "trip_at_end", "checked":"1", "data_supplied": data->load_config, "value":"1"%> <label for="trip_at_end">Trip caster when complete</label>
 <%#textarea "name": "pairs", "rows":"4", "cols":"20", "id":"pairs", "value": "j k\nf m"%>
-<label for="pairs">Cast kerning pairs together</label> <i>(specify one pair per line)</i>
+<label for="pairs">Cast kerning pairs together</label> <i>(specify one pair per line)</i></label>
+<br/>
+Clean Mats? <%#input "type": "checkbox", "name": "clean_mats", "id": "clean_mats", "checked":"0", "data_supplied": data->load_config, "value":"1"%>
+<br/>
 
 </fieldset>
 <fieldset>

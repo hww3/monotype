@@ -1,3 +1,9 @@
+20140827
+- Ribbon Generator: added ability to generate multiple "copies" of a font
+   when generating a font ribbon.
+- Ribbon Generator: added "clean matrices" option that will cast 2 of each
+   sort in a font.
+
 20140821
 - Ribbon Generator: added MCA sync utility that can sync MCAs between
    the standalone and cloud ribbon generators. (beta)
