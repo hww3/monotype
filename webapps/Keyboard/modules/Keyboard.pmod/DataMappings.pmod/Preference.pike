@@ -9,7 +9,6 @@ void post_define()
 // Add any post configuration logic here
 
 // set_alternate_key("myalternatekey");
-  fields->value->len=256;
 
 }
 
