@@ -491,7 +491,7 @@ String.Buffer render_proof(String.Buffer b, Monotype.Generator g)
   			  if(e->style == "B")
   			   ch = "<b>" + ch + "</b>";
   			  if(e->style == "S")
-  			   ch = "<font size=\"-1\">" + ch + "</font>";
+  			   ch = "<font size=\"-2\">" + ch + "</font>";
 
 
   			if(e->mat && (float)e->get_set_width() != (float)e->mat->get_set_width())
