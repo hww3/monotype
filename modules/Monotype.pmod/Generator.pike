@@ -1035,6 +1035,7 @@ mixed i_parse_tags(object parser, string data, mapping extra)
         quad_out();
         new_paragraph();
       }
+      column_set = ({});
       return 0;
     }
     else if(in_columnset)
