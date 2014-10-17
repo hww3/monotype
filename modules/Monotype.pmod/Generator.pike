@@ -879,6 +879,10 @@ int process_setting_buffer(int|void exact)
 			  	}
 			  }
 		  } 
+      if(!sizeof(current_line->elements))
+      {
+        throw(Error.Generic(sprintf("Cannot fit anything on line of length %O units.\n", config->lineunits)));
+      }
 		  new_line();
 	  }
   }
@@ -1044,7 +1048,7 @@ mixed i_parse_tags(object parser, string data, mapping extra)
        {
          in_column = 1;
          mapping atts = parse_tag(data);
-         if(!atts->width)
+         if(!(int)atts->width)
            throw(Error.Generic("No column width specified.\n"));
            
          int width = (int)atts->width;   
@@ -2076,6 +2080,7 @@ void new_line(int|void newpara)
   if(!((float)current_line->linelength > 0.0))
   {
     werror("WARNING: new_line() called without any content.\n");
+    throw(Error.Generic("foo\n"));
     return 0;
   }    
   if(!current_line->linespaces && abs(current_line->linelength - current_line->lineunits) > 1)
