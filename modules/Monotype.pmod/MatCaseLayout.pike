@@ -150,7 +150,7 @@ void set(string column, int row, Matrix mat)
             break;
        }
 
-       add_problem(column, row, sprintf("Duplicate mat: %s: %s%d and %s%d\n", 
+       add_problem(column, row, sprintf("Duplicate mat %s: %s%d and %s%d\n", 
 	    key2, column, row, elements[key]->col_pos, elements[key]->row_pos));
     }
     elements[key] = mat;
@@ -163,7 +163,7 @@ void set(string column, int row, Matrix mat)
 
 private void add_problem(string column, int row, string desc)
 {
-  problems += ({ ({column, row, string_to_utf8(desc)}) });
+  problems += ({ ({column, row, (desc)}) });
   werror(string_to_utf8(desc));
 }
 
