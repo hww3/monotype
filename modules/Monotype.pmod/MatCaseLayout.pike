@@ -150,7 +150,7 @@ void set(string column, int row, Matrix mat)
             break;
        }
 
-       add_problem(column, row, sprintf("Matcase contains duplicate mat: %s:new %s %d, orig %s %d\n", 
+       add_problem(column, row, sprintf("Duplicate mat: %s: %s%d and %s%d\n", 
 	    key2, column, row, elements[key]->col_pos, elements[key]->row_pos));
     }
     elements[key] = mat;

@@ -26,7 +26,7 @@ false
 			<% if( data && data->problems && sizeof(data->problems) ) { %>
 				 + '<%=sizeof(data->problems)%> problem(s):<br>'
 			<% foreach(data->problems; int i; array p) { %>
-			   +'<%=(((int)i)+1)%> <%=replace(p[2], "\n", "")%><br>'
+			   +'<%=(((int)i)+1)%> <%=replace(p[2], ({"\n", "'", "\""}), ({"", "\\'", "\\\""}))%><br>'
   			  <% } %>
 			<% } %>
 			,
