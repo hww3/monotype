@@ -132,7 +132,7 @@ void punch_mode()
     f->set_close_callback(nb_punch_close);
     f->set_read_callback(nb_punch_read);
     f->set_write_callback(nb_punch_write);
-    f->set_nonblocking();
+    f->set_nonblocking_keep_callbacks();
   }
   inCommandMode = 0;
   inPunchMode = 1;
