@@ -1,3 +1,7 @@
+20141214
+- MCA Editor: added confirmation when deleting MCA.
+- MCA Editor: added MCA rename feature.
+
 20140827
 - Ribbon Generator: added ability to generate multiple "copies" of a font
    when generating a font ribbon.
