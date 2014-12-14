@@ -1,0 +1,9 @@
+<h1>Delete Mat Case Arrangement (MCA)</h1>
+<p>
+<%#action_form "action": "do_delete"%>
+<input type="hidden" name="mca_id" value="<%=data->mca_id%>"/>
+Do you really want to delete the mca <i><%=data->mca->name%></i>?<p/>
+
+<button type="submit">Delete</button>
+
+</form>

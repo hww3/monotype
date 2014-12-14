@@ -26,6 +26,7 @@ List size: <%#page_size_selector "paginator": data->mca_page, "size":"10, 25, 50
   <% } else { %>
     <%#action_link "action": "share", "args": (string)mca["id"]%>Share</a> 
   <% } %>
+  |  <%#action_link "action": "rename", "args": (string)mca["id"]%>Rename</a> 
 
   | <%#action_link "action": "delete", "args": (string)mca["id"]%>Delete</a><% } %> ]
 <% } %>

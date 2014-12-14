@@ -1,0 +1,10 @@
+<h1>Rename Mat Case Arrangement (MCA)</h1>
+<p>
+<form>
+Renaming: <%=data->mca->name%><br/>
+New Name: <input type="text" name="name"/>
+<p>
+
+<button type="submit">Rename</button>
+
+</form>

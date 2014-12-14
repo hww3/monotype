@@ -53,23 +53,24 @@ public void index(Request id, Response response, Template.View view, mixed args)
 public void do_delete(Request id, Response response, Template.View view, mixed ... args)
 {
   object mca;
+  string mca_id = id->variables->mca_id;
 
   if(!sizeof(args))
   {
 	response->set_data("You must provide a matcase to delete.");
   }
 
-  mca = app->load_matcase_by_id(args[0], id->misc->session_variables->user);
+  mca = app->load_matcase_by_id(mca_id, id->misc->session_variables->user);
 
   if(!mca)
   {
-    response->flash("MCA ID " + args[0] + " was not found.");
+    response->flash("MCA ID " + mca_id + " was not found.");
     response->redirect(index);
   }
   else
   {
-    response->flash("MCA " + args[0] + " successfully deleted.");
-    app->delete_matcase(args[0], id->misc->session_variables->user);
+    response->flash("MCA " + mca["name"] + " successfully deleted.");
+    app->delete_matcase(mca_id, id->misc->session_variables->user);
     response->redirect(index);
   }
 }
@@ -145,9 +146,7 @@ public void delete(Request id, Response response, Template.View view, mixed ... 
     return;    
   }
   
-werror("delete()\n");
   mca = app->load_matcase_by_id(args[0], id->misc->session_variables->user);
-werror("delete(%O)\n", mca);
 
   if(!mca)
   {
@@ -156,7 +155,9 @@ werror("delete(%O)\n", mca);
   }
   else
   {
-    response->redirect(do_delete, args);
+    view->add("mca", mca);
+    view->add("mca_id", args[0]);
+//    response->redirect(do_delete, args);
   }
 }
 
@@ -189,6 +190,33 @@ public void copy(Request id, Response response, Template.View view, mixed ... ar
 	mca->set_size((int)id->variables->size);
     object mca_db = app->save_matcase(mca, id->misc->session_variables->user, id->variables->is_public);		
     response->redirect(edit, ({(string)mca_db["id"]}));
+  }
+}
+
+public void rename(Request id, Response response, Template.View view, mixed ... args)
+{
+  Monotype.MatCaseLayout mca;
+  mca = app->load_matcase_by_id(args[0], /*id->misc->session_variables->user*/);
+
+  view->add("mca", mca);
+
+  if(!id->variables->name || !sizeof(id->variables->name))
+  {
+    return;	
+  }
+  else
+  {
+    if(app->mca_exists(id->variables->name, id->misc->session_variables->user))
+    {
+      response->flash("MCA " + id->variables->name + " already exists.");
+      return;
+    }
+    else 
+    {
+      object mca_db = app->rename_matcase(mca, id->variables->name, id->misc->session_variables->user, id->variables->is_public);		
+      response->flash("msg", "MCA renamed to \"" + id->variables->name + "\" successfully.");
+      response->redirect(index);
+    }
   }
 }
 

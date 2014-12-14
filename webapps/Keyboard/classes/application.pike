@@ -76,6 +76,34 @@ werror("indices: %O\n", indices(mca_db));
   return mca_db;
 }
 
+object rename_matcase(Monotype.MatCaseLayout mca, string new_name, object user, int|void is_public, object|void updated)
+{
+	if(!mca) throw(Error.Generic("No MCA provided.\n"));
+	
+	array ret;
+	object mca_db;
+	mixed e = catch(ret = master()->resolv("Fins.Model.find.matcasearrangements")((["name": mca->name, "owner": user])));
+	if(e)
+  	werror("error getting mca: %O\n", e);
+        if(sizeof(ret)) mca_db = ret[0];
+	// note: need to handle owner and is_public fields properly.
+	if(!mca_db)
+	{
+ 	  throw(Error.Generic("Unable to fetch MCA " + mca->name + " for user " + user["name"] + ".\n"));
+	}
+	else
+	{
+		werror("renaming mca %O " + mca->name + " to " + new_name + "\n", mca_db);
+           mca->set_name(new_name);
+           object node = mca->dump();
+            
+		mca_db->set_atomic((["is_public": (is_public==-1?mca_db["is_public"]:is_public), 
+			"name": new_name,
+			"xml": Public.Parser.XML2.render_xml(node), "updated": (updated || Calendar.now())->format_http()]));
+	}
+  return mca_db;
+}
+
 void save_wedge(Monotype.Stopbar wedge, object user, int|void is_public)
 {
 	string file_name;
