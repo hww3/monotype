@@ -1,3 +1,4 @@
+
 <script type="text/javascript">
    dojo.require("dojox.layout.FloatingPane");
    dojo.require("dijit.form.Button");
@@ -72,7 +73,7 @@ function enableMatsInCase()
 				{
 					micDialog = new dojox.layout.FloatingPane(
 					{id: 'micDialog', title: '<b>Available Mats</b>', //dojo.byId('matsInCaseContainer'),
-						dockable: false,
+						dockable: false, resizable: true,
 						style: "position:absolute;top:50px;left:50px;width:850px;height:100px;",
 						}, dojo.byId('matsInCaseContainer')
 						);
@@ -125,42 +126,6 @@ dijit.byId('matsInCaseDisplay').set('open', true);
 dojo.query("#displayContainer").style({ display:"" }); 
 dojo.byId("floatcontainer").innerHTML="<div id='float1'></div>";
 }
-}
-
-function floatMICDisplay()
-{
-
-  micDisplayPane.show();
-return;
-//  dojo.query("#popOutLink").style({ display:"none" }); 
-  var div = dojo.byId("matsInCaseContainer");
-  if(div)
-  {
-//displayPaneSource = dijit.byId('matsInCaseDisplay').get('content');
-  dijit.byId('matsInCaseDisplay').set('open', false);
-  micDisplayPane = new dojox.layout.FloatingPane({
-      title: "Available Mats",
-      resizable: false,
-      dockable: false,
-	  content: div,
-      style: "position:absolute;top:0;left:0;",
-      id: "matsInCaseContainer"
-  }, dojo.byId("float1"));
-dojo.query("#displayContainer").style({ display:"none" }); 
-
-//  dijit.byId("micDisplayButton").set("enabled", false);
-micDisplayPane.close = function() {
-
-if(!this.closable){ return; } 
- paneClosed();
- this.destroyRecursive();
-};
- 
-
-  micDisplayPane.startup();
-  micDisplayPane.show();
-//micDisplayPane.connect(this, "onclose", function(){alert("close");})
-  }
 }
 
 // based on dojo.dnd.Source.checkAcceptance()
@@ -599,22 +564,22 @@ function loadStyle(elements, style)
 
 <div id="matsInCaseContainer" style="display:none">
 <div style="margin:10px;">
-<div id="matsInCaseNodeQ" dojoId="matsInCaseNodeQ" xdojoType="dojo.dnd.Source" accept="Q" style="position:relative; float:left" class="container"></div>
+<div id="matsInCaseNodeQ" dojoId="matsInCaseNodeQ" xdojoType="dojo.dnd.Source" accept="Q" style="position:relative; font-size:14px; float:left" class="container"></div>
 <div style="clear: left;">
-<div style="position:relative; float:left">Roman: </div>
-<div id="matsInCaseNodeR" dojoId="matsInCaseNodeR" xdojoType="dojo.dnd.Source" accept="R" style="position:relative; float:left" class="container"></div>
+<div style="position:relative; float:left">Roman: &nbsp; </div>
+<div id="matsInCaseNodeR" dojoId="matsInCaseNodeR" xdojoType="dojo.dnd.Source" accept="R" style="position:relative; font-size:14px; float:left" class="container"></div>
 </div>
 <div style="clear: left;">
-<div style="position:relative; float:left">Italic: </div>
-<div id="matsInCaseNodeI" dojoId="matsInCaseNodeI" xdojoType="dojo.dnd.Source" accept="I" style="position:relative; float:left" class="container"></div>
+<div style="position:relative; float:left">Italic: &nbsp; </div>
+<div id="matsInCaseNodeI" dojoId="matsInCaseNodeI" xdojoType="dojo.dnd.Source" accept="I" style="position:relative; font-size: 14px; float:left" class="container"></div>
 </div>
 <div style="clear: left;">
-<div style="position:relative; float:left">Bold: </div>
-<div id="matsInCaseNodeB" dojoId="matsInCaseNodeB" xdojoType="dojo.dnd.Source" accept="B" style="position:relative; float:left" class="container"></div>
+<div style="position:relative; float:left">Bold: &nbsp; </div>
+<div id="matsInCaseNodeB" dojoId="matsInCaseNodeB" xdojoType="dojo.dnd.Source" accept="B" style="position:relative; font-size: 14px; float:left" class="container"></div>
 </div>
 <div style="clear: left;">
-<div style="position:relative; float:left">Small Caps: </div>
-<div id="matsInCaseNodeS" dojoId="matsInCaseNodeS" xdojoType="dojo.dnd.Source" accept="S" style="position:relative; float:left" class="container"></div>
+<div style="position:relative; float:left">Small Caps: &nbsp; </div>
+<div id="matsInCaseNodeS" dojoId="matsInCaseNodeS" xdojoType="dojo.dnd.Source" accept="S" style="position:relative; font-size: 14px; float:left" class="container"></div>
 </div>
 </div>
 
