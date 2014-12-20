@@ -1,8 +1,13 @@
 20141220
 - MCA Editor: made available mats popup resizeable and a little more legible.
+
 20141214
 - MCA Editor: added confirmation when deleting MCA.
 - MCA Editor: added MCA rename feature.
+
+20141211
+- Punch: fix a communication problem that prevented punching.
+- MCA Editor: rework MCA errors display a bit.
 
 20140827
 - Ribbon Generator: added ability to generate multiple "copies" of a font
