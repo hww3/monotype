@@ -9,6 +9,10 @@
 - Punch: fix a communication problem that prevented punching.
 - MCA Editor: rework MCA errors display a bit.
 
+20141025
+- General: handle wide characters (unicode) more reliably.
+- Font generator: fix a few bugs that prevented reliable operation.
+
 20140827
 - Ribbon Generator: added ability to generate multiple "copies" of a font
    when generating a font ribbon.
