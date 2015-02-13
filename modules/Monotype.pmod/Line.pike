@@ -1,4 +1,4 @@
-#charset utf8
+w#charset utf8
 
 //! represents a line in a job.
 
@@ -650,14 +650,15 @@ array calculate_positions(Line line)
     //werror("needed units: %d, max_ls_adjustment: %d\n", needed_units, max_ls_adjustment);
       	          if(needed_units > max_ls_adjustment || abs(needed_units) > max_reduction_units)
       	          {
-      	            int unit_shift_diff = (me->get_set_width() - s->get(me->row_pos - 1) );
-    //werror("unit_shift_diff: %d\n", unit_shift_diff);
-      	            if(config->unit_shift && me->row_pos > 1 && unit_shift_diff <= max_ls_adjustment && abs(unit_shift_diff) <= max_reduction_units)
-      	            {
-    //werror("yeah!\n");
-      	              row_pos = (me->row_pos - 1);
+      	            if(config->unit_shift && me->row_pos > 1)
+                    {
+                      int unit_shift_diff = (me->get_set_width() - s->get(me->row_pos - 1) );
+                      if(unit_shift_diff <= max_ls_adjustment && abs(unit_shift_diff) <= max_reduction_units)
+       	              {
+      	                row_pos = (me->row_pos - 1);
           			      col_pos = "D" + col_pos;
           			      needed_units = me->get_set_width() - s->get(me->row_pos - 1);
+      	              }
       	            }
       	          }
 
