@@ -1,3 +1,7 @@
+20150212
+- Ribbon Generator: only attempt to use unit shift when it's enabled and
+    in a row we can shift with.
+
 20141220
 - MCA Editor: made available mats popup resizeable and a little more legible.
 
