@@ -1,4 +1,4 @@
-w#charset utf8
+#charset utf8
 
 //! represents a line in a job.
 
