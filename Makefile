@@ -5,7 +5,7 @@ RIBBON_GENERATOR=RibbonGenerator
 CASTER_CONTROL=Caster
 PUNCH=Punch
 PRIVATE_KEY_DIR=${HOME}/SparkleShare/hww3/Development/Sparkle
-DEPLOY_DEST=/srv/delta-home/keyboard-deploy
+DEPLOY_DEST=${HOME}/kb/keyboard-deploy
 
 # note: Public.ObjectiveC must be available and built
 #
