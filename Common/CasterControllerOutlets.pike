@@ -6,6 +6,9 @@ object SkipBackwardButton;
 object SkipBeginButton;
 object CasterToggleButton;
 object LoadJobButton;
+object JumpToLine;
+object ManualPinControlButton;
+
 object PinControlWindow;
 object JumpToLineWindow;
 

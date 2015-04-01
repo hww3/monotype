@@ -32,6 +32,8 @@ static void create(int argc, array argv)
       werror("connecting widget %O\n", wn);
       this[wn] = w;
     }
+    else
+      werror("not connecting widget %O\n", wn);
   }
 
   register_preferences();
@@ -44,6 +46,8 @@ static void create(int argc, array argv)
   mainWindow->show_all();
   mainWindow->signal_connect("delete-event", do_exit);
 
+#if constant(Webkit)
+
   if(!linewebview)
   {
     linewebview = Webkit.WebView();
@@ -51,6 +55,7 @@ static void create(int argc, array argv)
     linewebview->load_uri("http://www.welliver.org");  
   }
 
+#endif /* constant(Webkit) */
 }
 
 int main(int argc, array argv)
@@ -215,7 +220,8 @@ void do_exit(mixed ... args)
 void setCurrentLine(int n)
 {
   string js = "highlight_line(" + n + ");";
-  linewebview->execute_script(js);
+  if(linewebview)
+    linewebview->execute_script(js);
 }
 
 void allOff(object b)
@@ -308,7 +314,9 @@ void LoadJobButton_clicked_cb(mixed ... args)
     CasterToggleButton->set_sensitive(1);
     View_JumpToLine_Menu->set_sensitive(1);
     JumpToLineButton->set_sensitive(1);
+#if constant(Webkit)
     LinesInJobButton->set_sensitive(1);
+#endif /* constant(Webkit) */
 //  app->mainMenu()->update();
     UpdateLinesView();
   }
@@ -317,7 +325,8 @@ void LoadJobButton_clicked_cb(mixed ... args)
 
 void UpdateLinesView()
 {
-  linewebview->load_string(Driver->getRibbonContents(), "text/html", "UTF-8", "file:///");
+  if(linewebview)
+    linewebview->load_string(Driver->getRibbonContents(), "text/html", "UTF-8", "file:///");
 }
 
 int lineview_delete_cb(mixed ... args)
