@@ -615,7 +615,7 @@ int process_setting_buffer(int|void exact)
  	     
 	if(!tl->is_overset()) // did the word fit using combined spaces?
     	{
-    	  werror("tight line fit2!\n");
+ //   	  werror("tight line fit2!\n");
      	  tl->line_number = current_line->line_number;
      	  tl->line_on_page = current_line->line_on_page;
     	  tightline = tl;	 
@@ -631,13 +631,13 @@ int process_setting_buffer(int|void exact)
 	     }
 	     else
 	     {
-	       werror("tight line didn't fit.\n");
+//	       werror("tight line didn't fit.\n");
 	     }
     }
      
 	  if(current_line->is_overset()) // back up to before the last space.
 	  {
-	    werror("word didn't fit, justification is %d/%d\n", current_line->big, current_line->little);
+//	    werror("word didn't fit, justification is %d/%d\n", current_line->big, current_line->little);
       object x;
 
 		  int can_try_hyphenation = 0;
@@ -655,7 +655,7 @@ int process_setting_buffer(int|void exact)
 		  }
       while(x && x!= JustifyingSpace);
 
-	    werror("removed word, justification is %d/%d\n", current_line->big, current_line->little);
+//	    werror("removed word, justification is %d/%d\n", current_line->big, current_line->little);
 		  if(exact) return 1;
 
       // prepare a clone of the line, so that we can jump back easily.
@@ -686,7 +686,7 @@ int process_setting_buffer(int|void exact)
 			  {
 			    array wordsorts = data_to_set[i+1..(bs-1)];
 				  string word = (wordsorts->character)*"";
-				  werror("attempting to hyphenate word %O from %O to %O\n", word, i, bs);
+//				  werror("attempting to hyphenate word %O from %O to %O\n", word, i, bs);
 
 				  array word_parts;
 				  if(search(word, "-") != -1)
@@ -698,7 +698,7 @@ int process_setting_buffer(int|void exact)
 				  {
   				  word_parts = hyphenate_word(word);				    
 				  }
-				  werror("word parts are %O\n", word_parts * ", ");
+	//			  werror("word parts are %O\n", word_parts * ", ");
 
 				  // if there are no hyphenation options, we're stuck.
 				  if(sizeof(word_parts)<=1)
@@ -733,7 +733,7 @@ int process_setting_buffer(int|void exact)
 				  	  object brokenlig;
 					    string syl;
 					  
-					    werror("portion: %O\n", portion);
+					//    werror("portion: %O\n", portion);
 					  
   					  foreach(portion/""; int x; string act)
 	  				  {
@@ -747,20 +747,20 @@ int process_setting_buffer(int|void exact)
 					      }
   					  }
 					  
-					    werror("sortsinsyllable: %O\n", sortsinsyllable);
-					    werror("sortsinsyllable: %O\n", sortsinsyllable->character);
+				//	    werror("sortsinsyllable: %O\n", sortsinsyllable);
+				//	    werror("sortsinsyllable: %O\n", sortsinsyllable->character);
 
 					    if(lower_case(sortsinsyllable->character * "") == portion)
 					    {
 					      // we have the whole shebang. no need to mess with re-ligaturing.
-					      werror("simple break.\n");
+					//      werror("simple break.\n");
 					      data_to_set = ({JustifyingSpace});
 					      data_to_set += sortsinsyllable;
 					      simple_break = 1;
 					    }
 					    else
 					    {
-					      werror("sorts in syllable = %O, portion = %O\n", sortsinsyllable->character, portion);
+					  //    werror("sorts in syllable = %O, portion = %O\n", sortsinsyllable->character, portion);
 					      // we don't have the whole portion. most likely, the end of the portion breaks a ligature.
 					      // so, we look at the sort in wordsorts after the last in the sortsinsyllable.
 					      data_to_set = ({JustifyingSpace});
@@ -768,7 +768,7 @@ int process_setting_buffer(int|void exact)
 
   					    brokenlig = wordsorts[sizeof(sortsinsyllable)];
 	  				  
-	  				    werror("broken ligature: %O\n", brokenlig->character);
+	  			//	    werror("broken ligature: %O\n", brokenlig->character);
 	  				    
 	  				    // syl is the part of the syllable containing a hanging ligature.
   					    syl = (portion[sizeof(sortsinsyllable->character * "")..]);
@@ -796,18 +796,18 @@ int process_setting_buffer(int|void exact)
 	  					  do
 	  					  {
 	  					    template = current_line->elements[i];
-	  					    werror(string_to_utf8(sprintf("template: %O\n", template)));
+//	  					    werror(string_to_utf8(sprintf("template: %O\n", template)));
 	  					    i--;
 	  					  } while(template->is_real_js);
 	  					  
 		  				  data_to_set += prepare_data(({"-"}), template);
 	  				  }
 			 	    
-			  		  werror("seeing if %O will fit... %O = %O", portion, data_to_set, data_to_set->character);
+			  //		  werror("seeing if %O will fit... %O = %O", portion, data_to_set, data_to_set->character);
 				  	  int res = process_setting_buffer(1);
 					    if(!res)
 					    {
-						    werror("yes!\n");
+				//		    werror("yes!\n");
 						    // it fit! now we must put the rest of the word in the setting buffer.
 						    if(sizeof(word_parts)>=final_portion)
 						    {	
@@ -840,7 +840,7 @@ int process_setting_buffer(int|void exact)
 					
 					    else // take it all off the line and try again.
 					    {
-						    werror("nope.\n");
+					//	    werror("nope.\n");
 					    }
 
   					  if(final_portion == 0 && !current_line->can_justify()) // we got to the last syllable and it won't fit. we must have a crazy syllable!
@@ -858,7 +858,7 @@ int process_setting_buffer(int|void exact)
 					    }
 					    else if(final_portion == 0)
 					    {
-					      werror("sadness.\n");
+//					      werror("sadness.\n");
 					      array toadd = ({});
 					      if(sizeof(new_data_to_set) > (bs+1))
 					        toadd = new_data_to_set[bs+1..];
@@ -939,16 +939,23 @@ mixed i_parse_tags(object parser, string data, mapping extra)
               }              
               werror("col alignment: %O\n", cnt);
               if(abs(cnt[-1] - cnt[0]) < sizeof(cnt)) // ok, as close as it's gonna get!
-                break;
-//                sleep(5);
-              if(sizeof(column_parser->config->page_length) != sizeof(column_parser->pages))
               {
+                werror("columns fairly equal: %O\n", cnt);
+                break;                
+              }
+//                sleep(5);
+              if(sizeof(column_parser->config->page_length) != sizeof(cnt))
+              {
+                werror("correcting pages\n");
                 int fpl = column_parser->config->page_length[0];
-                column_parser->config->page_length = allocate(sizeof(column_parser->pages), column_parser->config->page_length[-1]);
+                column_parser->config->page_length = allocate(sizeof(cnt), column_parser->config->page_length[-1]);                
                 column_parser->config->page_length[0] = fpl;
               }
-              column_parser->config->page_length[-1]--;
+              column_parser->config->page_length[0]--;
+              werror("page lengths: %O\n", column_parser->config->page_length);
+              werror("reset\n");
               column_parser->reset();
+              werror("reset done\n");
             } while(1);
             
           }
@@ -1603,16 +1610,16 @@ array hyphenate_word(string word)
   if(hyphenator)
   {
     word = hyphenator->hyphenate(word);
-werror("hyphenator present\n");
+//werror("hyphenator present\n");
   }
 #endif /* have Public.Tools.Language.Hyphenate */
 	
     array word_parts = word/"-";
-werror("config->unnatural_word_breaks: %O\n", config->unnatural_word_breaks)	;
+//werror("config->unnatural_word_breaks: %O\n", config->unnatural_word_breaks)	;
 
     if(!(sizeof(word_parts) > 1) && config->unnatural_word_breaks)
     {
-werror("splitting unnaturally.\n");
+//werror("splitting unnaturally.\n");
 	word_parts = word/"";
     }
 	
@@ -1621,14 +1628,15 @@ werror("splitting unnaturally.\n");
 
 void new_paragraph(int|void quad)
 {
-  werror("quad? %O can justify? %O\n", quad, current_line->can_justify());
+//  werror("quad? %O can justify? %O\n", quad, current_line->can_justify());
   if(!quad && current_line->can_justify()) /* do not quad out */ ; 
   else
-  {werror("quadding.\n");
+  {
+    //werror("quadding.\n");
     quad_out();
-   werror("yeah!\n");
+  // werror("yeah!\n");
   }
-  werror("quad? %O can justify? %O\n", quad, current_line->can_justify());
+//  werror("quad? %O can justify? %O\n", quad, current_line->can_justify());
   new_line(1);  
 }
 
@@ -1726,7 +1734,7 @@ int calc_lineunits()
     {
       update_page();
     }
-    else if(spl>0 && spl % (config->page_length[1] * col_count) == 0)
+    else if(spl>0 && spl % (config->page_length[-1] * col_count) == 0)
     {
       update_page();
     }
@@ -1734,20 +1742,21 @@ int calc_lineunits()
     // this only comes into play on the last page; so it shouldn't matter that we aren't
     // calculating the current line on the page as if each page could have different lengths.
     int current_page = sizeof(pages);   
-    int ps = current_page?1:0;
+    int ps = (current_page?1:0);
     if(sizeof(config->page_length) > current_page) ps = current_page;
     
     int psl = sizeof(lines) - ((config->page_length[0] * col_count)); // the number of lines on pages of last page length.
 //    werror("psl: %O\n", psl);
-    int page = psl / (config->page_length[1] * col_count);
-    int lop = psl -  (page * col_count * config->page_length[1]);
+    int page = psl / (config->page_length[-1] * col_count);
+    int lop = psl -  (page * col_count * config->page_length[-1]);
 //    werror("page: %O\n", page);
 //    werror("lop: %O\n", lop);
+werror("page pos: %O, %O, lengths: %O\n", sizeof(pages), ps, config->page_length);
   werror("page len: %O\n", config->page_length[ps]);
     col = (lop) / config->page_length[ps];
   }
   
-  werror("current column number: %d %O\n", col, config->widths);
+//  werror("current column number: %d %O\n", col, config->widths);
   config->lineunits = config->widths[col-1];
   return col;
 }
