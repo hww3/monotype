@@ -1,3 +1,9 @@
+#
+# To generate localizable strings from the English language nib and generate a localized nib:
+# 
+# ibtool --generate-strings-file Resources/English.lproj/Caster.strings Resources/English.lproj/Caster.nib 
+# ibtool --strings-file Resources/French.lproj/Caster.strings --write Resources/French.lproj/Caster.nib Resources/English.lproj/Caster.nib
+#
 SPARKLE_HOME=${HOME}/SparkleShare/hww3/Development/SparkleDist
 PUBLIC_OBJECTIVEC=${HOME}/devel/Public_ObjectiveC
 FINS_REPO="https://hg.welliver.org"
