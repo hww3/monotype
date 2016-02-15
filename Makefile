@@ -105,7 +105,8 @@ stub:
 ccapp: 
 	cp -Rf CasterApp/* ${CASTER_CONTROL}.app/Contents/
 	cp -Rf Common/* ${CASTER_CONTROL}.app/Contents/Resources/
-
+	ibtool --strings-file ${CASTER_CONTROL}.app/Contents/Resources/French.lproj/Caster.strings --write ${CASTER_CONTROL}.app/Contents/Resources/French.lproj/Caster.nib ${CASTER_CONTROL}.app/Contents/Resources/English.proj/Caster.nib
+ 
 punchresources: 
 	cp -Rf PunchApp/* ${PUNCH}.app/Contents/
 	cp -Rf Common/* ${PUNCH}.app/Contents/Resources/
@@ -141,6 +142,7 @@ webapp: fins phantomjs
 	cp -Rf webapps/Keyboard "${RIBBON_GENERATOR}.app/Contents/Resources"
 	cp -Rf modules/* "${RIBBON_GENERATOR}.app/Contents/Resources/Keyboard/modules"
 	cp -Rf CHANGES "${RIBBON_GENERATOR}.app/Contents/Resources"
+	ibtool --strings-file ${RIBBON_GENERATOR}.app/Contents/Resources/French.lproj/MainMenu.strings --write ${RIBBON_GENERATOR}.app/Contents/Resources/French.lproj/MainMenu.nib ${RIBBON_GENERATOR}.app/Contents/Resources/English.proj/MainMenu.nib
 	cp -Rf dojo-release-1.6.1-src/release/dojo "${RIBBON_GENERATOR}.app/Contents/Resources/Keyboard"
 	cp -Rf phantomjs-1.9.7-macosx/bin/phantomjs "${RIBBON_GENERATOR}.app/Contents/Resources/Keyboard/bin"
 
