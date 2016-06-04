@@ -3,7 +3,7 @@ inherit Monotype.Generator;
 array raster_data;
 Monotype.Line raster_line;
 
-static void create(mapping settings, string shape)
+protected void create(mapping settings, string shape)
 {
   array cd = render(shape);
   raster_data = generate_columns(cd);

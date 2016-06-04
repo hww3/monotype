@@ -6,7 +6,7 @@
   float calculated_width;
   object matrix;
 
-  static void create(object _matrix)
+  protected void create(object _matrix)
   {
     matrix = _matrix;	
   }

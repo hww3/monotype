@@ -3,7 +3,7 @@
 
 
 //!
-static void create(mapping config)
+protected void create(mapping config)
 {
 	
 }

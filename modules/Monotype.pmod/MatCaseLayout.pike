@@ -55,7 +55,7 @@ void create(int|void size)
 // fill an empty matcase with positions for each column.
 // this way, if we have a column with nothing in it, there's still
 // a record of it so that calls to get() won't fail.
-static void populate_empty()
+protected void populate_empty()
 {
   foreach(validcolumns; string col;)
   {

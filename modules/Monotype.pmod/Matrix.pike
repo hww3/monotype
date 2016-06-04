@@ -15,7 +15,7 @@ import Public.Parser.XML2;
   
   function report_problem;
 
-  static mixed cast(string to)
+  protected mixed cast(string to)
   {
     if(to == "mapping")
     {
@@ -31,7 +31,7 @@ import Public.Parser.XML2;
     else throw(Error.Generic("Casting Matrix to " + to + " not supported."));
   }
 
-  static void create(void|Node n, void|function report)
+  protected void create(void|Node n, void|function report)
   {
     report_problem = report;
     if(n) 

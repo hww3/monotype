@@ -81,7 +81,7 @@ ADT.Stack cjc = ADT.Stack();
     }
   }	
   
-	static mixed cast(string t)
+	protected mixed cast(string t)
 	{
 	   if(t!="string") throw(Error.Generic("invalid cast type " + t + ".\n"));
 	
@@ -108,7 +108,7 @@ ADT.Stack cjc = ADT.Stack();
 	    add(e);
 	}
 	
-	static void create(object _m, object _s, mapping _config, object _g)
+	protected void create(object _m, object _s, mapping _config, object _g)
 	{
     config = _config;
 		m = _m;
