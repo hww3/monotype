@@ -130,7 +130,7 @@ fins: framework prereqs
 
 deploy: prereqs
 	mkdir -p "${DEPLOY_DEST}"
-	cp "${DEPLOY_DEST}"/Keyboard.sqlite3 "${DEPLOY_DEST}"/Keyboard.sqlite3.`date +"%Y%m%d%H%M"`
+	if [ -f "${DEPLOY_DEST}"/Keyboard.sqlite3" ] ; then cp "${DEPLOY_DEST}"/Keyboard.sqlite3 "${DEPLOY_DEST}"/Keyboard.sqlite3.`date +"%Y%m%d%H%M"` ; else echo "No database to back up." ; fi
 	cp -Rf webapps/Keyboard "${DEPLOY_DEST}"
 	cp -Rf Fins_build/lib "${DEPLOY_DEST}/Keyboard"
 	cp -Rf modules/* "${DEPLOY_DEST}/Keyboard/modules"
