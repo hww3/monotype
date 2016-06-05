@@ -6,7 +6,7 @@
 #
 SPARKLE_HOME=${HOME}/SparkleShare/hww3/Development/SparkleDist
 PUBLIC_OBJECTIVEC=${HOME}/devel/Public_ObjectiveC
-FINS_REPO="https://bitbucket.org/hww3/fins"
+FINS_REPO=https://bitbucket.org/hww3/fins
 RIBBON_GENERATOR=RibbonGenerator
 CASTER_CONTROL=Caster
 PUNCH=Punch
