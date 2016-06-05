@@ -50,7 +50,7 @@ void start()
 
 //! default user authenticator, for data models where a user object represents 
 //! a user and the password is saved as a plain text string. 
-static mixed default_validate_user(Request id, Response response, Template.View t) 
+protected mixed default_validate_user(Request id, Response response, Template.View t) 
 { 
   mixed r = Fins.Model.find.users( ([ "username": id->variables->username,
                                       "password": id->variables->password
@@ -65,7 +65,7 @@ static mixed default_validate_user(Request id, Response response, Template.View 
 
 //! default user authenticator, for data models where a user object represents
 //! a user and the password field contains a MD5 crypt string.
-static mixed md5_validate_user(Request id, Response response, Template.View t)
+protected mixed md5_validate_user(Request id, Response response, Template.View t)
 {
   mixed r = Fins.Model.find.users( ([ "username": id->variables->username,
                                     ]) );
@@ -91,7 +91,7 @@ string password_template_name = "auth/sendpassword";
 //!  this method receives a password which the user has typed twice (in order
 //!  to prevent typos. This method should perform other QA checks if necessary
 //!  (such as password complexity and aging tests).
-static mixed default_reset_password(Request id, Response response, Template.View t, mixed user, string newpassword)
+protected mixed default_reset_password(Request id, Response response, Template.View t, mixed user, string newpassword)
 {
   user["password"] = newpassword;
   return 1;
@@ -109,7 +109,7 @@ static mixed default_reset_password(Request id, Response response, Template.View
 //! @note
 //!  this method requires a field length longer than the maximum acceptable
 //!  password length. 
-static mixed md5_reset_password(Request id, Response response, Template.View t, mixed user, string newpassword)
+protected mixed md5_reset_password(Request id, Response response, Template.View t, mixed user, string newpassword)
 {
   user["password"] = Crypto.make_crypt_md5(newpassword);
   return 1;
@@ -117,7 +117,7 @@ static mixed md5_reset_password(Request id, Response response, Template.View t, 
 
 //! default user password locator
 //! 
-static mixed default_find_user_password(Request id, Response response, Template.View t)
+protected mixed default_find_user_password(Request id, Response response, Template.View t)
 {
 
   mixed r = Fins.Model.find.users( ([ "username": id->variables->username
@@ -133,7 +133,7 @@ static mixed default_find_user_password(Request id, Response response, Template.
 //! 
 //! @note
 //!  this method will reset the password of the user, as the original password isn't available.
-static mixed md5_find_user_password(Request id, Response response, Template.View t)
+protected mixed md5_find_user_password(Request id, Response response, Template.View t)
 {
 
   mixed r = Fins.Model.find.users( ([ "username": id->variables->username
@@ -149,20 +149,20 @@ static mixed md5_find_user_password(Request id, Response response, Template.View
   else return 0;
 }
 
-static string generate_password()
+protected string generate_password()
 {
   return "";
 }
 
 //! override this method to set the mail host for retrieved password emails.
-static string get_mail_host()
+protected string get_mail_host()
 {
   return "mail.welliver.org";
 //  return gethostname();
 }
 
 //! override this method to set the return address for retrieved password emails.
-static string get_return_address()
+protected string get_return_address()
 {
   return "password-retrieval@" + gethostname();
 }

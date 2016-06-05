@@ -30,7 +30,7 @@ float setwidth;
 object m, s;
 mapping config;
 
-	static mixed cast(string t)
+	protected mixed cast(string t)
 	{
 	   if(t!="string") throw(Error.Generic("invalid cast type " + t + ".\n"));
 	
@@ -56,7 +56,7 @@ mapping config;
 	    add(e);
 	}
 	
-	static void create(object _m, object _s, mapping _config, object _g)
+	protected void create(object _m, object _s, mapping _config, object _g)
 	{
     config = _config;
 		m = _m;
