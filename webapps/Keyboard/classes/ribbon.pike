@@ -4,7 +4,8 @@ inherit "mono_doccontroller";
 int __quiet = 1;
 
 
-mapping pointsystems = (["12.0":"Anglo-American Pica", "12.84":"Cicero", "12.8":"Old English Pica"]);
+mapping pointsystems = (["12.0":"Anglo-American Pica", "12.84":"Cicero", 
+                         "12.8":"Old English Pica", "13.58": "Imprimerie Nationale"]);
 
 void start()
 {
