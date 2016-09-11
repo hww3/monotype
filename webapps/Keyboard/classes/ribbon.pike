@@ -81,15 +81,12 @@ public void get_wedge_for_mca(Request id, Response response, Template.View v, mi
 public mapping extract_settings(Request id)
 {
 werror("EXCTRACT_SETTINGS: %O\n", id->variables);
-  return ([
+  mapping settings = ([
 		"justification": (int)id->variables->justification,
 		"unit_adding": (int)id->variables->unitadding,
 		"unit_shift": (int)(id->variables->unit_shift),
-		"mould": (int)id->variables->pointsize,
-		"pointsystemname": pointsystems[id->variables->pointsystem||"12.0"],
-		"pointsystem": (float)id->variables->pointsystem,
+		"mould": (int)id->variables->points,
 		"setwidth": (float)id->variables->set,
-		"linelengthp": (float)id->variables->linelength,
 		"stopbar": app->load_wedge(id->variables->wedge),
 		"matcase": app->load_matcase_by_id(id->variables->mca),
 		"jobname": id->variables->jobname,
@@ -105,11 +102,24 @@ werror("EXCTRACT_SETTINGS: %O\n", id->variables);
 		"enable_combined_space": (int)id->variables->enable_combined_space,
 		"min_little": (int)(((id->variables->min_just||"")/"/")[1]), 
 		"min_big": (int)(((id->variables->min_just||"")/"/")[0]),
+		"min_little_nonjust": (int)(((id->variables->min_nonjust||"")/"/")[1]), 
+		"min_big_nonjust": (int)(((id->variables->min_nonjust||"")/"/")[0]),
 		"hanging_punctuation": (int)id->variables->hanging_punctuation,
 		"pad_margins": (int)id->variables->pad_margins,
 		"allow_lowercase_smallcaps": (int)id->variables->allow_lowercase_smallcaps,
 		"allow_punctuation_substitution": (int)id->variables->allow_punctuation_substitution
 		]);
+
+  if(id->variables->linelength_type && id->variables->linelength_type == "units") {
+		settings["lineunits"] = (int)id->variables->lineunits;
+  }		
+  else {
+		settings["pointsystemname"] = pointsystems[id->variables->pointsystem||"12.0"];
+		settings["pointsystem"] = (float)id->variables->pointsystem;
+		settings["linelengthp"] = (float)id->variables->linelength;
+  };
+
+		return settings;
 }
 
 public void do_generate(Request id, Response response, Template.View v, mixed ... args)
@@ -133,7 +143,7 @@ public void do_generate(Request id, Response response, Template.View v, mixed ..
 	object g = Monotype.Generator(settings);
 	g->set_hyphenation_rules(id->misc->session_variables->user["Preferences"]["hyphenation_rules"]["value"]);
 	g->parse(data);
-        if(settings->linelengthp > 90.0)
+        if(settings->linelengthp > 90.0 || settings->lineunits > 180*9)
         {
           g = Monotype.split_column(g);
         }
@@ -171,6 +181,8 @@ public void trick(Request id, Response response, Template.View v, mixed ... args
       "lang": "en_US",
       "min_big": 1,
       "min_little": 8,
+      "min_big_nonjust": 1,
+      "min_little_nonjust": 8,
       "mould": 12,
       "page_length": 42,
       "pointsystem": 12.0,
@@ -359,7 +371,7 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
         g = Monotype.Generator(settings);
         g->set_hyphenation_rules(id->misc->session_variables->user["Preferences"]["hyphenation_rules"]["value"]);
         err = Error.mkerror(catch(g->parse(data)));
-        if(!err && settings->linelengthp > 90.0)
+        if(!err && (settings->linelengthp > 90.0 || settings->lineunits > (180*9)))
         {
 	  g = Monotype.split_column(g);
         }
@@ -384,7 +396,7 @@ public void do_validate(Request id, Response response, Template.View v, mixed ..
 	werror("parse_time: %O\n", parse_time);
 
    b = render_proof(b, g);
-
+werror("SETTINGS: %O\n", g->config);
    v->add("settings", g->config);
    v->add("now", Calendar.now());
     v->add("job_id", job_id);
@@ -533,7 +545,7 @@ werror("EXCTRACT_FONT_SETTINGS: %O\n", id->variables);
 		"justification": (int)id->variables->justification,
 		"unit_adding": (int)id->variables->unitadding,
 		"unit_shift": (int)(id->variables->unit_shift),
-		"mould": (int)id->variables->pointsize,
+		"mould": (int)id->variables->points,
 		"pointsystemname": pointsystems[id->variables->pointsystem||"12.0"],
 		"pointsystem": (float)id->variables->pointsystem,
 		"setwidth": (float)id->variables->set,
@@ -647,13 +659,6 @@ Monotype.Generator make_font(mapping settings, object id)
     if((int)id->variables[alphabet])
       alphabets += ({alphabet});
 
-  if(settings->clean_mats)
-  {
-    add_all_sorts(g, alphabets, parts, pairs, scheme, 2);
-    g->quad_out();
-    g->new_line();
-  }
-
   // lather, rinse, repeat.
   for(int fq = 0; fq < settings->quantity; fq++)
   {
@@ -697,6 +702,13 @@ Monotype.Generator make_font(mapping settings, object id)
     g->new_line();
     
     werror("**** %O of %O\n", i, settings->quantity);
+  }
+
+  if(settings->clean_mats)
+  {
+    add_all_sorts(g, alphabets, parts, pairs, scheme, 2);
+    g->quad_out();
+    g->new_line();
   }
 
   return g;

@@ -18,7 +18,8 @@ int little;
 
 // should justifying spaces be fixed at the "base width" (1 or 2 units less than the js row width)?
 int js_are_fixed = 0;
-  
+int is_line_justified = 1;
+
   int finalized;
   
   int line_number;
@@ -32,6 +33,7 @@ int js_are_fixed = 0;
 	int min_space_units;
 	int min_little, _min_little;
 	int min_big, _min_big;	
+	int _min_big_nonjust, _min_little_nonjust;
 
 //! determines whether a line ends with a galley trip justification code.
 int double_justification = 0;
@@ -65,20 +67,30 @@ int cc, cf, c, f; // the current justification wedge settings
 
 ADT.Stack cjc = ADT.Stack();  
 
+void set_justified_line(int b) {
+  is_line_justified = b;
+  
+  if(b) {
+	  min_big = _min_big;
+	  min_little = _min_little;
+  } 
+  else {
+  	min_big = _min_big_nonjust;
+	min_little = _min_little_nonjust;
+  }
+
+	  werror("setting justifiction to %d/%d\n", min_big, min_little);
+  
+}
+
   void set_fixed_js(int x)
   {
     if(x)
-    {
       js_are_fixed = 1;
-      min_little = 1;
-      min_big = 1;
-    }
     else
-    {
       js_are_fixed = 0;
-      min_little = _min_little;
-      min_big = _min_big;
-    }
+
+    set_justified_line(is_line_justified);
   }	
   
 	protected mixed cast(string t)
@@ -118,6 +130,9 @@ ADT.Stack cjc = ADT.Stack();
 		_min_big = config->min_big||1;
 		min_little = _min_little;
 		min_big = _min_big;
+
+		_min_little_nonjust = config->min_little_nonjust||1;
+		_min_big_nonjust = config->min_big_nonjust||1;
 		
 		setwidth = config->setwidth;
 		lineunits = (float)config->lineunits;		

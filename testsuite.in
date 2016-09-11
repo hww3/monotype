@@ -52,6 +52,19 @@ test_any([[
 ]], 1);
 
 test_any([[
+  // <qo> should give appropriately sized spaces, test using units instead of picas.
+  mapping mysettings = settings + ([]);
+  m_delete(mysettings, "linelengthp");
+  //mysettings->linelengthp = 31.0;
+  mysettings->lineunits = 180;
+  object g = Monotype.Generator(mysettings);
+  g->parse("Mary had a little lamb<qo>\n");
+  g->generate_ribbon();
+  werror("large: %O small: %O\n", g->lines[0]->big, g->lines[0]->little);
+  return ((g->lines[0]->little == 8) && (g->lines[0]->big == 3) && !sizeof(g->lines[0]->errors));
+]], 1);
+
+test_any([[
   // <qo> should always work.
   object g = Monotype.Generator(settings + (["linelengthp": 30.0]));
   g->parse("Mary had a little lamb<qo>\n");
@@ -79,6 +92,20 @@ test_any([[
   // <p> behaves differently from <qo> when within justifying range
   // note the return code of this test.
   object g = Monotype.Generator(settings);
+  g->parse("Mary had ");
+  g->parse("a little lamb<p>\n");
+
+  return ((g->lines[0]->little == 8) && (g->lines[0]->big == 3) && !sizeof(g->lines[0]->errors));
+]], 0);
+
+test_any([[
+  // <p> behaves differently from <qo> when within justifying range
+  // note the return code of this test.
+    mapping mysettings = settings + ([]);
+  m_delete(mysettings, "linelengthp");
+
+  mysettings->lineunits = 180;
+  object g = Monotype.Generator(mysettings);
   g->parse("Mary had ");
   g->parse("a little lamb<p>\n");
 

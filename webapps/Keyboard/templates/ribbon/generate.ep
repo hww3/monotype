@@ -21,7 +21,7 @@ function updateSet()
    lineunits = ~~(18 * (pica||12) * 
    			(1/setWidth) * lineLength);
    			
-   dojo.byId("lineunits").innerHTML = "<i>(" + lineunits + " units)</i>";
+   dojo.byId("lineunitsspan").innerHTML = "<i>(" + lineunits + " units)</i>";
   
 }
 
@@ -49,6 +49,30 @@ function getWedge(e)
 function getWedgeForMCA(mca, id)
 {
   dojo.xhrGet({url: "/ribbon/get_wedge_for_mca/" + mca, load: function(d){ setWedge(d, id);}});
+}
+
+function enablePicas()
+{
+  dojo.byId("linelength").disabled=false;
+  dojo.byId("anglo").disabled=false;
+  dojo.byId("cicero").disabled=false;
+  dojo.byId("oldenglish").disabled=false;
+  dojo.byId("imprimerienationale").disabled=false; 
+  dojo.byId("lineunits").disabled=true;
+  dojo.byId("linelengthpicas").disabled=false;
+  dojo.byId("linelengthunits").disabled=true;
+}
+
+function enableUnits()
+{
+  dojo.byId("linelength").disabled=true;
+  dojo.byId("anglo").disabled=true;
+  dojo.byId("cicero").disabled=true;
+  dojo.byId("oldenglish").disabled=true;
+  dojo.byId("imprimerienationale").disabled=true;
+  dojo.byId("lineunits").disabled=false;
+  dojo.byId("linelengthpicas").disabled=true;
+  dojo.byId("linelengthunits").disabled=false;
 }
 
 function enableFile()
@@ -126,17 +150,29 @@ Set Width
 Point Size
 <%#select "name": "points", "id": "points", "value": "12", "options": ({"4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "18", "24"})%>
 <br/>
+<%#input "type": "radio", "name": "linelength_type", "id": "linelength_type_picas", "value": "picas", "checked": "1", "onclick": "enablePicas();"%> 
+<label for="linelength_type_picas">Line length using Picas</label>
+<fieldset id="linelengthpicas">
 Total Cast Line Length (picas/ciceros)
-<%#input "type":"text",  "name": "linelength", "id": "linelength", "size":"5", "value": "30", "onchange": "updateSet();" %> 
+<%#input "type":"text",  "name": "linelength", "id": "linelength", "size":"5", "value": "30", "enabled": 1, "onchange": "updateSet();" %> 
 <%#input "type": "radio", "name": "pointsystem", "id": "anglo",  "value": "12.0", "checked":"1" , "onchange": "updateSet();" %> <label for="anglo">UK-Anglo 
 Pica</label> 
 &nbsp;
 <%#input "type": "radio", "name": "pointsystem", "id": "cicero", "value": "12.84" , "onchange": "updateSet();" %> <label for="cicero">Cicero</label>
 &nbsp;
 <%#input "type": "radio", "name": "pointsystem", "id": "oldenglish", "value": "12.8", "onchange": "updateSet();" %>  <label for="oldenglish">Old English Pica</label>
+&nbsp; 
 <%#input "type": "radio", "name": "pointsystem", "id": "imprimerienationale", "value": "13.58", "onchange": "updateSet();" %>  <label for="imprimerienationale">Imprimerie Nationale</label>
 
-<span id="lineunits"></span>
+<span id="lineunitsspan"></span>
+</fieldset>
+<%#input "type": "radio", "name": "linelength_type", "id": "linelength_type_units", "value": "units", "onclick": "enableUnits();"%> 
+<label for="linelength_type_units">
+Line length using Monotype Units</label>
+<fieldset id="linelengthunits">
+Total Cast Line Length (Monotype units) 
+<%#input "type":"text",  "name": "lineunits", "id": "lineunits", "size":"5", "value": "", "enabled": 0 %> 
+</fieldset>
 <br/>
 Page Length (in lines) <%#input "type": "text", "name": "page_length", "size":"5", "value": "42"%>
 </fieldset>
@@ -156,8 +192,10 @@ Page Length (in lines) <%#input "type": "text", "name": "page_length", "size":"5
 <br/>
 <%#select "name": "maximum_quad_units", "id": "maximum_quad_units", "value": "18", "options": ({"18", "9", "15", "12", "11", "10"})%> <label for="maximum_quad_units">Maximum space size when quadding</label> 
 <br/>
-Minimum Justifying Space Size (3/8 is default)
+Minimum Justifying Space Size for Justified Lines (3/8 is default)
 <%#select "name": "min_just", "value": "3/8", "options": ({"1/1", "1/2", "1/3", "1/4", "1/5", "1/6", "1/7", "1/8", "1/9", "1/10", "1/11", "1/12", "1/13", "1/14", "1/14", "2/1", "2/2", "2/3", "2/4", "2/5", "2/6", "2/7", "2/8", "2/9", "2/10", "2/11", "2/12", "2/13", "2/14", "2/14", "3/1", "3/2", "3/3", "3/4", "3/5", "3/6", "3/7", "3/8", "3/9", "3/10", "3/11", "3/12", "3/13", "3/14", "3/14"})%>
+Minimum Justifying Space Size for Non-Justified Lines(3/8 is default)
+<%#select "name": "min_nonjust", "value": "3/8", "options": ({"1/1", "1/2", "1/3", "1/4", "1/5", "1/6", "1/7", "1/8", "1/9", "1/10", "1/11", "1/12", "1/13", "1/14", "1/14", "2/1", "2/2", "2/3", "2/4", "2/5", "2/6", "2/7", "2/8", "2/9", "2/10", "2/11", "2/12", "2/13", "2/14", "2/14", "3/1", "3/2", "3/3", "3/4", "3/5", "3/6", "3/7", "3/8", "3/9", "3/10", "3/11", "3/12", "3/13", "3/14", "3/14"})%>
 </fieldset>
 <fieldset>
 <legend>Hyphenation and Layout</legend>
@@ -195,8 +233,19 @@ if(elem.checked)
   enableFile();
 else
   enableText();
+
+var lu = dojo.byId("lineunits");
+if(lu && !isNaN(lu.value) && lu.value > 0.0)
+{
+dojo.byId("linelength_type_units").checked = true;
+enableUnits();
+}
+else 
+{
+  dojo.byId("linelength_type_picas").checked=true;
+enablePicas();
+}
 </script>
-</fieldset>
 <p>
 <button type="submit">Preview Ribbon</button>
 </form>

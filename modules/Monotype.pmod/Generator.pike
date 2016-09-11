@@ -101,34 +101,36 @@ mixed `->lines=(mixed l)
     stopbar
     mould
 */
-void create(mapping settings)
+void create(mapping asettings)
 {	
 
-//  werror("Monotype.Generator(%O)\n", settings);
+  werror("Monotype.Generator(%O)\n", asettings);
   float lineunits;
-  
+  mapping  settings = asettings + ([]);
+ 
   if(settings->linelengthp && settings->lineunits)
   {
     throw(Error.Generic("Line length must be specified in picas or units, but not both.\n"));
   }
-  else if(settings->linelengthp)
-    lineunits = round(18 * (settings->pointsystem||12) * 
-			(1/settings->setwidth) * settings->linelengthp);
   else if(settings->lineunits)
   {
     settings->linelengthp = lineunits/(18 * (settings->pointsystem||12) *
                          (1/settings->setwidth));
-    lineunits = settings->lineunits;
-  }    
+  }   
+  else if(settings->linelengthp)
+    settings->lineunits = round(18 * (settings->pointsystem||12) * 
+			(1/settings->setwidth) * settings->linelengthp);
+  else {
+    throw(Error.Generic("Line length must be specified, either in picas or units."));
+  }
   config = settings;
-  config->lineunits = lineunits;
 
   if(settings->matcase)
     set_matcase(settings->matcase);
   if(settings->stopbar)
     set_stopbar(settings->stopbar);
   
-//    werror ("line should be %O units.\n", lineunits);
+    werror ("line should be %O units.\n", lineunits);
 
   if(config->pad_margins)
   {
@@ -1792,6 +1794,8 @@ void quad_out()
 {
 //  werror("quad_out()\n");
   current_line->finalized = 1;
+  current_line->set_justified_line(0);
+  
   float left = current_line->lineunits - current_line->linelength;
   werror("* have %.1f units left on line.\n", left);
 
@@ -1859,6 +1863,8 @@ float low_quad_out(float amount, int|void atbeginning, int|void is_quadding)
   float ix;
   float leftover;
 
+  current_line->set_justified_line(0);
+  
   if(!floatp(amount)) amount = (float)amount;
   mapping qspaces;
   if(is_quadding)

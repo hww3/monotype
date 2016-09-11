@@ -5,3 +5,13 @@ webapps/Keyboard/dojo
 webapps/Keyboard/logs
 webapps/mca
 webapps/wedges
+testsuite
+phantomjs-1.9.7-macosx
+dojo-release-1.6.1-src
+Caster.app
+Punch.app
+RibbonGenerator.app
+Caster-*.zip
+Punch-*.zip
+RibbonGenerator-*.zip
+Pike.framework

@@ -1,3 +1,10 @@
+20160911
+- Ribbon Generator: add separate minimum space size for non-justified lines.
+- Ribbon Generator: move matrix cleanup codes for fonts to beginning of job.
+
+20160701
+- Ribbon Generator: allow line length to be specified directly in Monotype units.
+
 20160214
 - Ribbon Generator: add Imprimerie Nationale point system.
 

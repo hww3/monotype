@@ -61,7 +61,12 @@ function showCodes(line, url)
 </tr>
 <tr>
 <td>
-<b>Mould Size:</b> <%$settings.mould%> <b>Line Length:</b> <%$settings.linelengthp%> <%$settings.pointsystemname%>
+<b>Mould Size:</b> <%$settings.mould%> 
+<%if (data && data->settings && data->settings->linelengthp > 0.0) { %>
+<b>Line Length:</b> <%$settings.linelengthp%> <%$settings.pointsystemname%>
+<%} else {%>
+<b>Line Length:</b> <%$settings.lineunits%> Units
+<% } %>
 </td>
 </tr>
 </table>

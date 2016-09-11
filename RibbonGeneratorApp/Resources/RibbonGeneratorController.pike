@@ -10,6 +10,7 @@ Cocoa.NSButton LaunchBrowser;
 Cocoa.NSTextField StartupLabel;
 Cocoa.NSButton ViewLog;
 Cocoa.NSButton BackupData;
+object webView;
 
 object server;
 
@@ -81,6 +82,7 @@ int applicationShouldTerminateAfterLastWindowClosed_(object q)
 void applicationWillFinishLaunching_(object event)
 {
 werror("***\n*** starting!\n**\n");
+werror("WEBVIEW: %O\n", webView);
 // are we running in a desktop mode?
 	object fm = Cocoa.NSFileManager.defaultManager();
 	string url = "~/Library/Application Support/Monotype Caster Control";
