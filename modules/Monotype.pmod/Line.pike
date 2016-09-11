@@ -131,8 +131,8 @@ void set_justified_line(int b) {
 		min_little = _min_little;
 		min_big = _min_big;
 
-		_min_little_nonjust = config->min_little_nonjust||1;
-		_min_big_nonjust = config->min_big_nonjust||1;
+		_min_little_nonjust = config->min_little_nonjust||_min_little;
+		_min_big_nonjust = config->min_big_nonjust||_min_big;
 		
 		setwidth = config->setwidth;
 		lineunits = (float)config->lineunits;		

@@ -33,6 +33,11 @@ test_do(add_constant("settings", ([
      "stopbar": test_stopbar,
    ])))
    
+   //
+   // NOTE
+   //
+   // need a test that checks both justified and non-justified space widths
+   //
 test_any([[
   // <qo> should give appropriately sized spaces.
   object g = Monotype.Generator(settings);
@@ -50,6 +55,17 @@ test_any([[
 
   return ((g->lines[0]->little == 5) && (g->lines[0]->big == 2) && !sizeof(g->lines[0]->errors));
 ]], 1);
+
+
+test_any([[
+  // <qo> should give appropriately sized spaces.
+
+  object g = Monotype.Generator(settings  + (["min_big_nonjust": 3, "min_little_nonjust": 8]));
+  g->parse("Mary had a little lamb<qo>\n");
+
+  return ((g->lines[0]->little == 8) && (g->lines[0]->big == 3) && !sizeof(g->lines[0]->errors));
+]], 1);
+
 
 test_any([[
   // <qo> should give appropriately sized spaces, test using units instead of picas.
