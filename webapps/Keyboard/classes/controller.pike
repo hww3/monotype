@@ -62,7 +62,7 @@ void app_info(object id, object response, object v, mixed ... args)
 
 void changes(object id, object response, object v, mixed ... args)
 {
-	v->add("changes" , Stdio.read_file("CHANGES"));
+   v->add("changes" , Stdio.read_file(app->config->app_dir + "/../CHANGES"));
 }
 
 void _backup_db(object id, object response, object v, mixed ... args)
