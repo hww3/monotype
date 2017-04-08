@@ -202,6 +202,8 @@ Minimum Justifying Space Size for Non-Justified Lines(3/8 is default)
 <%#input "type":"checkbox", "name":"hyphenate", "id":"hyphenate", "value":"1", "checked":"1", "data_supplied": data->load_config%> <label for="hyphenate">Enable Hyphenation for </label>
 <%#select "name": "lang", "default": "en_US", "options": ({ ({"en_US", "English (US)"}), ({"nl_NL", "Dutch"}), ({"de_DE", "German"}), ({"de_CH", "German (Switzerland)"}), ({"fr_FR", "French"}), ({"it_IT", "Italian"}), ({"es_ES", "Spanish"}) })%>
 <br/>
+<%#input "type":"checkbox", "name":"hyphenate_any_line_mode", "id":"hyphenate_any_line_mode", "value":"1", "checked":"0", "data_supplied": data->load_config%> <label for="hyphenate_any_line_mode">Enable Hyphenation for Non-justified Lines</label>
+<br/>
 <%#input "type": "checkbox", "name": "unnatural_word_breaks", "id": "unnatural_word_breaks", "value":"1"%> <label for="unnatural_word_breaks">Allow hard (non-standard) breaks for hyphenation</label>
 <%#input "type": "checkbox", "name": "hyphenate_no_hyphen", "id": "hyphenate_no_hyphen", "value":"1"%> <label for="hyphenate_no_hyphen">Do not include hyphen in hyphenated words</label>
 <br/>

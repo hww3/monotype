@@ -91,8 +91,8 @@ werror("EXCTRACT_SETTINGS: %O\n", id->variables);
 		"matcase": app->load_matcase_by_id(id->variables->mca),
 		"jobname": id->variables->jobname,
 		"dict_dir": combine_path(app->config->app_dir, "config"),
-    "lang": id->variables->lang,
-    "hyphenate": (int)id->variables->hyphenate,
+    	"lang": id->variables->lang,
+    	"hyphenate": (int)id->variables->hyphenate,
 		"unnatural_word_breaks": (int)id->variables->unnatural_word_breaks,
 		"hyphenate_no_hyphen": (int)id->variables->hyphenate_no_hyphen,
 		"trip_at_end": (int)id->variables->trip_at_end,
@@ -107,7 +107,8 @@ werror("EXCTRACT_SETTINGS: %O\n", id->variables);
 		"hanging_punctuation": (int)id->variables->hanging_punctuation,
 		"pad_margins": (int)id->variables->pad_margins,
 		"allow_lowercase_smallcaps": (int)id->variables->allow_lowercase_smallcaps,
-		"allow_punctuation_substitution": (int)id->variables->allow_punctuation_substitution
+		"allow_punctuation_substitution": (int)id->variables->allow_punctuation_substitution,
+		"hyphenate_any_line_mode": (int)id->variables->hyphenate_any_line_mode
 		]);
 
   if(id->variables->linelength_type && id->variables->linelength_type == "units") {
@@ -190,6 +191,7 @@ public void trick(Request id, Response response, Template.View v, mixed ... args
       "unit_adding": 0,
       "unit_shift": 0,
       "unnatural_word_breaks": 0,
+	  "hyphenate_any_line_mode": 0,
       "dict_dir": dictdir,
       "matcase": test_mca,
       "stopbar": test_stopbar,
