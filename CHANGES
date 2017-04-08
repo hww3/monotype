@@ -1,3 +1,6 @@
+20170408
+- Ribbon Generator: add option to allow hyphenation for non-justified lines
+
 20160911
 - Ribbon Generator: add separate minimum space size for non-justified lines.
 - Ribbon Generator: move matrix cleanup codes for fonts to beginning of job.
