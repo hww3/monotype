@@ -30,7 +30,7 @@ function showDialog(title, url)
   if(!myDialog)
     myDialog = new dojox.widget.DialogSimple({
               title: "Programmatic Dialog Creation",
-
+		style: "height:600px; width:800px; overflow:auto;",
           });
 
   myDialog.set('title', title);
