@@ -1,3 +1,6 @@
+20171109
+- Ribbon Generator: enable scrollbar on markup popup so that it doesn't overflow
+    the window.
 20170408
 - Ribbon Generator: add option to allow hyphenation for non-justified lines
 
